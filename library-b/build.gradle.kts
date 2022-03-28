@@ -1,7 +1,7 @@
 plugins {
-    id("myproject.library-conventions")
+	id("myproject.library-conventions")
 }
 
 dependencies {
-    implementation(project(":internal-module"))
+	implementation(project(":internal-module"))
 }

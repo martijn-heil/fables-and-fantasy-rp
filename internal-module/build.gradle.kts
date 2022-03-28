@@ -1,7 +1,7 @@
 plugins {
-    id("myproject.java-conventions")
+	id("myproject.java-conventions")
 }
 
 dependencies {
-    // internal module dependencies
+	// internal module dependencies
 }

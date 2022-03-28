@@ -7,19 +7,19 @@ import java.net.URI
 //import org.gradle.plugins.ide.idea.model.IdeaLanguageLevel
 
 plugins {
-    java
-    kotlin("jvm")
-    id("com.github.johnrengelman.shadow")
-    idea
+	java
+	kotlin("jvm")
+	id("com.github.johnrengelman.shadow")
+	idea
 
-    // NOTE: external plugin version is specified in implementation dependency artifact of the project's build file
+	// NOTE: external plugin version is specified in implementation dependency artifact of the project's build file
 }
 
 group = "com.fablesfantasyrp.core.${rootProject.name.toLowerCase()}"
 
 java   {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
 }
 
 
@@ -36,10 +36,10 @@ java   {
 // Projects should use Maven Central for external dependencies
 // This could be the organization's private repository
 repositories {
-    maven { url = URI("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") }
+	maven { url = URI("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") }
 
-    mavenCentral()
-    mavenLocal()
+	mavenCentral()
+	mavenLocal()
 }
 
 //idea {
@@ -51,9 +51,9 @@ repositories {
 
 // Enable deprecation messages when compiling Java code
 tasks.withType<JavaCompile>().configureEach {
-    options.compilerArgs.add("-Xlint:deprecation")
+	options.compilerArgs.add("-Xlint:deprecation")
 }
 
 dependencies {
-    compileOnly("org.spigotmc:spigot-api:1.18.1-R0.1-SNAPSHOT") { isChanging = true }
+	compileOnly("org.spigotmc:spigot-api:1.18.1-R0.1-SNAPSHOT") { isChanging = true }
 }
