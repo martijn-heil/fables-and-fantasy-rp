@@ -8,7 +8,9 @@ class FablesHorseLimits : JavaPlugin() {
 
 	override fun onEnable() {
 		logger.info("horse limits enabled boi!")
-		val horses = server.worlds.map { it.entities.filterIsInstance<Horse>() }.flatten()
-		horses.forEach { if(it.jumpStrength > MAX_JUMP_STRENGTH) it.jumpStrength = MAX_JUMP_STRENGTH }
+		server.scheduler.scheduleSyncRepeatingTask(this, {
+			val horses = server.worlds.map { it.entities.filterIsInstance<Horse>() }.flatten()
+			horses.forEach { if(it.jumpStrength > MAX_JUMP_STRENGTH) it.jumpStrength = MAX_JUMP_STRENGTH }
+		}, 1, 1)
 	}
 }
