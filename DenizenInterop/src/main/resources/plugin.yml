@@ -1,0 +1,6 @@
+name: DenizenInterop
+version: @version@
+authors: [@authors@]
+depend: [Denizen]
+main: com.fablesfantasyrp.plugin.denizeninterop.FablesDenizenInterop
+api-version: @bukkit_api_version@

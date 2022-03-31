@@ -17,6 +17,8 @@ plugins {
 }
 
 group = "com.fablesfantasyrp.plugin"
+val authors = "Ninjoh, Darwin"
+val bukkitApiVersion = "1.18"
 
 java   {
 	sourceCompatibility = JavaVersion.VERSION_17
@@ -25,10 +27,14 @@ java   {
 
 tasks {
     withType<ProcessResources> {
-        filter(mapOf(Pair("tokens", mapOf(Pair("version", version)))), ReplaceTokens::class.java)
-    }
+        filter(mapOf(Pair("tokens", mapOf(
+				Pair("version", version),
+				Pair("authors", authors),
+				Pair("bukkit_api_version", bukkitApiVersion)
+		))), ReplaceTokens::class.java)
+	}
+
     withType<ShadowJar> {
-        this.classifier = null
         this.configurations = listOf(project.configurations.shadow.get())
     }
 }
@@ -37,9 +43,9 @@ tasks {
 // This could be the organization's private repository
 repositories {
 	maven { url = URI("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") }
+	maven { url = URI("https://jitpack.io") }
 
 	mavenCentral()
-	mavenLocal()
 }
 
 idea {
@@ -73,6 +79,6 @@ fun urlFile (url: URL, name: String): ConfigurableFileCollection  {
 }
 
 dependencies {
-	compileOnly("org.spigotmc:spigot-api:1.18.1-R0.1-SNAPSHOT") { isChanging = true }
-	compileOnly(urlFile(URL("https://ci.citizensnpcs.co/job/Denizen/lastSuccessfulBuild/artifact/target/Denizen-1.2.4-b1762-REL.jar"), "Denizen"))
+	implementation("org.spigotmc:spigot-api:1.18.1-R0.1-SNAPSHOT") { isChanging = true }
+	implementation(urlFile(URL("https://ci.citizensnpcs.co/job/Denizen/lastSuccessfulBuild/artifact/target/Denizen-1.2.4-b1762-REL.jar"), "Denizen"))
 }

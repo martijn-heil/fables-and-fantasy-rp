@@ -1,0 +1,6 @@
+name: KotlinRuntime
+version: @version@
+authors: [@authors@]
+depend: []
+main: com.fablesfantasyrp.plugin.kotlinruntime.FablesKotlinRuntime
+api-version: @bukkit_api_version@

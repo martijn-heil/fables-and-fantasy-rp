@@ -3,4 +3,4 @@ version: @version@
 authors: [@authors@]
 depend: []
 main: com.fablesfantasyrp.plugin.horselimits.FablesHorseLimits
-api-version: 1.18
+api-version: @bukkit_api_version@
