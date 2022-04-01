@@ -81,4 +81,5 @@ fun urlFile (url: URL, name: String): ConfigurableFileCollection  {
 dependencies {
 	implementation("org.spigotmc:spigot-api:1.18.1-R0.1-SNAPSHOT") { isChanging = true }
 	implementation(urlFile(URL("https://ci.citizensnpcs.co/job/Denizen/lastSuccessfulBuild/artifact/target/Denizen-1.2.4-b1762-REL.jar"), "Denizen"))
+	implementation(urlFile(URL("https://ci.ender.zone/job/EssentialsX/lastSuccessfulBuild/artifact/jars/EssentialsX-2.20.0-dev+4-4bd1b3c.jar"), "EssentialsX"))
 }

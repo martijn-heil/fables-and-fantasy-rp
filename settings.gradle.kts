@@ -3,4 +3,6 @@ include("internal-module", "library-a", "library-b",
 		"HorseLimits",
 		"DenizenInterop",
 		"Database",
-		"KotlinRuntime")
+		"KotlinRuntime",
+		"Halt",
+		"Utils")

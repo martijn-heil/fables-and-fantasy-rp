@@ -1,0 +1,6 @@
+name: FablesUtils
+version: @version@
+authors: [@authors@]
+depend: [Essentials]
+main: com.fablesfantasyrp.plugin.utils.FablesUtils
+api-version: @bukkit_api_version@
