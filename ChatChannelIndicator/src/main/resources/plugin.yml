@@ -2,5 +2,5 @@ name: FablesChatChannelIndicator
 version: @version@
 authors: [@authors@]
 depend: [FablesKotlinRuntime, FablesUtils, FablesDenizenInterop, NinCommands]
-main: com.fablesfantasyrp.plugin.chatchannelindicator.ChatChannelIndicator
+main: com.fablesfantasyrp.plugin.chatchannelindicator.FablesChatChannelIndicator
 api-version: @bukkit_api_version@

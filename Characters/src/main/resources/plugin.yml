@@ -1,0 +1,6 @@
+name: FablesCharacters
+version: @version@
+authors: [@authors@]
+depend: [FablesKotlinRuntime, FablesUtils, FablesDenizenInterop]
+main: com.fablesfantasyrp.plugin.characters.FablesCharacters
+api-version: @bukkit_api_version@

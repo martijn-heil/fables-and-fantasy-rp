@@ -5,4 +5,5 @@ include("HorseLimits",
 		"KotlinRuntime",
 		"Halt",
 		"Utils",
-		"ChatChannelIndicator")
+		"ChatChannelIndicator",
+		"Characters")

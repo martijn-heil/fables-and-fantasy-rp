@@ -1,4 +1,4 @@
-name: KotlinRuntime
+name: FablesKotlinRuntime
 version: @version@
 authors: [@authors@]
 depend: []
