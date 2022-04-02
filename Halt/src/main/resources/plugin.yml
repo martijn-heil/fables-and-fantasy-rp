@@ -1,7 +1,7 @@
 name: FablesHalt
 version: @version@
 authors: [@authors@]
-depend: [FablesUtils, NinCommands]
+depend: [FablesKotlinRuntime, FablesUtils, NinCommands]
 main: com.fablesfantasyrp.plugin.halt.FablesHalt
 api-version: @bukkit_api_version@
 permissions:

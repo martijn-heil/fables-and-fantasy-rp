@@ -1,6 +1,6 @@
 name: FablesDatabase
 version: @version@
 authors: [@authors@]
-depend: []
+depend: [FablesKotlinRuntime]
 main: com.fablesfantasyrp.plugin.database.FablesDatabase
 api-version: @bukkit_api_version@

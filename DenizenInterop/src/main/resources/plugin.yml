@@ -1,6 +1,6 @@
 name: FablesDenizenInterop
 version: @version@
 authors: [@authors@]
-depend: [Denizen]
+depend: [FablesKotlinRuntime, Denizen]
 main: com.fablesfantasyrp.plugin.denizeninterop.FablesDenizenInterop
 api-version: @bukkit_api_version@
