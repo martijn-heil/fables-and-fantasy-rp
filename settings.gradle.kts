@@ -5,4 +5,5 @@ include("internal-module", "library-a", "library-b",
 		"Database",
 		"KotlinRuntime",
 		"Halt",
-		"Utils")
+		"Utils",
+		"ChatChannelIndicator")

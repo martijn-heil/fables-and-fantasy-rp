@@ -1,4 +1,4 @@
-name: DenizenInterop
+name: FablesDenizenInterop
 version: @version@
 authors: [@authors@]
 depend: [Denizen]

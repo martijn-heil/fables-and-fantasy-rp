@@ -10,7 +10,8 @@ import org.bukkit.entity.Player
 class Commands {
 	@Command(aliases = ["halt", "h"], desc = "Formally halt nearby players")
 	@Require("fables.halt.command.halt")
-	fun halt(@Sender origin: Player, targets: List<Player>) {
+	fun halt(@Sender origin: Player, target: Player) {
+		val targets = listOf(target)
 		targets.asSequence()
 				.filter { origin.location.distance(it.location) < 15 }
 				.filter { !it.isVanished }
