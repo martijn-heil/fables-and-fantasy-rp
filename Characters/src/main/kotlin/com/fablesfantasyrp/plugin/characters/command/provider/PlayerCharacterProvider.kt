@@ -20,6 +20,7 @@ class PlayerCharacterProvider(private val server: Server) : Provider<PlayerChara
 		return server.playerCharacters.asSequence()
 				.map { it.name }
 				.filter { it.startsWith(prefix) }
+				.map { if (it.contains(" ")) "\"$it\"" else it }
 				.toList()
 	}
 }
