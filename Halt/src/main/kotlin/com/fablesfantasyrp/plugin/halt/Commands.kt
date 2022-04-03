@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.halt
 
+import com.fablesfantasyrp.plugin.characters.command.provider.AllowCharacterName
 import com.fablesfantasyrp.plugin.utils.ess
 import com.fablesfantasyrp.plugin.utils.isVanished
 import com.gitlab.martijn_heil.nincommands.common.Sender
@@ -10,7 +11,7 @@ import org.bukkit.entity.Player
 class Commands {
 	@Command(aliases = ["halt", "h"], desc = "Formally halt nearby players")
 	@Require("fables.halt.command.halt")
-	fun halt(@Sender origin: Player, target: Player) {
+	fun halt(@Sender origin: Player, @AllowCharacterName target: Player) {
 		val targets = listOf(target)
 		targets.asSequence()
 				.filter { origin.location.distance(it.location) < 15 }

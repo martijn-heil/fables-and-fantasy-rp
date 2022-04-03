@@ -4,11 +4,11 @@ import com.denizenscript.denizencore.objects.core.ElementTag
 import com.denizenscript.denizencore.objects.core.MapTag
 import com.fablesfantasyrp.plugin.denizeninterop.dFlags
 import org.bukkit.Location
-import org.bukkit.entity.Player
+import org.bukkit.OfflinePlayer
 
-class DenizenCharacter(val id: UInt, private val p: Player) : Character {
+class DenizenPlayerCharacter(override val id: UInt, override val player: OfflinePlayer) : PlayerCharacter {
 	private val dataMap: MapTag
-		get() = (p.dFlags.getFlagValue("characters") as MapTag).getObject(id.toString()) as MapTag
+		get() = (player.dFlags.getFlagValue("characters") as MapTag).getObject(id.toString()) as MapTag
 
 	override var name: String
 		get() = dataMap.getObject("name").asElement().asString()
@@ -32,5 +32,15 @@ class DenizenCharacter(val id: UInt, private val p: Player) : Character {
 
 	override fun toString(): String {
 		return "DenizenCharacter(id=$id, name=$name, age=$age, gender=$gender, race=$race)"
+	}
+
+	override fun equals(other: Any?): Boolean {
+		return if (other is DenizenPlayerCharacter) {
+			other.id == id
+		} else false
+	}
+
+	override fun hashCode(): Int {
+		return id.hashCode()
 	}
 }

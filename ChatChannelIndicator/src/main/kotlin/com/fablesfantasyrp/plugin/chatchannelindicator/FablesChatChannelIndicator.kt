@@ -17,9 +17,9 @@ import org.bukkit.ChatColor.GREEN
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 
-lateinit var instance: ChatChannelIndicator
+lateinit var instance: FablesChatChannelIndicator
 
-class ChatChannelIndicator : JavaPlugin() {
+class FablesChatChannelIndicator : JavaPlugin() {
 
 	override fun onEnable() {
 		instance = this

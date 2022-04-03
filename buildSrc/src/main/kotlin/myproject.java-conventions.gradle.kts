@@ -17,6 +17,7 @@ plugins {
 }
 
 group = "com.fablesfantasyrp.plugin"
+version = "1.0-SNAPSHOT"
 val authors = "Ninjoh, darwj"
 val bukkitApiVersion = "1.18"
 

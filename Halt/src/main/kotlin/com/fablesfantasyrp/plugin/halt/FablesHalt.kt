@@ -1,5 +1,7 @@
 package com.fablesfantasyrp.plugin.halt
 
+import com.fablesfantasyrp.plugin.characters.command.provider.PlayerCharacterModule
+import com.fablesfantasyrp.plugin.characters.currentPlayerCharacter
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.BukkitModule
@@ -26,6 +28,7 @@ class FablesHalt : JavaPlugin() {
 		injector.install(BukkitModule(server))
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
+		injector.install(PlayerCharacterModule(server))
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()
@@ -57,8 +60,12 @@ var Player.haltedBy: Player?
 
 fun Player.halt(halter: Player) {
 	this.haltedBy = halter
-	this.sendMessage("${RED}You have been formally halted by ${GRAY}${halter.name}${RED}!")
-	Bukkit.broadcast("${this.name} has been successfully halted by ${halter.name}", "fables.halt.notify")
+	val halterCharName = halter.currentPlayerCharacter.name
+	val haltedCharName = this.currentPlayerCharacter.name
+	this.sendMessage("${RED}You have been formally halted by ${GRAY}${halterCharName}${RED}!")
+	halter.sendMessage("${GREEN}You have successfully halted ${GRAY}${haltedCharName}")
+	Bukkit.broadcast("[Halt] $haltedCharName (${name}) has been " +
+			"successfully halted by $halterCharName (${halter.name})", "fables.halt.notify")
 }
 
 fun Player.unhalt() {
