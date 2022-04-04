@@ -6,6 +6,8 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.Server
 import org.bukkit.plugin.java.JavaPlugin
 
+val SYSPREFIX = "[CHARACTERS]"
+
 class FablesCharacters : JavaPlugin() {
 
 	override fun onEnable() {
