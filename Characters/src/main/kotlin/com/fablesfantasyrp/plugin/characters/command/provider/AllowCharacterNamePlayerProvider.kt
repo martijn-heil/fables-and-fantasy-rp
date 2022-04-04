@@ -38,8 +38,8 @@ class AllowCharacterNamePlayerProvider(private val server: Server,
 				.filter { it.player.isOnline && it.player.currentPlayerCharacter == it }
 				.map { it.name }
 				.plus(playerProvider.getSuggestions(prefix, locals, modifiers))
-				.filter { it.startsWith(prefix) }
-				.map { if (it.contains(" ")) "\"$it\"" else it }
+				.filter { it.startsWith(prefix.removePrefix("\"")) }
+				.map { quote(it) }
 				.toList()
 	}
 }
