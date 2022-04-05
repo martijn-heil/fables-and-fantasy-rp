@@ -1,0 +1,4 @@
+db:
+  url: 'jdbc:h2:./plugins/FablesDatabase/fables_db'
+  username: 'root'
+  password: ''
