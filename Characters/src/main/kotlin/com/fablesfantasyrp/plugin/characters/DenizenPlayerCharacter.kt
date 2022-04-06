@@ -1,12 +1,13 @@
 package com.fablesfantasyrp.plugin.characters
 
+import com.denizenscript.denizen.objects.LocationTag
 import com.denizenscript.denizencore.objects.core.ElementTag
 import com.denizenscript.denizencore.objects.core.MapTag
 import com.fablesfantasyrp.plugin.denizeninterop.dFlags
 import org.bukkit.Location
 import org.bukkit.OfflinePlayer
 
-class DenizenPlayerCharacter(override val id: UInt, override val player: OfflinePlayer) : PlayerCharacter {
+class DenizenPlayerCharacter(override val id: ULong, override val player: OfflinePlayer) : PlayerCharacter {
 	private val dataMap: MapTag
 		get() = (player.dFlags.getFlagValue("characters") as MapTag).getObject(id.toString()) as MapTag
 
@@ -22,13 +23,20 @@ class DenizenPlayerCharacter(override val id: UInt, override val player: Offline
 	override val gender: Gender
 		get() = Gender.valueOf(dataMap.getObject("gender").asElement().asString().uppercase())
 	override val race: Race
-		get() = Race.valueOf(dataMap.getObject("race").asElement().asString().uppercase())
+		get() = Race.valueOf(dataMap.getObject("race").asElement().asString().uppercase().replace(' ', '_'))
 	override val stats: CharacterStats
-		get() = TODO("Not yet implemented")
+		get() {
+			val stats = dataMap.getObject("stats") as MapTag
+			val strength = stats.getObject("strength").asElement().asInt().toUInt()
+			val defense = stats.getObject("defense").asElement().asInt().toUInt()
+			val agility = stats.getObject("agility").asElement().asInt().toUInt()
+			val intelligence = stats.getObject("intelligence").asElement().asInt().toUInt()
+			return CharacterStats(strength, defense, agility, intelligence)
+		}
 	override val location: Location
-		get() = TODO("Not yet implemented")
-	override val money: Long
-		get() = TODO("Not yet implemented")
+		get() = dataMap.getObject("location") as LocationTag
+	override val money: ULong
+		get() = dataMap.getObject("money").asElement().asLong().toULong()
 
 	override fun toString(): String {
 		return "DenizenCharacter(id=$id, name=$name, age=$age, gender=$gender, race=$race)"

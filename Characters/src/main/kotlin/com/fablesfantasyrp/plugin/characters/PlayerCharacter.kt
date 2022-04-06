@@ -4,7 +4,7 @@ import org.bukkit.Location
 import org.bukkit.OfflinePlayer
 
 interface PlayerCharacter {
-	val id: UInt
+	val id: ULong
 	var name: String
 	var age: UInt
 	var description: String
@@ -12,6 +12,6 @@ interface PlayerCharacter {
 	val race: Race
 	val stats: CharacterStats
 	val location: Location
-	val money: Long
+	val money: ULong
 	val player: OfflinePlayer
 }
