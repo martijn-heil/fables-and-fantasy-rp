@@ -1,0 +1,6 @@
+name: FablesWhitelist
+version: @version@
+authors: [@authors@]
+depend: [FablesKotlinRuntime]
+main: com.fablesfantasyrp.plugin.whitelist.FablesWhitelist
+api-version: @bukkit_api_version@
