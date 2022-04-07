@@ -5,7 +5,6 @@ import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.BukkitModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.sender.BukkitSenderModule
-import com.gitlab.martijn_heil.nincommands.common.bukkit.registerCommand
 import com.sk89q.intake.Intake
 import com.sk89q.intake.fluent.CommandGraph
 import com.sk89q.intake.parametric.ParametricBuilder
@@ -37,7 +36,7 @@ class FablesMagic : JavaPlugin() {
 				.graph()
 				.dispatcher
 
-		registerCommand(dispatcher, this, dispatcher.aliases.toList())
+		//registerCommand(dispatcher, this, dispatcher.aliases.toList())
 	}
 
 	companion object {

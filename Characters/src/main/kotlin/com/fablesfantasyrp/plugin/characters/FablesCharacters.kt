@@ -43,7 +43,7 @@ val OfflinePlayer.playerCharacters: List<PlayerCharacter>
 			if (it.matches(Regex("[0-9]+"))) { // Yes, this was necessary
 				DenizenPlayerCharacter(it.toULong(), this)
 			} else {
-				FablesCharacters.instance.logger.severe("For player: $uniqueId Ignoring corrupt player character data: $it")
+				FablesCharacters.instance.logger.severe("For player: $uniqueId (${name}) Ignoring corrupt player character data: $it")
 				null
 			}
 		}
@@ -67,7 +67,10 @@ private fun migrateDenizenToSql(server: Server, playerCharacterRepo: PlayerChara
 			e.printStackTrace()
 		} catch(e: java.lang.IllegalArgumentException) {
 			if (e.message?.startsWith("No enum constant com.fablesfantasyrp.plugin.characters.Race.") == true) {
-				FablesCharacters.instance.logger.severe("Ignoring legacy character: id = ${it.id}, name = ${it.name}, gender = ${it.gender}")
+				FablesCharacters.instance.logger.severe(
+						"Ignoring legacy character: id = ${it.id}, " +
+								"player = ${it.player.uniqueId} (${it.player.name}), " +
+								"name = ${it.name}, gender = ${it.gender}")
 			} else {
 				throw e
 			}

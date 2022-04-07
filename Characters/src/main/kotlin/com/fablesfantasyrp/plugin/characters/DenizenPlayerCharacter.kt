@@ -39,7 +39,7 @@ class DenizenPlayerCharacter(override val id: ULong, override val player: Offlin
 		get() = dataMap.getObject("money").asElement().asLong().toULong()
 
 	override fun toString(): String {
-		return "DenizenCharacter(id=$id, name=$name, age=$age, gender=$gender, race=$race)"
+		return "DenizenCharacter(id=$id, player=${player.uniqueId} (${player.name}), name=$name, age=$age, gender=$gender, race=$race)"
 	}
 
 	override fun equals(other: Any?): Boolean {
