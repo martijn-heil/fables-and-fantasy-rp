@@ -7,4 +7,5 @@ include("HorseLimits",
 		"Utils",
 		"ChatChannelIndicator",
 		"Characters",
-		"Magic")
+		"Magic",
+		"Whitelist")
