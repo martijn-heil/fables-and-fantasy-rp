@@ -11,19 +11,20 @@ import java.sql.SQLIntegrityConstraintViolationException
 
 internal val SYSPREFIX = "[CHARACTERS]"
 
+lateinit var playerCharacterRepository: PlayerCharacterRepository
+	private set
+
 class FablesCharacters : JavaPlugin() {
-	lateinit var playerCharacterRepo: PlayerCharacterRepository
-		private set
 
 	override fun onEnable() {
 		instance = this
-		playerCharacterRepo = PlayerCharacterRepository(server)
+		playerCharacterRepository = PlayerCharacterRepository(server)
 		server.offlinePlayers.forEach { ensurePresenceInDatabase(it) }
-		migrateDenizenToSql(server, playerCharacterRepo)
+		migrateDenizenToSql(server, playerCharacterRepository)
 	}
 
 	override fun onDisable() {
-		playerCharacterRepo.saveAllDirty()
+		playerCharacterRepository.saveAllDirty()
 	}
 
 	companion object {

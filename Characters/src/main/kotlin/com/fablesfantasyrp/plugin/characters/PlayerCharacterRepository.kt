@@ -29,7 +29,8 @@ class PlayerCharacterRepository internal constructor(private val server: Server)
 				"location_y = ?, " +
 				"location_z = ?, " +
 				"location_yaw = ?, " +
-				"location_pitch = ? " +
+				"location_pitch = ?, " +
+				"location_world = ?" +
 				"WHERE id = ?")
 		stmnt.setString(1, c.name)
 		stmnt.setInt(2, c.age.toInt())
@@ -40,7 +41,8 @@ class PlayerCharacterRepository internal constructor(private val server: Server)
 		stmnt.setDouble(7, c.location.z)
 		stmnt.setFloat(8, c.location.yaw)
 		stmnt.setFloat(9, c.location.pitch)
-		stmnt.setLong(10, c.id.toLong())
+		stmnt.setObject(10, c.location.world!!.uid)
+		stmnt.setLong(11, c.id.toLong())
 		stmnt.executeUpdate()
 	}
 
@@ -55,7 +57,7 @@ class PlayerCharacterRepository internal constructor(private val server: Server)
 			   player: OfflinePlayer): SimplePlayerCharacter {
 		val stmnt = fablesDatabase.prepareStatement("INSERT INTO fables_characters " +
 				"(player, name, description, age, race, gender, money, " +
-				"location_x, location_y, location_z, location_yaw, location_pitch, " +
+				"location_x, location_y, location_z, location_yaw, location_pitch, location_world, " +
 				"stat_strength, stat_defense, stat_agility, stat_intelligence) " +
 				"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)
 		stmnt.setObject(1, player.uniqueId)
@@ -70,10 +72,11 @@ class PlayerCharacterRepository internal constructor(private val server: Server)
 		stmnt.setDouble(10, location.z)
 		stmnt.setFloat(11, location.yaw)
 		stmnt.setFloat(12, location.pitch)
-		stmnt.setInt(13, stats.strength.toInt())
-		stmnt.setInt(14, stats.defense.toInt())
-		stmnt.setInt(15, stats.agility.toInt())
-		stmnt.setInt(16, stats.intelligence.toInt())
+		stmnt.setObject(13, location.world!!.uid)
+		stmnt.setInt(14, stats.strength.toInt())
+		stmnt.setInt(15, stats.defense.toInt())
+		stmnt.setInt(16, stats.agility.toInt())
+		stmnt.setInt(17, stats.intelligence.toInt())
 		stmnt.executeUpdate()
 		stmnt.generatedKeys.next()
 		val id = stmnt.generatedKeys.getLong("id").toULong()
@@ -82,7 +85,7 @@ class PlayerCharacterRepository internal constructor(private val server: Server)
 				stats, location, money, player)
 	}
 
-	fun fromId(id: ULong): SimplePlayerCharacter {
+	fun forId(id: ULong): SimplePlayerCharacter {
 		return fromCache(id) ?: run {
 			val stmnt = fablesDatabase.prepareStatement("SELECT * FROM fables_characters WHERE id = ?")
 			stmnt.setInt(1, id.toInt())
@@ -94,7 +97,7 @@ class PlayerCharacterRepository internal constructor(private val server: Server)
 		}
 	}
 
-	fun allFromPlayer(p: OfflinePlayer): List<SimplePlayerCharacter> {
+	fun allForPlayer(p: OfflinePlayer): List<SimplePlayerCharacter> {
 		val stmnt = fablesDatabase.prepareStatement("SELECT * FROM fables_characters WHERE player = ?")
 		stmnt.setObject(1, p.uniqueId)
 		val result = stmnt.executeQuery()
@@ -132,6 +135,7 @@ class PlayerCharacterRepository internal constructor(private val server: Server)
 		val locZ = result.getFloat("location_z").toDouble()
 		val locPitch = result.getFloat("location_pitch")
 		val locYaw = result.getFloat("location_yaw")
+		val locWorld = result.getObject("location_world") as UUID
 		val statStrength = result.getInt("stat_strength").toUInt()
 		val statDefense = result.getInt("stat_defense").toUInt()
 		val statAgility = result.getInt("stat_agility").toUInt()
@@ -140,7 +144,7 @@ class PlayerCharacterRepository internal constructor(private val server: Server)
 		return SimplePlayerCharacter(this,
 				id, name, age, description, gender, race,
 				CharacterStats(statStrength, statDefense, statAgility, statIntelligence),
-				Location(server.getWorld("Eden"), locX, locY, locZ, locYaw, locPitch), money,
+				Location(server.getWorld(locWorld), locX, locY, locZ, locYaw, locPitch), money,
 				server.getOfflinePlayer(playerUuid))
 	}
 

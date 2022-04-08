@@ -1,6 +1,6 @@
 CREATE TABLE fables_players (
 	id					UUID NOT NULL,
-	current_character	INTEGER,
+	current_character	BIGINT,
 	chat_channel		VARCHAR(32) DEFAULT 'ooc',
 	PRIMARY KEY (id)
 );
@@ -21,6 +21,7 @@ CREATE TABLE fables_characters (
 	location_z			DOUBLE PRECISION NOT NULL,
 	location_yaw		FLOAT NOT NULL,
 	location_pitch		FLOAT NOT NULL,
+	location_world,		UUID NOT NULL,
 	stat_strength		TINYINT NOT NULL,
 	stat_defense		TINYINT NOT NULL,
 	stat_agility		TINYINT NOT NULL,

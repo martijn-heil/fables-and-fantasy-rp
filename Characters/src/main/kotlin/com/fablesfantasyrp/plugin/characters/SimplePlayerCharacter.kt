@@ -8,19 +8,19 @@ class SimplePlayerCharacter : PlayerCharacter {
 	private var dirtyMarker: DirtyMarker<SimplePlayerCharacter>? = null
 	override val id: ULong
 	override var name: String
-		set(value) { field = value; dirtyMarker?.markDirty(this) }
+		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 
 	override var age: UInt
-		set(value) { field = value; dirtyMarker?.markDirty(this) }
+		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 
 	override var description: String
-		set(value) { field = value; dirtyMarker?.markDirty(this) }
+		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 
 	override var location: Location
-		set(value) { field = value; dirtyMarker?.markDirty(this) }
+		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 
 	override var money: ULong
-		set(value) { field = value; dirtyMarker?.markDirty(this) }
+		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 
 	override val player: OfflinePlayer
 	override val gender: Gender
