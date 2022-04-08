@@ -16,6 +16,11 @@ class Commands {
 	fun halt(@Sender origin: Player, @AllowCharacterName target: Player) {
 		val targets = listOf(target).filter { !it.ess.isVanished }
 		for (it in targets) {
+			if (it == origin) {
+				origin.sendMessage("$SYSPREFIX ${RED}You can't halt yourself!")
+				continue
+			}
+
 			if (it.location.distance(origin.location) > 15) {
 				origin.sendMessage("$SYSPREFIX ${RED}Failed to halt ${GRAY}${it.currentPlayerCharacter.name}${RED} " +
 						"because this player is too far away!")
