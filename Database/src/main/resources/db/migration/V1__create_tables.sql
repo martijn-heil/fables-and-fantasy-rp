@@ -39,7 +39,7 @@ CREATE TABLE fables_characters (
 );
 
 CREATE INDEX fables_characters_player ON fables_characters(player);
-CREATE INDEX fables_players_current_character on fables_players(current_character);
+CREATE INDEX fables_players_current_character ON fables_players(current_character);
 
 ALTER TABLE fables_players ADD FOREIGN KEY (current_character) REFERENCES fables_characters(id);
 ALTER TABLE fables_characters ADD FOREIGN KEY (player) REFERENCES fables_players(id);
