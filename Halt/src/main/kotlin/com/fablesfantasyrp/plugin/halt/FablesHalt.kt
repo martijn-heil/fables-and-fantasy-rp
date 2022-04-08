@@ -16,7 +16,7 @@ import org.bukkit.ChatColor.*
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 
-val SYSPREFIX = "${DARK_RED}${BOLD}[${RED}${BOLD}HALT${DARK_RED}${BOLD}]${GRAY}"
+val SYSPREFIX = "${DARK_RED}${BOLD}[${RED}${BOLD} HALT ${DARK_RED}${BOLD}]${GRAY}"
 
 class FablesHalt : JavaPlugin() {
 

@@ -46,7 +46,7 @@ val OfflinePlayer.playerCharacters: List<PlayerCharacter>
 			if (it.matches(Regex("[0-9]+"))) { // Yes, this was necessary
 				DenizenPlayerCharacter(it.toULong(), this)
 			} else {
-				FablesCharacters.instance.logger.severe("For player: $uniqueId (${name}) Ignoring corrupt player character data: $it")
+				//FablesCharacters.instance.logger.severe("For player: $uniqueId (${name}) Ignoring corrupt player character data: $it")
 				null
 			}
 		}
