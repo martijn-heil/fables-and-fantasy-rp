@@ -86,10 +86,10 @@ class DatabasePlayerRepository internal constructor(private val plugin: Plugin) 
 			val stmnt = fablesDatabase.prepareStatement("SELECT * FROM fables_characters WHERE id = ?")
 			stmnt.setObject(1, id)
 			val result = stmnt.executeQuery()
-			if (!result.next()) throw Exception("Character not found in database")
-			val char = fromRow(result)
-			cache[id] = WeakReference(char)
-			char
+			if (!result.next()) throw Exception("Player not found in database")
+			val playerData = fromRow(result)
+			cache[id] = WeakReference(playerData)
+			playerData
 		}
 	}
 

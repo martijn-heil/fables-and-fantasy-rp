@@ -16,7 +16,6 @@ import org.bukkit.ChatColor.*
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 
-lateinit var instance: FablesHalt
 val SYSPREFIX = "${DARK_RED}${BOLD}[${RED}${BOLD}HALT${DARK_RED}${BOLD}]${GRAY}"
 
 class FablesHalt : JavaPlugin() {
@@ -43,6 +42,10 @@ class FablesHalt : JavaPlugin() {
 
 		registerCommand(dispatcher, this, dispatcher.aliases.toList())
 	}
+
+	companion object {
+		lateinit var instance: FablesHalt
+	}
 }
 
 // player halted by halter
@@ -63,7 +66,7 @@ fun Player.halt(halter: Player) {
 	this.haltedBy = halter
 	val halterCharName = halter.currentPlayerCharacter.name
 	val haltedCharName = this.currentPlayerCharacter.name
-	this.sendMessage("$SYSPREFIX ${RED}You have been formally halted by ${GRAY}${halterCharName}${RED}!")
+	this.sendMessage("$SYSPREFIX ${RED}You have been halted by ${GRAY}${halterCharName}${RED}!")
 	halter.sendMessage("$SYSPREFIX ${GREEN}You have successfully halted ${GRAY}${haltedCharName}")
 	Bukkit.broadcast("$SYSPREFIX $haltedCharName (${name}) has been " +
 			"successfully halted by $halterCharName (${halter.name})", "fables.halt.notify")
