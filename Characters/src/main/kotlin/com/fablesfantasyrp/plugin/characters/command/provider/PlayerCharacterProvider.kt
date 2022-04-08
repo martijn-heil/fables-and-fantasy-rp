@@ -19,7 +19,7 @@ class PlayerCharacterProvider(private val server: Server) : Provider<PlayerChara
 	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
 		return server.playerCharacters.asSequence()
 				.map { it.name }
-				.filter { it.startsWith(prefix.removePrefix("\"")) }
+				.filter { it.startsWith(prefix.removePrefix("\""), true) }
 				.map { quote(it) }
 				.toList()
 	}
