@@ -1,8 +1,8 @@
-package com.fablesfantasyrp.plugin.playerdata
+package com.fablesfantasyrp.plugin.playerdata.database
 
-import com.fablesfantasyrp.plugin.characters.playerCharacterRepository
 import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
 import com.fablesfantasyrp.plugin.database.repository.CachingRepository
+import com.fablesfantasyrp.plugin.playerdata.databasePlayerRepository
 import org.bukkit.OfflinePlayer
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority.MONITOR
@@ -15,11 +15,10 @@ import java.sql.ResultSet
 import java.util.*
 
 
-class FablesPlayerRepository internal constructor(private val plugin: Plugin) : CachingRepository<FablesPlayer> {
-	private val cache = HashMap<UUID, WeakReference<FablesPlayer>>()
-	private val strongCache = HashSet<FablesPlayer>()
-	private val dirty = LinkedHashSet<FablesPlayer>()
-
+class DatabasePlayerRepository internal constructor(private val plugin: Plugin) : CachingRepository<DatabasePlayer> {
+	private val cache = HashMap<UUID, WeakReference<DatabasePlayer>>()
+	private val strongCache = HashSet<DatabasePlayer>()
+	private val dirty = LinkedHashSet<DatabasePlayer>()
 	private val server = plugin.server
 
 	init {
@@ -53,27 +52,27 @@ class FablesPlayerRepository internal constructor(private val plugin: Plugin) : 
 		entries.forEach { save(it) }
 	}
 
-	override fun markDirty(v: FablesPlayer) {
+	override fun markDirty(v: DatabasePlayer) {
 		dirty.add(v)
 	}
 
-	override fun save(v: FablesPlayer) {
+	override fun save(v: DatabasePlayer) {
 		saveRaw(v)
 		dirty.remove(v)
 	}
 
-	private fun saveRaw(v: FablesPlayer) {
+	private fun saveRaw(v: DatabasePlayer) {
 		val stmnt = fablesDatabase.prepareStatement("UPDATE fables_players SET " +
 				"current_character = ?, " +
 				"chat_channel = ? " +
 				"WHERE id = ?")
-		stmnt.setLong(1, v.currentCharacter.id.toLong())
+		stmnt.setLong(1, v.currentCharacterId.toLong())
 		stmnt.setString(2, v.chatChannel)
 		stmnt.setObject(3, v.player.uniqueId)
 		stmnt.executeUpdate()
 	}
 
-	override fun destroy(v: FablesPlayer) {
+	override fun destroy(v: DatabasePlayer) {
 		cache.remove(v.player.uniqueId)
 		strongCache.remove(v)
 		val stmnt = fablesDatabase.prepareStatement("DELETE FROM fables_players WHERE id = ?")
@@ -81,7 +80,7 @@ class FablesPlayerRepository internal constructor(private val plugin: Plugin) : 
 		stmnt.executeUpdate()
 	}
 
-	fun forPlayer(p: OfflinePlayer): FablesPlayer {
+	fun forPlayer(p: OfflinePlayer): DatabasePlayer {
 		val id = p.uniqueId
 		return fromCache(id) ?: run {
 			val stmnt = fablesDatabase.prepareStatement("SELECT * FROM fables_characters WHERE id = ?")
@@ -94,13 +93,13 @@ class FablesPlayerRepository internal constructor(private val plugin: Plugin) : 
 		}
 	}
 
-	private fun fromCache(id: UUID): FablesPlayer? {
+	private fun fromCache(id: UUID): DatabasePlayer? {
 		val maybe = cache[id]?.get()
 		if (maybe == null) cache.remove(id)
 		return maybe
 	}
 
-	private fun fromRowOrCache(result: ResultSet): FablesPlayer {
+	private fun fromRowOrCache(result: ResultSet): DatabasePlayer {
 		val id = result.getObject("id") as UUID
 		val maybe = fromCache(id)
 
@@ -113,13 +112,15 @@ class FablesPlayerRepository internal constructor(private val plugin: Plugin) : 
 		}
 	}
 
-	private fun fromRow(result: ResultSet): FablesPlayer {
+	private fun fromRow(result: ResultSet): DatabasePlayer {
 		val id = result.getObject("id") as UUID
 		val currentCharacterId = result.getLong("current_character").toULong()
 		val chatChannel = result.getString("chat_channel")
 
-		val char = playerCharacterRepository.forId(currentCharacterId)
-
-		return FablesPlayer(this, server.getOfflinePlayer(id), char, chatChannel)
+		return DatabasePlayer(this, server.getOfflinePlayer(id), currentCharacterId, chatChannel)
 	}
 }
+
+fun DatabasePlayer.Companion.forOfflinePlayer(p: OfflinePlayer) = databasePlayerRepository.forPlayer(p)
+fun DatabasePlayer.save() = databasePlayerRepository.save(this)
+fun DatabasePlayer.destroy() = databasePlayerRepository.destroy(this)

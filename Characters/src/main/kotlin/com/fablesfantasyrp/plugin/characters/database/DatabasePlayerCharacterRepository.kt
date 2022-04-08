@@ -1,5 +1,9 @@
-package com.fablesfantasyrp.plugin.characters
+package com.fablesfantasyrp.plugin.characters.database
 
+import com.fablesfantasyrp.plugin.characters.CharacterStats
+import com.fablesfantasyrp.plugin.characters.Gender
+import com.fablesfantasyrp.plugin.characters.Race
+import com.fablesfantasyrp.plugin.characters.databasePlayerCharacterRepository
 import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
 import com.fablesfantasyrp.plugin.database.repository.CachingRepository
 import org.bukkit.Location
@@ -10,16 +14,16 @@ import java.sql.ResultSet
 import java.sql.Statement
 import java.util.*
 
-class PlayerCharacterRepository internal constructor(private val server: Server) : CachingRepository<SimplePlayerCharacter> {
-	private val cache = HashMap<ULong, WeakReference<SimplePlayerCharacter>>()
-	private val dirty = HashSet<SimplePlayerCharacter>()
+class DatabasePlayerCharacterRepository internal constructor(private val server: Server) : CachingRepository<DatabasePlayerCharacter> {
+	private val cache = HashMap<ULong, WeakReference<DatabasePlayerCharacter>>()
+	private val dirty = HashSet<DatabasePlayerCharacter>()
 
-	override fun save(v: SimplePlayerCharacter) {
+	override fun save(v: DatabasePlayerCharacter) {
 		saveRaw(v)
 		dirty.remove(v)
 	}
 
-	private fun saveRaw(c: SimplePlayerCharacter) {
+	private fun saveRaw(c: DatabasePlayerCharacter) {
 		val stmnt = fablesDatabase.prepareStatement("UPDATE fables_characters SET " +
 				"name = ?, " +
 				"age = ?, " +
@@ -54,7 +58,7 @@ class PlayerCharacterRepository internal constructor(private val server: Server)
 			   stats: CharacterStats,
 			   location: Location,
 			   money: ULong,
-			   player: OfflinePlayer): SimplePlayerCharacter {
+			   player: OfflinePlayer): DatabasePlayerCharacter {
 		val stmnt = fablesDatabase.prepareStatement("INSERT INTO fables_characters " +
 				"(player, name, description, age, race, gender, money, " +
 				"location_x, location_y, location_z, location_yaw, location_pitch, location_world, " +
@@ -80,12 +84,12 @@ class PlayerCharacterRepository internal constructor(private val server: Server)
 		stmnt.executeUpdate()
 		stmnt.generatedKeys.next()
 		val id = stmnt.generatedKeys.getLong("id").toULong()
-		return SimplePlayerCharacter(this,
+		return DatabasePlayerCharacter(this,
 				id, name, age, description, gender, race,
 				stats, location, money, player)
 	}
 
-	fun forId(id: ULong): SimplePlayerCharacter {
+	fun forId(id: ULong): DatabasePlayerCharacter {
 		return fromCache(id) ?: run {
 			val stmnt = fablesDatabase.prepareStatement("SELECT * FROM fables_characters WHERE id = ?")
 			stmnt.setInt(1, id.toInt())
@@ -97,23 +101,24 @@ class PlayerCharacterRepository internal constructor(private val server: Server)
 		}
 	}
 
-	fun allForPlayer(p: OfflinePlayer): List<SimplePlayerCharacter> {
+	fun allForPlayer(p: OfflinePlayer): List<DatabasePlayerCharacter> {
 		val stmnt = fablesDatabase.prepareStatement("SELECT * FROM fables_characters WHERE player = ?")
 		stmnt.setObject(1, p.uniqueId)
 		val result = stmnt.executeQuery()
-		val all = ArrayList<SimplePlayerCharacter>()
+		val all = ArrayList<DatabasePlayerCharacter>()
 		while(result.next()) all.add(fromRowOrCache(result))
 		return all
 	}
 
-	override fun destroy(v: SimplePlayerCharacter) {
+	override fun destroy(v: DatabasePlayerCharacter) {
 		cache.remove(v.id)
+		dirty.remove(v)
 		val stmnt = fablesDatabase.prepareStatement("DELETE FROM fables_characters WHERE id = ?")
 		stmnt.setLong(1, v.id.toLong())
 		stmnt.executeUpdate()
 	}
 
-	override fun markDirty(v: SimplePlayerCharacter) {
+	override fun markDirty(v: DatabasePlayerCharacter) {
 		dirty.add(v)
 	}
 
@@ -122,7 +127,7 @@ class PlayerCharacterRepository internal constructor(private val server: Server)
 		dirty.clear()
 	}
 
-	private fun fromRow(result: ResultSet): SimplePlayerCharacter {
+	private fun fromRow(result: ResultSet): DatabasePlayerCharacter {
 		val id = result.getLong("id").toULong()
 		val name = result.getString("name")
 		val age = result.getInt("age").toUInt()
@@ -141,20 +146,20 @@ class PlayerCharacterRepository internal constructor(private val server: Server)
 		val statAgility = result.getInt("stat_agility").toUInt()
 		val statIntelligence = result.getInt("stat_intelligence").toUInt()
 		val playerUuid = result.getObject("player") as UUID
-		return SimplePlayerCharacter(this,
+		return DatabasePlayerCharacter(this,
 				id, name, age, description, gender, race,
 				CharacterStats(statStrength, statDefense, statAgility, statIntelligence),
 				Location(server.getWorld(locWorld), locX, locY, locZ, locYaw, locPitch), money,
 				server.getOfflinePlayer(playerUuid))
 	}
 
-	private fun fromCache(id: ULong): SimplePlayerCharacter? {
+	private fun fromCache(id: ULong): DatabasePlayerCharacter? {
 		val maybe = cache[id]?.get()
 		if (maybe == null) cache.remove(id)
 		return maybe
 	}
 
-	private fun fromRowOrCache(result: ResultSet): SimplePlayerCharacter {
+	private fun fromRowOrCache(result: ResultSet): DatabasePlayerCharacter {
 		val id = result.getLong("id").toULong()
 		val maybe = fromCache(id)
 
@@ -167,3 +172,8 @@ class PlayerCharacterRepository internal constructor(private val server: Server)
 		}
 	}
 }
+
+fun DatabasePlayerCharacter.Companion.forId(id: ULong) = databasePlayerCharacterRepository.forId(id)
+fun DatabasePlayerCharacter.Companion.allForPlayer(p: OfflinePlayer) = databasePlayerCharacterRepository.allForPlayer(p)
+fun DatabasePlayerCharacter.save() = databasePlayerCharacterRepository.save(this)
+fun DatabasePlayerCharacter.destroy() = databasePlayerCharacterRepository.destroy(this)

@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.characters
 
 import com.denizenscript.denizencore.objects.core.MapTag
-import com.fablesfantasyrp.plugin.database.ensurePresenceInDatabase
+import com.fablesfantasyrp.plugin.characters.database.DatabasePlayerCharacterRepository
 import com.fablesfantasyrp.plugin.denizeninterop.dFlags
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
@@ -11,20 +11,19 @@ import java.sql.SQLIntegrityConstraintViolationException
 
 internal val SYSPREFIX = "[CHARACTERS]"
 
-lateinit var playerCharacterRepository: PlayerCharacterRepository
+lateinit var databasePlayerCharacterRepository: DatabasePlayerCharacterRepository
 	private set
 
 class FablesCharacters : JavaPlugin() {
 
 	override fun onEnable() {
 		instance = this
-		playerCharacterRepository = PlayerCharacterRepository(server)
-		server.offlinePlayers.forEach { ensurePresenceInDatabase(it) }
-		migrateDenizenToSql(server, playerCharacterRepository)
+		//playerCharacterRepository = PlayerCharacterRepository(server)
+		//migrateDenizenToSql(server, playerCharacterRepository)
 	}
 
 	override fun onDisable() {
-		playerCharacterRepository.saveAllDirty()
+		//playerCharacterRepository.saveAllDirty()
 	}
 
 	companion object {
@@ -53,7 +52,7 @@ val OfflinePlayer.playerCharacters: List<PlayerCharacter>
 val Server.playerCharacters: List<PlayerCharacter>
 	get() = offlinePlayers.asSequence().map { it.playerCharacters }.flatten().toList()
 
-private fun migrateDenizenToSql(server: Server, playerCharacterRepo: PlayerCharacterRepository) {
+private fun migrateDenizenToSql(server: Server, playerCharacterRepo: DatabasePlayerCharacterRepository) {
 	val integrityViolations = ArrayList<PlayerCharacter>()
 
 	val chars = server.offlinePlayers.asSequence().map { it.playerCharacters }.flatten().toMutableList()
