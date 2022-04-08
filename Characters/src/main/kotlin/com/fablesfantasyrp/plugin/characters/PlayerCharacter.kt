@@ -14,4 +14,6 @@ interface PlayerCharacter {
 	val location: Location
 	val money: ULong
 	val player: OfflinePlayer
+
+	companion object
 }

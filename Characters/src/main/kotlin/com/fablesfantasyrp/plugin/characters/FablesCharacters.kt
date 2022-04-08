@@ -3,11 +3,9 @@ package com.fablesfantasyrp.plugin.characters
 import com.denizenscript.denizencore.objects.core.MapTag
 import com.fablesfantasyrp.plugin.characters.database.DatabasePlayerCharacterRepository
 import com.fablesfantasyrp.plugin.denizeninterop.dFlags
-import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.Server
 import org.bukkit.plugin.java.JavaPlugin
-import java.sql.SQLIntegrityConstraintViolationException
 
 internal val SYSPREFIX = "[CHARACTERS]"
 
@@ -18,7 +16,7 @@ class FablesCharacters : JavaPlugin() {
 
 	override fun onEnable() {
 		instance = this
-		//playerCharacterRepository = PlayerCharacterRepository(server)
+		//playerCharacterRepository = PlayerCharacterRepository(this)
 		//migrateDenizenToSql(server, playerCharacterRepository)
 	}
 
@@ -30,6 +28,11 @@ class FablesCharacters : JavaPlugin() {
 		lateinit var instance: FablesCharacters
 	}
 }
+
+//fun PlayerCharacter.Companion.forId(id: ULong): PlayerCharacter = DatabasePlayerCharacter.forId(id)
+//fun PlayerCharacter.Companion.all(): List<PlayerCharacter> = DatabasePlayerCharacter.all()
+//fun PlayerCharacter.Companion.allForPlayer(p: OfflinePlayer): List<PlayerCharacter>
+
 val OfflinePlayer.currentPlayerCharacter: PlayerCharacter
 	get() {
 		val id = dFlags.getFlagValue("characters_current").asElement().asLong().toULong()
@@ -51,32 +54,3 @@ val OfflinePlayer.playerCharacters: List<PlayerCharacter>
 
 val Server.playerCharacters: List<PlayerCharacter>
 	get() = offlinePlayers.asSequence().map { it.playerCharacters }.flatten().toList()
-
-private fun migrateDenizenToSql(server: Server, playerCharacterRepo: DatabasePlayerCharacterRepository) {
-	val integrityViolations = ArrayList<PlayerCharacter>()
-
-	val chars = server.offlinePlayers.asSequence().map { it.playerCharacters }.flatten().toMutableList()
-	chars.sortBy { it.id }
-
-	chars.forEach {
-		try {
-			playerCharacterRepo.create(it.name, it.age, it.description, it.gender,
-					it.race, it.stats, it.location, it.money, it.player)
-		} catch(e: SQLIntegrityConstraintViolationException) {
-			integrityViolations.add(it)
-			e.printStackTrace()
-		} catch(e: java.lang.IllegalArgumentException) {
-			if (e.message?.startsWith("No enum constant com.fablesfantasyrp.plugin.characters.Race.") == true) {
-				FablesCharacters.instance.logger.severe(
-						"Ignoring legacy character: id = ${it.id}, " +
-								"player = ${it.player.uniqueId} (${it.player.name}), " +
-								"name = ${it.name}, gender = ${it.gender}")
-			} else {
-				throw e
-			}
-		}
-	}
-	playerCharacterRepo.saveAllDirty()
-
-	integrityViolations.forEach { Bukkit.getLogger().info(it.toString()) }
-}

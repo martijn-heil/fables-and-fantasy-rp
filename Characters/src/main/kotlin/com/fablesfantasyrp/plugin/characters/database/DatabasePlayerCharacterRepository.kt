@@ -8,15 +8,16 @@ import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDataba
 import com.fablesfantasyrp.plugin.database.repository.CachingRepository
 import org.bukkit.Location
 import org.bukkit.OfflinePlayer
-import org.bukkit.Server
+import org.bukkit.plugin.Plugin
 import java.lang.ref.WeakReference
 import java.sql.ResultSet
 import java.sql.Statement
 import java.util.*
 
-class DatabasePlayerCharacterRepository internal constructor(private val server: Server) : CachingRepository<DatabasePlayerCharacter> {
+class DatabasePlayerCharacterRepository internal constructor(private val plugin: Plugin) : CachingRepository<DatabasePlayerCharacter> {
 	private val cache = HashMap<ULong, WeakReference<DatabasePlayerCharacter>>()
 	private val dirty = HashSet<DatabasePlayerCharacter>()
+	private val server = plugin.server
 
 	override fun save(v: DatabasePlayerCharacter) {
 		saveRaw(v)
@@ -101,6 +102,14 @@ class DatabasePlayerCharacterRepository internal constructor(private val server:
 		}
 	}
 
+	fun all(): List<DatabasePlayerCharacter> {
+		val stmnt = fablesDatabase.prepareStatement("SELECT * FROM fables_characters")
+		val result = stmnt.executeQuery()
+		val all = ArrayList<DatabasePlayerCharacter>()
+		while(result.next()) all.add(fromRowOrCache(result))
+		return all
+	}
+
 	fun allForPlayer(p: OfflinePlayer): List<DatabasePlayerCharacter> {
 		val stmnt = fablesDatabase.prepareStatement("SELECT * FROM fables_characters WHERE player = ?")
 		stmnt.setObject(1, p.uniqueId)
@@ -174,6 +183,7 @@ class DatabasePlayerCharacterRepository internal constructor(private val server:
 }
 
 fun DatabasePlayerCharacter.Companion.forId(id: ULong) = databasePlayerCharacterRepository.forId(id)
+fun DatabasePlayerCharacter.Companion.all() = databasePlayerCharacterRepository.all()
 fun DatabasePlayerCharacter.Companion.allForPlayer(p: OfflinePlayer) = databasePlayerCharacterRepository.allForPlayer(p)
 fun DatabasePlayerCharacter.save() = databasePlayerCharacterRepository.save(this)
 fun DatabasePlayerCharacter.destroy() = databasePlayerCharacterRepository.destroy(this)
