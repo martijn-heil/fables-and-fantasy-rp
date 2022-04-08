@@ -1,0 +1,6 @@
+name: FablesChat
+version: @version@
+authors: [@authors@]
+depend: [FablesKotlinRuntime, FablesDatabase, FablesPlayerData, NinCommands]
+main: com.fablesfantasyrp.plugin.chat.FablesChat
+api-version: @bukkit_api_version@

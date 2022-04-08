@@ -15,10 +15,10 @@ import java.sql.ResultSet
 import java.util.*
 
 
-class DatabasePlayerRepository internal constructor(private val plugin: Plugin) : CachingRepository<DatabasePlayer> {
-	private val cache = HashMap<UUID, WeakReference<DatabasePlayer>>()
-	private val strongCache = HashSet<DatabasePlayer>()
-	private val dirty = LinkedHashSet<DatabasePlayer>()
+class DatabasePlayerRepository internal constructor(private val plugin: Plugin) : CachingRepository<DatabasePlayerData> {
+	private val cache = HashMap<UUID, WeakReference<DatabasePlayerData>>()
+	private val strongCache = HashSet<DatabasePlayerData>()
+	private val dirty = LinkedHashSet<DatabasePlayerData>()
 	private val server = plugin.server
 
 	init {
@@ -52,35 +52,35 @@ class DatabasePlayerRepository internal constructor(private val plugin: Plugin) 
 		entries.forEach { save(it) }
 	}
 
-	override fun markDirty(v: DatabasePlayer) {
+	override fun markDirty(v: DatabasePlayerData) {
 		dirty.add(v)
 	}
 
-	override fun save(v: DatabasePlayer) {
+	override fun save(v: DatabasePlayerData) {
 		saveRaw(v)
 		dirty.remove(v)
 	}
 
-	private fun saveRaw(v: DatabasePlayer) {
+	private fun saveRaw(v: DatabasePlayerData) {
 		val stmnt = fablesDatabase.prepareStatement("UPDATE fables_players SET " +
 				"current_character = ?, " +
 				"chat_channel = ? " +
 				"WHERE id = ?")
 		stmnt.setLong(1, v.currentCharacterId.toLong())
 		stmnt.setString(2, v.chatChannel)
-		stmnt.setObject(3, v.player.uniqueId)
+		stmnt.setObject(3, v.offlinePlayer.uniqueId)
 		stmnt.executeUpdate()
 	}
 
-	override fun destroy(v: DatabasePlayer) {
-		cache.remove(v.player.uniqueId)
+	override fun destroy(v: DatabasePlayerData) {
+		cache.remove(v.offlinePlayer.uniqueId)
 		strongCache.remove(v)
 		val stmnt = fablesDatabase.prepareStatement("DELETE FROM fables_players WHERE id = ?")
-		stmnt.setObject(1, v.player.uniqueId)
+		stmnt.setObject(1, v.offlinePlayer.uniqueId)
 		stmnt.executeUpdate()
 	}
 
-	fun forPlayer(p: OfflinePlayer): DatabasePlayer {
+	fun forPlayer(p: OfflinePlayer): DatabasePlayerData {
 		val id = p.uniqueId
 		return fromCache(id) ?: run {
 			val stmnt = fablesDatabase.prepareStatement("SELECT * FROM fables_characters WHERE id = ?")
@@ -93,13 +93,13 @@ class DatabasePlayerRepository internal constructor(private val plugin: Plugin) 
 		}
 	}
 
-	private fun fromCache(id: UUID): DatabasePlayer? {
+	private fun fromCache(id: UUID): DatabasePlayerData? {
 		val maybe = cache[id]?.get()
 		if (maybe == null) cache.remove(id)
 		return maybe
 	}
 
-	private fun fromRowOrCache(result: ResultSet): DatabasePlayer {
+	private fun fromRowOrCache(result: ResultSet): DatabasePlayerData {
 		val id = result.getObject("id") as UUID
 		val maybe = fromCache(id)
 
@@ -112,15 +112,15 @@ class DatabasePlayerRepository internal constructor(private val plugin: Plugin) 
 		}
 	}
 
-	private fun fromRow(result: ResultSet): DatabasePlayer {
+	private fun fromRow(result: ResultSet): DatabasePlayerData {
 		val id = result.getObject("id") as UUID
 		val currentCharacterId = result.getLong("current_character").toULong()
 		val chatChannel = result.getString("chat_channel")
 
-		return DatabasePlayer(this, server.getOfflinePlayer(id), currentCharacterId, chatChannel)
+		return DatabasePlayerData(this, server.getOfflinePlayer(id), currentCharacterId, chatChannel)
 	}
 }
 
-fun DatabasePlayer.Companion.forOfflinePlayer(p: OfflinePlayer) = databasePlayerRepository.forPlayer(p)
-fun DatabasePlayer.save() = databasePlayerRepository.save(this)
-fun DatabasePlayer.destroy() = databasePlayerRepository.destroy(this)
+fun DatabasePlayerData.Companion.forOfflinePlayer(p: OfflinePlayer) = databasePlayerRepository.forPlayer(p)
+fun DatabasePlayerData.save() = databasePlayerRepository.save(this)
+fun DatabasePlayerData.destroy() = databasePlayerRepository.destroy(this)
