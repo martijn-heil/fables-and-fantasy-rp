@@ -1,0 +1,19 @@
+name: FablesStaffMode
+version: @version@
+authors: [@authors@]
+depend: [FablesKotlinRuntime, FablesPlayerData, FablesUtils, NinCommands, PlaceholderAPI]
+main: com.fablesfantasyrp.plugin.staffmode.FablesStaffMode
+api-version: @bukkit_api_version@
+permissions:
+  fables.staffmode.command.duty:
+    description: Toggle your staff duty status on/off
+    default: op
+  fables.staffmode.command.duty.others:
+    description: Toggle other's staff duty status on/off
+    default: op
+  fables.staffmode.notify.duty:
+    description: Get notified when someone changes their staff duty status
+    default: op
+  fables.staffmode.command.stafflist:
+    description: List staff online and their duty status
+    default: op

@@ -10,4 +10,5 @@ include("HorseLimits",
 		"Characters",
 		"Magic",
 		"Whitelist",
-		"Chat")
+		"Chat",
+		"StaffMode")

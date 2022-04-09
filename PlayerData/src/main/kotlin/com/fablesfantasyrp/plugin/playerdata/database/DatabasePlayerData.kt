@@ -9,12 +9,12 @@ class DatabasePlayerData : PlayerData {
 
 	override val offlinePlayer: OfflinePlayer
 
-	override var currentCharacterId: ULong
+	override var currentCharacterId: ULong?
 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 	override var chatChannel: String
 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 
-	internal constructor(dirtyMarker: DirtyMarker<DatabasePlayerData>, player: OfflinePlayer, currentCharacter: ULong, chatChannel: String) {
+	internal constructor(dirtyMarker: DirtyMarker<DatabasePlayerData>, player: OfflinePlayer, currentCharacter: ULong?, chatChannel: String) {
 		this.offlinePlayer = player
 		this.currentCharacterId = currentCharacter
 		this.chatChannel = chatChannel

@@ -12,6 +12,7 @@ import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.plugin.Plugin
 import java.lang.ref.WeakReference
 import java.sql.ResultSet
+import java.sql.Types
 import java.util.*
 
 
@@ -66,7 +67,12 @@ class DatabasePlayerRepository internal constructor(private val plugin: Plugin) 
 				"current_character = ?, " +
 				"chat_channel = ? " +
 				"WHERE id = ?")
-		stmnt.setLong(1, v.currentCharacterId.toLong())
+		val currentCharacterId = v.currentCharacterId
+		if (currentCharacterId != null) {
+			stmnt.setLong(1, currentCharacterId.toLong())
+		} else {
+			stmnt.setNull(1, Types.BIGINT)
+		}
 		stmnt.setString(2, v.chatChannel)
 		stmnt.setObject(3, v.offlinePlayer.uniqueId)
 		stmnt.executeUpdate()
@@ -83,7 +89,7 @@ class DatabasePlayerRepository internal constructor(private val plugin: Plugin) 
 	fun forPlayer(p: OfflinePlayer): DatabasePlayerData {
 		val id = p.uniqueId
 		return fromCache(id) ?: run {
-			val stmnt = fablesDatabase.prepareStatement("SELECT * FROM fables_characters WHERE id = ?")
+			val stmnt = fablesDatabase.prepareStatement("SELECT * FROM fables_players WHERE id = ?")
 			stmnt.setObject(1, id)
 			val result = stmnt.executeQuery()
 			if (!result.next()) throw Exception("Player not found in database")
@@ -114,7 +120,8 @@ class DatabasePlayerRepository internal constructor(private val plugin: Plugin) 
 
 	private fun fromRow(result: ResultSet): DatabasePlayerData {
 		val id = result.getObject("id") as UUID
-		val currentCharacterId = result.getLong("current_character").toULong()
+		var currentCharacterId: ULong? = result.getLong("current_character").toULong()
+		if (result.wasNull()) currentCharacterId = null
 		val chatChannel = result.getString("chat_channel")
 
 		return DatabasePlayerData(this, server.getOfflinePlayer(id), currentCharacterId, chatChannel)
