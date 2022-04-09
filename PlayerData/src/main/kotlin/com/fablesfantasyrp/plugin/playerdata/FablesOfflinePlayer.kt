@@ -12,8 +12,8 @@ open class FablesOfflinePlayer(val rawData: PlayerData)  {
 		fun forOfflinePlayer(p: OfflinePlayer) = FablesOfflinePlayer(DatabasePlayerData.forOfflinePlayer(p))
 	}
 
-	override fun equals(other: Any?) = other is FablesOfflinePlayer && other.offlinePlayer == offlinePlayer
-	override fun hashCode(): Int = offlinePlayer.hashCode()
+	override fun equals(other: Any?) = other is FablesOfflinePlayer && other.rawData == this.rawData
+	override fun hashCode(): Int = rawData.hashCode()
 }
 
 val OfflinePlayer.fablesOfflinePlayer

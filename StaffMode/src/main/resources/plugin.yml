@@ -1,7 +1,7 @@
 name: FablesStaffMode
 version: @version@
 authors: [@authors@]
-depend: [FablesKotlinRuntime, FablesPlayerData, FablesUtils, NinCommands, PlaceholderAPI]
+depend: [FablesKotlinRuntime, FablesPlayerData, FablesUtils, NinCommands, PlaceholderAPI, Essentials]
 main: com.fablesfantasyrp.plugin.staffmode.FablesStaffMode
 api-version: @bukkit_api_version@
 permissions:

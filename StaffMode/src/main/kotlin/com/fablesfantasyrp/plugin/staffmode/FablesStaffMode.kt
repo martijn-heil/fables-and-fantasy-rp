@@ -62,10 +62,13 @@ private val onDuty = HashSet<FablesPlayer>()
 var FablesPlayer.isOnDuty: Boolean
 	get() = onDuty.contains(this)
 	set(value) {
+		val onOff = if (value) "on" else "off"
 		if (value) {
 			if(onDuty.add(this)) {
 				player.sendMessage("$SYSPREFIX You are now on duty!")
 				Bukkit.broadcast("$SYSPREFIX ${player.name} has gone on duty", "fables.staffmode.notify.duty")
+			} else {
+				player.sendMessage("$SYSPREFIX You are already $onOff duty!")
 			}
 		} else {
 			if (onDuty.remove(this)) {
@@ -82,6 +85,8 @@ var FablesPlayer.isOnDuty: Boolean
 
 				player.sendMessage("$SYSPREFIX You are now off duty!")
 				Bukkit.broadcast("$SYSPREFIX ${player.name} has gone off duty", "fables.staffmode.notify.duty")
+			} else {
+				player.sendMessage("$SYSPREFIX You are already $onOff duty!")
 			}
 		}
 	}
