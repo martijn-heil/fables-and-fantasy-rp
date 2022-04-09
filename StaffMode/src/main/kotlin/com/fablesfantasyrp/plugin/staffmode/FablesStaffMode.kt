@@ -64,7 +64,7 @@ var FablesPlayer.isOnDuty: Boolean
 	set(value) {
 		val onOff = if (value) "on" else "off"
 		if (value) {
-			if(onDuty.add(this)) {
+			if (onDuty.add(this)) {
 				player.sendMessage("$SYSPREFIX You are now on duty!")
 				Bukkit.broadcast("$SYSPREFIX ${player.name} has gone on duty", "fables.staffmode.notify.duty")
 			} else {
@@ -74,7 +74,7 @@ var FablesPlayer.isOnDuty: Boolean
 			if (onDuty.remove(this)) {
 				if (player.gameMode != GameMode.SURVIVAL) {
 					player.gameMode = GameMode.SURVIVAL
-					player.sendMessage("$SYSPREFIX Your gamemode was changed to survival because you are going off duty.")
+					player.sendMessage("$SYSPREFIX Your game mode was changed to survival because you are going off duty.")
 				}
 
 				val essPlayer = player.ess

@@ -5,7 +5,8 @@ import com.fablesfantasyrp.plugin.playerdata.database.forOfflinePlayer
 import org.bukkit.entity.Player
 
 class FablesPlayer(rawData: PlayerData) : FablesOfflinePlayer(rawData) {
-	override val player: Player = super.player!!
+	override val player: Player
+		get() = super.player!!
 
 	companion object {
 		fun forPlayer(p: Player) = FablesPlayer(DatabasePlayerData.forOfflinePlayer(p))
