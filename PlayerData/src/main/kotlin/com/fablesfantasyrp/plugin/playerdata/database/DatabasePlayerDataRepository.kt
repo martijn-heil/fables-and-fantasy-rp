@@ -5,6 +5,7 @@ import com.fablesfantasyrp.plugin.database.repository.CachingRepository
 import com.fablesfantasyrp.plugin.playerdata.databasePlayerRepository
 import org.bukkit.OfflinePlayer
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority.LOWEST
 import org.bukkit.event.EventPriority.MONITOR
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -24,7 +25,7 @@ class DatabasePlayerRepository internal constructor(private val plugin: Plugin) 
 
 	init {
 		server.pluginManager.registerEvents(object : Listener {
-			@EventHandler(priority = MONITOR)
+			@EventHandler(priority = LOWEST)
 			fun onPlayerJoin(e: PlayerJoinEvent) {
 				strongCache.add(forPlayer(e.player))
 			}
@@ -89,13 +90,16 @@ class DatabasePlayerRepository internal constructor(private val plugin: Plugin) 
 	fun forPlayer(p: OfflinePlayer): DatabasePlayerData {
 		val id = p.uniqueId
 		return fromCache(id) ?: run {
-			val stmnt = fablesDatabase.prepareStatement("SELECT * FROM fables_players WHERE id = ?")
-			stmnt.setObject(1, id)
-			val result = stmnt.executeQuery()
-			if (!result.next()) throw Exception("Player not found in database")
-			val playerData = fromRow(result)
-			cache[id] = WeakReference(playerData)
-			playerData
+			while(true) {
+				val stmnt = fablesDatabase.prepareStatement("SELECT * FROM fables_players WHERE id = ?")
+				stmnt.setObject(1, id)
+				val result = stmnt.executeQuery()
+				if (!result.next()) { this.create(p); continue } // Try again
+				val playerData = fromRow(result)
+				cache[id] = WeakReference(playerData)
+				return playerData
+			}
+			throw IllegalStateException()
 		}
 	}
 
@@ -125,6 +129,13 @@ class DatabasePlayerRepository internal constructor(private val plugin: Plugin) 
 		val chatChannel = result.getString("chat_channel")
 
 		return DatabasePlayerData(this, server.getOfflinePlayer(id), currentCharacterId, chatChannel)
+	}
+
+	private fun create(p: OfflinePlayer) {
+		val stmnt2 = fablesDatabase.prepareStatement("INSERT INTO fables_players (id) VALUES(?)")
+		stmnt2.setObject(1, p.uniqueId)
+		stmnt2.executeUpdate()
+		stmnt2.close()
 	}
 }
 

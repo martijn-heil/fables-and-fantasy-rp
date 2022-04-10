@@ -1,7 +1,5 @@
 package com.fablesfantasyrp.plugin.database
 
-import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
-import org.bukkit.OfflinePlayer
 import org.bukkit.plugin.java.JavaPlugin
 import org.flywaydb.core.Flyway
 import org.flywaydb.core.api.FlywayException
@@ -56,10 +54,6 @@ class FablesDatabase : JavaPlugin() {
 			this.isEnabled = false
 			return
 		}
-
-		server.pluginManager.registerEvents(DataIntegrityListener(), this)
-
-		server.onlinePlayers.forEach { ensurePresenceInDatabase(it) }
 	}
 
 	override fun onDisable() {
@@ -82,19 +76,4 @@ class FablesDatabase : JavaPlugin() {
 				return field
 			}
 	}
-}
-
-fun ensurePresenceInDatabase(offlinePlayer: OfflinePlayer) {
-	// Check if player is registered in the database yet.
-	val stmnt = fablesDatabase.prepareStatement("SELECT 1 FROM fables_players WHERE id=?")
-	stmnt.setObject(1, offlinePlayer.uniqueId)
-	val result = stmnt.executeQuery()
-	if(!result.next()) { // player isn't yet present in the database.
-		val stmnt2 = fablesDatabase.prepareStatement("INSERT INTO fables_players (id) VALUES(?)")
-		stmnt2.setObject(1, offlinePlayer.uniqueId)
-		stmnt2.executeUpdate()
-		stmnt2.close()
-	}
-
-	stmnt.close()
 }
