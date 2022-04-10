@@ -65,6 +65,7 @@ var FablesPlayer.isOnDuty: Boolean
 		val onOff = if (value) "on" else "off"
 		if (value) {
 			if (onDuty.add(this)) {
+				player.updateCommands()
 				player.sendMessage("$SYSPREFIX You are now on duty!")
 				Bukkit.broadcast("$SYSPREFIX ${player.name} has gone on duty", "fables.staffmode.notify.duty")
 			} else {
@@ -83,6 +84,7 @@ var FablesPlayer.isOnDuty: Boolean
 					player.sendMessage("$SYSPREFIX Your god mode was disabled because you are going off duty.")
 				}
 
+				player.updateCommands()
 				player.sendMessage("$SYSPREFIX You are now off duty!")
 				Bukkit.broadcast("$SYSPREFIX ${player.name} has gone off duty", "fables.staffmode.notify.duty")
 			} else {
