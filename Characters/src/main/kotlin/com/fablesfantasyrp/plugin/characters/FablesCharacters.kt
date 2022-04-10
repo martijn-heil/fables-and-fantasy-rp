@@ -33,9 +33,10 @@ class FablesCharacters : JavaPlugin() {
 //fun PlayerCharacter.Companion.all(): List<PlayerCharacter> = DatabasePlayerCharacter.all()
 //fun PlayerCharacter.Companion.allForPlayer(p: OfflinePlayer): List<PlayerCharacter>
 
-val OfflinePlayer.currentPlayerCharacter: PlayerCharacter
+val OfflinePlayer.currentPlayerCharacter: PlayerCharacter?
 	get() {
-		val id = dFlags.getFlagValue("characters_current").asElement().asLong().toULong()
+		val currentCharacter = dFlags.getFlagValue("characters_current") ?: return null
+		val id = currentCharacter.asElement().asLong().toULong()
 		return DenizenPlayerCharacter(id, this)
 	}
 

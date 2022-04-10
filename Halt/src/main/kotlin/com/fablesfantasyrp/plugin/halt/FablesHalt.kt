@@ -64,8 +64,8 @@ var Player.haltedBy: Player?
 
 fun Player.halt(halter: Player) {
 	this.haltedBy = halter
-	val halterCharName = halter.currentPlayerCharacter.name
-	val haltedCharName = this.currentPlayerCharacter.name
+	val halterCharName = halter.currentPlayerCharacter!!.name
+	val haltedCharName = this.currentPlayerCharacter!!.name
 	this.sendMessage("$SYSPREFIX ${RED}You have been halted by ${GRAY}${halterCharName}${RED}!")
 	halter.sendMessage("$SYSPREFIX ${GREEN}You have successfully halted ${GRAY}${haltedCharName}")
 	Bukkit.broadcast("$SYSPREFIX $haltedCharName (${name}) has been " +

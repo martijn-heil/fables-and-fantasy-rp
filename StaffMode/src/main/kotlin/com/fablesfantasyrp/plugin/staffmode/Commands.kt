@@ -22,7 +22,10 @@ class Commands {
 	@Command(aliases = ["stafflist"], desc = "List staff members")
 	@Require("fables.staffmode.command.stafflist")
 	fun stafflist(@Sender sender: CommandSender) {
-		val fablesPlayers = Bukkit.getOnlinePlayers().asSequence().map { FablesPlayer.forPlayer(it) }
+		val fablesPlayers = Bukkit.getOnlinePlayers().asSequence()
+				.filter { it.hasPermission("fables.staffmode.command.duty") }
+				.map { FablesPlayer.forPlayer(it) }
+
 		val onDuty = fablesPlayers
 				.filter { it.isOnDuty }
 				.map { it.player }

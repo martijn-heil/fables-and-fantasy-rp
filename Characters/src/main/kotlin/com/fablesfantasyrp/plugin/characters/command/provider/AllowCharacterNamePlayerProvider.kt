@@ -15,7 +15,7 @@ class AllowCharacterNamePlayerProvider(private val server: Server,
 	override fun isProvided(): Boolean = false
 
 	private fun getByPlayerCharacter(arguments: CommandArgs, modifiers: List<Annotation>): Player? {
-		return server.onlinePlayers.find { it.currentPlayerCharacter.name == arguments.peek() }
+		return server.onlinePlayers.find { it.currentPlayerCharacter?.name == arguments.peek() }
 	}
 
 	private fun getByPlayerProvider(arguments: CommandArgs, modifiers: List<Annotation>): Player? {
