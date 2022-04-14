@@ -40,4 +40,10 @@ class Commands {
 		sender.sendMessage("${GREEN}On ${GRAY}duty: " + onDuty.joinToString(sep))
 		sender.sendMessage("${RED}Off ${GRAY}duty: " + offDuty.joinToString(sep))
 	}
+
+	@Command(aliases = ["updatecommands"], desc = "Execute org.bukkit.entity.Player#updateCommands() on a player")
+	@Require("fables.staffmode.command.updatecommands")
+	fun updatecommands(@CommandTarget("fables.staffmode.command.updatecommands.others") target: Player) {
+		target.updateCommands()
+	}
 }
