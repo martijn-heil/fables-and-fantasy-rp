@@ -49,6 +49,11 @@ class FablesStaffMode : JavaPlugin() {
 				.dispatcher
 
 		registerCommand(dispatcher, this, dispatcher.aliases.toList())
+
+		// This is the only reliable way I've managed to solve this problem
+		server.scheduler.scheduleSyncRepeatingTask(this, {
+			server.onlinePlayers.forEach { it.updateCommands() }
+		},0, 10)
 	}
 
 	companion object {
@@ -65,7 +70,6 @@ var FablesPlayer.isOnDuty: Boolean
 		val onOff = if (value) "on" else "off"
 		if (value) {
 			if (onDuty.add(this)) {
-				Bukkit.getScheduler().scheduleSyncDelayedTask(FablesStaffMode.instance, { player.updateCommands() }, 1)
 				player.sendMessage("$SYSPREFIX You are now on duty!")
 				Bukkit.broadcast("$SYSPREFIX ${player.name} has gone on duty", "fables.staffmode.notify.duty")
 			} else {
@@ -84,7 +88,6 @@ var FablesPlayer.isOnDuty: Boolean
 					player.sendMessage("$SYSPREFIX Your god mode was disabled because you are going off duty.")
 				}
 
-				Bukkit.getScheduler().scheduleSyncDelayedTask(FablesStaffMode.instance, { player.updateCommands() }, 1)
 				player.sendMessage("$SYSPREFIX You are now off duty!")
 				Bukkit.broadcast("$SYSPREFIX ${player.name} has gone off duty", "fables.staffmode.notify.duty")
 			} else {
