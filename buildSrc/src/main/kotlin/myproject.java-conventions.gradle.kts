@@ -13,6 +13,7 @@ plugins {
 	kotlin("jvm")
 	id("com.github.johnrengelman.shadow")
 	idea
+	id("io.papermc.paperweight.userdev")
 
 	// NOTE: external plugin version is specified in implementation dependency artifact of the project's build file
 }
@@ -48,6 +49,10 @@ tasks {
 		this.archiveVersion.set("")
 		this.archiveAppendix.set("")
     }
+
+	assemble {
+		dependsOn(reobfJar)
+	}
 }
 
 // Projects should use Maven Central for external dependencies
@@ -82,9 +87,9 @@ fun downloadFile(url: URL, outputFileName: String) {
 		}
 	}
 }
-
+val downloadPath = "${buildDir.parentFile.parent}/build/download/"
 fun urlFile (url: URL, name: String): ConfigurableFileCollection  {
-	val path = "$buildDir/download/${name}.jar"
+	val path = "$downloadPath/${name}.jar"
 	val f = File(path)
 	f.parentFile.mkdirs()
 	if(!f.exists()) downloadFile(url, path)
@@ -92,6 +97,7 @@ fun urlFile (url: URL, name: String): ConfigurableFileCollection  {
 }
 
 dependencies {
+	paperDevBundle("1.18.1-R0.1-SNAPSHOT")
 	implementation("org.spigotmc:spigot-api:1.18.1-R0.1-SNAPSHOT") { isChanging = true }
 	implementation(urlFile(URL("https://ci.ender.zone/job/EssentialsX/lastSuccessfulBuild/artifact/jars/EssentialsX-2.20.0-dev+5-d891268.jar"), "EssentialsX"))
 	implementation("me.clip:placeholderapi:2.10.0")

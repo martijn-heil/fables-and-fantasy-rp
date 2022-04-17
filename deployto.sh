@@ -1,2 +1,2 @@
 #!/bin/bash
-cp ./*/build/libs/*-all.jar "$1/"
+cp ./*/build/libs/*-SNAPSHOT.jar "$1/"
