@@ -14,7 +14,7 @@ the `buildSrc` directory is the only exception to this, `buildSrc` is our Gradle
 to deduplicate and centralize Gradle behavioral rules between our different subprojects.
 
 ## Building
-Running `gradle shadowJar` in the project root will build all subprojects.
+Running `gradle reobfJar` in the project root will build all subprojects.
 You can subsequently find the produced plugin jars at `./*/build/libs/Fables*-all.jar`
 
 On \*nix systems you can run the `deployto.sh` script to copy all plugin jars to a directory somewhere else.
