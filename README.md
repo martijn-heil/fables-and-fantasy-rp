@@ -15,7 +15,7 @@ to deduplicate and centralize Gradle behavioral rules between our different subp
 
 ## Building
 Running `gradle reobfJar` in the project root will build all subprojects.
-You can subsequently find the produced plugin jars at `./*/build/libs/Fables*-all.jar`
+You can subsequently find the produced plugin jars at `./*/build/libs/Fables*-SNAPSHOT.jar`
 
 On \*nix systems you can run the `deployto.sh` script to copy all plugin jars to a directory somewhere else.
 Example: `./deployto.sh /to/my/testserver/plugins/`
