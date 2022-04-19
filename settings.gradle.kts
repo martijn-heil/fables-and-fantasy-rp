@@ -11,4 +11,5 @@ include("HorseLimits",
 		"Magic",
 		"Whitelist",
 		"Chat",
-		"StaffMode")
+		"StaffMode",
+		"ViewDistance")

@@ -1,0 +1,8 @@
+name: FablesViewDistance
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - NinCommands
+main: com.fablesfantasyrp.plugin.viewdistance.FablesViewDistance
+api-version: @bukkit_api_version@
