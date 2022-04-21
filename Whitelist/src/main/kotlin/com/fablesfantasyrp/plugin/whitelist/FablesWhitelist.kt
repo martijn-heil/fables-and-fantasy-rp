@@ -9,7 +9,7 @@ class FablesWhitelist : JavaPlugin() {
 
 	override fun onEnable() {
 		instance = this
-
+		server.pluginManager.registerEvents(WhitelistListener(server), this)
 	}
 
 	companion object {
