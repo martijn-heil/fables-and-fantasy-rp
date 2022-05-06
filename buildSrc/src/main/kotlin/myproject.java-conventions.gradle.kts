@@ -97,7 +97,7 @@ fun urlFile (url: URL, name: String): ConfigurableFileCollection  {
 }
 
 dependencies {
-	paperDevBundle("1.18.1-R0.1-SNAPSHOT")
+	paperDevBundle("1.18.2-R0.1-SNAPSHOT")
 	//implementation("org.spigotmc:spigot-api:1.18.1-R0.1-SNAPSHOT") { isChanging = true }
 	implementation(urlFile(URL("https://ci.ender.zone/job/EssentialsX/lastSuccessfulBuild/artifact/jars/EssentialsX-2.20.0-dev+5-d891268.jar"), "EssentialsX"))
 	implementation("me.clip:placeholderapi:2.10.0")
