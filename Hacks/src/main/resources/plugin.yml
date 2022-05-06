@@ -1,0 +1,6 @@
+name: FablesHacks
+version: @version@
+authors: [@authors@]
+depend: [FablesKotlinRuntime, Vault, LuckPerms]
+main: com.fablesfantasyrp.plugin.hacks.FablesHacks
+api-version: @bukkit_api_version@
