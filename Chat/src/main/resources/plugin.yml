@@ -8,6 +8,7 @@ depend:
   - FablesPlayerData
   - FablesUtils
   - FablesCharacters
+  - FablesDenizenInterop
   - NinCommands
   - Vault
 loadbefore:
