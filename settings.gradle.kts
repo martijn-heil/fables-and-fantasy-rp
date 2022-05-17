@@ -12,4 +12,5 @@ include("HorseLimits",
 		"Chat",
 		"StaffMode",
 		"ViewDistance",
-		"Hacks")
+		"Hacks",
+		"Gui")

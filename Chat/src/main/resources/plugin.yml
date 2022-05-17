@@ -1,6 +1,17 @@
 name: FablesChat
 version: @version@
 authors: [@authors@]
-depend: [FablesKotlinRuntime, FablesDatabase, FablesPlayerData, NinCommands]
+depend:
+  - FablesKotlinRuntime
+  - FablesGui
+  - FablesDatabase
+  - FablesPlayerData
+  - FablesUtils
+  - FablesCharacters
+  - NinCommands
+  - Vault
+loadbefore:
+  - LiteBans  # Also registers /togglechat
+  - CraftBook # Also registers /ic
 main: com.fablesfantasyrp.plugin.chat.FablesChat
 api-version: @bukkit_api_version@

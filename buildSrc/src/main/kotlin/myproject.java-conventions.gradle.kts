@@ -60,10 +60,11 @@ tasks {
 repositories {
 	maven { url = URI("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") }
 	maven { url = URI("https://repo.extendedclip.com/content/repositories/placeholderapi") }
-	maven { url = uri("https://ci.citizensnpcs.co/job/Denizen/1765/maven-repository/repository/") }
+	maven { url = URI("https://ci.citizensnpcs.co/job/Denizen/1765/maven-repository/repository/") }
 	maven { url = URI("https://jitpack.io") }
 
 	mavenCentral()
+	maven { url = URI("https://repo.minebench.de/") }
 }
 
 idea {
