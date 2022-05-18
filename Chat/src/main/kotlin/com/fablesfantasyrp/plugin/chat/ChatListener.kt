@@ -8,7 +8,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerChatEvent
 
 class ChatListener(private val server: Server) : Listener {
-	@EventHandler(priority = HIGHEST)
+	@EventHandler(priority = HIGHEST, ignoreCancelled = true)
 	fun onPlayerChat(e: PlayerChatEvent) {
 		e.isCancelled = true
 		if (e.message.isEmpty()) return
