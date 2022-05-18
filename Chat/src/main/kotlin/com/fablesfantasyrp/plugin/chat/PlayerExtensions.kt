@@ -7,7 +7,6 @@ import com.fablesfantasyrp.plugin.playerdata.FablesPlayer
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.Style
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
-import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 
 var FablesOfflinePlayer.chatChannel: ChatChannel
