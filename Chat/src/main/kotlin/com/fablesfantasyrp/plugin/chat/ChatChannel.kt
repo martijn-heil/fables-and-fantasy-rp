@@ -16,6 +16,8 @@ import org.bukkit.entity.Player
 
 interface ChatChannel {
 	fun getRecipients(from: Player): Sequence<Player>
+
+	@Throws(IllegalArgumentException::class)
 	fun sendMessage(from: Player, message: String)
 
 	companion object
@@ -199,9 +201,9 @@ object ChatInCharacter : ChatChannel {
 		val match = Regex(pattern).matchEntire(message)
 
 		return when {
-			message.startsWith("<<") -> ChatInCharacterContextual // TODO fix contextual chat
+			message.startsWith("<<") -> ChatInCharacterContextual
 			match != null -> {
-				when(val channel = match.groups[2]!!.value) {
+				when(val channel = match.groups[2]!!.value.lowercase()) {
 					"w" -> ChatInCharacterWhisper
 					"q" -> ChatInCharacterQuiet
 					"s" -> ChatInCharacterShout

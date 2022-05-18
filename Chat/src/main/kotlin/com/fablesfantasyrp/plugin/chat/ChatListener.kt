@@ -13,6 +13,10 @@ class ChatListener(private val server: Server) : Listener {
 		e.isCancelled = true
 		if (e.message.isEmpty()) return
 		val fPlayer = FablesPlayer.forPlayer(e.player)
-		fPlayer.doChat(e.message)
+		try {
+			fPlayer.doChat(e.message)
+		} catch (e: IllegalArgumentException) {
+			fPlayer.sendError(e.message ?: "IllegalArgumentException")
+		}
 	}
 }
