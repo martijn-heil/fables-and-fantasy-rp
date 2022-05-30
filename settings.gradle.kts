@@ -13,4 +13,5 @@ include("HorseLimits",
 		"StaffMode",
 		"ViewDistance",
 		"Hacks",
-		"Gui")
+		"Gui",
+		"Text")

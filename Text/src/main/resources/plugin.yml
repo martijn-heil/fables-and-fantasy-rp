@@ -1,0 +1,9 @@
+name: FablesText
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesPlayerData
+  - Vault
+main: com.fablesfantasyrp.plugin.text.FablesText
+api-version: @bukkit_api_version@
