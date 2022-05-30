@@ -1,12 +1,13 @@
-name: FablesCharacters
+name: FablesRolls
 version: @version@
 authors: [@authors@]
 depend:
   - FablesKotlinRuntime
   - FablesUtils
   - FablesPlayerData
-  - FablesDenizenInterop
-  - FablesDatabase
+  - FablesCharacters
+  - FablesText
+  - FablesChat
   - NinCommands
-main: com.fablesfantasyrp.plugin.characters.FablesCharacters
+main: com.fablesfantasyrp.plugin.rolls.FablesRolls
 api-version: @bukkit_api_version@

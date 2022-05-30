@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.chat
 
 import com.fablesfantasyrp.plugin.playerdata.FablesPlayer
+import com.fablesfantasyrp.plugin.text.sendError
 import org.bukkit.Server
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority.HIGHEST

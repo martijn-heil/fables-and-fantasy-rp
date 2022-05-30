@@ -14,4 +14,5 @@ include("HorseLimits",
 		"ViewDistance",
 		"Hacks",
 		"Gui",
-		"Text")
+		"Text",
+		"Rolls")

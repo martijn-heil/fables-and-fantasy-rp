@@ -7,6 +7,7 @@ dependencies {
     implementation(project(":Database"))
     implementation(project(":PlayerData"))
     implementation(project(":Utils"))
+    implementation(project(":Text"))
     implementation(project(":Characters"))
     implementation(project(":Gui"))
     implementation(project(":DenizenInterop"))
