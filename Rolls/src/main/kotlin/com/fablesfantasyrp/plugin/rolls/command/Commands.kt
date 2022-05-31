@@ -26,10 +26,10 @@ import kotlin.random.Random
 import kotlin.random.nextInt
 
 class Commands {
-	@Command(aliases = ["roll"], desc = "Roll the dice!")
+	@Command(aliases = ["roll", "dice"], desc = "Roll the dice!")
 	@Require("fables.rolls.command.roll")
 	fun roll(@Sender sender: Player,
-			 @FixedSuggestions @Suggestions(["3", "6", "20", "100"]) @Range(min = 2.0, max = 200.0) dice: Int,
+			 @FixedSuggestions @Suggestions(["3", "6", "20", "100"]) @Range(min = 2.0, max = 200.0) @Optional("20") dice: Int,
 			 @Optional kind: CharacterStatKind?) {
 		val fPlayer = FablesPlayer.forPlayer(sender)
 		val stats = fPlayer.currentPlayerCharacter!!.stats
