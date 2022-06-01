@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.rolls
 
+import com.fablesfantasyrp.plugin.characters.command.provider.PlayerCharacterModule
 import com.fablesfantasyrp.plugin.rolls.command.Commands
-import com.fablesfantasyrp.plugin.rolls.command.provider.RollsCommandModule
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.FixedSuggestionsModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
@@ -28,7 +28,7 @@ class FablesRolls : JavaPlugin() {
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
 		injector.install(FixedSuggestionsModule(injector))
-		injector.install(RollsCommandModule())
+		injector.install(PlayerCharacterModule(server))
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()
