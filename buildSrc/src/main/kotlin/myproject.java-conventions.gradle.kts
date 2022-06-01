@@ -14,6 +14,7 @@ plugins {
 	id("com.github.johnrengelman.shadow")
 	idea
 	id("io.papermc.paperweight.userdev")
+	id("com.vanniktech.dependency.graph.generator")
 
 	// NOTE: external plugin version is specified in implementation dependency artifact of the project's build file
 }

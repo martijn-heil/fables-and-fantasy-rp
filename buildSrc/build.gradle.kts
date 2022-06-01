@@ -11,4 +11,5 @@ dependencies {
     implementation("gradle.plugin.com.github.johnrengelman:shadow:7.1.2")
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.20-RC2")
     implementation("io.papermc.paperweight.userdev:io.papermc.paperweight.userdev.gradle.plugin:1.3.3")
+    implementation( "com.vanniktech:gradle-dependency-graph-generator-plugin:0.7.0")
 }
