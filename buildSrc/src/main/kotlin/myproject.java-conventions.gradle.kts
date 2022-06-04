@@ -30,6 +30,7 @@ java   {
 	sourceCompatibility = JavaVersion.VERSION_17
 	targetCompatibility = JavaVersion.VERSION_17
 }
+
 tasks {
     withType<ProcessResources> {
         filter(mapOf(Pair("tokens", mapOf(
@@ -62,6 +63,7 @@ repositories {
 	maven { url = URI("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") }
 	maven { url = URI("https://repo.extendedclip.com/content/repositories/placeholderapi") }
 	maven { url = URI("https://ci.citizensnpcs.co/job/Denizen/1765/maven-repository/repository/") }
+	maven { url = URI("https://repo.essentialsx.net/releases/") }
 	maven { url = URI("https://jitpack.io") }
 
 	mavenCentral()
@@ -100,7 +102,10 @@ fun urlFile (url: URL, name: String): ConfigurableFileCollection  {
 
 dependencies {
 	paperDevBundle("1.18.2-R0.1-SNAPSHOT")
-	//implementation("org.spigotmc:spigot-api:1.18.1-R0.1-SNAPSHOT") { isChanging = true }
-	implementation(urlFile(URL("https://ci.ender.zone/job/EssentialsX/lastSuccessfulBuild/artifact/jars/EssentialsX-2.20.0-dev+5-d891268.jar"), "EssentialsX"))
+	implementation("net.essentialsx:EssentialsX:2.19.0") {
+		exclude(group = "org.bukkit")
+		exclude(group = "org.spigotmc")
+		exclude(group = "io.papermc")
+	}
 	implementation("me.clip:placeholderapi:2.10.0")
 }
