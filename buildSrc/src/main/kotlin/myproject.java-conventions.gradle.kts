@@ -40,7 +40,8 @@ tasks {
 		))), ReplaceTokens::class.java)
 	}
 
-	withType<KotlinCompile> {
+	withType<KotlinCompile>().configureEach {
+		kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.time.ExperimentalTime"
 		kotlinOptions {
 			jvmTarget = "17"
 		}

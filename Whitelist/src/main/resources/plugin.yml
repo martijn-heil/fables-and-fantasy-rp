@@ -1,6 +1,10 @@
 name: FablesWhitelist
 version: @version@
 authors: [@authors@]
-depend: [FablesKotlinRuntime]
+depend:
+  - FablesKotlinRuntime
+  - FablesText
+  - FablesUtils
+  - SuperVanish
 main: com.fablesfantasyrp.plugin.whitelist.FablesWhitelist
 api-version: @bukkit_api_version@

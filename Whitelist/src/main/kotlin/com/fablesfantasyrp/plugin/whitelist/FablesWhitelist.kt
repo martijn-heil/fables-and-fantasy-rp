@@ -1,15 +1,16 @@
 package com.fablesfantasyrp.plugin.whitelist
 
-import org.bukkit.ChatColor.*
-import org.bukkit.plugin.java.JavaPlugin
+import com.github.shynixn.mccoroutine.SuspendingJavaPlugin
 
-internal val SYSPREFIX = "${DARK_RED}${BOLD}[${RED}${BOLD}WHITELIST${DARK_RED}${BOLD}]${GRAY}"
+internal val PLUGIN: FablesWhitelist
+	get() = FablesWhitelist.instance
 
-class FablesWhitelist : JavaPlugin() {
+class FablesWhitelist : SuspendingJavaPlugin() {
 
 	override fun onEnable() {
 		instance = this
 		server.pluginManager.registerEvents(WhitelistListener(server), this)
+		WhitelistMonitor(this).start()
 	}
 
 	companion object {
