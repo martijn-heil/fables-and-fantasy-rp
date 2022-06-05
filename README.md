@@ -14,8 +14,14 @@ the `buildSrc` directory is the only exception to this, `buildSrc` is our Gradle
 to deduplicate and centralize Gradle behavioral rules between our different subprojects.
 
 ## Building
-Running `gradle reobfJar` in the project root will build all subprojects.
+Running `gradle build` in the project root will build all subprojects.
 You can subsequently find the produced plugin jars at `./*/build/libs/Fables*-SNAPSHOT.jar`
 
 On \*nix systems you can run the `deployto.sh` script to copy all plugin jars to a directory somewhere else.
 Example: `./deployto.sh /to/my/testserver/plugins/`
+
+## Code style
+We use tabs for indentation. Go cry.
+When using Intellij IDEA it should automatically take over the preconfigured style options.
+
+Try to keep line length below 120 columns.

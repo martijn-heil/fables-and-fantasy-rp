@@ -1,0 +1,13 @@
+name: FablesRolls
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+  - FablesPlayerData
+  - FablesCharacters
+  - FablesText
+  - FablesChat
+  - NinCommands
+main: com.fablesfantasyrp.plugin.rolls.FablesRolls
+api-version: @bukkit_api_version@

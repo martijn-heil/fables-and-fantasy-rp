@@ -3,6 +3,8 @@ package com.fablesfantasyrp.plugin.playerdata.database
 import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
 import com.fablesfantasyrp.plugin.database.repository.CachingRepository
 import com.fablesfantasyrp.plugin.playerdata.databasePlayerRepository
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import org.bukkit.OfflinePlayer
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority.LOWEST
@@ -42,100 +44,139 @@ class DatabasePlayerRepository internal constructor(private val plugin: Plugin) 
 		server.scheduler.scheduleSyncRepeatingTask(plugin, {
 			saveNWeakDirty(1)
 		}, 0, 1)
+
+		server.onlinePlayers.forEach { strongCache.add(forPlayer(it)) }
 	}
 
 	override fun saveAllDirty() {
-		dirty.forEach { saveRaw(it) }
-		dirty.clear()
+		synchronized(this) {
+			dirty.forEach { saveRaw(it) }
+			dirty.clear()
+		}
 	}
 
 	private fun saveNWeakDirty(n: Int) {
-		val entries = dirty.asSequence().filter { !strongCache.contains(it) }.take(n).toList()
-		entries.forEach { save(it) }
+		synchronized(this) {
+			val entries = dirty.asSequence().filter { !strongCache.contains(it) }.take(n).toList()
+			entries.forEach { save(it) }
+		}
 	}
 
 	override fun markDirty(v: DatabasePlayerData) {
-		dirty.add(v)
+		synchronized(this) {
+			dirty.add(v)
+		}
 	}
 
 	override fun save(v: DatabasePlayerData) {
-		saveRaw(v)
-		dirty.remove(v)
+		synchronized(this) {
+			saveRaw(v)
+			dirty.remove(v)
+		}
 	}
 
 	private fun saveRaw(v: DatabasePlayerData) {
-		val stmnt = fablesDatabase.prepareStatement("UPDATE fables_players SET " +
-				"current_character = ?, " +
-				"chat_channel = ? " +
-				"WHERE id = ?")
-		val currentCharacterId = v.currentCharacterId
-		if (currentCharacterId != null) {
-			stmnt.setLong(1, currentCharacterId.toLong())
-		} else {
-			stmnt.setNull(1, Types.BIGINT)
+		synchronized(this) {
+			plugin.logger.info("Saving player '${v.offlinePlayer.name}' (${v.offlinePlayer.uniqueId}) to database..")
+			val stmnt = fablesDatabase.prepareStatement("UPDATE fables_players SET " +
+					"current_character = ?, " +
+					"chat_channel = ?, " +
+					"chat_style = ?, " +
+					"chat_disabled_channels = ? " +
+					"WHERE id = ?")
+			val currentCharacterId = v.currentCharacterId
+			if (currentCharacterId != null) {
+				stmnt.setLong(1, currentCharacterId.toLong())
+			} else {
+				stmnt.setNull(1, Types.BIGINT)
+			}
+			stmnt.setString(2, v.chatChannel)
+			stmnt.setString(3, v.chatStyle?.let { GsonComponentSerializer.gson().serialize(Component.text().style(it).build()) } )
+			stmnt.setArray(4, fablesDatabase.createArrayOf("VARCHAR(32)", v.chatDisabledChannels.toTypedArray()))
+			stmnt.setObject(5, v.offlinePlayer.uniqueId)
+			stmnt.executeUpdate()
 		}
-		stmnt.setString(2, v.chatChannel)
-		stmnt.setObject(3, v.offlinePlayer.uniqueId)
-		stmnt.executeUpdate()
 	}
 
 	override fun destroy(v: DatabasePlayerData) {
-		cache.remove(v.offlinePlayer.uniqueId)
-		strongCache.remove(v)
-		val stmnt = fablesDatabase.prepareStatement("DELETE FROM fables_players WHERE id = ?")
-		stmnt.setObject(1, v.offlinePlayer.uniqueId)
-		stmnt.executeUpdate()
+		synchronized(this) {
+			cache.remove(v.offlinePlayer.uniqueId)
+			strongCache.remove(v)
+			val stmnt = fablesDatabase.prepareStatement("DELETE FROM fables_players WHERE id = ?")
+			stmnt.setObject(1, v.offlinePlayer.uniqueId)
+			stmnt.executeUpdate()
+		}
 	}
 
 	fun forPlayer(p: OfflinePlayer): DatabasePlayerData {
-		val id = p.uniqueId
-		return fromCache(id) ?: run {
-			while(true) {
-				val stmnt = fablesDatabase.prepareStatement("SELECT * FROM fables_players WHERE id = ?")
-				stmnt.setObject(1, id)
-				val result = stmnt.executeQuery()
-				if (!result.next()) { this.create(p); continue } // Try again
-				val playerData = fromRow(result)
-				cache[id] = WeakReference(playerData)
-				return playerData
+		synchronized(this) {
+			val id = p.uniqueId
+			return fromCache(id) ?: run {
+				while(true) {
+					val stmnt = fablesDatabase.prepareStatement("SELECT * FROM fables_players WHERE id = ?")
+					stmnt.setObject(1, id)
+					val result = stmnt.executeQuery()
+					if (!result.next()) {
+						plugin.logger.info("Player '${p.name}' (${p.uniqueId}) did not yet exist in database, creating..")
+						this.create(p)
+						continue // Try again
+					}
+					plugin.logger.info("Loading player '${p.name}' (${p.uniqueId}) from database..")
+					val playerData = fromRow(result)
+					cache[id] = WeakReference(playerData)
+					return playerData
+				}
+				throw IllegalStateException()
 			}
-			throw IllegalStateException()
 		}
 	}
 
 	private fun fromCache(id: UUID): DatabasePlayerData? {
-		val maybe = cache[id]?.get()
-		if (maybe == null) cache.remove(id)
-		return maybe
+		synchronized(this) {
+			val maybe = cache[id]?.get()
+			if (maybe == null) cache.remove(id)
+			return maybe
+		}
 	}
 
 	private fun fromRowOrCache(result: ResultSet): DatabasePlayerData {
-		val id = result.getObject("id") as UUID
-		val maybe = fromCache(id)
+		synchronized(this) {
+			val id = result.getObject("id") as UUID
+			val maybe = fromCache(id)
 
-		return if (maybe != null) {
-			maybe
-		} else {
-			val surely = fromRow(result)
-			cache[id] = WeakReference(surely)
-			surely
+			return if (maybe != null) {
+				maybe
+			} else {
+				val surely = fromRow(result)
+				cache[id] = WeakReference(surely)
+				surely
+			}
 		}
 	}
 
 	private fun fromRow(result: ResultSet): DatabasePlayerData {
-		val id = result.getObject("id") as UUID
-		var currentCharacterId: ULong? = result.getLong("current_character").toULong()
-		if (result.wasNull()) currentCharacterId = null
-		val chatChannel = result.getString("chat_channel")
+		synchronized(this) {
+			val id = result.getObject("id") as UUID
+			var currentCharacterId: ULong? = result.getLong("current_character").toULong()
+			if (result.wasNull()) currentCharacterId = null
+			val chatChannel = result.getString("chat_channel")
+			val chatStyle = result.getString("chat_style")?.let { GsonComponentSerializer.gson().deserialize(it).style() }
+			val chatDisabledChannels = result.getArray("chat_disabled_channels")?.array
+					?.let { it as Array<Any> }
+					?.let { it.map { it as String } }?.toSet() ?: emptySet()
 
-		return DatabasePlayerData(this, server.getOfflinePlayer(id), currentCharacterId, chatChannel)
+			return DatabasePlayerData(this, server.getOfflinePlayer(id), currentCharacterId,
+					chatChannel, chatStyle, chatDisabledChannels)
+		}
 	}
 
 	private fun create(p: OfflinePlayer) {
-		val stmnt2 = fablesDatabase.prepareStatement("INSERT INTO fables_players (id) VALUES(?)")
-		stmnt2.setObject(1, p.uniqueId)
-		stmnt2.executeUpdate()
-		stmnt2.close()
+		synchronized(this) {
+			val stmnt2 = fablesDatabase.prepareStatement("INSERT INTO fables_players (id) VALUES(?)")
+			stmnt2.setObject(1, p.uniqueId)
+			stmnt2.executeUpdate()
+			stmnt2.close()
+		}
 	}
 }
 

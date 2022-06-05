@@ -23,6 +23,7 @@ class FablesDatabase : JavaPlugin() {
 		// For some reason Flyway just can't reliably find the migrations as a resource in the jar
 		// So instead we just put them on the filesystem and let flyway find them there
 		this.saveResource("db/migration/V1__create_tables.sql", true)
+		this.saveResource("db/migration/V2__chat.sql", true)
 
 		val flyway = Flyway(classLoader)
 		flyway.setLocations("filesystem:${this.dataFolder.resolve("db/migration").path}")

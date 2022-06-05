@@ -3,6 +3,7 @@ package com.fablesfantasyrp.plugin.characters
 import com.denizenscript.denizencore.objects.core.MapTag
 import com.fablesfantasyrp.plugin.characters.database.DatabasePlayerCharacterRepository
 import com.fablesfantasyrp.plugin.denizeninterop.dFlags
+import com.fablesfantasyrp.plugin.playerdata.FablesOfflinePlayer
 import org.bukkit.OfflinePlayer
 import org.bukkit.Server
 import org.bukkit.plugin.java.JavaPlugin
@@ -55,3 +56,10 @@ val OfflinePlayer.playerCharacters: List<PlayerCharacter>
 
 val Server.playerCharacters: List<PlayerCharacter>
 	get() = offlinePlayers.asSequence().map { it.playerCharacters }.flatten().toList()
+
+val FablesOfflinePlayer.currentPlayerCharacter: PlayerCharacter?
+	get() = offlinePlayer.currentPlayerCharacter
+
+
+val FablesOfflinePlayer.playerCharacters: List<PlayerCharacter>
+	get() = offlinePlayer.playerCharacters
