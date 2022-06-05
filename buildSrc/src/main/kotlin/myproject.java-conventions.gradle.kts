@@ -109,5 +109,10 @@ dependencies {
 		exclude(group = "org.spigotmc")
 		exclude(group = "io.papermc")
 	}
+	implementation("net.essentialsx:EssentialsXSpawn:2.19.0") {
+		exclude(group = "org.bukkit")
+		exclude(group = "org.spigotmc")
+		exclude(group = "io.papermc")
+	}
 	implementation("me.clip:placeholderapi:2.10.0")
 }

@@ -1,6 +1,9 @@
 name: FablesUtils
 version: @version@
 authors: [@authors@]
-depend: [FablesKotlinRuntime, Essentials]
+depend:
+  - FablesKotlinRuntime
+  - Essentials
+  - EssentialsSpawn
 main: com.fablesfantasyrp.plugin.utils.FablesUtils
 api-version: @bukkit_api_version@
