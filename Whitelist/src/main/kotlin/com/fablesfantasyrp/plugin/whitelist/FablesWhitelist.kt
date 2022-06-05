@@ -9,7 +9,7 @@ class FablesWhitelist : SuspendingJavaPlugin() {
 
 	override fun onEnable() {
 		instance = this
-		server.pluginManager.registerEvents(WhitelistListener(server), this)
+		server.pluginManager.registerEvents(WhitelistListener(this), this)
 		WhitelistMonitor(this).start()
 	}
 

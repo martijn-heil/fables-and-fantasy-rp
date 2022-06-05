@@ -5,6 +5,7 @@ depend:
   - FablesKotlinRuntime
   - FablesText
   - FablesUtils
+  - FablesUtilsOffline
   - SuperVanish
 main: com.fablesfantasyrp.plugin.whitelist.FablesWhitelist
 api-version: @bukkit_api_version@

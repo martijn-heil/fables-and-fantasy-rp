@@ -15,4 +15,5 @@ include("HorseLimits",
 		"Hacks",
 		"Gui",
 		"Text",
-		"Rolls")
+		"Rolls",
+		"UtilsOffline")

@@ -21,7 +21,7 @@ fun sendWelcomeMessage(who: CommandSender) {
 					"Please enjoy your stay in the world of Eden!" +
 					"</gray>",
 			Placeholder.component("whitelist_application_link",
-					parseLinks("[https://forums.fablesfantasyrp.com/index.php?form/whitelist-application.1/select")),
+					parseLinks("https://forums.fablesfantasyrp.com/index.php?form/whitelist-application.1/select")),
 			Placeholder.component("discord_link", parseLinks("https://discord.gg/ymNFxDKPx9"))
 	)
 	who.sendMessage(message)
