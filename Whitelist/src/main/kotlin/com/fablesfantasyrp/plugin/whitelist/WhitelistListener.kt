@@ -13,10 +13,12 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.GameMode
 import org.bukkit.Server
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority.LOW
 import org.bukkit.event.EventPriority.MONITOR
 import org.bukkit.event.Listener
+import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.player.*
 
 class WhitelistListener(private val plugin: SuspendingJavaPlugin) : Listener {
@@ -63,6 +65,32 @@ class WhitelistListener(private val plugin: SuspendingJavaPlugin) : Listener {
 			e.isCancelled = true
 			e.player.sendError("Spectators cannot execute any command!")
 		}
+	}
+
+	@EventHandler(priority = LOW, ignoreCancelled = true)
+	fun onPlayerAttemptPickupItem(e: PlayerAttemptPickupItemEvent) {
+		if (!e.player.isWhitelisted) e.isCancelled = true
+	}
+
+	@EventHandler(priority = LOW, ignoreCancelled = true)
+	fun onPlayerRecipeDiscover(e: PlayerRecipeDiscoverEvent) {
+		if (!e.player.isWhitelisted) e.isCancelled = true
+	}
+
+	@EventHandler(priority = LOW, ignoreCancelled = true)
+	fun onPlayerStatisticIncrement(e: PlayerStatisticIncrementEvent) {
+		if (!e.player.isWhitelisted) e.isCancelled = true
+	}
+
+	@EventHandler(priority = LOW, ignoreCancelled = true)
+	fun onEntityDamageByPlayer(e: EntityDamageByEntityEvent) {
+		val damager = e.damager
+		if (damager is Player && !damager.isWhitelisted) e.isCancelled = true
+	}
+
+	@EventHandler(priority = LOW, ignoreCancelled = true)
+	fun onPlayerDropItem(e: PlayerDropItemEvent) {
+		if (!e.player.isWhitelisted) e.isCancelled = true
 	}
 
 	@EventHandler(priority = MONITOR, ignoreCancelled = true)
