@@ -1,6 +1,9 @@
 name: FablesUtilsOffline
 version: @version@
 authors: [@authors@]
-depend: [FablesKotlinRuntime, OfflineManager]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+  - OfflineManager
 main: com.fablesfantasyrp.plugin.utilsoffline.FablesUtilsOffline
 api-version: @bukkit_api_version@
