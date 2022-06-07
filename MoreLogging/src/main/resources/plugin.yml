@@ -1,0 +1,11 @@
+name: FablesMoreLogging
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+softdepend:
+  - Essentials
+  - SuperVanish
+main: com.fablesfantasyrp.plugin.morelogging.FablesMoreLogging
+api-version: @bukkit_api_version@
