@@ -15,8 +15,7 @@ import org.bukkit.GameMode
 import org.bukkit.Server
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
-import org.bukkit.event.EventPriority.LOW
-import org.bukkit.event.EventPriority.MONITOR
+import org.bukkit.event.EventPriority.*
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.player.*
@@ -25,7 +24,7 @@ class WhitelistListener(private val plugin: SuspendingJavaPlugin) : Listener {
 	private val server: Server
 		get() = plugin.server
 
-	@EventHandler(priority = LOW, ignoreCancelled = true)
+	@EventHandler(priority = HIGHEST, ignoreCancelled = true)
 	fun onPlayerJoin(e: PlayerJoinEvent) {
 		val p = e.player
 		if (p.isWhitelisted) return
@@ -41,12 +40,13 @@ class WhitelistListener(private val plugin: SuspendingJavaPlugin) : Listener {
 		server.scheduler.scheduleSyncDelayedTask(plugin, { VanishAPI.hidePlayer(p) }, 0)
 	}
 
-	@EventHandler(priority = LOW, ignoreCancelled = true)
+	@EventHandler(priority = HIGHEST, ignoreCancelled = true)
 	fun onPlayerQuit(e: PlayerQuitEvent) {
-		if (!e.player.isWhitelisted) {
-			e.quitMessage(miniMessage.deserialize("<light_purple>(Spectator) <name> left the game</light_purple>",
-					Placeholder.unparsed("name", e.player.name)))
-		}
+		if (e.player.isWhitelisted) return
+		if (e.quitMessage() == null) return
+
+		e.quitMessage(miniMessage.deserialize("<light_purple>(Spectator) <name> left the game</light_purple>",
+				Placeholder.unparsed("name", e.player.name)))
 	}
 
 	@EventHandler(priority = LOW, ignoreCancelled = true)
