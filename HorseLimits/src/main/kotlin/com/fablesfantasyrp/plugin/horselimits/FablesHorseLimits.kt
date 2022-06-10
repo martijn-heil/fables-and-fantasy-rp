@@ -9,7 +9,7 @@ class FablesHorseLimits : JavaPlugin() {
 	override fun onEnable() {
 		server.scheduler.scheduleSyncRepeatingTask(this, {
 			server.worlds.asSequence()
-					.map { it.entities.filterIsInstance<Horse>() }
+					.map { it.entities.asSequence().filterIsInstance<Horse>() }
 					.flatten()
 					.forEach { if(it.jumpStrength > MAX_JUMP_STRENGTH) it.jumpStrength = MAX_JUMP_STRENGTH }
 		}, 1, 1)
