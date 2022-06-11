@@ -4,11 +4,19 @@ import com.denizenscript.denizen.objects.PlayerTag
 import com.denizenscript.denizencore.objects.core.ElementTag
 import com.fablesfantasyrp.plugin.characters.*
 import com.fablesfantasyrp.plugin.denizeninterop.denizenRun
+import com.fablesfantasyrp.plugin.playerdata.FablesOfflinePlayer
+import com.fablesfantasyrp.plugin.text.join
+import com.fablesfantasyrp.plugin.text.legacyText
+import com.fablesfantasyrp.plugin.text.miniMessage
 import com.github.shynixn.mccoroutine.SuspendingJavaPlugin
 import com.github.shynixn.mccoroutine.launch
+import com.gitlab.martijn_heil.nincommands.common.CommandTarget
 import com.gitlab.martijn_heil.nincommands.common.Sender
 import com.sk89q.intake.Command
 import com.sk89q.intake.Require
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 
 class Commands(private val plugin: SuspendingJavaPlugin) {
@@ -20,6 +28,29 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 				Pair("target", PlayerTag(target.player)),
 				Pair("id", ElementTag(target.id.toLong())),
 		))
+	}
+
+	@Command(aliases = ["listcharacters", "listchars"], desc = "List a player's characters")
+	@Require(Permission.Command.Listcharacters)
+	fun listcharacters(@Sender sender: Player, @CommandTarget(Permission.Command.Listcharacters + ".others") target: OfflinePlayer) {
+		val fTarget = FablesOfflinePlayer.forOfflinePlayer(target)
+		val msg = Component.text()
+
+		val header = miniMessage.deserialize("<gray><prefix><player_name> has the following characters:</gray>",
+				Placeholder.component("prefix", legacyText(SYSPREFIX)),
+				Placeholder.unparsed("player_name", target.name ?: target.uniqueId.toString())
+		)
+		msg.append(header)
+		msg.append(Component.newline())
+
+		val body = Component.text().append(fTarget.playerCharacters.asSequence().map {
+			miniMessage.deserialize("<gray>#<id> <name></gray>",
+					Placeholder.unparsed("id", it.id.toString().padStart(4, '0')),
+					Placeholder.unparsed("name", it.name))
+		}.join(Component.newline()).asIterable()).asComponent()
+		msg.append(body)
+
+		sender.sendMessage(msg.asComponent().compact())
 	}
 
 	@Command(aliases = ["updatestats"], desc = "Update a player's character stats")
@@ -35,7 +66,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 			initialSliderValues = CharacterStats(0U, 0U, 0U, 0U)
 		}
 
-		val gui = CharacterStatsGui(FablesCharacters.instance, minimums, "(#${target.id}) ${target.name}'s stats",
+		val gui = CharacterStatsGui(FablesCharacters.instance, minimums, "#${target.id} ${target.name}'s stats",
 				initialSliderValues)
 
 		plugin.launch {

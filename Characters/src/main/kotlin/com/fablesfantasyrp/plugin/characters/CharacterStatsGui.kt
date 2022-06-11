@@ -57,9 +57,9 @@ class CharacterStatsGui(plugin: JavaPlugin, minimums: CharacterStats, title: Str
 
 		addElement(DynamicGuiElement('p') { _ ->
 			if (freePoints > 0U) {
-				StaticGuiElement('p', ItemStack(Material.AMETHYST_SHARD), "Points left: $freePoints")
+				StaticGuiElement('p', ItemStack(Material.AMETHYST_SHARD), freePoints.toInt(), { true }, "Points left: $freePoints")
 			} else {
-				StaticGuiElement('p', ItemStack(Material.WRITABLE_BOOK), {
+				StaticGuiElement('p', ItemStack(Material.WRITABLE_BOOK), freePoints.toInt(), {
 					result.complete(CharacterStats(
 							strength = strengthSlider.value + minimums.strength,
 							defense = defenseSlider.value + minimums.defense,
