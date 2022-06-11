@@ -1,6 +1,7 @@
 name: FablesGui
 version: @version@
 authors: [@authors@]
-depend: []
+depend:
+  - FablesKotlinRuntime
 main: com.fablesfantasyrp.plugin.gui.FablesGui
 api-version: @bukkit_api_version@

@@ -2,6 +2,7 @@ package com.fablesfantasyrp.plugin.halt
 
 import com.fablesfantasyrp.plugin.characters.command.provider.AllowCharacterName
 import com.fablesfantasyrp.plugin.characters.currentPlayerCharacter
+import com.fablesfantasyrp.plugin.playerdata.FablesPlayer
 import com.fablesfantasyrp.plugin.utils.ess
 import com.fablesfantasyrp.plugin.utils.isVanished
 import com.gitlab.martijn_heil.nincommands.common.Sender
@@ -18,7 +19,7 @@ class Commands {
 	fun halt(@Sender origin: Player, @AllowCharacterName target: Player) {
 		val targets = listOf(target).asSequence()
 				.filter { !it.isVanished }
-				.filter { it.currentPlayerCharacter != null }
+				.filter { FablesPlayer.forPlayer(it).currentPlayerCharacter != null }
 				.filter { it.gameMode != SPECTATOR }.toList()
 
 		for (it in targets) {
@@ -28,13 +29,13 @@ class Commands {
 			}
 
 			if (it.location.distance(origin.location) > 15) {
-				origin.sendMessage("$SYSPREFIX ${RED}Failed to halt ${GRAY}${it.currentPlayerCharacter!!.name}${RED} " +
+				origin.sendMessage("$SYSPREFIX ${RED}Failed to halt ${GRAY}${FablesPlayer.forPlayer(it).currentPlayerCharacter!!.name}${RED} " +
 						"because this player is too far away!")
 				continue
 			}
 
 			if (it.ess.isGodModeEnabled) {
-				origin.sendMessage("$SYSPREFIX ${RED} Failed to halt ${GRAY}${it.currentPlayerCharacter!!.name}${RED} " +
+				origin.sendMessage("$SYSPREFIX ${RED} Failed to halt ${GRAY}${FablesPlayer.forPlayer(it).currentPlayerCharacter!!.name}${RED} " +
 						"because this player is in god mode!")
 				continue
 			}

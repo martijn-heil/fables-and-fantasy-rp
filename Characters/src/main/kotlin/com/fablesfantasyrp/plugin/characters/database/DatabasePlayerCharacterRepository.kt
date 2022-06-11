@@ -3,7 +3,7 @@ package com.fablesfantasyrp.plugin.characters.database
 import com.fablesfantasyrp.plugin.characters.CharacterStats
 import com.fablesfantasyrp.plugin.characters.Gender
 import com.fablesfantasyrp.plugin.characters.Race
-import com.fablesfantasyrp.plugin.characters.databasePlayerCharacterRepository
+import com.fablesfantasyrp.plugin.characters.playerCharacterRepository
 import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
 import com.fablesfantasyrp.plugin.database.repository.CachingRepository
 import org.bukkit.Location
@@ -182,8 +182,8 @@ class DatabasePlayerCharacterRepository internal constructor(private val plugin:
 	}
 }
 
-fun DatabasePlayerCharacter.Companion.forId(id: ULong) = databasePlayerCharacterRepository.forId(id)
-fun DatabasePlayerCharacter.Companion.all() = databasePlayerCharacterRepository.all()
-fun DatabasePlayerCharacter.Companion.allForPlayer(p: OfflinePlayer) = databasePlayerCharacterRepository.allForPlayer(p)
-fun DatabasePlayerCharacter.save() = databasePlayerCharacterRepository.save(this)
-fun DatabasePlayerCharacter.destroy() = databasePlayerCharacterRepository.destroy(this)
+fun DatabasePlayerCharacter.Companion.forId(id: ULong) = playerCharacterRepository.forId(id)
+fun DatabasePlayerCharacter.Companion.all() = playerCharacterRepository.all()
+fun DatabasePlayerCharacter.Companion.allForPlayer(p: OfflinePlayer) = playerCharacterRepository.allForPlayer(p)
+fun DatabasePlayerCharacter.save() = playerCharacterRepository.save(this)
+fun DatabasePlayerCharacter.destroy() = playerCharacterRepository.destroy(this)

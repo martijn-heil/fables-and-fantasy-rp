@@ -8,5 +8,9 @@ dependencies {
     implementation(project(":DenizenInterop"))
     implementation(project(":Database"))
     implementation(project(":PlayerData"))
+    implementation(project(":Gui"))
+    implementation(project(":Form"))
+    implementation(project(":KotlinRuntime"))
+    implementation(project(":Text"))
     implementation("com.gitlab.martijn-heil:NinCommands:-SNAPSHOT")
 }

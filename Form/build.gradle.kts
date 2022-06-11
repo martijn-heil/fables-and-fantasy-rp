@@ -4,8 +4,8 @@ plugins {
 
 dependencies {
     // internal module dependencies
-    implementation(project(":Utils"))
-    implementation(project(":Characters"))
     implementation(project(":PlayerData"))
+    implementation(project(":Gui"))
+    implementation(project(":KotlinRuntime"))
     implementation("com.gitlab.martijn-heil:NinCommands:-SNAPSHOT")
 }

@@ -17,4 +17,6 @@ include("HorseLimits",
 		"Text",
 		"Rolls",
 		"UtilsOffline",
-		"MoreLogging")
+		"MoreLogging",
+		"Form",
+		"Text")

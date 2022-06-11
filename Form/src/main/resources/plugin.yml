@@ -1,0 +1,6 @@
+name: FablesForm
+version: @version@
+authors: [@authors@]
+depend: [FablesPlayerData, FablesGui]
+main: com.fablesfantasyrp.plugin.form.FablesForm
+api-version: @bukkit_api_version@

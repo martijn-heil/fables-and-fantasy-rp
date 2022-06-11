@@ -11,6 +11,7 @@ dependencies {
     implementation(project(":Characters"))
     implementation(project(":Gui"))
     implementation(project(":DenizenInterop"))
+    implementation(project(":Text"))
     implementation("com.gitlab.martijn-heil:NinCommands:-SNAPSHOT")
     implementation("com.github.MilkBowl:VaultAPI:1.7") {
         exclude(group = "org.bukkit")
