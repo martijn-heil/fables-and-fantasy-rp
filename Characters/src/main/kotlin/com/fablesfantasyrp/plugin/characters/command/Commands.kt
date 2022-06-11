@@ -26,8 +26,6 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 	@Require(Permission.Command.Updatestats)
 	fun updatestats(@Sender sender: Player, target: PlayerCharacter) {
 		val minimums = target.race.boosters + CharacterStats(2U, 2U, 2U, 2U)
-		plugin.logger.info("minimums: $minimums")
-		plugin.logger.info("stats: ${target.stats}")
 		var initialSliderValues = target.stats - minimums
 		if (initialSliderValues.strength > 8U ||
 				initialSliderValues.defense > 8U ||
@@ -36,9 +34,8 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 			sender.sendMessage("$SYSPREFIX Detected that you will be editing legacy player stats, starting with a clean slate.")
 			initialSliderValues = CharacterStats(0U, 0U, 0U, 0U)
 		}
-		plugin.logger.info("initial slider values: $initialSliderValues")
 
-		val gui = CharacterStatsGui(FablesCharacters.instance, minimums, "${target.name}'s stats",
+		val gui = CharacterStatsGui(FablesCharacters.instance, minimums, "(#${target.id}) ${target.name}'s stats",
 				initialSliderValues)
 
 		plugin.launch {
