@@ -57,7 +57,7 @@ class GuiSlider(char: Char,
 						val isFilled = value >= sectionValue
 						val item = if (isFilled) FILLED_ITEM else EMPTY_ITEM
 
-						StaticGuiElement('e', item, 1, { true }, "")
+						StaticGuiElement('e', item, 1, { true }, " ")
 					})
 				}
 			}
