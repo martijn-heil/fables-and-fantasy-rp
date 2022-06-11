@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.chat
 
 import com.fablesfantasyrp.plugin.chat.command.provider.ChatModule
+import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.BukkitModule
@@ -23,6 +24,7 @@ internal lateinit var miniMessage: MiniMessage
 class FablesChat : JavaPlugin() {
 
 	override fun onEnable() {
+		enforceDependencies(this)
 		instance = this
 
 		vaultChat = server.servicesManager.getRegistration(Chat::class.java)!!.provider

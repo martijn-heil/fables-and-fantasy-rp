@@ -17,4 +17,11 @@ data class CharacterStats(	val strength: UInt = 0U,
 			agility = other.agility + this.agility,
 			intelligence = other.intelligence + this.intelligence
 	)
+
+	operator fun minus(other: CharacterStats) = CharacterStats(
+			strength = this.strength - other.strength,
+			defense = this.defense - other.defense,
+			agility = this.agility - other.agility,
+			intelligence = this.intelligence - other.intelligence
+	)
 }

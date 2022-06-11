@@ -6,5 +6,6 @@ object Permission {
 	object Command {
 		private const val prefix = Permission.prefix + ".command"
 		const val Updatestats = "${prefix}.updatestats"
+		const val Cardother = "${prefix}.othercard"
 	}
 }

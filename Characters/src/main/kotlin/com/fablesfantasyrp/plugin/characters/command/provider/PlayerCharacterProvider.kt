@@ -12,8 +12,9 @@ class PlayerCharacterProvider(private val server: Server) : Provider<PlayerChara
 	override fun isProvided(): Boolean = false
 
 	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): PlayerCharacter {
-		return server.playerCharacters.asSequence().filter { it.name == arguments.next() }.firstOrNull()
-				?: throw ArgumentParseException("Character not found")
+		val name = arguments.next()
+		return server.playerCharacters.asSequence().filter { it.name == name }.firstOrNull()
+				?: throw ArgumentParseException("A character called '$name' could not be found")
 	}
 
 	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
