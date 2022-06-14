@@ -1,0 +1,4 @@
+ignore_patterns:
+  - '^Could not set view distance for'
+  - 'moved wrongly!$'
+  - 'was kicked due to keepalive timeout!$'
