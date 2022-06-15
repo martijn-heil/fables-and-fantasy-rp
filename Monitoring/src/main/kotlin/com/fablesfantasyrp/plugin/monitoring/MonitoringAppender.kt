@@ -6,7 +6,7 @@ import org.apache.logging.log4j.core.appender.AbstractAppender
 
 class MonitoringAppender() : AbstractAppender("MonitoringAppender", null, null, true, emptyArray()) {
 	private fun send(event: LogEvent) {
-		logToDiscord("`[${event.level}] [${event.loggerName}] ${event.message.formattedMessage}`")
+		logToDiscord("[${event.level}] [${event.loggerName}] ${event.message.formattedMessage}")
 	}
 
 	override fun append(event: LogEvent) {
