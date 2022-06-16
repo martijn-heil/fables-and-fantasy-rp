@@ -19,6 +19,7 @@ import org.bukkit.event.EventPriority.*
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.player.*
+import java.util.logging.Level
 
 class WhitelistListener(private val plugin: SuspendingJavaPlugin) : Listener {
 	private val server: Server
@@ -97,13 +98,17 @@ class WhitelistListener(private val plugin: SuspendingJavaPlugin) : Listener {
 	fun onPlayerWhitelisted(e: WhitelistAddedPlayerEvent) {
 		val offlinePlayer = e.offlinePlayer
 
-		if (offlinePlayer.hasPlayedBefore()) {
-			offlinePlayer.player?.let { VanishAPI.showPlayer(it) }
-			offlinePlayer.location = essentialsSpawn.getSpawn("default")
-			offlinePlayer.gameMode = GameMode.SURVIVAL
+		try {
+			if (offlinePlayer.hasPlayedBefore()) {
+				offlinePlayer.player?.let { VanishAPI.showPlayer(it) }
+				offlinePlayer.location = essentialsSpawn.getSpawn("default")
+				offlinePlayer.gameMode = GameMode.SURVIVAL
+			}
+		} catch(ex: Exception) {
+			plugin.logger.log(Level.SEVERE, "Error handling WhitelistAddedPlayerEvent", ex)
+		} finally {
+			offlinePlayer.player?.kick(Component.text("You have been whitelisted, please relog!"))
 		}
-
-		offlinePlayer.player?.kick(Component.text("You have been whitelisted, please relog!"))
 	}
 
 	@EventHandler(priority = MONITOR, ignoreCancelled = true)
