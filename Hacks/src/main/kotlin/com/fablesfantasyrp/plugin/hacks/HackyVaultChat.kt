@@ -3,8 +3,15 @@ package com.fablesfantasyrp.plugin.hacks
 import net.milkbowl.vault.chat.Chat
 import net.milkbowl.vault.permission.Permission
 import org.bukkit.ChatColor
+import org.bukkit.OfflinePlayer
+import org.bukkit.entity.Player
+import java.util.*
 
 class HackyVaultChat(child: Chat, perms: Permission) : DelegatedVaultChat(child, perms) {
+	private val NINJOH_NAME = "Ninjoh"
+	private val NINJOH_UUID = UUID.fromString("50d8fcf0-166e-4ab3-9176-c41fb575071a")
+	private val NINJOH_CHAT_PREFIX: String = ChatColor.RED.toString()
+
 	override fun getName(): String {
 		return "HackyVaultChat(${super.getName()})"
 	}
@@ -13,8 +20,22 @@ class HackyVaultChat(child: Chat, perms: Permission) : DelegatedVaultChat(child,
 	override fun getPlayerPrefix(world: String?, player: String?): String {
 		return when {
 			// I could not live with that bloody donator star in front of my name..
-			player == "Ninjoh" -> ChatColor.DARK_PURPLE.toString()
+			player == NINJOH_NAME -> NINJOH_CHAT_PREFIX
 			else -> super.getPlayerPrefix(world, player)
+		}
+	}
+
+	override fun getPlayerPrefix(world: String?, player: OfflinePlayer?): String {
+		return when {
+			player?.uniqueId == NINJOH_UUID -> NINJOH_CHAT_PREFIX
+			else -> super.getPlayerPrefix(world, player)
+		}
+	}
+
+	override fun getPlayerPrefix(player: Player?): String {
+		return when {
+			player?.uniqueId == NINJOH_UUID -> NINJOH_CHAT_PREFIX
+			else -> super.getPlayerPrefix(player)
 		}
 	}
 }
