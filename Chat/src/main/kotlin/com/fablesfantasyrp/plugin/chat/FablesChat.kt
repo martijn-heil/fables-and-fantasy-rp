@@ -51,6 +51,11 @@ class FablesChat : JavaPlugin() {
 		dispatcher.commands.forEach { registerCommand(dispatcher, this, it.allAliases.toList()) }
 
 		server.pluginManager.registerEvents(ChatListener(server), this)
+		this.getCommand("ic")!!.setExecutor(Commands.CommandChatInCharacter())
+		this.getCommand("looc")!!.setExecutor(Commands.CommandChatLocalOutOfCharacter())
+		this.getCommand("ooc")!!.setExecutor(Commands.CommandChatOutOfCharacter())
+		this.getCommand("staffchat")!!.setExecutor(Commands.CommandChatStaff())
+		this.getCommand("spectatorchat")!!.setExecutor(Commands.CommandChatSpectator())
 	}
 
 	companion object {

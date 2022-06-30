@@ -14,22 +14,36 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor.translateAlternateColorCodes
+import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 
 interface ChatChannel {
 	fun getRecipients(from: Player): Sequence<Player>
 
-	@Throws(IllegalArgumentException::class)
+	@Throws(ChatIllegalArgumentException::class)
 	fun sendMessage(from: Player, message: String)
 
 	companion object
+}
+
+interface CommandSenderCompatibleChatChannel {
+	fun sendMessage(from: CommandSender, message: String)
+	fun getRecipients(from: CommandSender): Sequence<CommandSender>
 }
 
 interface ToggleableChatChannel
 
 interface RawChatChannel {
 	fun sendMessage(from: Player, message: Component)
+}
+
+interface PreviewableChatChannel {
+	fun getPreview(from: Player, message: String): Component
+}
+
+interface PreviewableCommandSenderCompatibleChatChannel {
+	fun getPreview(from: CommandSender, message: String): Component
 }
 
 fun ChatChannel.Companion.fromString(s: String) = when(s.lowercase()) {
@@ -44,33 +58,39 @@ fun ChatChannel.Companion.fromString(s: String) = when(s.lowercase()) {
 	else -> null
 }
 
-object ChatOutOfCharacter : ChatChannel, RawChatChannel, ToggleableChatChannel {
+class ChatIllegalArgumentException(message: String) : IllegalArgumentException(message)
+
+object ChatOutOfCharacter : ChatChannel, RawChatChannel, ToggleableChatChannel, CommandSenderCompatibleChatChannel {
 	override fun getRecipients(from: Player) =
 		Bukkit.getOnlinePlayers().asSequence()
 				.filter { !it.ess.isIgnoredPlayer(from.ess) }
 				.filter { !FablesPlayer.forPlayer(it).disabledChatChannels.contains(this) }
 
-	override fun sendMessage(from: Player, message: String) {
-		this.sendMessage(from, parseLinks(message))
-	}
+	override fun getRecipients(from: CommandSender) =
+			Bukkit.getOnlinePlayers().asSequence()
+					.filter { !FablesPlayer.forPlayer(it).disabledChatChannels.contains(this) }
 
-	override fun sendMessage(from: Player, message: Component) {
-		val fPlayer = FablesPlayer.forPlayer(from)
+	override fun sendMessage(from: Player, message: String) = this.sendMessage(from, parseLinks(message))
+	override fun sendMessage(from: Player, message: Component) = this.sendMessage(from as CommandSender, message)
+	override fun sendMessage(from: CommandSender, message: String) = this.sendMessage(from, parseLinks(message))
 
-		val legacyChatPrefix = vaultChat.getPlayerPrefix(from)
-		val chatPrefix = legacyChatPrefix
-				.let { translateAlternateColorCodes('&', it) }
-				.let { legacyText(it) }
-		val playerNameStyle = fPlayer.playerNameStyle
+	fun sendMessage(from: CommandSender, message: Component) {
+		val chatPrefix = if (from is Player) {
+			vaultChat.getPlayerPrefix(from)
+					.let { translateAlternateColorCodes('&', it) }
+					.let { legacyText(it) }
+		} else Component.text()
 
-		val chatSuffix = vaultChat.getPlayerSuffix(from)
-				.let { translateAlternateColorCodes('&', it) }
-				.let { legacyText(it) }
+		val chatSuffix = if (from is Player) {
+			vaultChat.getPlayerSuffix(from)
+					.let { translateAlternateColorCodes('&', it) }
+					.let { legacyText(it) }
+		} else Component.text()
 
 		val customResolver = TagResolver.builder()
 				.tag("prefix", Tag.selfClosingInserting(chatPrefix))
 				.tag("suffix", Tag.selfClosingInserting(chatSuffix))
-				.tag("player_name", Tag.selfClosingInserting(Component.text(from.name).style(playerNameStyle)))
+				.tag("player_name", Tag.selfClosingInserting(Component.text(from.name).style(from.nameStyle)))
 				.tag("message", Tag.selfClosingInserting(message))
 				.build()
 		val final = miniMessage.deserialize(
@@ -118,21 +138,23 @@ object ChatLocalOutOfCharacter : ChatChannel, RawChatChannel {
 	override fun toString() = "looc"
 }
 
-object ChatSpectator : ChatChannel, RawChatChannel, ToggleableChatChannel {
-	override fun getRecipients(from: Player) =
+object ChatSpectator : ChatChannel, RawChatChannel, ToggleableChatChannel, CommandSenderCompatibleChatChannel {
+	override fun getRecipients(from: Player) = this.getRecipients(from as CommandSender)
+
+	override fun getRecipients(from: CommandSender) =
 			Bukkit.getOnlinePlayers().asSequence()
 					.filter {
 						!it.isWhitelisted ||
-							(it.hasPermission(Permission.Channel.Spectator) &&
-									!FablesPlayer.forPlayer(it).disabledChatChannels.contains(this))
+								(it.hasPermission(Permission.Channel.Spectator) &&
+										!FablesPlayer.forPlayer(it).disabledChatChannels.contains(this))
 					}
 					.filter { !FablesPlayer.forPlayer(it).disabledChatChannels.contains(this) }
 
-	override fun sendMessage(from: Player, message: String) {
-		this.sendMessage(from, parseLinks(message))
-	}
+	override fun sendMessage(from: Player, message: String) = this.sendMessage(from, parseLinks(message))
+	override fun sendMessage(from: CommandSender, message: String) = this.sendMessage(from, parseLinks(message))
+	override fun sendMessage(from: Player, message: Component) = this.sendMessage(from as CommandSender, message)
 
-	override fun sendMessage(from: Player, message: Component) {
+	fun sendMessage(from: CommandSender, message: Component) {
 		val customResolver = TagResolver.builder()
 				.tag("player_name", Tag.selfClosingInserting(Component.text(from.name)))
 				.tag("message", Tag.selfClosingInserting(message))
@@ -147,32 +169,36 @@ object ChatSpectator : ChatChannel, RawChatChannel, ToggleableChatChannel {
 	override fun toString() = "spectator"
 }
 
-object ChatStaff : ChatChannel, RawChatChannel {
+object ChatStaff : ChatChannel, RawChatChannel, CommandSenderCompatibleChatChannel {
 	override fun getRecipients(from: Player): Sequence<Player> =
 			Bukkit.getOnlinePlayers().asSequence()
 					.filter { it.hasPermission(Permission.Channel.Staff) }
 
-	override fun sendMessage(from: Player, message: String) {
-		this.sendMessage(from, parseLinks(message))
-	}
+	override fun getRecipients(from: CommandSender): Sequence<Player> =
+			Bukkit.getOnlinePlayers().asSequence()
+					.filter { it.hasPermission(Permission.Channel.Staff) }
 
-	override fun sendMessage(from: Player, message: Component) {
-		val fPlayer = FablesPlayer.forPlayer(from)
+	override fun sendMessage(from: Player, message: String) = this.sendMessage(from, parseLinks(message))
+	override fun sendMessage(from: CommandSender, message: String) = this.sendMessage(from, parseLinks(message))
+	override fun sendMessage(from: Player, message: Component) = sendMessage(from as CommandSender, message)
 
-		val legacyChatPrefix = vaultChat.getPlayerPrefix(from)
-		val chatPrefix = legacyChatPrefix
-				.let { translateAlternateColorCodes('&', it) }
-				.let { legacyText(it) }
-		val playerNameStyle = fPlayer.playerNameStyle
+	fun sendMessage(from: CommandSender, message: Component) {
+		val chatPrefix = if (from is Player) {
+			vaultChat.getPlayerPrefix(from)
+					.let { translateAlternateColorCodes('&', it) }
+					.let { legacyText(it) }
+		} else Component.text()
 
-		val chatSuffix = vaultChat.getPlayerSuffix(from)
-				.let { translateAlternateColorCodes('&', it) }
-				.let { legacyText(it) }
+		val chatSuffix = if (from is Player) {
+			vaultChat.getPlayerSuffix(from)
+					.let { translateAlternateColorCodes('&', it) }
+					.let { legacyText(it) }
+		} else Component.text()
 
 		val customResolver = TagResolver.builder()
 				.tag("prefix", Tag.selfClosingInserting(chatPrefix))
 				.tag("suffix", Tag.selfClosingInserting(chatSuffix))
-				.tag("player_name", Tag.selfClosingInserting(Component.text(from.name).style(playerNameStyle)))
+				.tag("player_name", Tag.selfClosingInserting(Component.text(from.name).style(from.nameStyle)))
 				.tag("message", Tag.selfClosingInserting(message))
 				.build()
 		val final = miniMessage.deserialize(
@@ -210,7 +236,7 @@ object ChatInCharacter : ChatChannel {
 					"w" -> ChatInCharacterWhisper
 					"q" -> ChatInCharacterQuiet
 					"s" -> ChatInCharacterShout
-					else -> throw IllegalArgumentException("Unknown relative channel '$channel'.")
+					else -> throw ChatIllegalArgumentException("Unknown relative channel '$channel'.")
 				}
 			}
 			else -> ChatInCharacterStandard

@@ -16,8 +16,8 @@ class ChatListener(private val server: Server) : Listener {
 		val fPlayer = FablesPlayer.forPlayer(e.player)
 		try {
 			fPlayer.doChat(e.message)
-		} catch (e: IllegalArgumentException) {
-			fPlayer.sendError(e.message ?: "IllegalArgumentException")
+		} catch (e: ChatIllegalArgumentException) {
+			fPlayer.sendError(e.message ?: "Illegal argument.")
 		}
 	}
 }

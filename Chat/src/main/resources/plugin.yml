@@ -17,3 +17,29 @@ loadbefore:
   - CraftBook # Also registers /ic
 main: com.fablesfantasyrp.plugin.chat.FablesChat
 api-version: @bukkit_api_version@
+commands:
+  ic:
+    description: "Change to or type in IC chat."
+    aliases: [rp]
+    permission: fables.chat.channel.ic
+    usage: "Usage: /<command> [message]?"
+  looc:
+    description: "Change to or type in LOOC chat."
+    aliases: []
+    permission: fables.chat.channel.looc
+    usage: "Usage: /<command> [message]?"
+  ooc:
+    description: "Change to or type in OOC chat."
+    aliases: []
+    permission: fables.chat.channel.ooc
+    usage: "Usage: /<command> [message]?"
+  staffchat:
+    description: "Change to or type in staff chat."
+    aliases: [staff, st]
+    permission: fables.chat.channel.staff
+    usage: "Usage: /<command> [message]?"
+  spectatorchat:
+    description: "Change to or type in spectator chat."
+    aliases: [specchat, sc]
+    permission: fables.chat.channel.spectator
+    usage: "Usage: /<command> [message]?"
