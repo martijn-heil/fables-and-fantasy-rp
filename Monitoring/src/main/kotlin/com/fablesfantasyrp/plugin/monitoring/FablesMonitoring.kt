@@ -4,11 +4,11 @@ import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.github.shynixn.mccoroutine.SuspendingJavaPlugin
 import org.apache.logging.log4j.LogManager
 
-private val rootLogger
+private val rootLogger: org.apache.logging.log4j.core.Logger?
 	get() = (LogManager.getRootLogger() as org.apache.logging.log4j.core.Logger)
 
 class FablesMonitoring : SuspendingJavaPlugin() {
-	private lateinit var appender: TimeBasedGroupingAppender
+	private var appender: TimeBasedGroupingAppender? = null
 
 	override fun onEnable() {
 		enforceDependencies(this)
@@ -17,18 +17,18 @@ class FablesMonitoring : SuspendingJavaPlugin() {
 
 		appender = TimeBasedGroupingAppender(config.getStringList("ignore_patterns")
 				.map { Regex(it) }, MonitoringAppender())
-		appender.start()
+		appender?.start()
 		server.scheduler.scheduleSyncDelayedTask(this, {
-			rootLogger.addAppender(appender)
+			if (appender != null) rootLogger?.addAppender(appender)
 		}, 20)
 
 		server.scheduler.scheduleSyncRepeatingTask(this, {
-			appender.maybeFlush()
+			appender?.maybeFlush()
 		}, 0, 20)
 	}
 
 	override fun onDisable() {
-		rootLogger.removeAppender(appender)
+		rootLogger?.removeAppender(appender)
 	}
 
 	companion object {
