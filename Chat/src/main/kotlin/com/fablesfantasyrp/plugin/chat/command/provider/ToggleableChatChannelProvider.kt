@@ -22,6 +22,6 @@ class ToggleableChatChannelProvider(private val server: Server) : Provider<Toggl
 	}
 
 	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
-		return listOf("ooc", "spectator").filter { it.startsWith(prefix) }
+		return listOf("ooc", "spectator", "looc").filter { it.startsWith(prefix) }
 	}
 }

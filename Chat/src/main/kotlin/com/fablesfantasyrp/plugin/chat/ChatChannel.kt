@@ -103,7 +103,7 @@ object ChatOutOfCharacter : ChatChannel, RawChatChannel, ToggleableChatChannel, 
 	override fun toString() = "ooc"
 }
 
-object ChatLocalOutOfCharacter : ChatChannel, RawChatChannel {
+object ChatLocalOutOfCharacter : ChatChannel, RawChatChannel, ToggleableChatChannel {
 	override fun getRecipients(from: Player): Sequence<Player> =
 			getPlayersWithinRange(from.location, 15U)
 					.filter { !it.ess.isIgnoredPlayer(from.ess) }
