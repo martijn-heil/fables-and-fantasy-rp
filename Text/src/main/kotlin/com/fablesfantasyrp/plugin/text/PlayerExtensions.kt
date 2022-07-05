@@ -24,16 +24,19 @@ val FablesPlayer.playerNameStyle: Style
 				.let { legacyText(it).style() }
 
 fun FablesPlayer.sendError(message: Component) {
-	val finalMessage = miniMessage.deserialize("<red>Error:</red> <dark_red><message></dark_red>",
-			Placeholder.component("message", message))
-	player.sendMessage(finalMessage)
+	player.sendMessage(formatError(message))
 }
 
 fun CommandSender.sendError(message: Component) {
-	val finalMessage = miniMessage.deserialize("<red>Error:</red> <dark_red><message></dark_red>",
-			Placeholder.component("message", message))
-	this.sendMessage(finalMessage)
+	this.sendMessage(formatError(message))
 }
+
+fun formatError(message: Component): Component {
+	return miniMessage.deserialize("<red>Error:</red> <dark_red><message></dark_red>",
+			Placeholder.component("message", message))
+}
+
+fun formatError(message: String): Component = formatError(Component.text(message))
 
 fun CommandSender.sendError(message: String) = this.sendError(Component.text(message))
 fun FablesPlayer.sendError(message: String) = this.sendError(Component.text(message))

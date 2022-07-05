@@ -46,7 +46,7 @@ interface PreviewableCommandSenderCompatibleChatChannel {
 	fun getPreview(from: CommandSender, message: String): Component
 }
 
-fun ChatChannel.Companion.fromString(s: String) = when(s.lowercase()) {
+fun ChatChannel.Companion.fromString(s: String): ChatChannel? = when(s.lowercase()) {
 	"ooc" -> ChatOutOfCharacter
 	"looc" -> ChatLocalOutOfCharacter
 	"ic" -> ChatInCharacter
@@ -55,12 +55,15 @@ fun ChatChannel.Companion.fromString(s: String) = when(s.lowercase()) {
 	"ic.shout" -> ChatInCharacterShout
 	"staff" -> ChatStaff
 	"spectator" -> ChatSpectator
+	"sc" -> ChatSpectator // alias
+	"st" -> ChatStaff // alias
 	else -> null
 }
 
 class ChatIllegalArgumentException(message: String) : IllegalArgumentException(message)
 
-object ChatOutOfCharacter : ChatChannel, RawChatChannel, ToggleableChatChannel, CommandSenderCompatibleChatChannel {
+object ChatOutOfCharacter : ChatChannel, RawChatChannel, ToggleableChatChannel, CommandSenderCompatibleChatChannel,
+		PreviewableChatChannel {
 	override fun getRecipients(from: Player) =
 		Bukkit.getOnlinePlayers().asSequence()
 				.filter { !it.ess.isIgnoredPlayer(from.ess) }
@@ -75,6 +78,16 @@ object ChatOutOfCharacter : ChatChannel, RawChatChannel, ToggleableChatChannel, 
 	override fun sendMessage(from: CommandSender, message: String) = this.sendMessage(from, parseLinks(message))
 
 	fun sendMessage(from: CommandSender, message: Component) {
+		val final = this.formatMessage(from, message)
+		getRecipients(from).forEach { it.sendMessage(final) }
+		logChatToConsole(final)
+	}
+
+	override fun getPreview(from: Player, message: String): Component = this.formatMessage(from, message)
+
+	private fun formatMessage(from: CommandSender, message: String) = this.formatMessage(from, parseLinks(message))
+
+	private fun formatMessage(from: CommandSender, message: Component): Component {
 		val chatPrefix = if (from is Player) {
 			vaultChat.getPlayerPrefix(from)
 					.let { translateAlternateColorCodes('&', it) }
@@ -93,17 +106,15 @@ object ChatOutOfCharacter : ChatChannel, RawChatChannel, ToggleableChatChannel, 
 				.tag("player_name", Tag.selfClosingInserting(Component.text(from.name).style(from.nameStyle)))
 				.tag("message", Tag.selfClosingInserting(message))
 				.build()
-		val final = miniMessage.deserialize(
+		return miniMessage.deserialize(
 				"<gold>[G]</gold> <gray><prefix><player_name><suffix></gray> <dark_gray>»</dark_gray> <gray><message></gray>",
 				TagResolver.standard(), customResolver)
-		getRecipients(from).forEach { it.sendMessage(final) }
-		logChatToConsole(final)
 	}
 
 	override fun toString() = "ooc"
 }
 
-object ChatLocalOutOfCharacter : ChatChannel, RawChatChannel, ToggleableChatChannel {
+object ChatLocalOutOfCharacter : ChatChannel, RawChatChannel, ToggleableChatChannel, PreviewableChatChannel {
 	override fun getRecipients(from: Player): Sequence<Player> =
 			getPlayersWithinRange(from.location, 15U)
 					.filter { !it.ess.isIgnoredPlayer(from.ess) }
@@ -113,18 +124,7 @@ object ChatLocalOutOfCharacter : ChatChannel, RawChatChannel, ToggleableChatChan
 	}
 
 	override fun sendMessage(from: Player, message: Component) {
-		val fPlayer = FablesPlayer.forPlayer(from)
-		val characterName = fPlayer.currentPlayerCharacter?.name ?: ""
-
-		val customResolver = TagResolver.builder()
-				.tag("character_name", Tag.selfClosingInserting(Component.text(characterName)))
-				.tag("player_name", Tag.selfClosingInserting(Component.text(from.name)))
-				.tag("message", Tag.selfClosingInserting(message))
-				.build()
-		val final = miniMessage.deserialize(
-				"<yellow>[L]</yellow> <white><player_name></white> " +
-						"<dark_gray>(</dark_gray><gray><character_name></gray><dark_gray>)</dark_gray> <yellow>»</yellow> " +
-						"<gray><message></gray>", TagResolver.standard(), customResolver)
+		val final = this.formatMessage(from, message)
 		val recipients = getRecipients(from).toList()
 		recipients.forEach { it.sendMessage(final) }
 		val loc = from.location
@@ -135,10 +135,27 @@ object ChatLocalOutOfCharacter : ChatChannel, RawChatChannel, ToggleableChatChan
 				.build())
 	}
 
+	private fun formatMessage(from: Player, message: Component): Component {
+		val fPlayer = FablesPlayer.forPlayer(from)
+		val characterName = fPlayer.currentPlayerCharacter?.name ?: ""
+
+		val customResolver = TagResolver.builder()
+				.tag("character_name", Tag.selfClosingInserting(Component.text(characterName)))
+				.tag("player_name", Tag.selfClosingInserting(Component.text(from.name)))
+				.tag("message", Tag.selfClosingInserting(message))
+				.build()
+		return miniMessage.deserialize(
+				"<yellow>[L]</yellow> <white><player_name></white> " +
+						"<dark_gray>(</dark_gray><gray><character_name></gray><dark_gray>)</dark_gray> <yellow>»</yellow> " +
+						"<gray><message></gray>", TagResolver.standard(), customResolver)
+	}
+
+	override fun getPreview(from: Player, message: String): Component = this.formatMessage(from, parseLinks(message))
 	override fun toString() = "looc"
 }
 
-object ChatSpectator : ChatChannel, RawChatChannel, ToggleableChatChannel, CommandSenderCompatibleChatChannel {
+object ChatSpectator : ChatChannel, RawChatChannel, ToggleableChatChannel, CommandSenderCompatibleChatChannel,
+		PreviewableChatChannel {
 	override fun getRecipients(from: Player) = this.getRecipients(from as CommandSender)
 
 	override fun getRecipients(from: CommandSender) =
@@ -155,21 +172,26 @@ object ChatSpectator : ChatChannel, RawChatChannel, ToggleableChatChannel, Comma
 	override fun sendMessage(from: Player, message: Component) = this.sendMessage(from as CommandSender, message)
 
 	fun sendMessage(from: CommandSender, message: Component) {
-		val customResolver = TagResolver.builder()
-				.tag("player_name", Tag.selfClosingInserting(Component.text(from.name)))
-				.tag("message", Tag.selfClosingInserting(message))
-				.build()
-		val final = miniMessage.deserialize(
-				"<green>[SC]</green> <gray><player_name></gray> <dark_gray>»</dark_gray> <yellow><message></yellow>",
-				TagResolver.standard(), customResolver)
+		val final = this.formatMessage(from, message)
 		getRecipients(from).forEach { it.sendMessage(final) }
 		logChatToConsole(final)
 	}
 
+	private fun formatMessage(from: CommandSender, message: Component): Component {
+		val customResolver = TagResolver.builder()
+				.tag("player_name", Tag.selfClosingInserting(Component.text(from.name)))
+				.tag("message", Tag.selfClosingInserting(message))
+				.build()
+		return miniMessage.deserialize(
+				"<green>[SC]</green> <gray><player_name></gray> <dark_gray>»</dark_gray> <yellow><message></yellow>",
+				TagResolver.standard(), customResolver)
+	}
+
+	override fun getPreview(from: Player, message: String): Component = this.formatMessage(from, parseLinks(message))
 	override fun toString() = "spectator"
 }
 
-object ChatStaff : ChatChannel, RawChatChannel, CommandSenderCompatibleChatChannel {
+object ChatStaff : ChatChannel, RawChatChannel, CommandSenderCompatibleChatChannel, PreviewableChatChannel {
 	override fun getRecipients(from: Player): Sequence<Player> =
 			Bukkit.getOnlinePlayers().asSequence()
 					.filter { it.hasPermission(Permission.Channel.Staff) }
@@ -183,6 +205,14 @@ object ChatStaff : ChatChannel, RawChatChannel, CommandSenderCompatibleChatChann
 	override fun sendMessage(from: Player, message: Component) = sendMessage(from as CommandSender, message)
 
 	fun sendMessage(from: CommandSender, message: Component) {
+		if(PlainTextComponentSerializer.plainText().serialize(message).isEmpty()) return
+
+		val final = this.formatMessage(from, message)
+		getRecipients(from).forEach { it.sendMessage(final) }
+		logChatToConsole(final)
+	}
+
+	private fun formatMessage(from: CommandSender, message: Component): Component {
 		val chatPrefix = if (from is Player) {
 			vaultChat.getPlayerPrefix(from)
 					.let { translateAlternateColorCodes('&', it) }
@@ -201,17 +231,16 @@ object ChatStaff : ChatChannel, RawChatChannel, CommandSenderCompatibleChatChann
 				.tag("player_name", Tag.selfClosingInserting(Component.text(from.name).style(from.nameStyle)))
 				.tag("message", Tag.selfClosingInserting(message))
 				.build()
-		val final = miniMessage.deserialize(
+		return miniMessage.deserialize(
 				"<dark_red>[ST]</dark_red> <gray><prefix><player_name><suffix></gray> <dark_gray>»</dark_gray> <red><message></red>",
 				TagResolver.standard(), customResolver)
-		getRecipients(from).forEach { it.sendMessage(final) }
-		logChatToConsole(final)
 	}
 
+	override fun getPreview(from: Player, message: String): Component = this.formatMessage(from, parseLinks(message))
 	override fun toString() = "staff"
 }
 
-object ChatInCharacter : ChatChannel {
+object ChatInCharacter : ChatChannel, PreviewableChatChannel {
 	private val pattern = "^(\\*)?\\s*#([a-z|A-Z])\\s?(.*$)"
 
 	override fun getRecipients(from: Player): Sequence<Player> {
@@ -243,6 +272,11 @@ object ChatInCharacter : ChatChannel {
 		}
 	}
 
+	override fun getPreview(from: Player, message: String): Component {
+		val channel = getRelativeChannel(message) as? PreviewableChatChannel ?: return Component.text("")
+		return channel.getPreview(from, trimMessage(message))
+	}
+
 	override fun toString() = "ic"
 }
 
@@ -263,7 +297,7 @@ private fun alternateStyle(message: String, startsWithAction: Boolean, actionSty
 private fun startsWithAction(message: String) = Regex("^\\s*\\*.*").matches(message)
 private fun stripLeadingStar(s: String) = Regex("^\\s*\\*\\s*(.*)").matchEntire(s)?.groupValues?.get(1) ?: s
 
-abstract class AbstractChatInCharacter : ChatChannel {
+abstract class AbstractChatInCharacter : ChatChannel, PreviewableChatChannel {
 	abstract val range: UInt
 	abstract val actionWord: String
 
@@ -271,6 +305,8 @@ abstract class AbstractChatInCharacter : ChatChannel {
 			getPlayersWithinRange(from.location, range)
 
 	override fun sendMessage(from: Player, message: String) {
+		if(message.isEmpty()) return
+
 		val formatted = formatMessage(from, message) ?: return
 		val recipients = getRecipients(from).toList()
 		recipients.forEach { it.sendMessage(formatted) }
@@ -308,6 +344,7 @@ abstract class AbstractChatInCharacter : ChatChannel {
 		return miniMessage.deserialize("<character_name> <default_emote><message>", TagResolver.standard(), customResolver)
 	}
 
+	override fun getPreview(from: Player, message: String): Component = this.formatMessage(from, message) ?: Component.text("")
 	override fun toString() = "ic"
 }
 

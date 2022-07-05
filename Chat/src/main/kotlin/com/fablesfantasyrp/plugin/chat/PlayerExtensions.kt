@@ -42,5 +42,18 @@ var FablesOfflinePlayer.disabledChatChannels: Set<ToggleableChatChannel>
 	set(value) { rawData.chatDisabledChannels = value.map { it.toString() }.toSet() }
 
 fun FablesPlayer.doChat(message: String) {
-	chatChannel.sendMessage(player, message)
+	val result: Pair<ChatChannel, String> = this.parseChatMessage(message)
+	result.first.sendMessage(player, result.second)
+}
+
+fun FablesPlayer.parseChatMessage(message: String): Pair<ChatChannel, String> {
+	val channelRegex = Regex("^\\s*\\$([A-z.]+)( (.*))?")
+	val matchResult = channelRegex.matchEntire(message)
+	return if (matchResult != null) {
+		val channelName = matchResult.groupValues[1]
+		ChatChannel.fromString(channelName)?.let { Pair(it, matchResult.groupValues[3]) }
+				?: throw ChatIllegalArgumentException("Unknown global channel '$channelName'.")
+	} else {
+		Pair(chatChannel, message)
+	}
 }

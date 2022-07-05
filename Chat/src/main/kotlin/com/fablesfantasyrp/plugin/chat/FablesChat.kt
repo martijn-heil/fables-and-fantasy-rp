@@ -20,6 +20,7 @@ internal val SYSPREFIX = "${GOLD}[${DARK_AQUA}${BOLD} CHAT ${GOLD}] $GRAY"
 
 internal lateinit var vaultChat: Chat
 internal lateinit var miniMessage: MiniMessage
+internal lateinit var chatPreviewManager: ChatPreviewManager
 
 class FablesChat : JavaPlugin() {
 
@@ -30,6 +31,7 @@ class FablesChat : JavaPlugin() {
 		vaultChat = server.servicesManager.getRegistration(Chat::class.java)!!.provider
 		miniMessage = MiniMessage.builder().strict(true).build()
 
+		chatPreviewManager = ChatPreviewManager(this)
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())
