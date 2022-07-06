@@ -17,5 +17,6 @@ object Permission {
 		private const val prefix = Permission.prefix + ".command"
 		const val Togglechat = "${prefix}.togglechat"
 		const val Chatcolor = "${prefix}.chatcolor"
+		const val Chatchannel = "${prefix}.chatchannel"
 	}
 }

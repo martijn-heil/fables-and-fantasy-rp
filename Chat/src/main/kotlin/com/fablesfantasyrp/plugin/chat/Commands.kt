@@ -6,6 +6,7 @@ import com.fablesfantasyrp.plugin.text.sendError
 import com.gitlab.martijn_heil.nincommands.common.Sender
 import com.sk89q.intake.Command
 import com.sk89q.intake.Require
+import com.sk89q.intake.util.auth.AuthorizationException
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -32,6 +33,14 @@ class Commands {
 				disabledChannels.plus(channel)
 			}
 		}
+	}
+
+	@Command(aliases = ["chatchannel", "channel", "chan", "ch"], desc = "Change your chat channel.")
+	@Require(Permission.Command.Chatchannel)
+	fun chatchannel(@Sender sender: Player, channel: ChatChannel) {
+		if (!sender.hasPermission("fables.chat.channel.${channel}")) throw AuthorizationException()
+		val fPlayer = FablesPlayer.forPlayer(sender)
+		fPlayer.chatChannel = channel
 	}
 
 	@Command(aliases = ["chatcolor", "ccolor"], desc = "Change your chat color.")
