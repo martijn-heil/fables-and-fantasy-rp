@@ -4,6 +4,8 @@ import com.denizenscript.denizencore.objects.core.ElementTag
 import com.fablesfantasyrp.plugin.denizeninterop.dFlags
 import com.fablesfantasyrp.plugin.playerdata.FablesOfflinePlayer
 import com.fablesfantasyrp.plugin.playerdata.FablesPlayer
+import me.neznamy.tab.api.TabAPI
+import me.neznamy.tab.api.team.UnlimitedNametagManager
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.Style
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
@@ -51,9 +53,39 @@ fun FablesPlayer.parseChatMessage(message: String): Pair<ChatChannel, String> {
 	val matchResult = channelRegex.matchEntire(message)
 	return if (matchResult != null) {
 		val channelName = matchResult.groupValues[1]
-		ChatChannel.fromString(channelName)?.let { Pair(it, matchResult.groupValues[3]) }
+		ChatChannel.fromStringAliased(channelName)?.let { Pair(it, matchResult.groupValues[3]) }
 				?: throw ChatIllegalArgumentException("Unknown global channel '$channelName'.")
 	} else {
 		Pair(chatChannel, message)
 	}
+}
+
+var FablesPlayer.isTyping: Boolean
+	get() = rawData.isTyping
+	internal set(value) {
+		if (value == rawData.isTyping) return
+		rawData.isTyping = value
+		val tabPlayer = TabAPI.getInstance().getPlayer(player.uniqueId) ?: return
+		val teamManager = TabAPI.getInstance().teamManager as? UnlimitedNametagManager ?: return
+		if (value) {
+			teamManager.setLine(tabPlayer, "belowname", ChatColor.GRAY.toString() + ".")
+			this.cycleTypingAnimation()
+		} else {
+			rawData.lastTypingAnimation = null
+			teamManager.resetLine(tabPlayer, "belowname")
+		}
+	}
+
+internal fun FablesPlayer.cycleTypingAnimation() {
+	val animation = when (rawData.lastTypingAnimation) {
+		"." -> ".."
+		".." -> "..."
+		"..." -> "...."
+		"...." -> "."
+		else -> "."
+	}
+	val tabPlayer = TabAPI.getInstance().getPlayer(player.uniqueId) ?: return
+	val teamManager = TabAPI.getInstance().teamManager as? UnlimitedNametagManager ?: return
+	teamManager.setLine(tabPlayer, "belowname", ChatColor.WHITE.toString() + animation)
+	rawData.lastTypingAnimation = animation
 }

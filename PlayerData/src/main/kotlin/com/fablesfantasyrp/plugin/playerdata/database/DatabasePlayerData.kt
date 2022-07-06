@@ -4,11 +4,16 @@ import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.playerdata.PlayerData
 import net.kyori.adventure.text.format.Style
 import org.bukkit.OfflinePlayer
+import java.time.Instant
 
 class DatabasePlayerData : PlayerData {
 	private var dirtyMarker: DirtyMarker<DatabasePlayerData>? = null
 
 	override val offlinePlayer: OfflinePlayer
+
+	override var isTyping: Boolean = false
+	override var lastTimeTyping: Instant = Instant.ofEpochSecond(0)
+	override var lastTypingAnimation: String? = null
 
 	override var currentCharacterId: ULong?
 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }

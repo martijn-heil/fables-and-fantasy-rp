@@ -11,6 +11,7 @@ depend:
   - FablesCharacters
   - FablesDenizenInterop
   - NinCommands
+  - TAB
   - ProtocolLib
   - Vault
 loadbefore:

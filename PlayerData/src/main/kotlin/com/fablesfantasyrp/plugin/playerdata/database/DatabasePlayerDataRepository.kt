@@ -131,6 +131,8 @@ class DatabasePlayerRepository internal constructor(private val plugin: Plugin) 
 		}
 	}
 
+	fun allOnline(): Collection<DatabasePlayerData> = strongCache
+
 	private fun fromCache(id: UUID): DatabasePlayerData? {
 		synchronized(this) {
 			val maybe = cache[id]?.get()
@@ -181,5 +183,6 @@ class DatabasePlayerRepository internal constructor(private val plugin: Plugin) 
 }
 
 fun DatabasePlayerData.Companion.forOfflinePlayer(p: OfflinePlayer) = databasePlayerRepository.forPlayer(p)
+fun DatabasePlayerData.Companion.allOnline() = databasePlayerRepository.allOnline()
 fun DatabasePlayerData.save() = databasePlayerRepository.save(this)
 fun DatabasePlayerData.destroy() = databasePlayerRepository.destroy(this)

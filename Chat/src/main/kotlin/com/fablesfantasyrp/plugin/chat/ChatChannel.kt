@@ -55,9 +55,22 @@ fun ChatChannel.Companion.fromString(s: String): ChatChannel? = when(s.lowercase
 	"ic.shout" -> ChatInCharacterShout
 	"staff" -> ChatStaff
 	"spectator" -> ChatSpectator
-	"sc" -> ChatSpectator // alias
-	"st" -> ChatStaff // alias
 	else -> null
+}
+
+fun ChatChannel.Companion.fromStringAliased(s: String): ChatChannel? {
+	val name = s.lowercase()
+	return when {
+		name == "ooc" -> ChatOutOfCharacter
+		name == "looc" -> ChatLocalOutOfCharacter
+		Regex("(ic|rp)").matches(name) -> ChatInCharacter
+		Regex("(ic|rp)\\.(whisper|w)").matches(name) -> ChatInCharacterWhisper
+		Regex("(ic|rp)\\.(quiet|q)").matches(name) -> ChatInCharacterQuiet
+		Regex("(ic|rp)\\.(shout|s)").matches(name) -> ChatInCharacterShout
+		Regex("(spectator|sc|spectatorchat|specchat)").matches(name) -> ChatInCharacter
+		Regex("(staff|st|staffchat)").matches(name) -> ChatStaff
+		else -> null
+	}
 }
 
 class ChatIllegalArgumentException(message: String) : IllegalArgumentException(message)
@@ -78,6 +91,8 @@ object ChatOutOfCharacter : ChatChannel, RawChatChannel, ToggleableChatChannel, 
 	override fun sendMessage(from: CommandSender, message: String) = this.sendMessage(from, parseLinks(message))
 
 	fun sendMessage(from: CommandSender, message: Component) {
+		if(PlainTextComponentSerializer.plainText().serialize(message).isEmpty()) return
+
 		val final = this.formatMessage(from, message)
 		getRecipients(from).forEach { it.sendMessage(final) }
 		logChatToConsole(final)
@@ -124,6 +139,8 @@ object ChatLocalOutOfCharacter : ChatChannel, RawChatChannel, ToggleableChatChan
 	}
 
 	override fun sendMessage(from: Player, message: Component) {
+		if(PlainTextComponentSerializer.plainText().serialize(message).isEmpty()) return
+
 		val final = this.formatMessage(from, message)
 		val recipients = getRecipients(from).toList()
 		recipients.forEach { it.sendMessage(final) }

@@ -14,10 +14,25 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerChatEvent
 import org.bukkit.plugin.Plugin
+import java.time.Duration
+import java.time.Instant
 
 
 class ChatPreviewManager(private val plugin: Plugin) {
 	init {
+		plugin.server.scheduler.scheduleSyncRepeatingTask(plugin, {
+			FablesPlayer.allOnline().forEach {
+				val now = Instant.now()
+				if (it.isTyping && Duration.between(it.rawData.lastTimeTyping, now).toMillis() >= 4000) {
+					it.isTyping = false
+				}
+			}
+		}, 0, 1)
+
+		plugin.server.scheduler.scheduleSyncRepeatingTask(plugin, {
+			FablesPlayer.allOnline().filter { it.isTyping }.forEach { it.cycleTypingAnimation() }
+		}, 0, 10)
+
 		ProtocolLibrary.getProtocolManager().addPacketListener(object : PacketAdapter(params().plugin(plugin)
 				.listenerPriority(ListenerPriority.HIGHEST)
 				.types(	PacketType.Login.Client.START,
@@ -34,6 +49,7 @@ class ChatPreviewManager(private val plugin: Plugin) {
 				when (event.packetType) {
 					PacketType.Play.Client.CHAT -> {
 						event.isCancelled = true
+						fPlayer.isTyping = false
 						plugin.server.scheduler.scheduleSyncDelayedTask(plugin) {
 							val chatMessage = packet.strings.read(0).take(256)
 							val chatEvent = PlayerChatEvent(player, chatMessage)
@@ -42,6 +58,8 @@ class ChatPreviewManager(private val plugin: Plugin) {
 					}
 
 					PacketType.Play.Client.CHAT_PREVIEW -> {
+						fPlayer.rawData.lastTimeTyping = Instant.now()
+						fPlayer.isTyping = true
 						val requestId = packet.integers.read(0)
 						val rawChatMessage = packet.strings.read(0)
 						try {

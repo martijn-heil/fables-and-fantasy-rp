@@ -64,6 +64,7 @@ repositories {
 	maven { url = URI("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") }
 	maven { url = URI("https://repo.extendedclip.com/content/repositories/placeholderapi") }
 	maven { url = URI("https://ci.citizensnpcs.co/job/Denizen/1765/maven-repository/repository/") }
+	maven { url = URI("https://repo.kryptonmc.org/releases") }
 	maven { url = URI("https://repo.dmulloy2.net/repository/public/") }
 	maven { url = URI("https://repo.essentialsx.net/releases/") }
 	maven { url = URI("https://repo.codemc.io/repository/maven-public/") }
