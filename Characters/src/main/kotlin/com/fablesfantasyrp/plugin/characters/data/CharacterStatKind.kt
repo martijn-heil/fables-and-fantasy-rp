@@ -1,4 +1,4 @@
-package com.fablesfantasyrp.plugin.characters
+package com.fablesfantasyrp.plugin.characters.data
 
 enum class CharacterStatKind {
 	STRENGTH,

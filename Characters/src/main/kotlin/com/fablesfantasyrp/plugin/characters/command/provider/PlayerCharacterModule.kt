@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.characters.command.provider
 
-import com.fablesfantasyrp.plugin.characters.CharacterStatKind
-import com.fablesfantasyrp.plugin.characters.PlayerCharacter
+import com.fablesfantasyrp.plugin.characters.data.CharacterStatKind
+import com.fablesfantasyrp.plugin.characters.data.PlayerCharacter
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.OfflinePlayerProvider
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.PlayerProvider
 import com.sk89q.intake.parametric.AbstractModule

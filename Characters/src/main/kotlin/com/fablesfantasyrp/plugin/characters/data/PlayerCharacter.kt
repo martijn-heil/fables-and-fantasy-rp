@@ -1,6 +1,6 @@
-package com.fablesfantasyrp.plugin.characters
+package com.fablesfantasyrp.plugin.characters.data
 
-import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterRepository
+import com.fablesfantasyrp.plugin.characters.playerCharacterRepository
 import org.bukkit.Location
 import org.bukkit.OfflinePlayer
 

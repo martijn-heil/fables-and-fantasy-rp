@@ -3,6 +3,9 @@ package com.fablesfantasyrp.plugin.characters.command
 import com.denizenscript.denizen.objects.PlayerTag
 import com.denizenscript.denizencore.objects.core.ElementTag
 import com.fablesfantasyrp.plugin.characters.*
+import com.fablesfantasyrp.plugin.characters.data.CharacterStats
+import com.fablesfantasyrp.plugin.characters.data.PlayerCharacter
+import com.fablesfantasyrp.plugin.characters.gui.CharacterStatsGui
 import com.fablesfantasyrp.plugin.denizeninterop.denizenRun
 import com.fablesfantasyrp.plugin.playerdata.FablesOfflinePlayer
 import com.fablesfantasyrp.plugin.text.join

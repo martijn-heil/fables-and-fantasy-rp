@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.characters.command.provider
 
-import com.fablesfantasyrp.plugin.characters.PlayerCharacter
+import com.fablesfantasyrp.plugin.characters.data.PlayerCharacter
 import com.fablesfantasyrp.plugin.characters.playerCharacters
 import com.sk89q.intake.argument.ArgumentParseException
 import com.sk89q.intake.argument.CommandArgs

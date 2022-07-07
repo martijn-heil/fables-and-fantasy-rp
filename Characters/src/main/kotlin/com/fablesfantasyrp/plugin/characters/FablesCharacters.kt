@@ -3,8 +3,8 @@ package com.fablesfantasyrp.plugin.characters
 import com.denizenscript.denizencore.objects.core.MapTag
 import com.fablesfantasyrp.plugin.characters.command.Commands
 import com.fablesfantasyrp.plugin.characters.command.provider.PlayerCharacterModule
+import com.fablesfantasyrp.plugin.characters.data.PlayerCharacter
 import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterRepository
-import com.fablesfantasyrp.plugin.characters.database.DatabasePlayerCharacterRepository
 import com.fablesfantasyrp.plugin.denizeninterop.dFlags
 import com.fablesfantasyrp.plugin.playerdata.FablesOfflinePlayer
 import com.fablesfantasyrp.plugin.utils.enforceDependencies

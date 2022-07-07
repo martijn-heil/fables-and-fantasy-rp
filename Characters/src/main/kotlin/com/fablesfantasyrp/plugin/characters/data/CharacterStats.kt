@@ -1,4 +1,4 @@
-package com.fablesfantasyrp.plugin.characters
+package com.fablesfantasyrp.plugin.characters.data
 
 data class CharacterStats(	val strength: UInt = 0U,
 						  	val defense: UInt = 0U,

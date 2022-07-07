@@ -1,8 +1,6 @@
 package com.fablesfantasyrp.plugin.playerdata
 
-import com.fablesfantasyrp.plugin.playerdata.database.DatabasePlayerData
-import com.fablesfantasyrp.plugin.playerdata.database.allOnline
-import com.fablesfantasyrp.plugin.playerdata.database.forOfflinePlayer
+import com.fablesfantasyrp.plugin.playerdata.data.PlayerData
 import org.bukkit.entity.Player
 
 class FablesPlayer(rawData: PlayerData) : FablesOfflinePlayer(rawData) {
@@ -10,7 +8,7 @@ class FablesPlayer(rawData: PlayerData) : FablesOfflinePlayer(rawData) {
 		get() = super.player!!
 
 	companion object {
-		fun forPlayer(p: Player) = FablesPlayer(DatabasePlayerData.forOfflinePlayer(p))
-		fun allOnline() = DatabasePlayerData.allOnline().asSequence().map { FablesPlayer(it) }
+		fun forPlayer(p: Player) = FablesPlayer(playerDataRepository.forOfflinePlayer(p))
+		fun allOnline() = playerDataRepository.allOnline().asSequence().map { FablesPlayer(it) }
 	}
 }

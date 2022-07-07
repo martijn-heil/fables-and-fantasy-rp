@@ -1,4 +1,4 @@
-package com.fablesfantasyrp.plugin.playerdata
+package com.fablesfantasyrp.plugin.playerdata.data
 
 import net.kyori.adventure.text.format.Style
 import org.bukkit.OfflinePlayer

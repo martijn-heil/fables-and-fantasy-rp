@@ -1,5 +1,6 @@
-package com.fablesfantasyrp.plugin.characters
+package com.fablesfantasyrp.plugin.characters.gui
 
+import com.fablesfantasyrp.plugin.characters.data.CharacterStats
 import com.fablesfantasyrp.plugin.gui.GuiSlider
 import com.fablesfantasyrp.plugin.gui.ResultProducingGui
 import de.themoep.inventorygui.DynamicGuiElement

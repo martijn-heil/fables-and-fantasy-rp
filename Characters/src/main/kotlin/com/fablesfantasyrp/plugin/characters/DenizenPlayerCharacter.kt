@@ -3,6 +3,10 @@ package com.fablesfantasyrp.plugin.characters
 import com.denizenscript.denizen.objects.LocationTag
 import com.denizenscript.denizencore.objects.core.ElementTag
 import com.denizenscript.denizencore.objects.core.MapTag
+import com.fablesfantasyrp.plugin.characters.data.CharacterStats
+import com.fablesfantasyrp.plugin.characters.data.Gender
+import com.fablesfantasyrp.plugin.characters.data.PlayerCharacter
+import com.fablesfantasyrp.plugin.characters.data.Race
 import com.fablesfantasyrp.plugin.denizeninterop.dFlags
 import org.bukkit.Location
 import org.bukkit.OfflinePlayer

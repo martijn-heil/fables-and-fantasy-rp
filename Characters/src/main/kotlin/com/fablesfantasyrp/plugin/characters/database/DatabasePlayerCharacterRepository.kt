@@ -1,10 +1,7 @@
 package com.fablesfantasyrp.plugin.characters.database
 
-import com.fablesfantasyrp.plugin.characters.CharacterStats
-import com.fablesfantasyrp.plugin.characters.Gender
-import com.fablesfantasyrp.plugin.characters.Race
+import com.fablesfantasyrp.plugin.characters.data.*
 import com.fablesfantasyrp.plugin.characters.playerCharacterRepository
-import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterRepository
 import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
 import com.fablesfantasyrp.plugin.database.repository.CachingRepository
 import org.bukkit.Location
@@ -15,17 +12,18 @@ import java.sql.ResultSet
 import java.sql.Statement
 import java.util.*
 
-class DatabasePlayerCharacterRepository internal constructor(private val plugin: Plugin) : PlayerCharacterRepository {
-	private val cache = HashMap<ULong, WeakReference<DatabasePlayerCharacter>>()
-	private val dirty = HashSet<DatabasePlayerCharacter>()
+class DatabasePlayerCharacterRepository internal constructor(private val plugin: Plugin)
+	: PlayerCharacterRepository, CachingRepository<PlayerCharacter> {
+	private val cache = HashMap<ULong, WeakReference<PlayerCharacter>>()
+	private val dirty = HashSet<PlayerCharacter>()
 	private val server = plugin.server
 
-	override fun save(v: DatabasePlayerCharacter) {
+	override fun save(v: PlayerCharacter) {
 		saveRaw(v)
 		dirty.remove(v)
 	}
 
-	private fun saveRaw(c: DatabasePlayerCharacter) {
+	private fun saveRaw(c: PlayerCharacter) {
 		val stmnt = fablesDatabase.prepareStatement("UPDATE fables_characters SET " +
 				"name = ?, " +
 				"age = ?, " +
@@ -91,7 +89,7 @@ class DatabasePlayerCharacterRepository internal constructor(private val plugin:
 				stats, location, money, player)
 	}
 
-	fun forId(id: ULong): DatabasePlayerCharacter {
+	override fun forId(id: ULong): PlayerCharacter {
 		return fromCache(id) ?: run {
 			val stmnt = fablesDatabase.prepareStatement("SELECT * FROM fables_characters WHERE id = ?")
 			stmnt.setInt(1, id.toInt())
@@ -103,24 +101,24 @@ class DatabasePlayerCharacterRepository internal constructor(private val plugin:
 		}
 	}
 
-	fun all(): List<DatabasePlayerCharacter> {
+	override fun all(): List<PlayerCharacter> {
 		val stmnt = fablesDatabase.prepareStatement("SELECT * FROM fables_characters")
 		val result = stmnt.executeQuery()
-		val all = ArrayList<DatabasePlayerCharacter>()
+		val all = ArrayList<PlayerCharacter>()
 		while(result.next()) all.add(fromRowOrCache(result))
 		return all
 	}
 
-	fun allForPlayer(p: OfflinePlayer): List<DatabasePlayerCharacter> {
+	override fun allForPlayer(p: OfflinePlayer): List<PlayerCharacter> {
 		val stmnt = fablesDatabase.prepareStatement("SELECT * FROM fables_characters WHERE player = ?")
 		stmnt.setObject(1, p.uniqueId)
 		val result = stmnt.executeQuery()
-		val all = ArrayList<DatabasePlayerCharacter>()
+		val all = ArrayList<PlayerCharacter>()
 		while(result.next()) all.add(fromRowOrCache(result))
 		return all
 	}
 
-	override fun destroy(v: DatabasePlayerCharacter) {
+	override fun destroy(v: PlayerCharacter) {
 		cache.remove(v.id)
 		dirty.remove(v)
 		val stmnt = fablesDatabase.prepareStatement("DELETE FROM fables_characters WHERE id = ?")
@@ -128,7 +126,7 @@ class DatabasePlayerCharacterRepository internal constructor(private val plugin:
 		stmnt.executeUpdate()
 	}
 
-	override fun markDirty(v: DatabasePlayerCharacter) {
+	override fun markDirty(v: PlayerCharacter) {
 		dirty.add(v)
 	}
 
@@ -163,13 +161,13 @@ class DatabasePlayerCharacterRepository internal constructor(private val plugin:
 				server.getOfflinePlayer(playerUuid))
 	}
 
-	private fun fromCache(id: ULong): DatabasePlayerCharacter? {
+	private fun fromCache(id: ULong): PlayerCharacter? {
 		val maybe = cache[id]?.get()
 		if (maybe == null) cache.remove(id)
 		return maybe
 	}
 
-	private fun fromRowOrCache(result: ResultSet): DatabasePlayerCharacter {
+	private fun fromRowOrCache(result: ResultSet): PlayerCharacter {
 		val id = result.getLong("id").toULong()
 		val maybe = fromCache(id)
 
@@ -183,8 +181,5 @@ class DatabasePlayerCharacterRepository internal constructor(private val plugin:
 	}
 }
 
-fun DatabasePlayerCharacter.Companion.forId(id: ULong) = playerCharacterRepository.forId(id)
-fun DatabasePlayerCharacter.Companion.all() = playerCharacterRepository.all()
-fun DatabasePlayerCharacter.Companion.allForPlayer(p: OfflinePlayer) = playerCharacterRepository.allForPlayer(p)
 fun DatabasePlayerCharacter.save() = playerCharacterRepository.save(this)
 fun DatabasePlayerCharacter.destroy() = playerCharacterRepository.destroy(this)

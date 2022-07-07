@@ -1,7 +1,6 @@
 package com.fablesfantasyrp.plugin.playerdata
 
-import com.fablesfantasyrp.plugin.playerdata.database.DatabasePlayerData
-import com.fablesfantasyrp.plugin.playerdata.database.forOfflinePlayer
+import com.fablesfantasyrp.plugin.playerdata.data.PlayerData
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 
@@ -13,12 +12,9 @@ open class FablesOfflinePlayer(val rawData: PlayerData)  {
 		get() = Bukkit.getPlayer(offlinePlayer.uniqueId)
 
 	companion object {
-		fun forOfflinePlayer(p: OfflinePlayer) = FablesOfflinePlayer(DatabasePlayerData.forOfflinePlayer(p))
+		fun forOfflinePlayer(p: OfflinePlayer) = FablesOfflinePlayer(playerDataRepository.forOfflinePlayer(p))
 	}
 
 	override fun equals(other: Any?) = other is FablesOfflinePlayer && other.rawData == this.rawData
 	override fun hashCode(): Int = rawData.hashCode()
 }
-
-val OfflinePlayer.fablesOfflinePlayer
-	get() = FablesOfflinePlayer.forOfflinePlayer(this)

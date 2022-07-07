@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.rolls.command
 
-import com.fablesfantasyrp.plugin.characters.CharacterStatKind
+import com.fablesfantasyrp.plugin.characters.data.CharacterStatKind
 import com.fablesfantasyrp.plugin.characters.currentPlayerCharacter
 import com.fablesfantasyrp.plugin.chat.chatStyle
 import com.fablesfantasyrp.plugin.chat.getPlayersWithinRange

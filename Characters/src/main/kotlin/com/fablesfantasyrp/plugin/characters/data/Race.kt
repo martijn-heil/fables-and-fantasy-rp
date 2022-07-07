@@ -1,4 +1,4 @@
-package com.fablesfantasyrp.plugin.characters
+package com.fablesfantasyrp.plugin.characters.data
 
 enum class Race(private val displayName: String, val boosters: CharacterStats) {
 	HUMAN("Human", CharacterStats(strength = 1U, defense = 1U, agility = 1U)),

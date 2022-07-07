@@ -1,13 +1,13 @@
 package com.fablesfantasyrp.plugin.playerdata.database
 
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
-import com.fablesfantasyrp.plugin.playerdata.PlayerData
+import com.fablesfantasyrp.plugin.playerdata.data.PlayerData
 import net.kyori.adventure.text.format.Style
 import org.bukkit.OfflinePlayer
 import java.time.Instant
 
 class DatabasePlayerData : PlayerData {
-	private var dirtyMarker: DirtyMarker<DatabasePlayerData>? = null
+	private var dirtyMarker: DirtyMarker<PlayerData>? = null
 
 	override val offlinePlayer: OfflinePlayer
 
@@ -27,7 +27,7 @@ class DatabasePlayerData : PlayerData {
 	override var chatDisabledChannels: Set<String>
 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 
-	internal constructor(dirtyMarker: DirtyMarker<DatabasePlayerData>, player: OfflinePlayer, currentCharacter: ULong?,
+	internal constructor(dirtyMarker: DirtyMarker<PlayerData>, player: OfflinePlayer, currentCharacter: ULong?,
 						 chatChannel: String, chatStyle: Style?, chatDisabledChannels: Set<String>) {
 		this.offlinePlayer = player
 		this.currentCharacterId = currentCharacter
