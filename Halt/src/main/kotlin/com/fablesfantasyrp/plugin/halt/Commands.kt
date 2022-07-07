@@ -18,9 +18,10 @@ class Commands {
 	@Require("fables.halt.command.halt")
 	fun halt(@Sender origin: Player, @AllowCharacterName target: Player) {
 		val targets = listOf(target).asSequence()
+				.filter { it.gameMode != SPECTATOR }
 				.filter { !it.isVanished }
 				.filter { FablesPlayer.forPlayer(it).currentPlayerCharacter != null }
-				.filter { it.gameMode != SPECTATOR }.toList()
+				.toList()
 
 		for (it in targets) {
 			if (it == origin) {
