@@ -1,5 +1,7 @@
 package com.fablesfantasyrp.plugin.characters.database
 
+import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterRepository
+import com.fablesfantasyrp.plugin.characters.playerCharacterRepository
 import com.fablesfantasyrp.plugin.characters.CharacterStats
 import com.fablesfantasyrp.plugin.characters.Gender
 import com.fablesfantasyrp.plugin.characters.PlayerCharacter
@@ -57,5 +59,5 @@ class DatabasePlayerCharacter : PlayerCharacter {
 		return id.hashCode()
 	}
 
-	companion object
+	companion object : PlayerCharacterRepository by playerCharacterRepository
 }

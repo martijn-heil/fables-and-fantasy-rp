@@ -4,6 +4,7 @@ import com.fablesfantasyrp.plugin.characters.CharacterStats
 import com.fablesfantasyrp.plugin.characters.Gender
 import com.fablesfantasyrp.plugin.characters.Race
 import com.fablesfantasyrp.plugin.characters.playerCharacterRepository
+import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterRepository
 import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
 import com.fablesfantasyrp.plugin.database.repository.CachingRepository
 import org.bukkit.Location
@@ -14,7 +15,7 @@ import java.sql.ResultSet
 import java.sql.Statement
 import java.util.*
 
-class DatabasePlayerCharacterRepository internal constructor(private val plugin: Plugin) : CachingRepository<DatabasePlayerCharacter> {
+class DatabasePlayerCharacterRepository internal constructor(private val plugin: Plugin) : PlayerCharacterRepository {
 	private val cache = HashMap<ULong, WeakReference<DatabasePlayerCharacter>>()
 	private val dirty = HashSet<DatabasePlayerCharacter>()
 	private val server = plugin.server

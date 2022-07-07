@@ -3,6 +3,7 @@ package com.fablesfantasyrp.plugin.characters
 import com.denizenscript.denizencore.objects.core.MapTag
 import com.fablesfantasyrp.plugin.characters.command.Commands
 import com.fablesfantasyrp.plugin.characters.command.provider.PlayerCharacterModule
+import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterRepository
 import com.fablesfantasyrp.plugin.characters.database.DatabasePlayerCharacterRepository
 import com.fablesfantasyrp.plugin.denizeninterop.dFlags
 import com.fablesfantasyrp.plugin.playerdata.FablesOfflinePlayer
@@ -23,7 +24,7 @@ import org.bukkit.Server
 
 internal val SYSPREFIX = "$GOLD[ $GREEN${BOLD}CHARACTERS $GOLD] $GRAY"
 
-lateinit var playerCharacterRepository: DatabasePlayerCharacterRepository
+lateinit var playerCharacterRepository: PlayerCharacterRepository
 	private set
 
 internal val PLUGIN get() = FablesCharacters.instance

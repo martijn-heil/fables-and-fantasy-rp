@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.characters
 
+import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterRepository
 import org.bukkit.Location
 import org.bukkit.OfflinePlayer
 
@@ -15,5 +16,5 @@ interface PlayerCharacter {
 	val money: ULong
 	val player: OfflinePlayer
 
-	companion object
+	companion object : PlayerCharacterRepository by playerCharacterRepository
 }
