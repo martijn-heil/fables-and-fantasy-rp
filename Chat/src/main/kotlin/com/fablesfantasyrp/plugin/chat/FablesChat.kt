@@ -1,6 +1,11 @@
 package com.fablesfantasyrp.plugin.chat
 
 import com.fablesfantasyrp.plugin.chat.command.provider.ChatModule
+import com.fablesfantasyrp.plugin.chat.data.ChatPlayerData
+import com.fablesfantasyrp.plugin.chat.data.ChatPlayerDataEntityMapper
+import com.fablesfantasyrp.plugin.chat.database.DatabasePersistentChatPlayerDataRepository
+import com.fablesfantasyrp.plugin.database.entity.EntityRepository
+import com.fablesfantasyrp.plugin.database.entity.EntityRepositoryImpl
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
@@ -11,16 +16,14 @@ import com.sk89q.intake.Intake
 import com.sk89q.intake.fluent.CommandGraph
 import com.sk89q.intake.parametric.ParametricBuilder
 import com.sk89q.intake.parametric.provider.PrimitivesModule
-import net.kyori.adventure.text.minimessage.MiniMessage
-import net.milkbowl.vault.chat.Chat
 import org.bukkit.ChatColor.*
 import org.bukkit.plugin.java.JavaPlugin
+import java.util.*
 
 internal val SYSPREFIX = "${GOLD}[${DARK_AQUA}${BOLD} CHAT ${GOLD}] $GRAY"
 
-internal lateinit var vaultChat: Chat
-internal lateinit var miniMessage: MiniMessage
 internal lateinit var chatPreviewManager: ChatPreviewManager
+internal lateinit var chatPlayerDataManager: EntityRepository<UUID, ChatPlayerData>
 
 class FablesChat : JavaPlugin() {
 
@@ -28,10 +31,12 @@ class FablesChat : JavaPlugin() {
 		enforceDependencies(this)
 		instance = this
 
-		vaultChat = server.servicesManager.getRegistration(Chat::class.java)!!.provider
-		miniMessage = MiniMessage.builder().strict(true).build()
-
 		chatPreviewManager = ChatPreviewManager(this)
+		chatPlayerDataManager = EntityRepositoryImpl(
+				ChatPlayerDataEntityMapper(
+						DatabasePersistentChatPlayerDataRepository()
+				)
+		)
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())

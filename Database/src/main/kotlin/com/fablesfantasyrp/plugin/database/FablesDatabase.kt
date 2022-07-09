@@ -25,36 +25,37 @@ class FablesDatabase : JavaPlugin() {
 		this.saveResource("db/migration/V1__create_tables.sql", true)
 		this.saveResource("db/migration/V2__chat.sql", true)
 
-		val flyway = Flyway(classLoader)
-		flyway.setLocations("filesystem:${this.dataFolder.resolve("db/migration").path}")
-		flyway.setDataSource(dbUrl, dbUsername, dbPassword)
-		flyway.isBaselineOnMigrate = true;
-		flyway.baselineVersion = MigrationVersion.fromVersion("0");
+		server.scheduler.scheduleSyncDelayedTask(this, {
+			val flyway = Flyway(classLoader)
+			flyway.setLocations("filesystem:${this.dataFolder.resolve("db/migration").path}")
+			flyway.setDataSource(dbUrl, dbUsername, dbPassword)
+			flyway.isBaselineOnMigrate = true;
+			flyway.baselineVersion = MigrationVersion.fromVersion("0");
 
-		try {
-			logger.info("Successfully applied ${flyway.migrate()} migrations")
-		} catch (ex: FlywayException) {
-			logger.severe(ex.message)
-			ex.printStackTrace()
 			try {
-				flyway.repair()
+				logger.info("Successfully applied ${flyway.migrate()} migrations")
 			} catch (ex: FlywayException) {
-				logger.severe("Error whilst attempting to repair migrations:")
+				logger.severe(ex.message)
 				ex.printStackTrace()
-				logger.severe("Continuing to disable plugin..")
-				this.isEnabled = false
-				return
+				try {
+					flyway.repair()
+				} catch (ex: FlywayException) {
+					logger.severe("Error whilst attempting to repair migrations:")
+					ex.printStackTrace()
+					logger.severe("Continuing to disable plugin..")
+					this.isEnabled = false
+					return@scheduleSyncDelayedTask
+				}
 			}
-		}
 
-		try {
-			dbconn = DriverManager.getConnection(dbUrl, dbUsername, dbPassword)
-		} catch (ex: SQLException) {
-			logger.severe(ex.message)
-			logger.severe("Disabling plugin due to database error..")
-			this.isEnabled = false
-			return
-		}
+			try {
+				dbconn = DriverManager.getConnection(dbUrl, dbUsername, dbPassword)
+			} catch (ex: SQLException) {
+				logger.severe(ex.message)
+				logger.severe("Disabling plugin due to database error..")
+				this.isEnabled = false
+			}
+		}, 0)
 	}
 
 	override fun onDisable() {

@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.chat
 
+import com.fablesfantasyrp.plugin.chat.channel.ChatIllegalArgumentException
 import com.fablesfantasyrp.plugin.playerdata.FablesPlayer
 import com.fablesfantasyrp.plugin.text.sendError
 import org.bukkit.Server

@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.chat
 
 import com.denizenscript.denizencore.objects.core.ElementTag
+import com.fablesfantasyrp.plugin.chat.channel.*
 import com.fablesfantasyrp.plugin.denizeninterop.dFlags
 import com.fablesfantasyrp.plugin.playerdata.FablesOfflinePlayer
 import com.fablesfantasyrp.plugin.playerdata.FablesPlayer
