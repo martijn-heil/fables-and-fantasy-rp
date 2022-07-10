@@ -16,5 +16,5 @@ class ChatPlayerDataEntityMapper(private val child: PersistentChatPlayerDataRepo
 	override fun all(): Collection<ChatPlayerEntity> = child.all().map { convert(it) }
 
 	private fun convert(it: PersistentChatPlayerData): ChatPlayerEntity
-		= ChatPlayerDataEntity(it.channel, it.chatStyle, it.disabledChannels, it.id)
+		= ChatPlayerDataEntity(it.id, it.channel, it.chatStyle, it.disabledChannels)
 }

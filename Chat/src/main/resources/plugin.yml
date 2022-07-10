@@ -5,7 +5,6 @@ depend:
   - FablesKotlinRuntime
   - FablesGui
   - FablesDatabase
-  - FablesPlayerData
   - FablesUtils
   - FablesText
   - FablesCharacters

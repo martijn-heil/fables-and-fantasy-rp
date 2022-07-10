@@ -64,7 +64,11 @@ open class SimpleEntityRepository<K, T: Identifiable<K>, C>(private var child: C
 
 	override fun allIds(): Collection<K> = child.allIds()
 	override fun all(): Collection<T> = child.allIds().map { this.forId(it)!! }
-	override fun forId(id: K): T? = fromCache(id) ?: child.forId(id)
+	override fun forId(id: K): T? = fromCache(id) ?: run {
+		val obj = child.forId(id)
+		cache[id] = WeakReference(obj)
+		obj
+	}
 
 	private fun fromCache(id: K): T? {
 		synchronized(this) {

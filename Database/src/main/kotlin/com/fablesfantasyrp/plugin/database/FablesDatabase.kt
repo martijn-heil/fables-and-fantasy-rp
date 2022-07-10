@@ -4,10 +4,12 @@ import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import org.flywaydb.core.Flyway
 import org.flywaydb.core.api.FlywayException
-import org.h2.jdbcx.JdbcDataSource
+import org.h2.jdbcx.JdbcConnectionPool
 import javax.sql.DataSource
 
 class FablesDatabase : JavaPlugin() {
+	private val DB_DRIVER = "org.h2.Driver"
+
 	override fun onEnable() {
 		logger.fine("Saving default config..")
 		saveDefaultConfig()
@@ -19,15 +21,10 @@ class FablesDatabase : JavaPlugin() {
 		// Storing the password in a char array doesn't improve much..
 		// it's stored in plaintext in the "config" object anyway.. :/
 
-		// For some reason Flyway just can't reliably find the migrations as a resource in the jar
-		// So instead we just put them on the filesystem and let flyway find them there
-		this.saveResource("db/migration/V1__create_tables.sql", true)
-		this.saveResource("db/migration/V2__chat.sql", true)
+		val dataSource = JdbcConnectionPool.create(dbUrl, dbUsername, dbPassword)
+		dataSource.maxConnections = 50
+		dataSource.loginTimeout = 5
 
-		val dataSource = JdbcDataSource()
-		dataSource.user = dbUsername
-		dataSource.password = dbPassword
-		dataSource.setURL(dbUrl)
 		fablesDatabase = dataSource
 
 		try {
@@ -63,7 +60,6 @@ fun applyMigrations(plugin: Plugin, schema: String?, classLoader: ClassLoader) {
 	if (schema != null) flywayConfig.defaultSchema(schema)
 
 	val flyway = flywayConfig.load()
-	//.locations("filesystem:${plugin.dataFolder.resolve("db/migration").path}")
 
 	try {
 		plugin.logger.info("Successfully applied ${flyway.migrate()} migrations")

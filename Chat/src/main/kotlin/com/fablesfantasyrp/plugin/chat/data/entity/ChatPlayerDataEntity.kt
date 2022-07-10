@@ -39,11 +39,12 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerData> {
 
 	override val id: UUID
 
-	constructor(channel: ChatChannel, chatStyle: Style?, disabledChannels: Set<ToggleableChatChannel>, id: UUID) {
+	constructor(id: UUID, channel: ChatChannel, chatStyle: Style?, disabledChannels: Set<ToggleableChatChannel>) {
+		Bukkit.getLogger().info("creating instance")
+		this.id = id
 		this.channel = channel
 		this.chatStyle = chatStyle
 		this.disabledChannels = disabledChannels
-		this.id = id
 	}
 
 	override var dirtyMarker: DirtyMarker<ChatPlayerData>? = null

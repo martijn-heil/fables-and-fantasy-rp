@@ -6,7 +6,6 @@ depend:
   - FablesUtils
   - FablesText
   - FablesForm
-  - FablesPlayerData
   - FablesGui
   - FablesDenizenInterop
   - FablesDatabase

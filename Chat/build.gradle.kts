@@ -17,5 +17,4 @@ dependencies {
         exclude(group = "org.bukkit")
     }
     implementation("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
-    implementation("org.flywaydb:flyway-core:5.0.3")
 }

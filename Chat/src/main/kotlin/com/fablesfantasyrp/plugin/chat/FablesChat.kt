@@ -5,6 +5,7 @@ import com.fablesfantasyrp.plugin.chat.data.entity.ChatPlayerDataEntityMapper
 import com.fablesfantasyrp.plugin.chat.data.entity.ChatPlayerDataEntityRepository
 import com.fablesfantasyrp.plugin.chat.data.entity.ChatPlayerEntity
 import com.fablesfantasyrp.plugin.chat.data.persistent.database.DatabasePersistentChatPlayerDataRepository
+import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.database.entity.EntityRepository
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
@@ -39,10 +40,10 @@ class FablesChat : JavaPlugin() {
 			return
 		}
 
-		chatPreviewManager = ChatPreviewManager(this)
+		//chatPreviewManager = ChatPreviewManager(this)
 		chatPlayerDataManager = ChatPlayerDataEntityRepository(this,
 				ChatPlayerDataEntityMapper(
-						DatabasePersistentChatPlayerDataRepository()
+						DatabasePersistentChatPlayerDataRepository(server, fablesDatabase)
 				)
 		).init()
 
@@ -71,6 +72,10 @@ class FablesChat : JavaPlugin() {
 		this.getCommand("ooc")!!.setExecutor(Commands.CommandChatOutOfCharacter())
 		this.getCommand("staffchat")!!.setExecutor(Commands.CommandChatStaff())
 		this.getCommand("spectatorchat")!!.setExecutor(Commands.CommandChatSpectator())
+	}
+
+	override fun onDisable() {
+		chatPlayerDataManager.saveAllDirty()
 	}
 
 	companion object {
