@@ -4,6 +4,7 @@ import com.earth2me.essentials.User
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
+import java.util.concurrent.locks.Lock
 
 // This code is supported by SuperVanish, PremiumVanish, VanishNoPacket and a few more vanish plugins.
 val Player.isVanished: Boolean
@@ -18,5 +19,14 @@ fun enforceDependencies(plugin: Plugin) {
 		if (dependency == null || !dependency.isEnabled) {
 			throw IllegalStateException("Missing dependency '$dependencyName'")
 		}
+	}
+}
+
+fun<T> Lock.withLock(f: () -> T): T {
+	this.lock()
+	return try {
+		f()
+	} finally {
+		this.unlock()
 	}
 }
