@@ -1,7 +1,6 @@
 package com.fablesfantasyrp.plugin.chat.gui
 
-import com.fablesfantasyrp.plugin.chat.chatStyle
-import com.fablesfantasyrp.plugin.playerdata.FablesPlayer
+import com.fablesfantasyrp.plugin.chat.chat
 import de.themoep.inventorygui.InventoryGui
 import de.themoep.inventorygui.StaticGuiElement
 import net.kyori.adventure.text.Component
@@ -42,8 +41,8 @@ class ChatColorGui(plugin: JavaPlugin) : InventoryGui(plugin, "Please select a c
 			StaticGuiElement(slot, item, {
 				if (it.whoClicked is Player) {
 					val player = it.whoClicked as Player
-					val fPlayer = FablesPlayer.forPlayer(player)
-					fPlayer.chatStyle = fPlayer.chatStyle?.color(color) ?: Style.style(color)
+					val chatPlayerEntity = player.chat
+					chatPlayerEntity.chatStyle = chatPlayerEntity.chatStyle?.color(color) ?: Style.style(color)
 				}
 				it.gui.close()
 				true

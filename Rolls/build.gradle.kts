@@ -8,6 +8,6 @@ dependencies {
     implementation(project(":Text"))
     implementation(project(":Chat"))
     implementation(project(":Characters"))
-    implementation(project(":PlayerData"))
+    implementation(project(":Database"))
     implementation("com.gitlab.martijn-heil:NinCommands:d133c3f4d4")
 }

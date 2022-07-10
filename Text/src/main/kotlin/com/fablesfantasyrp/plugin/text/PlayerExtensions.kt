@@ -1,6 +1,5 @@
 package com.fablesfantasyrp.plugin.text
 
-import com.fablesfantasyrp.plugin.playerdata.FablesPlayer
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.Style
@@ -12,19 +11,19 @@ import org.bukkit.entity.Player
 
 val CommandSender.nameStyle: Style
 	get() = when (this) {
-		is Player -> FablesPlayer.forPlayer(this).playerNameStyle
+		is Player -> this.playerNameStyle
 		is ConsoleCommandSender -> Style.style(NamedTextColor.DARK_RED)
 		else -> Style.style().build()
 	}
 
-val FablesPlayer.playerNameStyle: Style
+val Player.playerNameStyle: Style
 	get() = vaultChat.getPlayerPrefix(this.player)
 				.let { ChatColor.translateAlternateColorCodes('&', it) }
 				.let { ChatColor.getLastColors(it) }
 				.let { legacyText(it).style() }
 
-fun FablesPlayer.sendError(message: Component) {
-	player.sendMessage(formatError(message))
+fun Player.sendError(message: Component) {
+	this.sendMessage(formatError(message))
 }
 
 fun CommandSender.sendError(message: Component) {
@@ -39,6 +38,4 @@ fun formatError(message: Component): Component {
 fun formatError(message: String): Component = formatError(Component.text(message))
 
 fun CommandSender.sendError(message: String) = this.sendError(Component.text(message))
-fun FablesPlayer.sendError(message: String) = this.sendError(Component.text(message))
-fun Player.sendError(message: String) = FablesPlayer.forPlayer(this).sendError(message)
-fun Player.sendError(message: Component) = FablesPlayer.forPlayer(this).sendError(message)
+fun Player.sendError(message: String) = this.sendError(Component.text(message))

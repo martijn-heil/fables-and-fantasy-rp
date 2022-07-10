@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.chat.channel
 
-import com.fablesfantasyrp.plugin.chat.disabledChatChannels
-import com.fablesfantasyrp.plugin.playerdata.FablesPlayer
+
+import com.fablesfantasyrp.plugin.chat.chat
 import com.fablesfantasyrp.plugin.text.*
 import com.fablesfantasyrp.plugin.utils.ess
 import net.kyori.adventure.text.Component
@@ -19,11 +19,11 @@ object ChatOutOfCharacter : ChatChannel, RawChatChannel, ToggleableChatChannel, 
 	override fun getRecipients(from: Player) =
 			Bukkit.getOnlinePlayers().asSequence()
 					.filter { !it.ess.isIgnoredPlayer(from.ess) }
-					.filter { !FablesPlayer.forPlayer(it).disabledChatChannels.contains(this) }
+					.filter { !it.chat.disabledChannels.contains(this) }
 
 	override fun getRecipients(from: CommandSender) =
 			Bukkit.getOnlinePlayers().asSequence()
-					.filter { !FablesPlayer.forPlayer(it).disabledChatChannels.contains(this) }
+					.filter { !it.chat.disabledChannels.contains(this) }
 
 	override fun sendMessage(from: Player, message: String) = this.sendMessage(from, parseLinks(message))
 	override fun sendMessage(from: Player, message: Component) = this.sendMessage(from as CommandSender, message)

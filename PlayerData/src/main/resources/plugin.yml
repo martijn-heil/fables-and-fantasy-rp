@@ -1,6 +1,0 @@
-name: FablesPlayerData
-version: @version@
-authors: [@authors@]
-depend: [FablesKotlinRuntime, FablesDatabase]
-main: com.fablesfantasyrp.plugin.playerdata.FablesPlayerData
-api-version: @bukkit_api_version@

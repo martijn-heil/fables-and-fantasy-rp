@@ -1,10 +1,9 @@
 package com.fablesfantasyrp.plugin.rolls.command
 
-import com.fablesfantasyrp.plugin.characters.data.CharacterStatKind
 import com.fablesfantasyrp.plugin.characters.currentPlayerCharacter
-import com.fablesfantasyrp.plugin.chat.chatStyle
+import com.fablesfantasyrp.plugin.characters.data.CharacterStatKind
+import com.fablesfantasyrp.plugin.chat.chat
 import com.fablesfantasyrp.plugin.chat.getPlayersWithinRange
-import com.fablesfantasyrp.plugin.playerdata.FablesPlayer
 import com.fablesfantasyrp.plugin.rolls.ROLL_RANGE
 import com.fablesfantasyrp.plugin.rolls.getRollModifierFor
 import com.fablesfantasyrp.plugin.text.miniMessage
@@ -31,8 +30,7 @@ class Commands {
 	fun roll(@Sender sender: Player,
 			 @FixedSuggestions @Suggestions(["3", "6", "20", "100"]) @Range(min = 2.0, max = 200.0) @Optional("20") dice: Int,
 			 @Optional kind: CharacterStatKind?) {
-		val fPlayer = FablesPlayer.forPlayer(sender)
-		val stats = fPlayer.currentPlayerCharacter!!.stats
+		val stats = sender.currentPlayerCharacter!!.stats
 
 		val random = Random.nextInt(1..dice)
 		val result = if (kind != null) random + kind.getRollModifierFor(stats[kind]) else random
@@ -50,11 +48,11 @@ class Commands {
 			)
 		}
 
-		val chatStyle = fPlayer.chatStyle ?: Style.style(NamedTextColor.YELLOW)
+		val chatStyle = sender.chat.chatStyle ?: Style.style(NamedTextColor.YELLOW)
 		val resolver = TagResolver.builder().tag("chat_color", Tag.styling { it.merge(chatStyle) }).build()
 		val parsed = messages.map {
 			miniMessage.deserialize(it,
-					Placeholder.unparsed("name", fPlayer.currentPlayerCharacter?.name ?: sender.name),
+					Placeholder.unparsed("name", sender.currentPlayerCharacter?.name ?: sender.name),
 					Placeholder.unparsed("roll", random.toString()),
 					Placeholder.unparsed("dice", dice.toString()),
 					Placeholder.unparsed("result", result.toString()),

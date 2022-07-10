@@ -2,12 +2,14 @@ package com.fablesfantasyrp.plugin.characters.command
 
 import com.denizenscript.denizen.objects.PlayerTag
 import com.denizenscript.denizencore.objects.core.ElementTag
-import com.fablesfantasyrp.plugin.characters.*
+import com.fablesfantasyrp.plugin.characters.FablesCharacters
+import com.fablesfantasyrp.plugin.characters.Permission
+import com.fablesfantasyrp.plugin.characters.SYSPREFIX
 import com.fablesfantasyrp.plugin.characters.data.CharacterStats
 import com.fablesfantasyrp.plugin.characters.data.PlayerCharacter
 import com.fablesfantasyrp.plugin.characters.gui.CharacterStatsGui
+import com.fablesfantasyrp.plugin.characters.playerCharacters
 import com.fablesfantasyrp.plugin.denizeninterop.denizenRun
-import com.fablesfantasyrp.plugin.playerdata.FablesOfflinePlayer
 import com.fablesfantasyrp.plugin.text.join
 import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
@@ -36,7 +38,6 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 	@Command(aliases = ["listcharacters", "listchars"], desc = "List a player's characters")
 	@Require(Permission.Command.Listcharacters)
 	fun listcharacters(@Sender sender: Player, @CommandTarget(Permission.Command.Listcharacters + ".others") target: OfflinePlayer) {
-		val fTarget = FablesOfflinePlayer.forOfflinePlayer(target)
 		val msg = Component.text()
 
 		val header = miniMessage.deserialize("<gray><prefix><player_name> has the following characters:</gray>",
@@ -46,7 +47,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 		msg.append(header)
 		msg.append(Component.newline())
 
-		val body = Component.text().append(fTarget.playerCharacters.asSequence().map {
+		val body = Component.text().append(target.playerCharacters.asSequence().map {
 			miniMessage.deserialize("<gray>#<id> <name></gray>",
 					Placeholder.unparsed("id", it.id.toString().padStart(4, '0')),
 					Placeholder.unparsed("name", it.name))

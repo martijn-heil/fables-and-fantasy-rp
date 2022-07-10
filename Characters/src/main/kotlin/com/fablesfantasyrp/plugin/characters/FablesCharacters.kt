@@ -6,7 +6,6 @@ import com.fablesfantasyrp.plugin.characters.command.provider.PlayerCharacterMod
 import com.fablesfantasyrp.plugin.characters.data.PlayerCharacter
 import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterRepository
 import com.fablesfantasyrp.plugin.denizeninterop.dFlags
-import com.fablesfantasyrp.plugin.playerdata.FablesOfflinePlayer
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.github.shynixn.mccoroutine.SuspendingJavaPlugin
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
@@ -60,11 +59,6 @@ class FablesCharacters : SuspendingJavaPlugin() {
 	}
 }
 
-//fun PlayerCharacter.Companion.forId(id: ULong): PlayerCharacter = DatabasePlayerCharacter.forId(id)
-//fun PlayerCharacter.Companion.all(): List<PlayerCharacter> = DatabasePlayerCharacter.all()
-//fun PlayerCharacter.Companion.allForPlayer(p: OfflinePlayer): List<PlayerCharacter>
-
-@Deprecated("Use FablesOfflinePlayer#currentPlayerCharacter")
 val OfflinePlayer.currentPlayerCharacter: PlayerCharacter?
 	get() {
 		val currentCharacter = dFlags.getFlagValue("characters_current") ?: return null
@@ -72,7 +66,6 @@ val OfflinePlayer.currentPlayerCharacter: PlayerCharacter?
 		return DenizenPlayerCharacter(id, this)
 	}
 
-@Deprecated("Use FablesOfflinePlayer#playerCharacters")
 val OfflinePlayer.playerCharacters: List<PlayerCharacter>
 	get() {
 		val characters = dFlags.getFlagValue("characters") as? MapTag ?: return emptyList()
@@ -88,12 +81,3 @@ val OfflinePlayer.playerCharacters: List<PlayerCharacter>
 
 val Server.playerCharacters: List<PlayerCharacter>
 	get() = offlinePlayers.asSequence().map { it.playerCharacters }.flatten().toList()
-
-@Suppress("DEPRECATION")
-val FablesOfflinePlayer.currentPlayerCharacter: PlayerCharacter?
-	get() = offlinePlayer.currentPlayerCharacter
-
-
-@Suppress("DEPRECATION")
-val FablesOfflinePlayer.playerCharacters: List<PlayerCharacter>
-	get() = offlinePlayer.playerCharacters

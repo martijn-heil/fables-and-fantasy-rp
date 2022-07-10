@@ -2,7 +2,6 @@ package com.fablesfantasyrp.plugin.halt
 
 import com.fablesfantasyrp.plugin.characters.command.provider.PlayerCharacterModule
 import com.fablesfantasyrp.plugin.characters.currentPlayerCharacter
-import com.fablesfantasyrp.plugin.playerdata.FablesPlayer
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.BukkitModule
@@ -65,8 +64,8 @@ var Player.haltedBy: Player?
 
 fun Player.halt(halter: Player) {
 	this.haltedBy = halter
-	val halterCharName = FablesPlayer.forPlayer(halter).currentPlayerCharacter!!.name
-	val haltedCharName = FablesPlayer.forPlayer(this).currentPlayerCharacter!!.name
+	val halterCharName = halter.currentPlayerCharacter!!.name
+	val haltedCharName = this.currentPlayerCharacter!!.name
 	this.sendMessage("$SYSPREFIX ${RED}You have been halted by ${GRAY}${halterCharName}${RED}!")
 	halter.sendMessage("$SYSPREFIX ${GREEN}You have successfully halted ${GRAY}${haltedCharName}")
 	Bukkit.broadcast("$SYSPREFIX $haltedCharName (${name}) has been " +

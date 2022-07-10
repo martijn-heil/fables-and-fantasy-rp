@@ -1,8 +1,8 @@
 package com.fablesfantasyrp.plugin.chat.command.provider
 
-import com.fablesfantasyrp.plugin.chat.ChatChannel
-import com.fablesfantasyrp.plugin.chat.ToggleableChatChannel
-import com.fablesfantasyrp.plugin.chat.fromString
+import com.fablesfantasyrp.plugin.chat.channel.ChatChannel
+import com.fablesfantasyrp.plugin.chat.channel.ToggleableChatChannel
+import com.fablesfantasyrp.plugin.chat.channel.fromString
 import com.sk89q.intake.argument.ArgumentParseException
 import com.sk89q.intake.argument.CommandArgs
 import com.sk89q.intake.argument.Namespace

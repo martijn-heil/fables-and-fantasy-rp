@@ -7,7 +7,6 @@ dependencies {
     implementation(project(":Utils"))
     implementation(project(":DenizenInterop"))
     implementation(project(":Database"))
-    implementation(project(":PlayerData"))
     implementation(project(":Gui"))
     implementation(project(":Form"))
     implementation(project(":KotlinRuntime"))

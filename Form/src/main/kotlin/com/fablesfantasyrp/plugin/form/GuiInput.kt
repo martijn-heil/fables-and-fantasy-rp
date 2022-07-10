@@ -1,9 +1,9 @@
 package com.fablesfantasyrp.plugin.form
 
 import com.fablesfantasyrp.plugin.gui.ResultProducingGui
-import com.fablesfantasyrp.plugin.playerdata.FablesPlayer
+import org.bukkit.entity.Player
 
 
-suspend fun<T> promptGui(p: FablesPlayer, gui: ResultProducingGui<T>): T {
-	return gui.execute(p.player)
+suspend fun<T> promptGui(p: Player, gui: ResultProducingGui<T>): T {
+	return gui.execute(p)
 }

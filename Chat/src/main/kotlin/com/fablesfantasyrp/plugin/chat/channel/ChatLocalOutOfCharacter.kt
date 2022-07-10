@@ -2,7 +2,6 @@ package com.fablesfantasyrp.plugin.chat.channel
 
 import com.fablesfantasyrp.plugin.characters.currentPlayerCharacter
 import com.fablesfantasyrp.plugin.chat.getPlayersWithinRange
-import com.fablesfantasyrp.plugin.playerdata.FablesPlayer
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.parseLinks
 import com.fablesfantasyrp.plugin.utils.ess
@@ -37,8 +36,7 @@ object ChatLocalOutOfCharacter : ChatChannel, RawChatChannel, ToggleableChatChan
 	}
 
 	private fun formatMessage(from: Player, message: Component): Component {
-		val fPlayer = FablesPlayer.forPlayer(from)
-		val characterName = fPlayer.currentPlayerCharacter?.name ?: ""
+		val characterName = from.currentPlayerCharacter?.name ?: ""
 
 		val customResolver = TagResolver.builder()
 				.tag("character_name", Tag.selfClosingInserting(Component.text(characterName)))

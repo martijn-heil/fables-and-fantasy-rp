@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.chat.command.provider
 
-import com.fablesfantasyrp.plugin.chat.ChatChannel
-import com.fablesfantasyrp.plugin.chat.ToggleableChatChannel
+import com.fablesfantasyrp.plugin.chat.channel.ChatChannel
+import com.fablesfantasyrp.plugin.chat.channel.ToggleableChatChannel
 import com.sk89q.intake.parametric.AbstractModule
 import org.bukkit.Server
 

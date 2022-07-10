@@ -1,12 +1,11 @@
 package com.fablesfantasyrp.plugin.database
 
+import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import org.flywaydb.core.Flyway
 import org.flywaydb.core.api.FlywayException
-import org.flywaydb.core.api.MigrationVersion
-import java.sql.Connection
-import java.sql.DriverManager
-import java.sql.SQLException
+import org.h2.jdbcx.JdbcDataSource
+import javax.sql.DataSource
 
 class FablesDatabase : JavaPlugin() {
 	override fun onEnable() {
@@ -25,41 +24,22 @@ class FablesDatabase : JavaPlugin() {
 		this.saveResource("db/migration/V1__create_tables.sql", true)
 		this.saveResource("db/migration/V2__chat.sql", true)
 
-		server.scheduler.scheduleSyncDelayedTask(this, {
-			val flyway = Flyway(classLoader)
-			flyway.setLocations("filesystem:${this.dataFolder.resolve("db/migration").path}")
-			flyway.setDataSource(dbUrl, dbUsername, dbPassword)
-			flyway.isBaselineOnMigrate = true;
-			flyway.baselineVersion = MigrationVersion.fromVersion("0");
+		val dataSource = JdbcDataSource()
+		dataSource.user = dbUsername
+		dataSource.password = dbPassword
+		dataSource.setURL(dbUrl)
+		fablesDatabase = dataSource
 
-			try {
-				logger.info("Successfully applied ${flyway.migrate()} migrations")
-			} catch (ex: FlywayException) {
-				logger.severe(ex.message)
-				ex.printStackTrace()
-				try {
-					flyway.repair()
-				} catch (ex: FlywayException) {
-					logger.severe("Error whilst attempting to repair migrations:")
-					ex.printStackTrace()
-					logger.severe("Continuing to disable plugin..")
-					this.isEnabled = false
-					return@scheduleSyncDelayedTask
-				}
-			}
-
-			try {
-				dbconn = DriverManager.getConnection(dbUrl, dbUsername, dbPassword)
-			} catch (ex: SQLException) {
-				logger.severe(ex.message)
-				logger.severe("Disabling plugin due to database error..")
-				this.isEnabled = false
-			}
-		}, 0)
+		try {
+			applyMigrations(this, null, this.classLoader)
+		} catch (ex: Exception) {
+			this.isEnabled = false
+			return
+		}
 	}
 
 	override fun onDisable() {
-		dbconn!!.close()
+
 	}
 
 	companion object {
@@ -68,14 +48,34 @@ class FablesDatabase : JavaPlugin() {
 		private lateinit var dbUsername: String
 		private lateinit var dbPassword: String
 
-		val fablesDatabase: Connection
-			get() = dbconn!!
+		lateinit var fablesDatabase: DataSource
+			private set
+	}
+}
 
-		private var dbconn: Connection? = null
-			get() {
-				if(field!!.isClosed) field = DriverManager.getConnection(dbUrl, dbUsername, dbPassword)
+fun applyMigrations(plugin: Plugin, schema: String?, classLoader: ClassLoader) {
+	val flywayConfig = Flyway.configure(classLoader)
+			.dataSource(FablesDatabase.fablesDatabase)
+			.defaultSchema(schema)
+			.baselineOnMigrate(true)
+			.baselineVersion("0")
 
-				return field
-			}
+	if (schema != null) flywayConfig.defaultSchema(schema)
+
+	val flyway = flywayConfig.load()
+	//.locations("filesystem:${plugin.dataFolder.resolve("db/migration").path}")
+
+	try {
+		plugin.logger.info("Successfully applied ${flyway.migrate()} migrations")
+	} catch (ex: FlywayException) {
+		plugin.logger.severe(ex.message)
+		ex.printStackTrace()
+		try {
+			flyway.repair()
+		} catch (ex: FlywayException) {
+			plugin.logger.severe("Error whilst attempting to repair migrations:")
+			ex.printStackTrace()
+			throw ex
+		}
 	}
 }

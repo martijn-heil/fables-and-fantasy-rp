@@ -1,6 +1,5 @@
 package com.fablesfantasyrp.plugin.staffmode
 
-import com.fablesfantasyrp.plugin.playerdata.FablesPlayer
 import com.fablesfantasyrp.plugin.utils.ess
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
@@ -14,6 +13,7 @@ import com.sk89q.intake.parametric.provider.PrimitivesModule
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor.*
 import org.bukkit.GameMode
+import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 
 
@@ -62,36 +62,36 @@ class FablesStaffMode : JavaPlugin() {
 }
 
 // player halted by halter
-private val onDuty = HashSet<FablesPlayer>()
+private val onDuty = HashSet<Player>()
 
-var FablesPlayer.isOnDuty: Boolean
+var Player.isOnDuty: Boolean
 	get() = onDuty.contains(this)
 	set(value) {
 		val onOff = if (value) "on" else "off"
 		if (value) {
 			if (onDuty.add(this)) {
-				player.sendMessage("$SYSPREFIX You are now on duty!")
-				Bukkit.broadcast("$SYSPREFIX ${player.name} has gone on duty", "fables.staffmode.notify.duty")
+				this.sendMessage("$SYSPREFIX You are now on duty!")
+				Bukkit.broadcast("$SYSPREFIX ${this.name} has gone on duty", "fables.staffmode.notify.duty")
 			} else {
-				player.sendMessage("$SYSPREFIX You are already $onOff duty!")
+				this.sendMessage("$SYSPREFIX You are already $onOff duty!")
 			}
 		} else {
 			if (onDuty.remove(this)) {
-				if (player.gameMode != GameMode.SURVIVAL) {
-					player.gameMode = GameMode.SURVIVAL
-					player.sendMessage("$SYSPREFIX Your game mode was changed to survival because you are going off duty.")
+				if (this.gameMode != GameMode.SURVIVAL) {
+					this.gameMode = GameMode.SURVIVAL
+					this.sendMessage("$SYSPREFIX Your game mode was changed to survival because you are going off duty.")
 				}
 
-				val essPlayer = player.ess
+				val essPlayer = this.ess
 				if (essPlayer.isGodModeEnabled) {
 					essPlayer.isGodModeEnabled = false
-					player.sendMessage("$SYSPREFIX Your god mode was disabled because you are going off duty.")
+					this.sendMessage("$SYSPREFIX Your god mode was disabled because you are going off duty.")
 				}
 
-				player.sendMessage("$SYSPREFIX You are now off duty!")
-				Bukkit.broadcast("$SYSPREFIX ${player.name} has gone off duty", "fables.staffmode.notify.duty")
+				this.sendMessage("$SYSPREFIX You are now off duty!")
+				Bukkit.broadcast("$SYSPREFIX ${this.name} has gone off duty", "fables.staffmode.notify.duty")
 			} else {
-				player.sendMessage("$SYSPREFIX You are already $onOff duty!")
+				this.sendMessage("$SYSPREFIX You are already $onOff duty!")
 			}
 		}
 	}

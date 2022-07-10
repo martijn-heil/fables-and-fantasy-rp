@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.chat.channel
 
-import com.fablesfantasyrp.plugin.chat.disabledChatChannels
-import com.fablesfantasyrp.plugin.playerdata.FablesPlayer
+
+import com.fablesfantasyrp.plugin.chat.chat
 import com.fablesfantasyrp.plugin.text.Permission
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.parseLinks
@@ -22,9 +22,9 @@ object ChatSpectator : ChatChannel, RawChatChannel, ToggleableChatChannel, Comma
 					.filter {
 						!it.isWhitelisted ||
 								(it.hasPermission(Permission.Channel.Spectator) &&
-										!FablesPlayer.forPlayer(it).disabledChatChannels.contains(this))
+										!it.chat.disabledChannels.contains(this))
 					}
-					.filter { !FablesPlayer.forPlayer(it).disabledChatChannels.contains(this) }
+					.filter { !it.chat.disabledChannels.contains(this) }
 
 	override fun sendMessage(from: Player, message: String) = this.sendMessage(from, parseLinks(message))
 	override fun sendMessage(from: CommandSender, message: String) = this.sendMessage(from, parseLinks(message))

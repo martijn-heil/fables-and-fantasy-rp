@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.chat
 
+import com.fablesfantasyrp.plugin.chat.channel.*
 import com.fablesfantasyrp.plugin.chat.gui.ChatColorGui
-import com.fablesfantasyrp.plugin.playerdata.FablesPlayer
 import com.fablesfantasyrp.plugin.text.sendError
 import com.gitlab.martijn_heil.nincommands.common.Sender
 import com.sk89q.intake.Command
@@ -17,21 +17,21 @@ import org.bukkit.entity.Player
 class Commands {
 	@Command(aliases = ["togglechat", "tc"], desc = "Toggle a chat on or off.")
 	@Require(Permission.Command.Togglechat)
-	fun togglechat(@Sender origin: Player, channel: ToggleableChatChannel) {
+	fun togglechat(@Sender sender: Player, channel: ToggleableChatChannel) {
 		val channelDisplayName = channel.toString().uppercase()
 
-		val fPlayer = FablesPlayer.forPlayer(origin)
-		val disabledChannels = fPlayer.disabledChatChannels
-		fPlayer.disabledChatChannels = when {
+		val chatPlayerEntity = sender.chat
+		val disabledChannels = chatPlayerEntity.disabledChannels
+		chatPlayerEntity.disabledChannels = when {
 			disabledChannels.contains(channel) -> {
-				origin.sendMessage("$SYSPREFIX You have enabled $channelDisplayName chat.")
+				sender.sendMessage("$SYSPREFIX You have enabled $channelDisplayName chat.")
 				disabledChannels.minus(channel)
 			}
 			else -> {
-				origin.sendMessage("$SYSPREFIX You have disabled $channelDisplayName chat.")
-				if (channel == fPlayer.chatChannel) {
-					origin.sendMessage("$SYSPREFIX You have disabled your current channel, switching to LOOC instead.")
-					fPlayer.chatChannel = ChatLocalOutOfCharacter
+				sender.sendMessage("$SYSPREFIX You have disabled $channelDisplayName chat.")
+				if (channel == chatPlayerEntity.channel) {
+					sender.sendMessage("$SYSPREFIX You have disabled your current channel, switching to LOOC instead.")
+					chatPlayerEntity.channel = ChatLocalOutOfCharacter
 				}
 				disabledChannels.plus(channel)
 			}
@@ -42,8 +42,7 @@ class Commands {
 	@Require(Permission.Command.Chatchannel)
 	fun chatchannel(@Sender sender: Player, channel: ChatChannel) {
 		if (!sender.hasPermission("fables.chat.channel.${channel}")) throw AuthorizationException()
-		val fPlayer = FablesPlayer.forPlayer(sender)
-		fPlayer.chatChannel = channel
+		sender.chat.channel = channel
 	}
 
 	@Command(aliases = ["chatcolor", "ccolor"], desc = "Change your chat color.")
@@ -76,8 +75,7 @@ class Commands {
 			try {
 				if (message.isEmpty()) {
 					if (sender !is Player) return false
-					val fPlayer = FablesPlayer.forPlayer(sender)
-					fPlayer.chatChannel = channel
+					sender.chat.channel = channel
 				} else if (channel is CommandSenderCompatibleChatChannel) {
 					channel.sendMessage(sender, message)
 				} else {

@@ -1,10 +1,11 @@
 package com.fablesfantasyrp.plugin.chat
 
 import com.fablesfantasyrp.plugin.chat.command.provider.ChatModule
-import com.fablesfantasyrp.plugin.chat.data.ChatPlayerData
 import com.fablesfantasyrp.plugin.chat.data.entity.ChatPlayerDataEntityMapper
 import com.fablesfantasyrp.plugin.chat.data.entity.ChatPlayerDataEntityRepository
+import com.fablesfantasyrp.plugin.chat.data.entity.ChatPlayerEntity
 import com.fablesfantasyrp.plugin.chat.data.persistent.database.DatabasePersistentChatPlayerDataRepository
+import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.database.entity.EntityRepository
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
@@ -23,13 +24,20 @@ import java.util.*
 internal val SYSPREFIX = "${GOLD}[${DARK_AQUA}${BOLD} CHAT ${GOLD}] $GRAY"
 
 internal lateinit var chatPreviewManager: ChatPreviewManager
-internal lateinit var chatPlayerDataManager: EntityRepository<UUID, ChatPlayerData>
+internal lateinit var chatPlayerDataManager: EntityRepository<UUID, ChatPlayerEntity>
 
 class FablesChat : JavaPlugin() {
 
 	override fun onEnable() {
 		enforceDependencies(this)
 		instance = this
+
+		try {
+			applyMigrations(this, "fables_chat", this.classLoader)
+		} catch (e: Exception) {
+			this.isEnabled = false
+			return
+		}
 
 		chatPreviewManager = ChatPreviewManager(this)
 		chatPlayerDataManager = ChatPlayerDataEntityRepository(this,

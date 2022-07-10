@@ -1,9 +1,8 @@
 package com.fablesfantasyrp.plugin.chat.channel
 
 import com.fablesfantasyrp.plugin.characters.currentPlayerCharacter
-import com.fablesfantasyrp.plugin.chat.chatStyle
+import com.fablesfantasyrp.plugin.chat.chat
 import com.fablesfantasyrp.plugin.chat.getPlayersWithinRange
-import com.fablesfantasyrp.plugin.playerdata.FablesPlayer
 import com.fablesfantasyrp.plugin.text.Permission
 import com.fablesfantasyrp.plugin.text.formatChat
 import com.fablesfantasyrp.plugin.text.join
@@ -98,10 +97,9 @@ abstract class AbstractChatInCharacter : ChatChannel, PreviewableChatChannel {
 	}
 
 	protected open fun formatMessage(from: Player, message: String): Component? {
-		val fPlayer = FablesPlayer.forPlayer(from)
-		val actionStyle = fPlayer.chatStyle ?: Style.style(NamedTextColor.YELLOW)
+		val actionStyle = from.chat.chatStyle ?: Style.style(NamedTextColor.YELLOW)
 		val speechStyle = Style.style(NamedTextColor.WHITE)
-		val characterName = fPlayer.currentPlayerCharacter?.name ?:
+		val characterName = from.currentPlayerCharacter?.name ?:
 		throw IllegalStateException("Player without current character cannot chat in in-character chat.")
 
 		val startsWithAction = startsWithAction(message)

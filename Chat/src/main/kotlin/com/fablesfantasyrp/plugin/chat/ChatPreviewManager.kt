@@ -7,10 +7,13 @@ import com.comphenix.protocol.events.PacketAdapter
 import com.comphenix.protocol.events.PacketContainer
 import com.comphenix.protocol.events.PacketEvent
 import com.comphenix.protocol.wrappers.WrappedChatComponent
-import com.fablesfantasyrp.plugin.playerdata.FablesPlayer
+import com.fablesfantasyrp.plugin.chat.channel.ChatChannel
+import com.fablesfantasyrp.plugin.chat.channel.ChatIllegalArgumentException
+import com.fablesfantasyrp.plugin.chat.channel.PreviewableChatChannel
 import com.fablesfantasyrp.plugin.text.formatError
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
+import org.bukkit.Server
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerChatEvent
 import org.bukkit.plugin.Plugin
@@ -19,18 +22,24 @@ import java.time.Instant
 
 
 class ChatPreviewManager(private val plugin: Plugin) {
+	private val server: Server get() = plugin.server
+
 	init {
-		plugin.server.scheduler.scheduleSyncRepeatingTask(plugin, {
-			FablesPlayer.allOnline().forEach {
+		server.scheduler.scheduleSyncRepeatingTask(plugin, {
+			server.onlinePlayers.forEach {
+				val data = it.chat
 				val now = Instant.now()
-				if (it.isTyping && Duration.between(it.rawData.lastTimeTyping, now).toMillis() >= 4000) {
-					it.isTyping = false
+				if (data.isTyping && Duration.between(data.lastTimeTyping, now).toMillis() >= 4000) {
+					data.isTyping = false
 				}
 			}
 		}, 0, 1)
 
-		plugin.server.scheduler.scheduleSyncRepeatingTask(plugin, {
-			FablesPlayer.allOnline().filter { it.isTyping }.forEach { it.cycleTypingAnimation() }
+		server.scheduler.scheduleSyncRepeatingTask(plugin, {
+			server.onlinePlayers.asSequence()
+					.map { it.chat }
+					.filter { it.isTyping }
+					.forEach { it.cycleTypingAnimation() }
 		}, 0, 10)
 
 		ProtocolLibrary.getProtocolManager().addPacketListener(object : PacketAdapter(params().plugin(plugin)
@@ -43,13 +52,13 @@ class ChatPreviewManager(private val plugin: Plugin) {
 				if (event.isPlayerTemporary || event.isCancelled) return
 
 				val player = event.player
-				val fPlayer = FablesPlayer.forPlayer(player)
+				val chatPlayerEntity = player.chat
 				val packet: PacketContainer = event.packet
 
 				when (event.packetType) {
 					PacketType.Play.Client.CHAT -> {
 						event.isCancelled = true
-						fPlayer.isTyping = false
+						chatPlayerEntity.isTyping = false
 						plugin.server.scheduler.scheduleSyncDelayedTask(plugin) {
 							val chatMessage = packet.strings.read(0).take(256)
 							val chatEvent = PlayerChatEvent(player, chatMessage)
@@ -58,12 +67,12 @@ class ChatPreviewManager(private val plugin: Plugin) {
 					}
 
 					PacketType.Play.Client.CHAT_PREVIEW -> {
-						fPlayer.rawData.lastTimeTyping = Instant.now()
-						fPlayer.isTyping = true
+						chatPlayerEntity.lastTimeTyping = Instant.now()
+						chatPlayerEntity.isTyping = true
 						val requestId = packet.integers.read(0)
 						val rawChatMessage = packet.strings.read(0)
 						try {
-							val result: Pair<ChatChannel, String> = fPlayer.parseChatMessage(rawChatMessage)
+							val result: Pair<ChatChannel, String> = chatPlayerEntity.parseChatMessage(rawChatMessage)
 							val message = result.second
 							val channel = result.first as? PreviewableChatChannel ?: return
 							val messageComponent = channel.getPreview(player, message)
