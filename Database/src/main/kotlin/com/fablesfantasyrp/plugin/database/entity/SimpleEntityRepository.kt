@@ -1,23 +1,26 @@
 package com.fablesfantasyrp.plugin.database.entity
 
+import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.Identifiable
 import com.fablesfantasyrp.plugin.database.repository.KeyedRepository
 import com.fablesfantasyrp.plugin.database.repository.MutableRepository
 import java.lang.ref.WeakReference
 
-class EntityRepositoryImpl<K, T: Identifiable<K>, C>(private var child: C) : EntityRepository<K, T>
-		where C : KeyedRepository<K, T>, C : MutableRepository<T> {
+open class SimpleEntityRepository<K, T: Identifiable<K>, C>(private var child: C) : EntityRepository<K, T>
+		where C : KeyedRepository<K, T>,
+			  C : MutableRepository<T>,
+			  C: HasDirtyMarker<T> {
 	private val cache = HashMap<K, WeakReference<T>>()
 	private val strongCache = HashSet<T>()
 	private val dirty = LinkedHashSet<T>()
 
-	fun markStrong(v: T) {
-		strongCache.add(v)
+	fun init(): SimpleEntityRepository<K, T, C> {
+		child.dirtyMarker = this
+		return this
 	}
 
-	fun markWeak(v: T) {
-		strongCache.remove(v)
-	}
+	override fun markStrong(v: T) { strongCache.add(v) }
+	override fun markWeak(v: T) { strongCache.remove(v) }
 
 	override fun saveAllDirty() {
 		synchronized(this) {

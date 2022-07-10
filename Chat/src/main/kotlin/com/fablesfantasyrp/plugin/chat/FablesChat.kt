@@ -2,10 +2,10 @@ package com.fablesfantasyrp.plugin.chat
 
 import com.fablesfantasyrp.plugin.chat.command.provider.ChatModule
 import com.fablesfantasyrp.plugin.chat.data.ChatPlayerData
-import com.fablesfantasyrp.plugin.chat.data.ChatPlayerDataEntityMapper
-import com.fablesfantasyrp.plugin.chat.database.DatabasePersistentChatPlayerDataRepository
+import com.fablesfantasyrp.plugin.chat.data.entity.ChatPlayerDataEntityMapper
+import com.fablesfantasyrp.plugin.chat.data.persistent.database.DatabasePersistentChatPlayerDataRepository
 import com.fablesfantasyrp.plugin.database.entity.EntityRepository
-import com.fablesfantasyrp.plugin.database.entity.EntityRepositoryImpl
+import com.fablesfantasyrp.plugin.database.entity.SimpleEntityRepository
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
@@ -32,11 +32,11 @@ class FablesChat : JavaPlugin() {
 		instance = this
 
 		chatPreviewManager = ChatPreviewManager(this)
-		chatPlayerDataManager = EntityRepositoryImpl(
+		chatPlayerDataManager = SimpleEntityRepository(
 				ChatPlayerDataEntityMapper(
 						DatabasePersistentChatPlayerDataRepository()
 				)
-		)
+		).init()
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())

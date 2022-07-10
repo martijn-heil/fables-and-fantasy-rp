@@ -1,4 +1,4 @@
-package com.fablesfantasyrp.plugin.chat.database
+package com.fablesfantasyrp.plugin.chat.data.persistent.database
 
 import com.fablesfantasyrp.plugin.chat.data.persistent.PersistentChatPlayerData
 import com.fablesfantasyrp.plugin.chat.data.persistent.PersistentChatPlayerDataRepository

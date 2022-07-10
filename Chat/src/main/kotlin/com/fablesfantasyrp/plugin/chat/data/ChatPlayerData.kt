@@ -1,10 +1,6 @@
 package com.fablesfantasyrp.plugin.chat.data
 
 import com.fablesfantasyrp.plugin.chat.data.persistent.PersistentChatPlayerData
-import java.time.Instant
+import com.fablesfantasyrp.plugin.chat.data.volatile.VolatileChatPlayerData
 
-interface ChatPlayerData : PersistentChatPlayerData {
-	var isTyping: Boolean
-	var lastTimeTyping: Instant?
-	var lastTypingAnimation: String?
-}
+interface ChatPlayerData : PersistentChatPlayerData, VolatileChatPlayerData
