@@ -19,9 +19,7 @@ import java.io.Serializable
 object ChatInCharacter : ChatChannel, PreviewableChatChannel, Serializable {
 	private val pattern = "^(\\*)?\\s*#([a-z|A-Z])\\s?(.*$)"
 
-	override fun getRecipients(from: Player): Sequence<Player> {
-		throw NotImplementedError()
-	}
+	override fun getRecipients(from: Player): Sequence<Player> = ChatInCharacterStandard.getRecipients(from)
 
 	override fun sendMessage(from: Player, message: String) =
 			getRelativeChannel(message).sendMessage(from, trimMessage(message))

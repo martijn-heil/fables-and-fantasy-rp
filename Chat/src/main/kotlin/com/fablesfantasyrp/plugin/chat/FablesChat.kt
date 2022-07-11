@@ -49,6 +49,8 @@ class FablesChat : JavaPlugin() {
 				)
 		).init()
 
+		ChatCanHearManager().start()
+
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())
 		injector.install(BukkitModule(server))
