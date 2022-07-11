@@ -14,7 +14,7 @@ import org.bukkit.OfflinePlayer
 import java.time.Instant
 import java.util.*
 
-class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerData> {
+class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> {
 
 	private val offlinePlayer: OfflinePlayer get() = Bukkit.getOfflinePlayer(id)
 
@@ -47,7 +47,7 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerData> {
 		this.disabledChannels = disabledChannels
 	}
 
-	override var dirtyMarker: DirtyMarker<ChatPlayerData>? = null
+	override var dirtyMarker: DirtyMarker<ChatPlayerEntity>? = null
 
 	override var isTyping: Boolean = false
 		set(value) {

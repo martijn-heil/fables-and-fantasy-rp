@@ -15,6 +15,9 @@ class ChatPlayerDataEntityMapper(private val child: PersistentChatPlayerDataRepo
 	override fun forId(id: UUID): ChatPlayerEntity? = child.forId(id)?.let { convert(it) }
 	override fun all(): Collection<ChatPlayerEntity> = child.all().map { convert(it) }
 
-	private fun convert(it: PersistentChatPlayerData): ChatPlayerEntity
-		= ChatPlayerDataEntity(it.id, it.channel, it.chatStyle, it.disabledChannels)
+	private fun convert(it: PersistentChatPlayerData): ChatPlayerEntity {
+		val obj = ChatPlayerDataEntity(it.id, it.channel, it.chatStyle, it.disabledChannels)
+		obj.dirtyMarker = dirtyMarker
+		return obj
+	}
 }

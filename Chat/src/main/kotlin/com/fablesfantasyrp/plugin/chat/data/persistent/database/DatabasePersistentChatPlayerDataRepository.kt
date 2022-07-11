@@ -87,8 +87,8 @@ class DatabasePersistentChatPlayerDataRepository(private val server: Server, pri
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("UPDATE $TABLE_NAME SET " +
 					"channel = ?," +
-					"disabled_channels = ? " +
-					"chat_style = ?" +
+					"disabled_channels = ?, " +
+					"chat_style = ? " +
 					"WHERE id = ?")
 			if (v.channel is Serializable) stmnt.setObject(1, v.channel)
 			stmnt.setArray(2, connection.createArrayOf("JAVA_OBJECT", v.disabledChannels.filter { it is Serializable }.toTypedArray()))
