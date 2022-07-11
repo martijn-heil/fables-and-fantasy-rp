@@ -6,22 +6,22 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 
-interface CommandSenderCompatibleChatChannel {
+interface CommandSenderCompatibleChatChannel : ChatChannel {
 	fun sendMessage(from: CommandSender, message: String)
 	fun getRecipients(from: CommandSender): Sequence<CommandSender>
 }
 
-interface ToggleableChatChannel
+interface ToggleableChatChannel : ChatChannel
 
-interface RawChatChannel {
+interface RawChatChannel : ChatChannel {
 	fun sendMessage(from: Player, message: Component)
 }
 
-interface PreviewableChatChannel {
+interface PreviewableChatChannel : ChatChannel {
 	fun getPreview(from: Player, message: String): Component
 }
 
-interface PreviewableCommandSenderCompatibleChatChannel {
+interface PreviewableCommandSenderCompatibleChatChannel : ChatChannel {
 	fun getPreview(from: CommandSender, message: String): Component
 }
 

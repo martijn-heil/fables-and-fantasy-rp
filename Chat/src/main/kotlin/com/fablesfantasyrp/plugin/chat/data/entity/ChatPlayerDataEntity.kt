@@ -38,21 +38,25 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 	override var disabledChannels: Set<ToggleableChatChannel>
 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 
+	override var isReceptionIndicatorEnabled: Boolean = false
+		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
+
 	override val id: UUID
 
-	constructor(id: UUID, channel: ChatChannel, chatStyle: Style?, disabledChannels: Set<ToggleableChatChannel>) {
-		Bukkit.getLogger().info("creating instance")
+	constructor(id: UUID, channel: ChatChannel, chatStyle: Style?, disabledChannels: Set<ToggleableChatChannel>,
+				isReceptionIndicatorEnabled: Boolean) {
 		this.id = id
 		this.channel = channel
 		this.chatStyle = chatStyle
 		this.disabledChannels = disabledChannels
+		this.isReceptionIndicatorEnabled = isReceptionIndicatorEnabled
 	}
 
 	override var dirtyMarker: DirtyMarker<ChatPlayerEntity>? = null
 
 	override var isTyping: Boolean = false
 		set(value) {
-			if (value == this.isTyping) return
+			if (value == field) return
 			field = value
 			val tabPlayer = TabAPI.getInstance().getPlayer(id) ?: return
 			val teamManager = TabAPI.getInstance().teamManager as? UnlimitedNametagManager ?: return
@@ -61,13 +65,14 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 				this.cycleTypingAnimation()
 			} else {
 				this.lastTypingAnimation = null
+				this.previewChannel = null
 				teamManager.resetLine(tabPlayer, "belowname")
 			}
 		}
 
 	override var lastTimeTyping: Instant? = null
 	override var lastTypingAnimation: String? = null
-
+	override var previewChannel: ChatChannel? = null
 
 	override fun doChat(message: String) {
 		val result: Pair<ChatChannel, String> = this.parseChatMessage(message)

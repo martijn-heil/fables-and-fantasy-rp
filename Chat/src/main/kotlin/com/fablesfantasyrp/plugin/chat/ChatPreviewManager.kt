@@ -75,6 +75,7 @@ class ChatPreviewManager(private val plugin: Plugin) {
 							val result: Pair<ChatChannel, String> = chatPlayerEntity.parseChatMessage(rawChatMessage)
 							val message = result.second
 							val channel = result.first as? PreviewableChatChannel ?: return
+							chatPlayerEntity.previewChannel = channel
 							val messageComponent = channel.getPreview(player, message)
 							sendChatPreview(player, requestId, messageComponent)
 						} catch (e: ChatIllegalArgumentException) {

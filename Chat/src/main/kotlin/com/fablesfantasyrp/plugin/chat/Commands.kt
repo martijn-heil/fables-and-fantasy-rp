@@ -8,6 +8,8 @@ import com.gitlab.martijn_heil.nincommands.common.Sender
 import com.sk89q.intake.Command
 import com.sk89q.intake.Require
 import com.sk89q.intake.util.auth.AuthorizationException
+import net.kyori.adventure.key.Key
+import net.kyori.adventure.sound.Sound
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -37,6 +39,13 @@ class Commands {
 		}
 	}
 
+	@Command(aliases = ["togglereceptionindicator"], desc = "Toggle your chat reception indicator.")
+	@Require(Permission.Command.Togglechatindicator)
+	fun togglereceptionindicator(@Sender sender: Player) {
+		val chatPlayerData = sender.chat
+		chatPlayerData.isReceptionIndicatorEnabled = !chatPlayerData.isReceptionIndicatorEnabled
+	}
+
 	@Command(aliases = ["chatchannel", "channel", "chan", "ch"], desc = "Change your chat channel.")
 	@Require(Permission.Command.Chatchannel)
 	fun chatchannel(@Sender sender: Player, channel: ChatChannel) {
@@ -52,6 +61,13 @@ class Commands {
 
 	open class AbstractChatChannelCommand(private val channel: ChatChannel, private val permission: String) : CommandExecutor {
 		override fun onCommand(sender: CommandSender, command: org.bukkit.command.Command, label: String, args: Array<out String>): Boolean {
+			fun playErrorSound() {
+				if (sender is Player) {
+					sender.playSound(Sound.sound(
+							Key.key("minecraft:block.anvil.land"), Sound.Source.BLOCK, 1.0f, 1.0f))
+				}
+			}
+
 			if (!sender.hasPermission(permission)) {
 				sender.sendError("Permission denied.")
 				return true
@@ -71,6 +87,7 @@ class Commands {
 								Placeholder.unparsed("prefix", CHAT_CHAR)
 						)
 				)
+				playErrorSound()
 			} else {
 				sender.sendMessage(
 						miniMessage.deserialize("<red>" +
@@ -81,7 +98,9 @@ class Commands {
 								Placeholder.unparsed("label", label),
 								Placeholder.unparsed("channel", channel.toString()),
 								Placeholder.unparsed("prefix", CHAT_CHAR)
-						))
+						)
+				)
+				playErrorSound()
 			}
 
 			try {

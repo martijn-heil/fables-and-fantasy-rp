@@ -36,11 +36,12 @@ class DatabasePersistentChatPlayerDataRepository(private val server: Server, pri
 
 	override fun create(v: PersistentChatPlayerData) {
 		dataSource.connection.use { connection ->
-			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME (id, channel, disabled_channels) " +
-					"VALUES (?, ?, ?)")
+			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME (id, channel, disabled_channels, reception_indicator_enabled) " +
+					"VALUES (?, ?, ?, ?)")
 			stmnt.setObject(1, v.id)
 			if (v.channel is Serializable) stmnt.setObject(2, v.channel)
 			stmnt.setArray(3, connection.createArrayOf("JAVA_OBJECT", v.disabledChannels.filter { it is Serializable }.toTypedArray()))
+			stmnt.setBoolean(4, v.isReceptionIndicatorEnabled)
 			stmnt.executeUpdate()
 		}
 	}
@@ -86,14 +87,16 @@ class DatabasePersistentChatPlayerDataRepository(private val server: Server, pri
 	override fun update(v: PersistentChatPlayerData) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("UPDATE $TABLE_NAME SET " +
-					"channel = ?," +
+					"channel = ?, " +
 					"disabled_channels = ?, " +
-					"chat_style = ? " +
+					"chat_style = ?, " +
+					"reception_indicator_enabled = ? " +
 					"WHERE id = ?")
 			if (v.channel is Serializable) stmnt.setObject(1, v.channel)
 			stmnt.setArray(2, connection.createArrayOf("JAVA_OBJECT", v.disabledChannels.filter { it is Serializable }.toTypedArray()))
 			stmnt.setString(3, v.chatStyle?.let { GsonComponentSerializer.gson().serialize(Component.text().style(it).build()) })
-			stmnt.setObject(4, v.id)
+			stmnt.setBoolean(4, v.isReceptionIndicatorEnabled)
+			stmnt.setObject(5, v.id)
 			stmnt.executeUpdate()
 		}
 	}
@@ -105,6 +108,7 @@ class DatabasePersistentChatPlayerDataRepository(private val server: Server, pri
 				?.let { it as Array<Any> }
 				?.let { it.map { it as ToggleableChatChannel } }?.toSet() ?: emptySet()
 		val chatStyle = row.getString("chat_style")?.let { GsonComponentSerializer.gson().deserialize(it).style() }
-		return DatabaseChatPlayerData(id, channel, chatStyle, disabledChannels)
+		val isChatReceptionIndicatorEnabled = row.getBoolean("reception_indicator_enabled")
+		return DatabaseChatPlayerData(id, channel, chatStyle, disabledChannels, isChatReceptionIndicatorEnabled)
 	}
 }

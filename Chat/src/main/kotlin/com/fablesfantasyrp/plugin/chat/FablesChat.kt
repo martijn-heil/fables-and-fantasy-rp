@@ -42,14 +42,14 @@ class FablesChat : JavaPlugin() {
 			return
 		}
 
-		//chatPreviewManager = ChatPreviewManager(this)
+		chatPreviewManager = ChatPreviewManager(this)
 		chatPlayerDataManager = ChatPlayerDataEntityRepository(this,
 				ChatPlayerDataEntityMapper(
 						DatabasePersistentChatPlayerDataRepository(server, fablesDatabase)
 				)
 		).init()
 
-		ChatCanHearManager().start()
+		ChatReceptionIndicatorManager().start()
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())
