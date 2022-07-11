@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.chat.data.entity
 
+import com.fablesfantasyrp.plugin.chat.CHAT_CHAR
 import com.fablesfantasyrp.plugin.chat.SYSPREFIX
 import com.fablesfantasyrp.plugin.chat.channel.*
 import com.fablesfantasyrp.plugin.chat.data.ChatPlayerData
@@ -70,15 +71,22 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 
 	override fun doChat(message: String) {
 		val result: Pair<ChatChannel, String> = this.parseChatMessage(message)
-		result.first.sendMessage(this.offlinePlayer.player!!, result.second)
+		val channel = result.first
+		val content = result.second
+		if (content.isNotEmpty()) {
+			channel.sendMessage(this.offlinePlayer.player!!, content)
+		} else {
+			this.channel = channel
+		}
 	}
 
 	override fun parseChatMessage(message: String): Pair<ChatChannel, String> {
-		val channelRegex = Regex("^\\s*\\$([A-z.]+)( (.*))?")
+		val channelRegex = Regex("^\\s*\\$CHAT_CHAR([A-z.]+)( (.*))?")
 		val matchResult = channelRegex.matchEntire(message)
 		return if (matchResult != null) {
+			val content = matchResult.groupValues[3]
 			val channelName = matchResult.groupValues[1]
-			ChatChannel.fromStringAliased(channelName)?.let { Pair(it, matchResult.groupValues[3]) }
+			ChatChannel.fromStringAliased(channelName)?.let { Pair(it, content) }
 					?: throw ChatIllegalArgumentException("Unknown global channel '$channelName'.")
 		} else {
 			Pair(this.channel, message)

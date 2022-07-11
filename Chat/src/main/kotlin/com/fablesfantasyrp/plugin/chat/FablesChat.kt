@@ -27,6 +27,8 @@ internal val SYSPREFIX = "${GOLD}[${DARK_AQUA}${BOLD} CHAT ${GOLD}] $GRAY"
 internal lateinit var chatPreviewManager: ChatPreviewManager
 internal lateinit var chatPlayerDataManager: EntityRepository<UUID, ChatPlayerEntity>
 
+val CHAT_CHAR = "$"
+
 class FablesChat : JavaPlugin() {
 
 	override fun onEnable() {

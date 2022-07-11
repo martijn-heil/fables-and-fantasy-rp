@@ -17,7 +17,7 @@ class ChatListener(private val server: Server) : Listener {
 		try {
 			player.chat.doChat(e.message)
 		} catch (ex: ChatIllegalArgumentException) {
-			player.sendError(e.message ?: "Illegal argument.")
+			player.sendError(e.message)
 		}
 	}
 }

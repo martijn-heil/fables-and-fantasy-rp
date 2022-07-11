@@ -2,14 +2,13 @@ package com.fablesfantasyrp.plugin.chat
 
 import com.fablesfantasyrp.plugin.chat.channel.*
 import com.fablesfantasyrp.plugin.chat.gui.ChatColorGui
+import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.sendError
 import com.gitlab.martijn_heil.nincommands.common.Sender
 import com.sk89q.intake.Command
 import com.sk89q.intake.Require
 import com.sk89q.intake.util.auth.AuthorizationException
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
-import net.kyori.adventure.text.format.TextDecoration
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -62,14 +61,27 @@ class Commands {
 			if (channel !is CommandSenderCompatibleChatChannel && sender !is Player) {
 				sender.sendError("You have to be a Player to use this command. You are a ${sender::class.java.simpleName}.")
 				return true
+			} else if (message.isNotEmpty()) {
+				sender.sendMessage(
+						miniMessage.deserialize("<red>" +
+								"<bold>Using</bold> /<label> <bold>to send chat messages in chat channels is no longer supported.</bold><newline>" +
+								"<bold>Please write</bold> <green><prefix><label></green> <bold>in chat instead.</bold>" +
+								"</red>",
+								Placeholder.unparsed("label", label),
+								Placeholder.unparsed("prefix", CHAT_CHAR)
+						)
+				)
 			} else {
 				sender.sendMessage(
-						Component.text()
-								.append(Component.text("Using /$label <message> to send chat messages in chat channels is deprecated."))
-								.append(Component.newline())
-								.append(Component.text("Please write \"\$$channel <message>\" in chat instead."))
-								.color(NamedTextColor.RED).decorate(TextDecoration.BOLD)
-				)
+						miniMessage.deserialize("<red>" +
+										"<bold>Using</bold> /<label> <bold>to switch your chat channel to <channel> " +
+										"is no longer supported.</bold><newline>" +
+										"<bold>Please write </bold><green><prefix><label></green><bold> in chat instead.</bold>" +
+										"</red>",
+								Placeholder.unparsed("label", label),
+								Placeholder.unparsed("channel", channel.toString()),
+								Placeholder.unparsed("prefix", CHAT_CHAR)
+						))
 			}
 
 			try {
