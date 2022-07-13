@@ -21,6 +21,25 @@ interface PreviewableChatChannel : ChatChannel {
 	fun getPreview(from: Player, message: String): Component
 }
 
+interface SubChanneledChatChannel {
+	fun resolveSubChannel(message: String): Pair<ChatChannel, String>
+}
+
+fun ChatChannel.resolveSubChannelRecursive(message: String): Pair<ChatChannel, String> {
+	return if (this is SubChanneledChatChannel) {
+		val resolved = this.resolveSubChannel(message)
+		val content = resolved.second
+		val subChannel = resolved.first
+		if (subChannel is SubChanneledChatChannel) {
+			subChannel.resolveSubChannelRecursive(content)
+		} else {
+			Pair(subChannel, content)
+		}
+	} else {
+		Pair(this, message)
+	}
+}
+
 interface PreviewableCommandSenderCompatibleChatChannel : ChatChannel {
 	fun getPreview(from: CommandSender, message: String): Component
 }

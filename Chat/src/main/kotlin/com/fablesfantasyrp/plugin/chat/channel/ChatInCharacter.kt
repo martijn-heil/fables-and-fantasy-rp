@@ -16,39 +16,45 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.entity.Player
 import java.io.Serializable
 
-object ChatInCharacter : ChatChannel, PreviewableChatChannel, Serializable {
+object ChatInCharacter : ChatChannel, PreviewableChatChannel, SubChanneledChatChannel, Serializable {
 	private val pattern = "^(\\*)?\\s*#([a-z|A-Z])\\s?(.*$)"
 
 	override fun getRecipients(from: Player): Sequence<Player> = ChatInCharacterStandard.getRecipients(from)
 
-	override fun sendMessage(from: Player, message: String) =
-			getRelativeChannel(message).sendMessage(from, trimMessage(message))
+	override fun sendMessage(from: Player, message: String) {
+		val resolved = this.resolveSubChannelRecursive(message)
+		val content = resolved.second
+		val channel = resolved.first
+		channel.sendMessage(from, content)
+	}
 
 	private fun trimMessage(message: String): String {
 		val matches = Regex(pattern).matchEntire(message)?.groupValues ?: return message
 		return "${matches[1]}${matches[3]}"
 	}
 
-	private fun getRelativeChannel(message: String): ChatChannel {
+	override fun getPreview(from: Player, message: String): Component {
+		val resolved = this.resolveSubChannelRecursive(message)
+		val content = resolved.second
+		val channel = resolved.first as? PreviewableChatChannel ?: return Component.text("")
+		return channel.getPreview(from, content)
+	}
+
+	override fun resolveSubChannel(message: String): Pair<ChatChannel, String> {
 		val match = Regex(pattern).matchEntire(message)
 
 		return when {
-			message.startsWith("<<") -> ChatInCharacterContextual
+			message.startsWith("<<") -> Pair(ChatInCharacterContextual, message)
 			match != null -> {
 				when(val channel = match.groups[2]!!.value.lowercase()) {
-					"w" -> ChatInCharacterWhisper
-					"q" -> ChatInCharacterQuiet
-					"s" -> ChatInCharacterShout
+					"w" -> Pair(ChatInCharacterWhisper, trimMessage(message))
+					"q" -> Pair(ChatInCharacterQuiet, trimMessage(message))
+					"s" -> Pair(ChatInCharacterShout, trimMessage(message))
 					else -> throw ChatIllegalArgumentException("Unknown relative channel '$channel'.")
 				}
 			}
-			else -> ChatInCharacterStandard
+			else -> Pair(ChatInCharacterStandard, message)
 		}
-	}
-
-	override fun getPreview(from: Player, message: String): Component {
-		val channel = getRelativeChannel(message) as? PreviewableChatChannel ?: return Component.text("")
-		return channel.getPreview(from, trimMessage(message))
 	}
 
 	override fun toString() = "ic"

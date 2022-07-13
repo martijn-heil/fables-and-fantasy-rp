@@ -1,6 +1,8 @@
 package com.fablesfantasyrp.plugin.utils
 
 import com.earth2me.essentials.User
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
@@ -21,6 +23,13 @@ fun enforceDependencies(plugin: Plugin) {
 		}
 	}
 }
+
+fun Boolean.asEnabledDisabledComponent(): Component
+	= if (this) {
+		Component.text("enabled").color(NamedTextColor.GREEN)
+	} else {
+		Component.text("disabled").color(NamedTextColor.RED)
+	}
 
 fun<T> Lock.withLock(f: () -> T): T {
 	this.lock()

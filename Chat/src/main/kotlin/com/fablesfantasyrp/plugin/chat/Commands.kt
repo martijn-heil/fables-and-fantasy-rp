@@ -2,14 +2,18 @@ package com.fablesfantasyrp.plugin.chat
 
 import com.fablesfantasyrp.plugin.chat.channel.*
 import com.fablesfantasyrp.plugin.chat.gui.ChatColorGui
+import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.sendError
+import com.fablesfantasyrp.plugin.utils.asEnabledDisabledComponent
 import com.gitlab.martijn_heil.nincommands.common.Sender
 import com.sk89q.intake.Command
 import com.sk89q.intake.Require
 import com.sk89q.intake.util.auth.AuthorizationException
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.sound.Sound
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -44,6 +48,10 @@ class Commands {
 	fun togglereceptionindicator(@Sender sender: Player) {
 		val chatPlayerData = sender.chat
 		chatPlayerData.isReceptionIndicatorEnabled = !chatPlayerData.isReceptionIndicatorEnabled
+		val newStateDescription = chatPlayerData.isReceptionIndicatorEnabled.asEnabledDisabledComponent()
+		sender.sendMessage(legacyText(SYSPREFIX)
+				.append(Component.text(" Chat reception indicators are now ").color(NamedTextColor.GRAY))
+				.append(newStateDescription))
 	}
 
 	@Command(aliases = ["chatchannel", "channel", "chan", "ch"], desc = "Change your chat channel.")

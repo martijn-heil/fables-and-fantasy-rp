@@ -91,8 +91,13 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 		return if (matchResult != null) {
 			val content = matchResult.groupValues[3]
 			val channelName = matchResult.groupValues[1]
-			ChatChannel.fromStringAliased(channelName)?.let { Pair(it, content) }
+			val channel = ChatChannel.fromStringAliased(channelName)
 					?: throw ChatIllegalArgumentException("Unknown global channel '$channelName'.")
+			if (channel is SubChanneledChatChannel) {
+				channel.resolveSubChannelRecursive(content)
+			} else {
+				Pair(channel, content)
+			}
 		} else {
 			Pair(this.channel, message)
 		}
