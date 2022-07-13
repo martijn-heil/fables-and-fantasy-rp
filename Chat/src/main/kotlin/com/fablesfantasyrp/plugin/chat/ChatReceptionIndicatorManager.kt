@@ -8,6 +8,7 @@ class ChatReceptionIndicatorManager {
 	fun start() {
 		// Refresh interval must be divisible by 50
 		// Identifier must start and end with %
+		// Relational identifier must start with %rel_
 		TabAPI.getInstance().placeholderManager.registerRelationalPlaceholder(
 				"%rel_fables_chat_reception_indicator%",
 				50) { viewer, target ->
