@@ -17,6 +17,7 @@ import org.bukkit.entity.Player
 import java.io.Serializable
 
 object ChatInCharacter : ChatChannel, PreviewableChatChannel, SubChanneledChatChannel, Serializable {
+	@Transient
 	private val pattern = "^(\\*)?\\s*#([a-z|A-Z])\\s?(.*$)"
 
 	override fun getRecipients(from: Player): Sequence<Player> = ChatInCharacterStandard.getRecipients(from)
@@ -24,7 +25,7 @@ object ChatInCharacter : ChatChannel, PreviewableChatChannel, SubChanneledChatCh
 	override fun sendMessage(from: Player, message: String) {
 		val resolved = this.resolveSubChannelRecursive(message)
 		val content = resolved.second
-		val channel = resolved.first
+		val channel = resolved.first.let { if (it === this) ChatInCharacterStandard else it }
 		channel.sendMessage(from, content)
 	}
 
@@ -36,7 +37,8 @@ object ChatInCharacter : ChatChannel, PreviewableChatChannel, SubChanneledChatCh
 	override fun getPreview(from: Player, message: String): Component {
 		val resolved = this.resolveSubChannelRecursive(message)
 		val content = resolved.second
-		val channel = resolved.first as? PreviewableChatChannel ?: return Component.text("")
+		val channel = (resolved.first as? PreviewableChatChannel)?.let { if (it === this) ChatInCharacterStandard else it }
+				?: return Component.text("")
 		return channel.getPreview(from, content)
 	}
 
@@ -53,7 +55,7 @@ object ChatInCharacter : ChatChannel, PreviewableChatChannel, SubChanneledChatCh
 					else -> throw ChatIllegalArgumentException("Unknown relative channel '$channel'.")
 				}
 			}
-			else -> Pair(ChatInCharacterStandard, message)
+			else -> Pair(this, message)
 		}
 	}
 
@@ -128,7 +130,10 @@ abstract class AbstractChatInCharacter : ChatChannel, PreviewableChatChannel {
 }
 
 object ChatInCharacterStandard : AbstractChatInCharacter(), Serializable {
+	@Transient
 	override val range = 15U
+
+	@Transient
 	override val actionWord = "says"
 
 	override fun toString() = "ic.standard"
@@ -136,7 +141,10 @@ object ChatInCharacterStandard : AbstractChatInCharacter(), Serializable {
 }
 
 object ChatInCharacterWhisper : AbstractChatInCharacter(), Serializable {
+	@Transient
 	override val range = 2U
+
+	@Transient
 	override val actionWord = "whispers"
 
 	override fun formatMessage(from: Player, message: String): Component? {
@@ -149,7 +157,10 @@ object ChatInCharacterWhisper : AbstractChatInCharacter(), Serializable {
 }
 
 object ChatInCharacterQuiet : AbstractChatInCharacter(), Serializable {
+	@Transient
 	override val range = 8U
+
+	@Transient
 	override val actionWord = "says quietly"
 
 	override fun formatMessage(from: Player, message: String): Component? {
@@ -162,7 +173,10 @@ object ChatInCharacterQuiet : AbstractChatInCharacter(), Serializable {
 }
 
 object ChatInCharacterShout : AbstractChatInCharacter(), Serializable {
+	@Transient
 	override val range = 30U
+
+	@Transient
 	override val actionWord = "shouts"
 
 	override fun formatMessage(from: Player, message: String): Component? {
@@ -175,7 +189,10 @@ object ChatInCharacterShout : AbstractChatInCharacter(), Serializable {
 }
 
 object ChatInCharacterContextual : AbstractChatInCharacter(), Serializable {
+	@Transient
 	override val range = 15U
+
+	@Transient
 	override val actionWord = ""
 
 	override fun formatMessage(from: Player, message: String): Component {

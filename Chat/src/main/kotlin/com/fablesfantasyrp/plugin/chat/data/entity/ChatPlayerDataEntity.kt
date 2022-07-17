@@ -26,7 +26,7 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 			}
 		set(value) {
 			if (field != value) {
-				field = value;
+				field = value
 				dirtyMarker?.markDirty(this)
 				offlinePlayer.player?.sendMessage("$SYSPREFIX Your chat channel has been switched to ${value.toString().uppercase()}!")
 			}
@@ -93,13 +93,9 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 			val channelName = matchResult.groupValues[1]
 			val channel = ChatChannel.fromStringAliased(channelName)
 					?: throw ChatIllegalArgumentException("Unknown global channel '$channelName'.")
-			if (channel is SubChanneledChatChannel) {
-				channel.resolveSubChannelRecursive(content)
-			} else {
-				Pair(channel, content)
-			}
+			channel.resolveSubChannelRecursive(content)
 		} else {
-			Pair(this.channel, message)
+			this.channel.resolveSubChannelRecursive(message)
 		}
 	}
 

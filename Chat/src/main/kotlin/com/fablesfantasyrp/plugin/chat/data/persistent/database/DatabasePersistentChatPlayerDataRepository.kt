@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.chat.data.persistent.database
 
 import com.fablesfantasyrp.plugin.chat.channel.ChatChannel
+import com.fablesfantasyrp.plugin.chat.channel.ChatOutOfCharacter
 import com.fablesfantasyrp.plugin.chat.channel.ToggleableChatChannel
 import com.fablesfantasyrp.plugin.chat.data.persistent.PersistentChatPlayerData
 import com.fablesfantasyrp.plugin.chat.data.persistent.PersistentChatPlayerDataRepository
@@ -8,6 +9,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import org.bukkit.OfflinePlayer
 import org.bukkit.Server
+import org.h2.jdbc.JdbcSQLDataException
 import java.io.Serializable
 import java.sql.ResultSet
 import java.util.*
@@ -103,7 +105,11 @@ class DatabasePersistentChatPlayerDataRepository(private val server: Server, pri
 
 	private fun fromRow(row: ResultSet): DatabaseChatPlayerData {
 		val id = checkNotNull(row.getObject("id", UUID::class.java))
-		val channel = row.getObject("channel") as ChatChannel
+		val channel = try {
+			row.getObject("channel") as ChatChannel
+		} catch (ex: JdbcSQLDataException) {
+			ChatOutOfCharacter
+		}
 		val disabledChannels = row.getArray("disabled_channels")?.array
 				?.let { it as Array<Any> }
 				?.let { it.map { it as ToggleableChatChannel } }?.toSet() ?: emptySet()

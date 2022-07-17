@@ -30,7 +30,7 @@ fun ChatChannel.resolveSubChannelRecursive(message: String): Pair<ChatChannel, S
 		val resolved = this.resolveSubChannel(message)
 		val content = resolved.second
 		val subChannel = resolved.first
-		if (subChannel is SubChanneledChatChannel) {
+		if (subChannel is SubChanneledChatChannel && subChannel !== this) {
 			subChannel.resolveSubChannelRecursive(content)
 		} else {
 			Pair(subChannel, content)
@@ -56,7 +56,9 @@ fun ChatChannel.Companion.fromString(s: String): ChatChannel? = when(s.lowercase
 	else -> null
 }
 
-fun ChatChannel.Companion.all(): Collection<String> = listOf("ooc", "looc", "ic", "ic.whisper", "ic.quiet", "ic.shout", "staff", "spectator")
+fun ChatChannel.Companion.all(): Collection<String> = listOf(
+		"ooc", "looc", "ic", "ic.whisper", "ic.quiet", "ic.shout",
+		"staff", "spectator").plus(ChatStaff.subChannels.map { it.toString() })
 
 fun ChatChannel.Companion.fromStringAliased(s: String): ChatChannel? {
 	val name = s.lowercase()
@@ -69,6 +71,10 @@ fun ChatChannel.Companion.fromStringAliased(s: String): ChatChannel? {
 		Regex("(ic|rp)\\.(shout|s)").matches(name) -> ChatInCharacterShout
 		Regex("(spectator|sc|spectatorchat|specchat)").matches(name) -> ChatInCharacter
 		Regex("(staff|st|staffchat)").matches(name) -> ChatStaff
+		Regex("(staff|st|staffchat)\\..+").matches(name) -> {
+			val subChannelName = Regex("(staff|st|staffchat)\\.(.+)").matchEntire(name)!!.groupValues[2].uppercase()
+			ChatStaff.resolveSubChannelForName(subChannelName)
+		}
 		else -> null
 	}
 }
