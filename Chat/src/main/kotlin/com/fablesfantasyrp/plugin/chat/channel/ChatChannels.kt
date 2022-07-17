@@ -57,7 +57,7 @@ fun ChatChannel.Companion.fromString(s: String): ChatChannel? = when(s.lowercase
 }
 
 fun ChatChannel.Companion.all(): Collection<String> = listOf(
-		"ooc", "looc", "ic", "ic.whisper", "ic.quiet", "ic.shout",
+		"ooc", "looc", "ic", "ic.whisper", "ic.quiet", "ic.shout", "ic.contextual",
 		"staff", "spectator").plus(ChatStaff.subChannels.map { it.toString() })
 
 fun ChatChannel.Companion.fromStringAliased(s: String): ChatChannel? {

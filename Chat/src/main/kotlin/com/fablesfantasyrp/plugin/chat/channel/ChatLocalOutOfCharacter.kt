@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.chat.channel
 
 import com.fablesfantasyrp.plugin.characters.currentPlayerCharacter
+import com.fablesfantasyrp.plugin.chat.chat
 import com.fablesfantasyrp.plugin.chat.getPlayersWithinRange
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.parseLinks
@@ -15,6 +16,7 @@ import java.io.Serializable
 object ChatLocalOutOfCharacter : ChatChannel, RawChatChannel, ToggleableChatChannel, PreviewableChatChannel, Serializable {
 	override fun getRecipients(from: Player): Sequence<Player> =
 			getPlayersWithinRange(from.location, 15U)
+					.filter { !it.chat.disabledChannels.contains(this) }
 					.filter { !it.ess.isIgnoredPlayer(from.ess) }
 
 	override fun sendMessage(from: Player, message: String) {
