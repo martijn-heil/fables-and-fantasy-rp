@@ -81,17 +81,19 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 		val channel = result.first
 		val content = result.second
 		val player = this.offlinePlayer.player ?: throw UnsupportedOperationException("Player is not online")
+
+		if (!player.hasPermission(Permission.Channel.prefix + channel)) {
+			player.sendError("Permission denied.")
+			return
+		}
+
 		if (content.isNotEmpty()) {
 			channel.sendMessage(player, content)
 		} else {
-			if (player.hasPermission(Permission.Channel.prefix + channel)) {
-				this.channel = channel
-			} else {
-				player.sendError("Permission denied.")
-			}
+			this.channel = channel
 		}
 	}
-	
+
 	override fun parseChatMessage(message: String): Pair<ChatChannel, String> {
 		val channelRegex = Regex("^\\s*\\$CHAT_CHAR([A-z.]+)( (.*))?")
 		val matchResult = channelRegex.matchEntire(message)
