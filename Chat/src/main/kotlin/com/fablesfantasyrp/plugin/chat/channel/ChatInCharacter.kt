@@ -46,7 +46,7 @@ object ChatInCharacter : ChatChannel, PreviewableChatChannel, SubChanneledChatCh
 		val match = Regex(pattern).matchEntire(message)
 
 		return when {
-			message.startsWith("<<") -> Pair(ChatInCharacterContextual, message)
+			message.startsWith("<<") -> Pair(ChatInCharacterContextual, message.removePrefix("<<").trimStart())
 			match != null -> {
 				when(val channel = match.groups[2]!!.value.lowercase()) {
 					"w" -> Pair(ChatInCharacterWhisper, trimMessage(message))
@@ -198,7 +198,7 @@ object ChatInCharacterContextual : AbstractChatInCharacter(), Serializable {
 	override fun formatMessage(from: Player, message: String): Component {
 		val customResolver = TagResolver.builder()
 				.tag("player_name", Tag.selfClosingInserting(Component.text(from.name)))
-				.tag("message", Tag.selfClosingInserting(Component.text(message.removePrefix("<<").trim())))
+				.tag("message", Tag.selfClosingInserting(Component.text(message)))
 				.build()
 
 		return miniMessage.deserialize("<gray>[</gray><yellow>!</yellow><gray>]</gray> <white><message></white> " +
