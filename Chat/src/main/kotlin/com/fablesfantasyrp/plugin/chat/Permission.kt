@@ -5,7 +5,7 @@ object Permission {
 	const val Format = "${prefix}.format"
 
 	object Channel {
-		private const val prefix = Permission.prefix + ".channel"
+		const val prefix = Permission.prefix + ".channel"
 		const val Ic = "${prefix}.ic"
 		const val Ooc = "${prefix}.ooc"
 		const val Looc = "${prefix}.looc"

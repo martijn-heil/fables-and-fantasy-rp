@@ -1,11 +1,13 @@
 package com.fablesfantasyrp.plugin.chat.data.entity
 
 import com.fablesfantasyrp.plugin.chat.CHAT_CHAR
+import com.fablesfantasyrp.plugin.chat.Permission
 import com.fablesfantasyrp.plugin.chat.SYSPREFIX
 import com.fablesfantasyrp.plugin.chat.channel.*
 import com.fablesfantasyrp.plugin.chat.data.ChatPlayerData
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
+import com.fablesfantasyrp.plugin.text.sendError
 import me.neznamy.tab.api.TabAPI
 import me.neznamy.tab.api.team.UnlimitedNametagManager
 import net.kyori.adventure.text.format.Style
@@ -78,13 +80,18 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 		val result: Pair<ChatChannel, String> = this.parseChatMessage(message)
 		val channel = result.first
 		val content = result.second
+		val player = this.offlinePlayer.player ?: throw UnsupportedOperationException("Player is not online")
 		if (content.isNotEmpty()) {
-			channel.sendMessage(this.offlinePlayer.player!!, content)
+			channel.sendMessage(player, content)
 		} else {
-			this.channel = channel
+			if (player.hasPermission(Permission.Channel.prefix + channel)) {
+				this.channel = channel
+			} else {
+				player.sendError("Permission denied.")
+			}
 		}
 	}
-
+	
 	override fun parseChatMessage(message: String): Pair<ChatChannel, String> {
 		val channelRegex = Regex("^\\s*\\$CHAT_CHAR([A-z.]+)( (.*))?")
 		val matchResult = channelRegex.matchEntire(message)
