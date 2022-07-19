@@ -35,8 +35,14 @@ class Commands {
 			else -> {
 				sender.sendMessage("$SYSPREFIX You have disabled $channelDisplayName chat.")
 				if (channel == chatPlayerEntity.channel) {
-					sender.sendMessage("$SYSPREFIX You have disabled your current channel, switching to LOOC instead.")
-					chatPlayerEntity.channel = ChatLocalOutOfCharacter
+					val newChannel = if (chatPlayerEntity.channel != ChatLocalOutOfCharacter) {
+						ChatLocalOutOfCharacter
+					} else {
+						ChatInCharacter
+					}
+
+					sender.sendMessage("$SYSPREFIX You have disabled your current channel, switching to $newChannel instead.")
+					chatPlayerEntity.channel = newChannel
 				}
 				disabledChannels.plus(channel)
 			}

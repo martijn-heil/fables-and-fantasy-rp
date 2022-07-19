@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.chat.channel
 
+import com.fablesfantasyrp.plugin.chat.chat
 import com.fablesfantasyrp.plugin.text.*
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.Tag
@@ -12,13 +13,14 @@ import org.bukkit.entity.Player
 import java.io.Serializable
 
 object ChatStaff : AbstractSubChanneledChatChannel("staff", mapOf(
-		Pair(ChatStaffTechTeam.team, ChatStaffTechTeam),
-		Pair(ChatStaffEventTeam.team, ChatStaffEventTeam),
-		Pair(ChatStaffLoreTeam.team, ChatStaffLoreTeam),
-		Pair(ChatStaffModTeam.team, ChatStaffModTeam),
-		Pair(ChatStaffBuildTeam.team, ChatStaffBuildTeam),
-		Pair(ChatStaffCommunityTeam.team, ChatStaffCommunityTeam),
-		Pair(ChatStaffFeatureDevelopmentTeam.team, ChatStaffFeatureDevelopmentTeam),
+		Pair(ChatStaffEvent.channelName, ChatStaffEvent),
+		Pair(ChatStaffTechTeam.channelName, ChatStaffTechTeam),
+		Pair(ChatStaffEventTeam.channelName, ChatStaffEventTeam),
+		Pair(ChatStaffLoreTeam.channelName, ChatStaffLoreTeam),
+		Pair(ChatStaffModTeam.channelName, ChatStaffModTeam),
+		Pair(ChatStaffBuildTeam.channelName, ChatStaffBuildTeam),
+		Pair(ChatStaffCommunityTeam.channelName, ChatStaffCommunityTeam),
+		Pair(ChatStaffFeatureDevelopmentTeam.channelName, ChatStaffFeatureDevelopmentTeam),
 ), ChatStaffStandard), Serializable {
 	fun readResolve(): Any? = ChatStaff
 	override fun getRecipients(from: Player): Sequence<Player>
@@ -26,15 +28,15 @@ object ChatStaff : AbstractSubChanneledChatChannel("staff", mapOf(
 }
 
 abstract class AbstractChatStaff : ChatChannel, RawChatChannel, CommandSenderCompatibleChatChannel, PreviewableChatChannel, Serializable {
-	abstract val team: String
+	abstract val channelName: String
 
 	override fun getRecipients(from: Player): Sequence<Player> =
 			Bukkit.getOnlinePlayers().asSequence()
-					.filter { it.hasPermission(Permission.Channel.Staff + ".${team.lowercase()}") }
+					.filter { it.hasPermission(Permission.Channel.Staff + ".${channelName.lowercase()}") }
 
 	override fun getRecipients(from: CommandSender): Sequence<Player> =
 			Bukkit.getOnlinePlayers().asSequence()
-					.filter { it.hasPermission(Permission.Channel.Staff + ".${team.lowercase()}") }
+					.filter { it.hasPermission(Permission.Channel.Staff + ".${channelName.lowercase()}") }
 
 	override fun sendMessage(from: Player, message: String) = this.sendMessage(from, parseLinks(message))
 	override fun sendMessage(from: CommandSender, message: String) = this.sendMessage(from, parseLinks(message))
@@ -61,8 +63,8 @@ abstract class AbstractChatStaff : ChatChannel, RawChatChannel, CommandSenderCom
 					.let { legacyText(it) }
 		} else Component.text()
 
-		val teamName = if (team != "") team else null
-		val channelName = Component.text(listOfNotNull("ST", teamName).joinToString("."))
+		val teamName = if (channelName != "") channelName else null
+		val channelName = Component.text(listOfNotNull("ST", teamName).joinToString("#"))
 
 		val customResolver = TagResolver.builder()
 				.tag("prefix", Tag.selfClosingInserting(chatPrefix))
@@ -77,61 +79,83 @@ abstract class AbstractChatStaff : ChatChannel, RawChatChannel, CommandSenderCom
 	}
 
 	override fun getPreview(from: Player, message: String): Component = this.formatMessage(from, parseLinks(message))
-	override fun toString() = "staff.${team.lowercase()}"
+	override fun toString() = "staff#${channelName.lowercase()}"
 }
 
 object ChatStaffStandard : AbstractChatStaff() {
 	@Transient
-	override val team: String = ""
+	override val channelName: String = ""
 
 	fun readResolve(): Any? = ChatStaffStandard
+	private const val serialVersionUID: Long = 1
+}
+
+object ChatStaffEvent : AbstractChatStaff(), ToggleableChatChannel {
+	@Transient
+	override val channelName: String = "EVENT"
+
+	override fun getRecipients(from: CommandSender): Sequence<Player>
+		= super.getRecipients(from).filter { !it.chat.disabledChannels.contains(this) }
+
+	override fun getRecipients(from: Player): Sequence<Player>
+		= super.getRecipients(from).filter { !it.chat.disabledChannels.contains(this) }
+
+	fun readResolve(): Any? = ChatStaffEvent
+	private const val serialVersionUID: Long = 1
 }
 
 object ChatStaffTechTeam : AbstractChatStaff() {
 	@Transient
-	override val team: String = "TT"
+	override val channelName: String = "TT"
 
 	fun readResolve(): Any? = ChatStaffTechTeam
+	private const val serialVersionUID: Long = 1
 }
 
 object ChatStaffEventTeam : AbstractChatStaff() {
 	@Transient
-	override val team: String = "ET"
+	override val channelName: String = "ET"
 
 	fun readResolve(): Any? = ChatStaffEventTeam
+	private const val serialVersionUID: Long = 1
 }
 
 object ChatStaffLoreTeam : AbstractChatStaff() {
 	@Transient
-	override val team: String = "LT"
+	override val channelName: String = "LT"
 
 	fun readResolve(): Any? = ChatStaffLoreTeam
+	private const val serialVersionUID: Long = 1
 }
 
 object ChatStaffModTeam : AbstractChatStaff() {
 	@Transient
-	override val team: String = "MT"
+	override val channelName: String = "MT"
 
 	fun readResolve(): Any? = ChatStaffModTeam
+	private const val serialVersionUID: Long = 1
 }
 
 object ChatStaffBuildTeam : AbstractChatStaff() {
 	@Transient
-	override val team: String = "BT"
+	override val channelName: String = "BT"
 
 	fun readResolve(): Any? = ChatStaffModTeam
+	private const val serialVersionUID: Long = 1
 }
 
 object ChatStaffCommunityTeam : AbstractChatStaff() {
 	@Transient
-	override val team: String = "CT"
+	override val channelName: String = "CT"
 
 	fun readResolve(): Any? = ChatStaffModTeam
+	private const val serialVersionUID: Long = 1
 }
 
 object ChatStaffFeatureDevelopmentTeam : AbstractChatStaff() {
 	@Transient
-	override val team: String = "FD"
+	override val channelName: String = "FD"
 
 	fun readResolve(): Any? = ChatStaffFeatureDevelopmentTeam
+	private const val serialVersionUID: Long = 1
 }

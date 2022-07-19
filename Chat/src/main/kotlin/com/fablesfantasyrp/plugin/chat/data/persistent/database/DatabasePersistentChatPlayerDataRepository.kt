@@ -110,9 +110,16 @@ class DatabasePersistentChatPlayerDataRepository(private val server: Server, pri
 		} catch (ex: JdbcSQLDataException) {
 			ChatOutOfCharacter
 		}
-		val disabledChannels = row.getArray("disabled_channels")?.array
-				?.let { it as Array<Any> }
-				?.let { it.map { it as ToggleableChatChannel } }?.toSet() ?: emptySet()
+
+		val disabledChannels = try {
+			row.getArray("disabled_channels")?.array
+					?.let { it as Array<Any> }
+					?.let { it.mapNotNull { it as? ToggleableChatChannel } }?.toSet() ?: emptySet()
+		} catch (ex: JdbcSQLDataException) {
+			emptySet()
+		}
+		checkNotNull(disabledChannels)
+
 		val chatStyle = row.getString("chat_style")?.let { GsonComponentSerializer.gson().deserialize(it).style() }
 		val isChatReceptionIndicatorEnabled = row.getBoolean("reception_indicator_enabled")
 		return DatabaseChatPlayerData(id, channel, chatStyle, disabledChannels, isChatReceptionIndicatorEnabled)

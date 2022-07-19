@@ -54,4 +54,5 @@ object ChatLocalOutOfCharacter : ChatChannel, RawChatChannel, ToggleableChatChan
 	override fun getPreview(from: Player, message: String): Component = this.formatMessage(from, parseLinks(message))
 	override fun toString() = "looc"
 	fun readResolve(): Any? = ChatLocalOutOfCharacter
+	private const val serialVersionUID: Long = 1
 }

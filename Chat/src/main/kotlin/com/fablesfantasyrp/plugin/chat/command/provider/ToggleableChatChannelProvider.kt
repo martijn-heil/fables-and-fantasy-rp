@@ -2,6 +2,7 @@ package com.fablesfantasyrp.plugin.chat.command.provider
 
 import com.fablesfantasyrp.plugin.chat.channel.ChatChannel
 import com.fablesfantasyrp.plugin.chat.channel.ToggleableChatChannel
+import com.fablesfantasyrp.plugin.chat.channel.allStatic
 import com.fablesfantasyrp.plugin.chat.channel.fromString
 import com.sk89q.intake.argument.ArgumentParseException
 import com.sk89q.intake.argument.CommandArgs
@@ -22,6 +23,6 @@ class ToggleableChatChannelProvider(private val server: Server) : Provider<Toggl
 	}
 
 	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
-		return listOf("ooc", "spectator", "looc").filter { it.startsWith(prefix) }
+		return ChatChannel.allStatic().filterIsInstance(ToggleableChatChannel::class.java).map { it.toString() }
 	}
 }

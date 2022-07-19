@@ -67,4 +67,5 @@ object ChatOutOfCharacter : ChatChannel, RawChatChannel, ToggleableChatChannel, 
 
 	override fun toString() = "ooc"
 	fun readResolve(): Any? = ChatOutOfCharacter
+	private const val serialVersionUID: Long = 1
 }

@@ -49,4 +49,5 @@ object ChatSpectator : ChatChannel, RawChatChannel, ToggleableChatChannel, Comma
 	override fun getPreview(from: Player, message: String): Component = this.formatMessage(from, parseLinks(message))
 	override fun toString() = "spectator"
 	fun readResolve(): Any? = ChatSpectator
+	private const val serialVersionUID: Long = 1
 }

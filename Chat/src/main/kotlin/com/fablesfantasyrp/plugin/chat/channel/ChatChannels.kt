@@ -48,17 +48,30 @@ fun ChatChannel.Companion.fromString(s: String): ChatChannel? = when(s.lowercase
 	"ooc" -> ChatOutOfCharacter
 	"looc" -> ChatLocalOutOfCharacter
 	"ic" -> ChatInCharacter
-	"ic.whisper" -> ChatInCharacterWhisper
-	"ic.quiet" -> ChatInCharacterQuiet
-	"ic.shout" -> ChatInCharacterShout
+	"ic#whisper" -> ChatInCharacterWhisper
+	"ic#quiet" -> ChatInCharacterQuiet
+	"ic#shout" -> ChatInCharacterShout
+	"ic#contextual" -> ChatInCharacterContextual
 	"staff" -> ChatStaff
+	"staff#event" -> ChatStaffEvent
 	"spectator" -> ChatSpectator
 	else -> null
 }
 
-fun ChatChannel.Companion.all(): Collection<String> = listOf(
-		"ooc", "looc", "ic", "ic.whisper", "ic.quiet", "ic.shout", "ic.contextual",
-		"staff", "spectator").plus(ChatStaff.subChannels.map { it.toString() })
+fun ChatChannel.Companion.allStatic(): Collection<ChatChannel> = listOf(
+		ChatOutOfCharacter,
+		ChatLocalOutOfCharacter,
+		ChatInCharacter,
+		ChatInCharacterStandard,
+		ChatInCharacterShout,
+		ChatInCharacterQuiet,
+		ChatInCharacterWhisper,
+		ChatInCharacterContextual,
+		ChatSpectator,
+		ChatStaff,
+).plus(ChatStaff.subChannels)
+
+fun ChatChannel.Companion.allNames(): Collection<String> = ChatChannel.allStatic().map { it.toString() }
 
 fun ChatChannel.Companion.fromStringAliased(s: String): ChatChannel? {
 	val name = s.lowercase()
@@ -66,25 +79,18 @@ fun ChatChannel.Companion.fromStringAliased(s: String): ChatChannel? {
 		name == "ooc" -> ChatOutOfCharacter
 		name == "looc" -> ChatLocalOutOfCharacter
 		Regex("(ic|rp)").matches(name) -> ChatInCharacter
-		Regex("(ic|rp)\\.(whisper|w)").matches(name) -> ChatInCharacterWhisper
-		Regex("(ic|rp)\\.(quiet|q)").matches(name) -> ChatInCharacterQuiet
-		Regex("(ic|rp)\\.(shout|s)").matches(name) -> ChatInCharacterShout
+		Regex("(ic|rp)[.#](whisper|w)").matches(name) -> ChatInCharacterWhisper
+		Regex("(ic|rp)[.#](quiet|q)").matches(name) -> ChatInCharacterQuiet
+		Regex("(ic|rp)[.#](shout|s)").matches(name) -> ChatInCharacterShout
 		Regex("(spectator|sc|spectatorchat|specchat)").matches(name) -> ChatInCharacter
 		Regex("(staff|st|staffchat)").matches(name) -> ChatStaff
-		Regex("(staff|st|staffchat)\\..+").matches(name) -> {
-			val subChannelName = Regex("(staff|st|staffchat)\\.(.+)").matchEntire(name)!!.groupValues[2].uppercase()
+		Regex("(staff|st|staffchat)[.#].+").matches(name) -> {
+			val subChannelName = Regex("(staff|st|staffchat)[.#](.+)").matchEntire(name)!!.groupValues[2].uppercase()
 			ChatStaff.resolveSubChannelForName(subChannelName)
 		}
 		else -> null
 	}
 }
-
-fun ChatChannel.toStringAliased(): String? = when (this) {
-		is ChatOutOfCharacter -> "ooc"
-		is ChatInCharacter -> "ic.standard"
-		is ChatInCharacterStandard -> "ic.standard"
-		else -> null
-	}
 
 class ChatIllegalArgumentException(message: String) : IllegalArgumentException(message)
 

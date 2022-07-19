@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.chat.command.provider
 
 import com.fablesfantasyrp.plugin.chat.channel.ChatChannel
-import com.fablesfantasyrp.plugin.chat.channel.all
+import com.fablesfantasyrp.plugin.chat.channel.allNames
 import com.fablesfantasyrp.plugin.chat.channel.fromString
 import com.sk89q.intake.argument.ArgumentParseException
 import com.sk89q.intake.argument.CommandArgs
@@ -18,6 +18,6 @@ class ChatChannelProvider(private val server: Server) : Provider<ChatChannel> {
 	}
 
 	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
-		return ChatChannel.all().toList()
+		return ChatChannel.allNames().filter { it.startsWith(prefix) }.toList()
 	}
 }

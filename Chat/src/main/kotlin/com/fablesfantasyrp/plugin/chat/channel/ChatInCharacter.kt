@@ -61,6 +61,7 @@ object ChatInCharacter : ChatChannel, PreviewableChatChannel, SubChanneledChatCh
 
 	override fun toString() = "ic"
 	fun readResolve(): Any? = ChatInCharacter
+	private const val serialVersionUID: Long = 1
 }
 
 private fun alternateStyle(message: String, startsWithAction: Boolean, actionStyle: Style, speechStyle: Style): Component {
@@ -136,8 +137,9 @@ object ChatInCharacterStandard : AbstractChatInCharacter(), Serializable {
 	@Transient
 	override val actionWord = "says"
 
-	override fun toString() = "ic.standard"
+	override fun toString() = "ic#standard"
 	fun readResolve(): Any? = ChatInCharacterStandard
+	private const val serialVersionUID: Long = 1
 }
 
 object ChatInCharacterWhisper : AbstractChatInCharacter(), Serializable {
@@ -152,8 +154,9 @@ object ChatInCharacterWhisper : AbstractChatInCharacter(), Serializable {
 				?.let { Component.text("[W] ").color(NamedTextColor.GRAY).append(it) }
 	}
 
-	override fun toString() = "ic.whisper"
+	override fun toString() = "ic#whisper"
 	fun readResolve(): Any? = ChatInCharacterWhisper
+	private const val serialVersionUID: Long = 1
 }
 
 object ChatInCharacterQuiet : AbstractChatInCharacter(), Serializable {
@@ -168,8 +171,9 @@ object ChatInCharacterQuiet : AbstractChatInCharacter(), Serializable {
 				?.let { Component.text("[Q] ").color(NamedTextColor.GRAY).append(it) }
 	}
 
-	override fun toString() = "ic.quiet"
+	override fun toString() = "ic#quiet"
 	fun readResolve(): Any? = ChatInCharacterQuiet
+	private const val serialVersionUID: Long = 1
 }
 
 object ChatInCharacterShout : AbstractChatInCharacter(), Serializable {
@@ -184,8 +188,9 @@ object ChatInCharacterShout : AbstractChatInCharacter(), Serializable {
 				?.let { Component.text("[S] ").color(NamedTextColor.GRAY).append(it) }
 	}
 
-	override fun toString() = "ic.shout"
+	override fun toString() = "ic#shout"
 	fun readResolve(): Any? = ChatInCharacterShout
+	private const val serialVersionUID: Long = 1
 }
 
 object ChatInCharacterContextual : AbstractChatInCharacter(), Serializable {
@@ -206,6 +211,7 @@ object ChatInCharacterContextual : AbstractChatInCharacter(), Serializable {
 				TagResolver.standard(), customResolver)
 	}
 
-	override fun toString() = "ic.contextual"
+	override fun toString() = "ic#contextual"
 	fun readResolve(): Any? = ChatInCharacterContextual
+	private const val serialVersionUID: Long = 1
 }

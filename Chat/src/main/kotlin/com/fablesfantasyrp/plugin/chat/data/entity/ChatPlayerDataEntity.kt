@@ -31,13 +31,16 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 				field = value
 				dirtyMarker?.markDirty(this)
 				offlinePlayer.player?.sendMessage("$SYSPREFIX Your chat channel has been switched to ${value.toString().uppercase()}!")
+				if (value is ToggleableChatChannel && this.disabledChannels.contains(value)) {
+					this.disabledChannels = this.disabledChannels.filter { it != value }.toSet()
+				}
 			}
 		}
 
 	override var chatStyle: Style?
 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 
-	override var disabledChannels: Set<ToggleableChatChannel>
+	override var disabledChannels: Set<ToggleableChatChannel> = emptySet()
 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 
 	override var isReceptionIndicatorEnabled: Boolean = false
@@ -93,6 +96,9 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 		}
 
 		if (content.isNotEmpty()) {
+			if (channel is ToggleableChatChannel && this.disabledChannels.contains(channel)) {
+				this.disabledChannels = this.disabledChannels.filter { it != channel }.toSet()
+			}
 			channel.sendMessage(player, content)
 		} else {
 			this.channel = channel
@@ -100,7 +106,7 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 	}
 
 	override fun parseChatMessage(message: String): Pair<ChatChannel, String> {
-		val channelRegex = Regex("^\\s*\\$CHAT_CHAR([A-z.]+)( (.*))?")
+		val channelRegex = Regex("^\\s*\\$CHAT_CHAR([A-z.#]+)( (.*))?")
 		val matchResult = channelRegex.matchEntire(message)
 		return if (matchResult != null) {
 			val content = matchResult.groupValues[3]
