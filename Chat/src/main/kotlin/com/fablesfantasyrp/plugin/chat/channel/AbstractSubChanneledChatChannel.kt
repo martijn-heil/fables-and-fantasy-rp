@@ -40,7 +40,7 @@ abstract class AbstractSubChanneledChatChannel(private val name: String,
 		return Pair(channel, messageContent)
 	}
 
-	fun resolveSubChannelForName(name: String) = map[name]
+	fun resolveSubChannelForName(name: String) = map[name.uppercase()]
 
 	override fun toString() = name
 }

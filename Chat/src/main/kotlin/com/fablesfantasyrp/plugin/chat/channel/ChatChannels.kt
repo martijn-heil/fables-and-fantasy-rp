@@ -44,19 +44,7 @@ interface PreviewableCommandSenderCompatibleChatChannel : ChatChannel {
 	fun getPreview(from: CommandSender, message: String): Component
 }
 
-fun ChatChannel.Companion.fromString(s: String): ChatChannel? = when(s.lowercase()) {
-	"ooc" -> ChatOutOfCharacter
-	"looc" -> ChatLocalOutOfCharacter
-	"ic" -> ChatInCharacter
-	"ic#whisper" -> ChatInCharacterWhisper
-	"ic#quiet" -> ChatInCharacterQuiet
-	"ic#shout" -> ChatInCharacterShout
-	"ic#contextual" -> ChatInCharacterContextual
-	"staff" -> ChatStaff
-	"staff#event" -> ChatStaffEvent
-	"spectator" -> ChatSpectator
-	else -> null
-}
+fun ChatChannel.Companion.fromString(s: String): ChatChannel? = ChatChannel.allStatic().find { it.toString() == s }
 
 fun ChatChannel.Companion.allStatic(): Collection<ChatChannel> = listOf(
 		ChatOutOfCharacter,
@@ -82,6 +70,7 @@ fun ChatChannel.Companion.fromStringAliased(s: String): ChatChannel? {
 		Regex("(ic|rp)[.#](whisper|w)").matches(name) -> ChatInCharacterWhisper
 		Regex("(ic|rp)[.#](quiet|q)").matches(name) -> ChatInCharacterQuiet
 		Regex("(ic|rp)[.#](shout|s)").matches(name) -> ChatInCharacterShout
+		Regex("(ic|rp)[.#](contextual)").matches(name) -> ChatInCharacterContextual
 		Regex("(spectator|sc|spectatorchat|specchat)").matches(name) -> ChatInCharacter
 		Regex("(staff|st|staffchat)").matches(name) -> ChatStaff
 		Regex("(staff|st|staffchat)[.#].+").matches(name) -> {
