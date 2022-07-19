@@ -82,7 +82,12 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 		val content = result.second
 		val player = this.offlinePlayer.player ?: throw UnsupportedOperationException("Player is not online")
 
-		if (!player.hasPermission(Permission.Channel.prefix + channel)) {
+		if (!player.isWhitelisted && channel != ChatSpectator) {
+			player.sendError("Permission denied.")
+			return
+		}
+
+		if (!player.hasPermission("${Permission.Channel.prefix}.$channel")) {
 			player.sendError("Permission denied.")
 			return
 		}

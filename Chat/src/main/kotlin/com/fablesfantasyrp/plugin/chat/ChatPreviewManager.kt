@@ -15,6 +15,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import org.bukkit.Server
 import org.bukkit.entity.Player
+import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.event.player.PlayerChatEvent
 import org.bukkit.plugin.Plugin
 import java.time.Duration
@@ -61,7 +62,12 @@ class ChatPreviewManager(private val plugin: Plugin) {
 						chatPlayerEntity.isTyping = false
 						plugin.server.scheduler.scheduleSyncDelayedTask(plugin) {
 							val chatMessage = packet.strings.read(0).take(256)
+
+							val asyncChatEvent = AsyncPlayerChatEvent(false, player, chatMessage, server.onlinePlayers.toSet())
+							plugin.server.pluginManager.callEvent(asyncChatEvent)
+
 							val chatEvent = PlayerChatEvent(player, chatMessage)
+							chatEvent.isCancelled = asyncChatEvent.isCancelled
 							plugin.server.pluginManager.callEvent(chatEvent)
 						}
 					}
