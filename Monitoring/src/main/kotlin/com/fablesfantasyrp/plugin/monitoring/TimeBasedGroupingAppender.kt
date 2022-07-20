@@ -43,7 +43,7 @@ class TimeBasedGroupingAppender(private val ignorePatterns: Collection<Regex>, p
 	}
 
 	fun flush() {
-		val fuzzy = grouped.find { fuzzyMatch(it) } != null
+		val fuzzy = grouped.toList().find { fuzzyMatch(it) } != null
 		if (fuzzy) {
 			child.append(mergeLogEvents(grouped, Level.ERROR))
 		} else {
