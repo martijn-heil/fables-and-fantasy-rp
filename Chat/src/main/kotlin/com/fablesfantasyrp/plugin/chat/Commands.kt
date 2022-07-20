@@ -50,7 +50,7 @@ class Commands {
 	}
 
 	@Command(aliases = ["togglereceptionindicator"], desc = "Toggle your chat reception indicator.")
-	@Require(Permission.Command.Togglechatindicator)
+	@Require(Permission.Command.Togglereceptionindicator)
 	fun togglereceptionindicator(@Sender sender: Player) {
 		val chatPlayerData = sender.chat
 		chatPlayerData.isReceptionIndicatorEnabled = !chatPlayerData.isReceptionIndicatorEnabled

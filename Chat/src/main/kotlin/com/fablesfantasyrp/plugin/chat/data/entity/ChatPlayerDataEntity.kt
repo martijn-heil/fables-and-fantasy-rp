@@ -90,7 +90,7 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 			return
 		}
 
-		if (!player.hasPermission("${Permission.Channel.prefix}.$channel")) {
+		if (!player.hasPermission("${Permission.Channel.prefix}.${channel.toString().replace('#', '.')}")) {
 			player.sendError("Permission denied.")
 			return
 		}

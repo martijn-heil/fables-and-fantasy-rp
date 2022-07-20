@@ -71,7 +71,7 @@ fun ChatChannel.Companion.fromStringAliased(s: String): ChatChannel? {
 		Regex("(ic|rp)[.#](quiet|q)").matches(name) -> ChatInCharacterQuiet
 		Regex("(ic|rp)[.#](shout|s)").matches(name) -> ChatInCharacterShout
 		Regex("(ic|rp)[.#](contextual)").matches(name) -> ChatInCharacterContextual
-		Regex("(spectator|sc|spectatorchat|specchat)").matches(name) -> ChatInCharacter
+		Regex("(spectator|sc|spectatorchat|specchat)").matches(name) -> ChatSpectator
 		Regex("(staff|st|staffchat)").matches(name) -> ChatStaff
 		Regex("(staff|st|staffchat)[.#].+").matches(name) -> {
 			val subChannelName = Regex("(staff|st|staffchat)[.#](.+)").matchEntire(name)!!.groupValues[2].uppercase()

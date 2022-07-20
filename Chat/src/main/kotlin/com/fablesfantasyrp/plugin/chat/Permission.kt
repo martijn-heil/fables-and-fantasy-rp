@@ -18,6 +18,6 @@ object Permission {
 		const val Togglechat = "${prefix}.togglechat"
 		const val Chatcolor = "${prefix}.chatcolor"
 		const val Chatchannel = "${prefix}.chatchannel"
-		const val Togglechatindicator = "${prefix}.togglechatindicator"
+		const val Togglereceptionindicator = "${prefix}.togglereceptionindicator"
 	}
 }
