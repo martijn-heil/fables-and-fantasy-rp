@@ -57,7 +57,8 @@ class DatabasePersistentChatPlayerDataRepository(private val server: Server, pri
 		var result: PersistentChatPlayerData?
 		while (true) {
 			result = this.forIdMaybe(id)
-			if (result == null && server.getOfflinePlayer(id).hasPlayedBefore()) {
+			val offlinePlayer = server.getOfflinePlayer(id)
+			if (result == null && (offlinePlayer.isOnline || offlinePlayer.hasPlayedBefore())) {
 				this.create(DatabaseChatPlayerData(id))
 				continue
 			}
