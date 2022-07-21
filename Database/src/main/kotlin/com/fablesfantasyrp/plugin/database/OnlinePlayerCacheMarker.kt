@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.database
 
+import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -13,7 +14,12 @@ class OnlinePlayerCacheMarker<T>(private val plugin: Plugin, private val marker:
 		plugin.server.pluginManager.registerEvents(object : Listener {
 			@EventHandler(priority = EventPriority.LOWEST)
 			fun onPlayerJoin(e: PlayerJoinEvent) {
-				marker.markStrong(forPlayer(e.player))
+				try {
+					marker.markStrong(forPlayer(e.player))
+				} catch(ex: Exception) {
+					ex.printStackTrace()
+					e.player.kick(Component.text("An internal server error occurred! Please contact server staff."))
+				}
 			}
 
 			@EventHandler(priority = EventPriority.MONITOR)
