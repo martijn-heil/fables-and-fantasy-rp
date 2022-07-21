@@ -79,18 +79,29 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 	override var lastTypingAnimation: String? = null
 	override var previewChannel: ChatChannel? = null
 
+	private fun mayChatIn(channel: ChatChannel): Boolean {
+		val player = this.offlinePlayer.player ?: throw UnsupportedOperationException("Player is not online")
+		return (!(!player.isWhitelisted && channel == ChatSpectator) &&
+				!player.hasPermission("${Permission.Channel.prefix}.${channel.toString().replace('#', '.')}"))
+	}
+
 	override fun doChat(message: String) {
+		val player = this.offlinePlayer.player ?: throw UnsupportedOperationException("Player is not online")
+
+		if (!this.mayChatIn(this.channel)) {
+			this.channel = ChatOutOfCharacter
+		}
+
 		val result: Pair<ChatChannel, String> = this.parseChatMessage(message)
 		val channel = result.first
 		val content = result.second
-		val player = this.offlinePlayer.player ?: throw UnsupportedOperationException("Player is not online")
 
 		if (!player.isWhitelisted && channel != ChatSpectator) {
 			player.sendError("Permission denied.")
 			return
 		}
 
-		if (!player.hasPermission("${Permission.Channel.prefix}.${channel.toString().replace('#', '.')}")) {
+		if (!this.mayChatIn(channel)) {
 			player.sendError("Permission denied.")
 			return
 		}
