@@ -1,5 +1,7 @@
-package com.fablesfantasyrp.plugin.knockout
+package com.fablesfantasyrp.plugin.knockout.command
 
+import com.fablesfantasyrp.plugin.knockout.Permission
+import com.fablesfantasyrp.plugin.knockout.knockout
 import com.gitlab.martijn_heil.nincommands.common.CommandTarget
 import com.sk89q.intake.Command
 import com.sk89q.intake.Require

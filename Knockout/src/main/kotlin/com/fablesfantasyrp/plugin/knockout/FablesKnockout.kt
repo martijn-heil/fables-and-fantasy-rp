@@ -1,13 +1,13 @@
 package com.fablesfantasyrp.plugin.knockout
 
-import com.fablesfantasyrp.plugin.knockout.command.provider.ChatModule
+import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
+import com.fablesfantasyrp.plugin.database.applyMigrations
+import com.fablesfantasyrp.plugin.database.entity.EntityRepository
+import com.fablesfantasyrp.plugin.knockout.command.Commands
 import com.fablesfantasyrp.plugin.knockout.data.entity.ChatPlayerDataEntityMapper
 import com.fablesfantasyrp.plugin.knockout.data.entity.ChatPlayerDataEntityRepository
 import com.fablesfantasyrp.plugin.knockout.data.entity.KnockoutPlayerEntity
 import com.fablesfantasyrp.plugin.knockout.data.persistent.database.DatabasePersistentKnockoutPlayerDataRepository
-import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
-import com.fablesfantasyrp.plugin.database.applyMigrations
-import com.fablesfantasyrp.plugin.database.entity.EntityRepository
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
@@ -22,11 +22,10 @@ import org.bukkit.ChatColor.*
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
 
-internal val SYSPREFIX = "${GOLD}[${DARK_AQUA}${BOLD} CHAT ${GOLD}] $GRAY"
+internal val SYSPREFIX = "${GOLD}[${DARK_AQUA}${BOLD} KNOCKOUT ${GOLD}] $GRAY"
 
 internal lateinit var knockoutPlayerDataManager: EntityRepository<UUID, KnockoutPlayerEntity>
 
-val CHAT_CHAR = "$"
 
 class FablesKnockout : JavaPlugin() {
 
@@ -47,14 +46,12 @@ class FablesKnockout : JavaPlugin() {
 				)
 		).init()
 
-		ChatReceptionIndicatorManager().start()
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())
 		injector.install(BukkitModule(server))
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
-		injector.install(ChatModule(server))
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()
