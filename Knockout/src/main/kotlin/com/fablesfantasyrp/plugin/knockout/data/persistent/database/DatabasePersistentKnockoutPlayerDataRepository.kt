@@ -2,13 +2,11 @@ package com.fablesfantasyrp.plugin.knockout.data.persistent.database
 
 import com.fablesfantasyrp.plugin.knockout.data.persistent.PersistentKnockoutPlayerData
 import com.fablesfantasyrp.plugin.knockout.data.persistent.PersistentKnockoutPlayerDataRepository
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import org.bukkit.OfflinePlayer
 import org.bukkit.Server
-import org.h2.jdbc.JdbcSQLDataException
-import java.io.Serializable
+import org.bukkit.event.entity.EntityDamageEvent
 import java.sql.ResultSet
+import java.sql.Timestamp
 import java.util.*
 import javax.sql.DataSource
 
@@ -35,12 +33,16 @@ class DatabasePersistentKnockoutPlayerDataRepository(private val server: Server,
 
 	override fun create(v: PersistentKnockoutPlayerData) {
 		dataSource.connection.use { connection ->
-			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME (id, channel, disabled_channels, reception_indicator_enabled) " +
+			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME " +
+					"(id, knocked_out_at, knockout_cause, damager) " +
 					"VALUES (?, ?, ?, ?)")
 			stmnt.setObject(1, v.id)
-			if (v.channel is Serializable) stmnt.setObject(2, v.channel)
-			stmnt.setArray(3, connection.createArrayOf("JAVA_OBJECT", v.disabledChannels.filter { it is Serializable }.toTypedArray()))
-			stmnt.setBoolean(4, v.isReceptionIndicatorEnabled)
+			val knockedOutAt = v.knockedOutAt
+			val knockoutCause = v.knockoutCause
+			val damager = v.knockoutDamager
+			if (knockedOutAt != null) stmnt.setTimestamp(2, Timestamp.from(knockedOutAt))
+			if (knockoutCause != null) stmnt.setString(3, knockoutCause.name)
+			if (damager != null) stmnt.setObject(4, damager.uniqueId)
 			stmnt.executeUpdate()
 		}
 	}
@@ -87,39 +89,31 @@ class DatabasePersistentKnockoutPlayerDataRepository(private val server: Server,
 	override fun update(v: PersistentKnockoutPlayerData) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("UPDATE $TABLE_NAME SET " +
-					"channel = ?, " +
-					"disabled_channels = ?, " +
-					"chat_style = ?, " +
-					"reception_indicator_enabled = ? " +
+					"knocked_out_at = ?, " +
+					"knockout_cause = ?, " +
+					"damager = ? " +
 					"WHERE id = ?")
-			if (v.channel is Serializable) stmnt.setObject(1, v.channel)
-			stmnt.setArray(2, connection.createArrayOf("JAVA_OBJECT", v.disabledChannels.filter { it is Serializable }.toTypedArray()))
-			stmnt.setString(3, v.chatStyle?.let { GsonComponentSerializer.gson().serialize(Component.text().style(it).build()) })
-			stmnt.setBoolean(4, v.isReceptionIndicatorEnabled)
-			stmnt.setObject(5, v.id)
+			val knockedOutAt = v.knockedOutAt
+			val knockoutCause = v.knockoutCause
+			val damager = v.knockoutDamager
+			if (knockedOutAt != null) stmnt.setTimestamp(1, Timestamp.from(knockedOutAt))
+			if (knockoutCause != null) stmnt.setString(2, knockoutCause.name)
+			if (damager != null) stmnt.setObject(3, damager.uniqueId)
 			stmnt.executeUpdate()
 		}
 	}
 
 	private fun fromRow(row: ResultSet): DatabaseKnockoutPlayerData {
 		val id = checkNotNull(row.getObject("id", UUID::class.java))
-		val channel = try {
-			row.getObject("channel") as ChatChannel
-		} catch (ex: JdbcSQLDataException) {
-			ChatOutOfCharacter
-		}
 
-		val disabledChannels = try {
-			row.getArray("disabled_channels")?.array
-					?.let { it as Array<Any> }
-					?.let { it.mapNotNull { it as? ToggleableChatChannel } }?.toSet() ?: emptySet()
-		} catch (ex: JdbcSQLDataException) {
-			emptySet()
-		}
-		checkNotNull(disabledChannels)
+		val knockedOutAt = row.getTimestamp("knocked_out_at").toInstant()
+		val knockoutCause = EntityDamageEvent.DamageCause.valueOf(row.getString("knockout_cause"))
+		val damager = row.getObject("damager", UUID::class.java)
 
-		val chatStyle = row.getString("chat_style")?.let { GsonComponentSerializer.gson().deserialize(it).style() }
-		val isChatReceptionIndicatorEnabled = row.getBoolean("reception_indicator_enabled")
-		return DatabaseKnockoutPlayerData(id, channel, chatStyle, disabledChannels, isChatReceptionIndicatorEnabled)
+		return DatabaseKnockoutPlayerData(id,
+				isKnockedOut = knockedOutAt != null,
+				knockedOutAt = knockedOutAt,
+				knockoutDamager = server.getEntity(damager),
+				knockoutCause = knockoutCause)
 	}
 }

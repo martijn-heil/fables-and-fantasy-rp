@@ -6,12 +6,13 @@ import com.gitlab.martijn_heil.nincommands.common.CommandTarget
 import com.sk89q.intake.Command
 import com.sk89q.intake.Require
 import org.bukkit.entity.Player
+import org.bukkit.event.entity.EntityDamageEvent
 
 class Commands {
 	@Command(aliases = ["knockout", "ko"], desc = "Knock out a player")
 	@Require(Permission.Command.Knockout)
 	fun knockout(target: Player, @CommandTarget by: Player?) {
-		target.knockout.knockout(by)
+		target.knockout.knockout(EntityDamageEvent.DamageCause.CUSTOM, by)
 	}
 
 	@Command(aliases = ["revive"], desc = "Knock out a player")

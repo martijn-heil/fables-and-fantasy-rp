@@ -16,7 +16,10 @@ class ChatPlayerDataEntityMapper(private val child: PersistentKnockoutPlayerData
 	override fun all(): Collection<KnockoutPlayerEntity> = child.all().map { convert(it) }
 
 	private fun convert(it: PersistentKnockoutPlayerData): KnockoutPlayerEntity {
-		val obj = KnockoutPlayerDataEntity(it.id, it.knockedOutAt)
+		val obj = KnockoutPlayerDataEntity(it.id,
+				knockedOutAt = it.knockedOutAt,
+				knockoutCause = it.knockoutCause,
+				knockoutDamager = it.knockoutDamager)
 		obj.dirtyMarker = dirtyMarker
 		return obj
 	}

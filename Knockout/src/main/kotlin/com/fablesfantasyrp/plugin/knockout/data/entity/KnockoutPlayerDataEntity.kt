@@ -29,9 +29,11 @@ class KnockoutPlayerDataEntity : KnockoutPlayerEntity, HasDirtyMarker<KnockoutPl
 
 	override val id: UUID
 
-	constructor(id: UUID, knockedOutAt: Instant?) {
+	constructor(id: UUID, knockedOutAt: Instant?, knockoutCause: EntityDamageEvent.DamageCause?, knockoutDamager: Entity?) {
 		this.id = id
 		this.knockedOutAt = knockedOutAt
+		this.knockoutCause = knockoutCause
+		this.knockoutDamager = knockoutDamager
 	}
 
 	override var dirtyMarker: DirtyMarker<KnockoutPlayerEntity>? = null
