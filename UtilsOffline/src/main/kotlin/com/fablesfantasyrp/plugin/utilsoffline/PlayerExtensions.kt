@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.utilsoffline
 
-import net.flawe.offlinemanager.api.data.entity.IPlayerData
+import net.quazar.offlinemanager.api.data.entity.IPlayerData
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.OfflinePlayer

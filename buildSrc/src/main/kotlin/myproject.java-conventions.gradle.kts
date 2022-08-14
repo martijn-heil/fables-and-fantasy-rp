@@ -105,7 +105,7 @@ fun urlFile (url: URL, name: String): ConfigurableFileCollection  {
 }
 
 dependencies {
-	paperDevBundle("1.19-R0.1-SNAPSHOT")
+	paperDevBundle("1.19.2-R0.1-SNAPSHOT")
 	implementation("net.essentialsx:EssentialsX:2.19.0") {
 		exclude(group = "org.bukkit")
 		exclude(group = "org.spigotmc")
