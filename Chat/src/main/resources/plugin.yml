@@ -13,6 +13,8 @@ depend:
   - TAB
   - ProtocolLib
   - Vault
+softdepend:
+  - FablesMoreLogging
 loadbefore:
   - LiteBans  # Also registers /togglechat
   - CraftBook # Also registers /ic

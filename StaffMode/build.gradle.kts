@@ -5,5 +5,6 @@ plugins {
 dependencies {
     // internal module dependencies
     implementation(project(":Utils"))
+    implementation(project(":MoreLogging"))
     implementation("com.gitlab.martijn-heil:NinCommands:-SNAPSHOT")
 }

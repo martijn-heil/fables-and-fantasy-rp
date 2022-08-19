@@ -7,6 +7,7 @@ import com.fablesfantasyrp.plugin.text.Permission
 import com.fablesfantasyrp.plugin.text.formatChat
 import com.fablesfantasyrp.plugin.text.join
 import com.fablesfantasyrp.plugin.text.miniMessage
+import com.fablesfantasyrp.plugin.utils.humanReadable
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.Style
@@ -96,7 +97,7 @@ abstract class AbstractChatInCharacter : ChatChannel, PreviewableChatChannel {
 		recipients.forEach { it.sendMessage(formatted) }
 		val loc = from.location
 		logChatToConsole(Component.text()
-				.append(Component.text("[${loc.blockX}, ${loc.blockY}, ${loc.blockZ}, ${loc.world.name}] "))
+				.append(Component.text("[${loc.humanReadable()}] "))
 				.append(Component.text("${recipients.map { it.name }.sorted()} "))
 				.append(Component.text("(${from.name}) "))
 				.append(formatted)

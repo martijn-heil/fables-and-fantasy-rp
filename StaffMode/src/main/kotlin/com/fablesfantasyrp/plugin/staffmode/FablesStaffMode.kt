@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.staffmode
 
+import com.fablesfantasyrp.plugin.utils.ToggleableState
 import com.fablesfantasyrp.plugin.utils.ess
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
@@ -19,6 +20,9 @@ import org.bukkit.plugin.java.JavaPlugin
 
 val SYSPREFIX = "${DARK_RED}${BOLD}[${RED}${BOLD} STAFF MODE ${DARK_RED}${BOLD}]${GRAY}"
 
+internal var moreLoggingHook: MoreLoggingHook? = null
+	private set
+
 class FablesStaffMode : JavaPlugin() {
 
 	override fun onEnable() {
@@ -28,6 +32,10 @@ class FablesStaffMode : JavaPlugin() {
 			logger.severe("PlaceholderAPI not found, disabling plugin!")
 			this.isEnabled = false
 			return
+		}
+
+		if (server.pluginManager.getPlugin("FablesMoreLogging") != null) {
+			moreLoggingHook = MoreLoggingHook()
 		}
 
 		StaffModePlaceholderExpansion().register();
@@ -72,6 +80,7 @@ var Player.isOnDuty: Boolean
 			if (onDuty.add(this)) {
 				this.sendMessage("$SYSPREFIX You are now on duty!")
 				Bukkit.broadcast("$SYSPREFIX ${this.name} has gone on duty", "fables.staffmode.notify.duty")
+				moreLoggingHook?.logDutySwitch(this, ToggleableState.fromIsActiveBoolean(value))
 			} else {
 				this.sendMessage("$SYSPREFIX You are already $onOff duty!")
 			}
@@ -90,6 +99,7 @@ var Player.isOnDuty: Boolean
 
 				this.sendMessage("$SYSPREFIX You are now off duty!")
 				Bukkit.broadcast("$SYSPREFIX ${this.name} has gone off duty", "fables.staffmode.notify.duty")
+				moreLoggingHook?.logDutySwitch(this, ToggleableState.fromIsActiveBoolean(value))
 			} else {
 				this.sendMessage("$SYSPREFIX You are already $onOff duty!")
 			}

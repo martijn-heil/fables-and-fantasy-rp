@@ -11,17 +11,25 @@ class FablesMoreLogging : JavaPlugin() {
 		enforceDependencies(this)
 		instance = this
 
-		server.pluginManager.registerEvents(BukkitListener(logger, this), this)
+		ModerationLoggerManager(this).start()
+
+		MODERATION_LOGGER.info("Logging system starting up")
+
+		server.pluginManager.registerEvents(BukkitListener(MODERATION_LOGGER, this), this)
 
 		val essentials: Plugin? = server.pluginManager.getPlugin("Essentials")
 		if (essentials != null) {
-			server.pluginManager.registerEvents(EssentialsListener(logger, this), this)
+			server.pluginManager.registerEvents(EssentialsListener(MODERATION_LOGGER, this), this)
 		}
 
 		val superVanish: Plugin? = server.pluginManager.getPlugin("SuperVanish")
 		if (superVanish != null) {
-			server.pluginManager.registerEvents(SuperVanishListener(logger, this), this)
+			server.pluginManager.registerEvents(SuperVanishListener(MODERATION_LOGGER, this), this)
 		}
+	}
+
+	override fun onDisable() {
+		MODERATION_LOGGER.info("Logging system shutting down")
 	}
 
 	companion object {

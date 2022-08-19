@@ -9,3 +9,8 @@ softdepend:
   - SuperVanish
 main: com.fablesfantasyrp.plugin.morelogging.FablesMoreLogging
 api-version: @bukkit_api_version@
+commands:
+  modlog:
+    description: "Log to moderation logger."
+    permission: fables.morelogging.command.modlog
+    usage: "Usage: /<command> [level] [message]"
