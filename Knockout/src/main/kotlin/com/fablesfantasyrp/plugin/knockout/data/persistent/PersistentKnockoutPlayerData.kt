@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.knockout.data.persistent
 
 import com.fablesfantasyrp.plugin.database.repository.Identifiable
+import com.fablesfantasyrp.plugin.knockout.data.KnockoutState
 import org.bukkit.entity.Entity
 import org.bukkit.event.entity.EntityDamageEvent
 import java.time.Instant
@@ -11,4 +12,5 @@ interface PersistentKnockoutPlayerData : Identifiable<UUID> {
 	var knockedOutAt: Instant?
 	var knockoutCause: EntityDamageEvent.DamageCause?
 	var knockoutDamager: Entity?
+	val state: KnockoutState?
 }

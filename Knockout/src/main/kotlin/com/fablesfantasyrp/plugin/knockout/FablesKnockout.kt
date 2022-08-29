@@ -4,8 +4,8 @@ import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDataba
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.database.entity.EntityRepository
 import com.fablesfantasyrp.plugin.knockout.command.Commands
-import com.fablesfantasyrp.plugin.knockout.data.entity.ChatPlayerDataEntityMapper
-import com.fablesfantasyrp.plugin.knockout.data.entity.ChatPlayerDataEntityRepository
+import com.fablesfantasyrp.plugin.knockout.data.entity.KnockoutPlayerDataEntityMapper
+import com.fablesfantasyrp.plugin.knockout.data.entity.KnockoutPlayerDataEntityRepository
 import com.fablesfantasyrp.plugin.knockout.data.entity.KnockoutPlayerEntity
 import com.fablesfantasyrp.plugin.knockout.data.persistent.database.DatabasePersistentKnockoutPlayerDataRepository
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
@@ -32,16 +32,10 @@ class FablesKnockout : JavaPlugin() {
 	override fun onEnable() {
 		enforceDependencies(this)
 		instance = this
+		applyMigrations(this, "fables_knockout", this.classLoader)
 
-		try {
-			applyMigrations(this, "fables_chat", this.classLoader)
-		} catch (e: Exception) {
-			this.isEnabled = false
-			return
-		}
-
-		knockoutPlayerDataManager = ChatPlayerDataEntityRepository(this,
-				ChatPlayerDataEntityMapper(
+		knockoutPlayerDataManager = KnockoutPlayerDataEntityRepository(this,
+				KnockoutPlayerDataEntityMapper(
 						DatabasePersistentKnockoutPlayerDataRepository(server, fablesDatabase)
 				)
 		).init()

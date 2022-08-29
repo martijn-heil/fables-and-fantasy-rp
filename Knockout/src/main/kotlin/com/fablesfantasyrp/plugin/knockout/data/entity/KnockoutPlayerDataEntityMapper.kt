@@ -7,7 +7,7 @@ import com.fablesfantasyrp.plugin.knockout.data.persistent.PersistentKnockoutPla
 import com.fablesfantasyrp.plugin.knockout.data.persistent.PersistentKnockoutPlayerDataRepository
 import java.util.*
 
-class ChatPlayerDataEntityMapper(private val child: PersistentKnockoutPlayerDataRepository)
+class KnockoutPlayerDataEntityMapper(private val child: PersistentKnockoutPlayerDataRepository)
 	: AbstractEntityMapper<UUID, PersistentKnockoutPlayerData, KnockoutPlayerEntity, PersistentKnockoutPlayerDataRepository>(child),
 		HasDirtyMarker<KnockoutPlayerEntity> {
 	override var dirtyMarker: DirtyMarker<KnockoutPlayerEntity>? = null
@@ -17,6 +17,7 @@ class ChatPlayerDataEntityMapper(private val child: PersistentKnockoutPlayerData
 
 	private fun convert(it: PersistentKnockoutPlayerData): KnockoutPlayerEntity {
 		val obj = KnockoutPlayerDataEntity(it.id,
+				state = it.state,
 				knockedOutAt = it.knockedOutAt,
 				knockoutCause = it.knockoutCause,
 				knockoutDamager = it.knockoutDamager)

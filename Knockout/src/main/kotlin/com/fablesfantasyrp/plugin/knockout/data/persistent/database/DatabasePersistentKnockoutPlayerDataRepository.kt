@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.knockout.data.persistent.database
 
+import com.fablesfantasyrp.plugin.knockout.data.KnockoutState
 import com.fablesfantasyrp.plugin.knockout.data.persistent.PersistentKnockoutPlayerData
 import com.fablesfantasyrp.plugin.knockout.data.persistent.PersistentKnockoutPlayerDataRepository
 import org.bukkit.OfflinePlayer
@@ -34,15 +35,16 @@ class DatabasePersistentKnockoutPlayerDataRepository(private val server: Server,
 	override fun create(v: PersistentKnockoutPlayerData) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME " +
-					"(id, knocked_out_at, knockout_cause, damager) " +
-					"VALUES (?, ?, ?, ?)")
+					"(id, state, knocked_out_at, knockout_cause, damager) " +
+					"VALUES (?, ?, ?, ?, ?)")
 			stmnt.setObject(1, v.id)
 			val knockedOutAt = v.knockedOutAt
 			val knockoutCause = v.knockoutCause
 			val damager = v.knockoutDamager
-			if (knockedOutAt != null) stmnt.setTimestamp(2, Timestamp.from(knockedOutAt))
-			if (knockoutCause != null) stmnt.setString(3, knockoutCause.name)
-			if (damager != null) stmnt.setObject(4, damager.uniqueId)
+			stmnt.setString(2, v.state?.name)
+			stmnt.setTimestamp(3, knockedOutAt?.let { Timestamp.from(it) })
+			stmnt.setString(4, knockoutCause?.name)
+			stmnt.setObject(5, damager?.uniqueId)
 			stmnt.executeUpdate()
 		}
 	}
@@ -89,6 +91,7 @@ class DatabasePersistentKnockoutPlayerDataRepository(private val server: Server,
 	override fun update(v: PersistentKnockoutPlayerData) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("UPDATE $TABLE_NAME SET " +
+					"state = ?, " +
 					"knocked_out_at = ?, " +
 					"knockout_cause = ?, " +
 					"damager = ? " +
@@ -96,9 +99,12 @@ class DatabasePersistentKnockoutPlayerDataRepository(private val server: Server,
 			val knockedOutAt = v.knockedOutAt
 			val knockoutCause = v.knockoutCause
 			val damager = v.knockoutDamager
-			if (knockedOutAt != null) stmnt.setTimestamp(1, Timestamp.from(knockedOutAt))
-			if (knockoutCause != null) stmnt.setString(2, knockoutCause.name)
-			if (damager != null) stmnt.setObject(3, damager.uniqueId)
+			stmnt.setString(1, v.state?.name)
+			stmnt.setTimestamp(2, knockedOutAt?.let { Timestamp.from(it) })
+			stmnt.setString(3, knockoutCause?.name)
+			stmnt.setObject(4, damager?.uniqueId)
+			stmnt.setObject(5, v.id)
+			stmnt.executeUpdate()
 			stmnt.executeUpdate()
 		}
 	}
@@ -106,14 +112,16 @@ class DatabasePersistentKnockoutPlayerDataRepository(private val server: Server,
 	private fun fromRow(row: ResultSet): DatabaseKnockoutPlayerData {
 		val id = checkNotNull(row.getObject("id", UUID::class.java))
 
-		val knockedOutAt = row.getTimestamp("knocked_out_at").toInstant()
-		val knockoutCause = EntityDamageEvent.DamageCause.valueOf(row.getString("knockout_cause"))
-		val damager = row.getObject("damager", UUID::class.java)
+		val state = row.getString("state")?.let { KnockoutState.valueOf(it) }
+		val knockedOutAt = row.getTimestamp("knocked_out_at")?.toInstant()
+		val knockoutCause = row.getString("knockout_cause")?.let { EntityDamageEvent.DamageCause.valueOf(it) }
+		val damager: UUID? = row.getObject("damager", UUID::class.java)
 
 		return DatabaseKnockoutPlayerData(id,
+				state = state,
 				isKnockedOut = knockedOutAt != null,
 				knockedOutAt = knockedOutAt,
-				knockoutDamager = server.getEntity(damager),
+				knockoutDamager = damager?.let { server.getEntity(it) },
 				knockoutCause = knockoutCause)
 	}
 }

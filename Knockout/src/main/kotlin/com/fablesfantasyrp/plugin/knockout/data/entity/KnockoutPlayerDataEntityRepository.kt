@@ -8,7 +8,7 @@ import com.fablesfantasyrp.plugin.database.repository.MutableRepository
 import org.bukkit.plugin.Plugin
 import java.util.*
 
-class ChatPlayerDataEntityRepository<C>(private val plugin: Plugin, child: C) : SimpleEntityRepository<UUID, KnockoutPlayerEntity, C>(child)
+class KnockoutPlayerDataEntityRepository<C>(private val plugin: Plugin, child: C) : SimpleEntityRepository<UUID, KnockoutPlayerEntity, C>(child)
 	where C: KeyedRepository<UUID, KnockoutPlayerEntity>,
 		  C: MutableRepository<KnockoutPlayerEntity>,
 		  C: HasDirtyMarker<KnockoutPlayerEntity> {

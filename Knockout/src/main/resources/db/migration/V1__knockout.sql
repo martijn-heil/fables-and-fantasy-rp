@@ -1,5 +1,8 @@
 CREATE TABLE knockout (
 	id										UUID NOT NULL,
+	state									ENUM (	'KNOCKED_OUT',
+													'EXECUTED',
+													'REVIVED'),
 	knocked_out_at							TIMESTAMP,
 	knockout_cause							ENUM(	'CONTACT',
 													'ENTITY_ATTACK',
