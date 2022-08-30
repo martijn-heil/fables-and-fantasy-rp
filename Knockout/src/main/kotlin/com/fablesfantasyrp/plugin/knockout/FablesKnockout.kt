@@ -8,6 +8,7 @@ import com.fablesfantasyrp.plugin.knockout.data.entity.KnockoutPlayerDataEntityM
 import com.fablesfantasyrp.plugin.knockout.data.entity.KnockoutPlayerDataEntityRepository
 import com.fablesfantasyrp.plugin.knockout.data.entity.KnockoutPlayerEntity
 import com.fablesfantasyrp.plugin.knockout.data.persistent.database.DatabasePersistentKnockoutPlayerDataRepository
+import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.github.shynixn.mccoroutine.SuspendingJavaPlugin
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
@@ -19,10 +20,10 @@ import com.sk89q.intake.Intake
 import com.sk89q.intake.fluent.CommandGraph
 import com.sk89q.intake.parametric.ParametricBuilder
 import com.sk89q.intake.parametric.provider.PrimitivesModule
-import org.bukkit.ChatColor.*
 import java.util.*
 
-internal val SYSPREFIX = "${GOLD}[${DARK_AQUA}${BOLD} KNOCKOUT ${GOLD}] $GRAY"
+internal val SYSPREFIX =
+		miniMessage.deserialize("<gold>[</gold> <yellow><bold>KNOCKOUT</bold></yellow> <gold>]</gold> ")
 
 internal lateinit var knockoutPlayerDataManager: EntityRepository<UUID, KnockoutPlayerEntity>
 

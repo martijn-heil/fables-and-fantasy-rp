@@ -9,6 +9,7 @@ depend:
   - FablesText
   - FablesCharacters
   - FablesDenizenInterop
+  - FablesMoreLogging
   - NinCommands
   - TAB
   - ProtocolLib

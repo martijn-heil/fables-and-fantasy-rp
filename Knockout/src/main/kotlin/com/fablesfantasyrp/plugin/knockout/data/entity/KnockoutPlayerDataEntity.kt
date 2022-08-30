@@ -6,6 +6,7 @@ import com.fablesfantasyrp.plugin.knockout.PLUGIN
 import com.fablesfantasyrp.plugin.knockout.data.KnockoutPlayerData
 import com.fablesfantasyrp.plugin.knockout.data.KnockoutState
 import com.fablesfantasyrp.plugin.knockout.getFirstBlockBelowLocation
+import com.fablesfantasyrp.plugin.knockout.sendPrefixedMessage
 import com.github.shynixn.mccoroutine.launch
 import dev.geco.gsit.api.GSitAPI
 import dev.geco.gsit.objects.GetUpReason
@@ -65,7 +66,7 @@ class KnockoutPlayerDataEntity : KnockoutPlayerEntity, HasDirtyMarker<KnockoutPl
 		this.knockedOutAt = Instant.now()
 		this.state = KnockoutState.KNOCKED_OUT
 		if (this.offlinePlayer.isOnline) this.tick()
-		this.offlinePlayer.player?.sendMessage("You have been knocked out!")
+		this.offlinePlayer.player?.sendPrefixedMessage("You have been knocked out!")
 		this.startDelayedExecution()
 	}
 
@@ -108,6 +109,7 @@ class KnockoutPlayerDataEntity : KnockoutPlayerEntity, HasDirtyMarker<KnockoutPl
 				this.removeKnockOutEffects()
 				player.health = 6.0
 				this.state = null
+				player.sendPrefixedMessage("You were revived!")
 			}
 		}
 	}

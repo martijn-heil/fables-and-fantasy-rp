@@ -83,10 +83,12 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 
 	private fun mayChatIn(channel: ChatChannel): Boolean {
 		val player = this.offlinePlayer.player ?: throw UnsupportedOperationException("Player is not online")
+		val permission = "${Permission.Channel.prefix}.${channel.toString().replace('#', '.')}"
 
-		return (!player.isWhitelisted && channel == ChatSpectator) ||
-				(player.knockout.isKnockedOut && channel == ChatInCharacterQuiet) ||
-				player.hasPermission("${Permission.Channel.prefix}.${channel.toString().replace('#', '.')}")
+		if (player.isWhitelisted && player.hasPermission(permission) &&
+				player.knockout.isKnockedOut && channel != ChatInCharacterQuiet) return false
+
+		return (!player.isWhitelisted && channel == ChatSpectator) || player.hasPermission(permission)
 	}
 
 	override fun doChat(message: String) {
