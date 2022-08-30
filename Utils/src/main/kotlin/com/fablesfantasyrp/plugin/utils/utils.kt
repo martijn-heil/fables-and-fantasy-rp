@@ -3,6 +3,7 @@ package com.fablesfantasyrp.plugin.utils
 import com.earth2me.essentials.User
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
+import org.bukkit.Location
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
@@ -39,3 +40,5 @@ fun<T> Lock.withLock(f: () -> T): T {
 		this.unlock()
 	}
 }
+
+fun Location.humanReadable() = "${blockX},${blockY},${blockZ},${world.name}"

@@ -6,6 +6,7 @@ import com.fablesfantasyrp.plugin.chat.getPlayersWithinRange
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.parseLinks
 import com.fablesfantasyrp.plugin.utils.ess
+import com.fablesfantasyrp.plugin.utils.humanReadable
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.Tag
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
@@ -31,7 +32,7 @@ object ChatLocalOutOfCharacter : ChatChannel, RawChatChannel, ToggleableChatChan
 		recipients.forEach { it.sendMessage(final) }
 		val loc = from.location
 		logChatToConsole(Component.text()
-				.append(Component.text("[${loc.blockX}, ${loc.blockY}, ${loc.blockZ}, ${loc.world.name}] "))
+				.append(Component.text("[${loc.humanReadable()}] "))
 				.append(Component.text("${recipients.map { it.name }.sorted()} "))
 				.append(final)
 				.build())

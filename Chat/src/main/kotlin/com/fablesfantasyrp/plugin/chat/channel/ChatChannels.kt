@@ -1,9 +1,11 @@
 package com.fablesfantasyrp.plugin.chat.channel
 
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import java.util.logging.Logger
 
 
 interface CommandSenderCompatibleChatChannel : ChatChannel {
@@ -87,4 +89,9 @@ class ChatIllegalArgumentException(message: String) : IllegalArgumentException(m
 
 internal fun logChatToConsole(message: Component) {
 	Bukkit.getConsoleSender().sendMessage(message)
+
+	val plainText = PlainTextComponentSerializer.plainText().serialize(message)
+
+	// Don't change the log level, it's significant. See ModerationLogHandler
+	Logger.getLogger("FablesModerationLogger").finer(plainText)
 }

@@ -1,4 +1,4 @@
-package com.fablesfantasyrp.plugin.morelogging
+package com.fablesfantasyrp.plugin.utils
 
 enum class ToggleableState {
 	ON,
