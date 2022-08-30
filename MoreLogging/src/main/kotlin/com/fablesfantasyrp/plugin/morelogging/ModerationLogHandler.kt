@@ -1,5 +1,11 @@
 package com.fablesfantasyrp.plugin.morelogging
 
+import com.denizenscript.denizencore.objects.core.ElementTag
+import com.fablesfantasyrp.plugin.denizeninterop.denizenRun
+import net.kyori.adventure.key.Key
+import net.kyori.adventure.sound.Sound
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import org.apache.logging.log4j.Level
 import org.bukkit.Bukkit
 import java.util.logging.Handler
@@ -42,6 +48,20 @@ class ModerationLogHandler : Handler() {
 			val newLevel = if (record.level.intValue() < JulLevel.INFO.intValue()) JulLevel.INFO else level
 			Bukkit.getLogger().log(newLevel, record.message)
 		}
+
+		if (level.intValue() >= JulLevel.SEVERE.intValue()) {
+			this.logToDiscord(record.message, true)
+		} else if (level.intValue() >= JulLevel.WARNING.intValue()) {
+			Bukkit.broadcast(Component.text(record.message).color(NamedTextColor.GREEN), Permission.Log.Receive)
+			Bukkit.getOnlinePlayers().asSequence()
+					.filter { it.hasPermission(Permission.Log.Receive) }
+					.forEach { it.playSound(Sound.sound(Key.key(Key.MINECRAFT_NAMESPACE,
+							"block.anvil.land"), Sound.Source.MASTER,
+							1.0f, 1.0f)) }
+			this.logToDiscord(record.message)
+		} else if (level.intValue() >= JulLevel.INFO.intValue()) {
+			Bukkit.broadcast(Component.text(record.message).color(NamedTextColor.GRAY), Permission.Log.Receive)
+		}
 	}
 
 	override fun flush() {
@@ -50,5 +70,19 @@ class ModerationLogHandler : Handler() {
 
 	override fun close() {
 		// do nothing
+	}
+
+	private fun logToDiscord(message: String, ping: Boolean = false) {
+		// Magic values @mention Junior Moderator and Moderator
+		// Can be obtained with
+		// ex narrate "<proc[discord_group].context[[F&F] - Moderation Team].role[Junior Moderator].mention>"
+
+		val finalMessage = if (ping) "`$message` \n<@&922294150810972161> <@&852176608780877886>" else "`$message`"
+
+		denizenRun("discord_say", mapOf(
+				Pair("groupname", ElementTag("[F&F] - Moderation Team")),
+				Pair("channelname", ElementTag("logging")),
+				Pair("message", ElementTag(finalMessage)),
+		))
 	}
 }

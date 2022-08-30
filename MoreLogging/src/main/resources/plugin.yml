@@ -4,6 +4,8 @@ authors: [@authors@]
 depend:
   - FablesKotlinRuntime
   - FablesUtils
+  - FablesDenizenInterop
+  - dDiscordBot
 softdepend:
   - Essentials
   - SuperVanish
