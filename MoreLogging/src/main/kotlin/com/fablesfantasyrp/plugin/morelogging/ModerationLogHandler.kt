@@ -10,13 +10,15 @@ import java.util.logging.Level as JulLevel
  * All log events get logged to file.
  * Log events with level equal to or greater than FINER can be received by online moderators.
  * Log events with level equal to or greater than FINE get logged to console.
+ * Log events with level equal to or greater than INFO get sent to all online moderators.
  * Log events with level equal to or greater than WARN get sent to all online moderators and logged to discord.
  * Log events with level equal to or greater than SEVERE get sent to discord with a ping to the mod team.
  *
  * Flight modes -> FINEST
  * All chat and commands -> FINER
  * Significant state switches -> FINE
- * Lockpicking success etc -> WARN
+ * Knockouts -> INFO
+ * Lockpicking success, executions etc -> WARN
  */
 class ModerationLogHandler : Handler() {
 	override fun publish(record: LogRecord?) {

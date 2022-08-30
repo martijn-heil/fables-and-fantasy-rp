@@ -7,6 +7,8 @@ import com.fablesfantasyrp.plugin.knockout.data.KnockoutPlayerData
 import com.fablesfantasyrp.plugin.knockout.data.KnockoutState
 import com.fablesfantasyrp.plugin.knockout.getFirstBlockBelowLocation
 import com.fablesfantasyrp.plugin.knockout.sendPrefixedMessage
+import com.fablesfantasyrp.plugin.morelogging.MODERATION_LOGGER
+import com.fablesfantasyrp.plugin.utils.humanReadable
 import com.github.shynixn.mccoroutine.launch
 import dev.geco.gsit.api.GSitAPI
 import dev.geco.gsit.objects.GetUpReason
@@ -67,6 +69,14 @@ class KnockoutPlayerDataEntity : KnockoutPlayerEntity, HasDirtyMarker<KnockoutPl
 		this.state = KnockoutState.KNOCKED_OUT
 		if (this.offlinePlayer.isOnline) this.tick()
 		this.offlinePlayer.player?.sendPrefixedMessage("You have been knocked out!")
+		if (by != null) {
+			MODERATION_LOGGER.info("[${offlinePlayer.player?.location?.humanReadable()}] " +
+					"${offlinePlayer.name} was just knocked out by ${by.name}")
+		} else {
+			MODERATION_LOGGER.info("[${offlinePlayer.player?.location?.humanReadable()}] " +
+					"${offlinePlayer.name} was just knocked out")
+		}
+
 		this.startDelayedExecution()
 	}
 
@@ -127,6 +137,14 @@ class KnockoutPlayerDataEntity : KnockoutPlayerEntity, HasDirtyMarker<KnockoutPl
 		this.knockoutDamager = null
 		this.state = KnockoutState.REVIVED
 		if (this.offlinePlayer.isOnline) this.tick()
+
+		if (by != null) {
+			MODERATION_LOGGER.info("[${offlinePlayer.player?.location?.humanReadable()}] " +
+					"${offlinePlayer.name} was just revived by ${by.name}")
+		} else {
+			MODERATION_LOGGER.info("[${offlinePlayer.player?.location?.humanReadable()}] " +
+					"${offlinePlayer.name} was just revived")
+		}
 	}
 
 	override fun execute(cause: EntityDamageEvent.DamageCause?, by: Entity?) {
@@ -142,6 +160,14 @@ class KnockoutPlayerDataEntity : KnockoutPlayerEntity, HasDirtyMarker<KnockoutPl
 		this.knockoutCause = null
 		this.state = KnockoutState.EXECUTED
 		if (this.offlinePlayer.isOnline) this.tick()
+
+		if (by != null) {
+			MODERATION_LOGGER.warning("[${offlinePlayer.player?.location?.humanReadable()}] " +
+					"${offlinePlayer.name} was just executed by ${by.name}")
+		} else {
+			MODERATION_LOGGER.warning("[${offlinePlayer.player?.location?.humanReadable()}] " +
+					"${offlinePlayer.name} was just executed")
+		}
 	}
 
 	fun startDelayedRevival(helper: Player) {
