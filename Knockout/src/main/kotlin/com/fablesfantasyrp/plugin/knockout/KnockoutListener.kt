@@ -8,7 +8,9 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority.MONITOR
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.*
+import org.bukkit.event.player.PlayerCommandPreprocessEvent
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
+import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerJoinEvent
 
 class KnockoutListener(private val server: Server) : Listener {
@@ -66,8 +68,11 @@ class KnockoutListener(private val server: Server) : Listener {
 	@EventHandler(priority = MONITOR, ignoreCancelled = true)
 	fun onPlayerRightClick(e: PlayerInteractAtEntityEvent) {
 		val target = e.rightClicked as? Player ?: return
-		val knockoutEntity = target.knockout
-		if (knockoutEntity.isKnockedOut) knockoutEntity.revive(e.player)
+		val player = e.player
+		val knockoutEntity = target.knockout as? KnockoutPlayerDataEntity ?: return
+		if (knockoutEntity.isKnockedOut && !knockoutEntity.isBeingRevived) {
+			knockoutEntity.startDelayedRevival(player)
+		}
 	}
 
 	@EventHandler(priority = MONITOR, ignoreCancelled = true)
@@ -93,5 +98,23 @@ class KnockoutListener(private val server: Server) : Listener {
 	fun onPlayerGetUp(e: PreEntityGetUpSitEvent) {
 		val player = e.entity as? Player ?: return
 		if (player.knockout.isKnockedOut) e.isCancelled = true
+	}
+
+	@EventHandler(ignoreCancelled = true)
+	fun onPlayerInteract(e: PlayerInteractEvent) {
+		val knockoutEntity = e.player.knockout
+		if (knockoutEntity.isKnockedOut) e.isCancelled = true
+	}
+
+	@EventHandler(ignoreCancelled = true)
+	fun onPlayerInteractAtEntity(e: PlayerInteractAtEntityEvent) {
+		val knockoutEntity = e.player.knockout
+		if (knockoutEntity.isKnockedOut) e.isCancelled = true
+	}
+
+	@EventHandler(ignoreCancelled = true)
+	fun onPlayerCommandPreprocessEvent(e: PlayerCommandPreprocessEvent) {
+		val knockoutEntity = e.player.knockout
+		if (knockoutEntity.isKnockedOut) e.isCancelled = true
 	}
 }

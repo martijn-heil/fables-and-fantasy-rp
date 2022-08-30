@@ -8,6 +8,7 @@ dependencies {
     implementation(project(":Utils"))
     implementation(project(":Text"))
     implementation(project(":Characters"))
+    implementation(project(":Knockout"))
     implementation(project(":Gui"))
     implementation(project(":DenizenInterop"))
     implementation(project(":Text"))
