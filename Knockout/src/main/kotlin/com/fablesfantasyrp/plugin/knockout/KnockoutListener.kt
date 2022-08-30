@@ -8,10 +8,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority.MONITOR
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.*
-import org.bukkit.event.player.PlayerCommandPreprocessEvent
-import org.bukkit.event.player.PlayerInteractAtEntityEvent
-import org.bukkit.event.player.PlayerInteractEvent
-import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.player.*
 
 class KnockoutListener(private val server: Server) : Listener {
 	@EventHandler(ignoreCancelled = true)
@@ -81,11 +78,11 @@ class KnockoutListener(private val server: Server) : Listener {
 		if (knockoutEntity.isKnockedOut) knockoutEntity.execute(null, null)
 	}
 
-//	@EventHandler(priority = MONITOR, ignoreCancelled = true)
-//	fun onPlayerQuit(e: PlayerQuitEvent) {
-//		val knockoutEntity = e.player.knockout
-//		if (knockoutEntity.isKnockedOut) knockoutEntity.execute(EntityDamageEvent.DamageCause.CUSTOM, null)
-//	}
+	@EventHandler(priority = MONITOR, ignoreCancelled = true)
+	fun onPlayerQuit(e: PlayerQuitEvent) {
+		val knockoutEntity = e.player.knockout
+		if (knockoutEntity.isKnockedOut) knockoutEntity.execute(null, null)
+	}
 
 	@EventHandler(ignoreCancelled = true)
 	fun onPlayerRegainHealth(e: EntityRegainHealthEvent) {

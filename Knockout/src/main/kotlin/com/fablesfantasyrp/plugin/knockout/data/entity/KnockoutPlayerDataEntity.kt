@@ -71,10 +71,10 @@ class KnockoutPlayerDataEntity : KnockoutPlayerEntity, HasDirtyMarker<KnockoutPl
 		this.offlinePlayer.player?.sendPrefixedMessage("You have been knocked out!")
 		if (by != null) {
 			MODERATION_LOGGER.info("[${offlinePlayer.player?.location?.humanReadable()}] " +
-					"${offlinePlayer.name} was just knocked out by ${by.name}")
+					"${offlinePlayer.name} was just knocked out by ${by.name} (damage cause: $cause)")
 		} else {
 			MODERATION_LOGGER.info("[${offlinePlayer.player?.location?.humanReadable()}] " +
-					"${offlinePlayer.name} was just knocked out")
+					"${offlinePlayer.name} was just knocked out (damage cause: $cause)")
 		}
 
 		this.startDelayedExecution()
@@ -163,10 +163,10 @@ class KnockoutPlayerDataEntity : KnockoutPlayerEntity, HasDirtyMarker<KnockoutPl
 
 		if (by != null) {
 			MODERATION_LOGGER.warning("[${offlinePlayer.player?.location?.humanReadable()}] " +
-					"${offlinePlayer.name} was just executed by ${by.name}")
+					"${offlinePlayer.name} was just executed by ${by.name} (damage cause: $cause)")
 		} else {
 			MODERATION_LOGGER.warning("[${offlinePlayer.player?.location?.humanReadable()}] " +
-					"${offlinePlayer.name} was just executed")
+					"${offlinePlayer.name} was just executed (damage cause: $cause)")
 		}
 	}
 
