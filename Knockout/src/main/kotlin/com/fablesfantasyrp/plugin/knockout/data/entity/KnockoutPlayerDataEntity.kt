@@ -107,6 +107,7 @@ class KnockoutPlayerDataEntity : KnockoutPlayerEntity, HasDirtyMarker<KnockoutPl
 
 			KnockoutState.KNOCKED_OUT -> {
 				this.applyKnockoutEffects()
+				if (this.executionJob == null) this.startDelayedExecution()
 			}
 
 			KnockoutState.EXECUTED -> {
