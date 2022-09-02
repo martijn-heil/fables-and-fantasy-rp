@@ -7,6 +7,7 @@ import com.fablesfantasyrp.plugin.chat.channel.*
 import com.fablesfantasyrp.plugin.chat.data.ChatPlayerData
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
+import com.fablesfantasyrp.plugin.knockout.knockout
 import com.fablesfantasyrp.plugin.text.sendError
 import me.neznamy.tab.api.TabAPI
 import me.neznamy.tab.api.team.UnlimitedNametagManager
@@ -24,6 +25,7 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 	override var channel: ChatChannel
 		get() = when {
 				!offlinePlayer.isWhitelisted -> ChatSpectator
+				offlinePlayer.knockout.isKnockedOut -> ChatInCharacterQuiet
 				else -> field
 			}
 		set(value) {
@@ -81,8 +83,12 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 
 	private fun mayChatIn(channel: ChatChannel): Boolean {
 		val player = this.offlinePlayer.player ?: throw UnsupportedOperationException("Player is not online")
-		return (!player.isWhitelisted && channel == ChatSpectator) ||
-				player.hasPermission("${Permission.Channel.prefix}.${channel.toString().replace('#', '.')}")
+		val permission = "${Permission.Channel.prefix}.${channel.toString().replace('#', '.')}"
+
+		if (player.isWhitelisted && player.hasPermission(permission) &&
+				player.knockout.isKnockedOut && channel != ChatInCharacterQuiet) return false
+
+		return (!player.isWhitelisted && channel == ChatSpectator) || player.hasPermission(permission)
 	}
 
 	override fun doChat(message: String) {

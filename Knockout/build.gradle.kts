@@ -8,14 +8,14 @@ dependencies {
     implementation(project(":Utils"))
     implementation(project(":Text"))
     implementation(project(":Characters"))
-    implementation(project(":Knockout"))
     implementation(project(":Gui"))
     implementation(project(":DenizenInterop"))
     implementation(project(":Text"))
-    implementation("com.gitlab.martijn-heil:NinCommands:-SNAPSHOT") { isChanging = true }
+    implementation(project(":MoreLogging"))
+    implementation("com.gitlab.martijn-heil:NinCommands:-SNAPSHOT")
     implementation("me.neznamy:tab-api:3.0.2")
     implementation("com.github.MilkBowl:VaultAPI:1.7") {
         exclude(group = "org.bukkit")
     }
-    implementation("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT") { isChanging = true }
+    implementation("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
 }

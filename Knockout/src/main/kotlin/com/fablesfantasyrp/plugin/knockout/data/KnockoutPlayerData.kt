@@ -1,0 +1,6 @@
+package com.fablesfantasyrp.plugin.knockout.data
+
+import com.fablesfantasyrp.plugin.knockout.data.persistent.PersistentKnockoutPlayerData
+import com.fablesfantasyrp.plugin.knockout.data.volatile.VolatileKnockoutPlayerData
+
+interface KnockoutPlayerData : PersistentKnockoutPlayerData, VolatileKnockoutPlayerData

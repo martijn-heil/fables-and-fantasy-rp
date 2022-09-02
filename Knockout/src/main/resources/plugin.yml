@@ -1,0 +1,18 @@
+name: FablesKnockout
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesGui
+  - FablesDatabase
+  - FablesUtils
+  - FablesText
+  - FablesCharacters
+  - FablesDenizenInterop
+  - FablesMoreLogging
+  - NinCommands
+  - TAB
+  - ProtocolLib
+  - Vault
+main: com.fablesfantasyrp.plugin.knockout.FablesKnockout
+api-version: @bukkit_api_version@

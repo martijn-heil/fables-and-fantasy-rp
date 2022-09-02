@@ -34,12 +34,14 @@ class ModerationLoggerManager(private val plugin: JavaPlugin) {
 		appender.start()
 
 		val logger = LogManager.getLogger("FablesInternalModerationLogger") as Log4jLogger
+		logger.isAdditive = false
 		logger.addAppender(appender)
 		logger.level = org.apache.logging.log4j.Level.ALL
 		LOG4J_MODERATION_LOGGER = logger
 		MODERATION_LOGGER = java.util.logging.Logger.getLogger("FablesModerationLogger")
 		MODERATION_LOGGER.addHandler(ModerationLogHandler())
 		MODERATION_LOGGER.level = Level.ALL
+		MODERATION_LOGGER.useParentHandlers = false
 
 		plugin.getCommand("modlog")!!.setExecutor(ModerationLogCommand())
 	}

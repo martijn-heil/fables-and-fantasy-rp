@@ -121,4 +121,5 @@ dependencies {
 	implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:1.6.0")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.0")
+	implementation(urlFile(URL("https://github.com/Gecolay/GSit/releases/download/1.2.4/GSit-1.2.4.jar"), "GSit.jar"))
 }
