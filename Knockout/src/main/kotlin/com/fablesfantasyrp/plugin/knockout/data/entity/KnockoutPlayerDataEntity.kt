@@ -77,7 +77,7 @@ class KnockoutPlayerDataEntity : KnockoutPlayerEntity, HasDirtyMarker<KnockoutPl
 					"${offlinePlayer.name} was just knocked out (damage cause: $cause)")
 		}
 
-		this.startDelayedExecution()
+		if (this.executionJob == null) this.startDelayedExecution()
 	}
 
 	fun applyKnockoutEffects() {

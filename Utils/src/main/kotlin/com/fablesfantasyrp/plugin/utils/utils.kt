@@ -42,3 +42,7 @@ fun<T> Lock.withLock(f: () -> T): T {
 }
 
 fun Location.humanReadable() = "${blockX},${blockY},${blockZ},${world.name}"
+
+// Citizens NPC's are instances of Player too, but obviously, not real players
+// Citizens NPC's don't show up in the server.onlinePlayers list
+val Player.isRealPlayer: Boolean get() = server.onlinePlayers.contains(player)

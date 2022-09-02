@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.knockout
 
 import com.fablesfantasyrp.plugin.knockout.data.entity.KnockoutPlayerDataEntity
+import com.fablesfantasyrp.plugin.utils.isRealPlayer
 import dev.geco.gsit.api.event.PreEntityGetUpSitEvent
 import org.bukkit.Server
 import org.bukkit.entity.Player
@@ -14,14 +15,15 @@ class KnockoutListener(private val server: Server) : Listener {
 	@EventHandler(ignoreCancelled = true)
 	fun onPlayerDamageByEntity(e: EntityDamageByEntityEvent) {
 		val player = e.entity as? Player ?: return
+		if (!player.isRealPlayer) return
 
 		val knockoutEntity = player.knockout
 
 		if (knockoutEntity.isKnockedOut) {
-			knockoutEntity.execute(e.cause, null)
+			knockoutEntity.execute(e.cause, e.damager)
 			e.isCancelled = true
 		} else if (player.health - e.finalDamage <= 0) {
-			knockoutEntity.knockout(e.cause, null)
+			knockoutEntity.knockout(e.cause, e.damager)
 			e.isCancelled = true
 		}
 	}
@@ -29,6 +31,7 @@ class KnockoutListener(private val server: Server) : Listener {
 	@EventHandler(ignoreCancelled = true)
 	fun onPlayerDamageByBlock(e: EntityDamageByBlockEvent) {
 		val player = e.entity as? Player ?: return
+		if (!player.isRealPlayer) return
 
 		val knockoutEntity = player.knockout
 
@@ -43,7 +46,9 @@ class KnockoutListener(private val server: Server) : Listener {
 
 	@EventHandler(ignoreCancelled = true)
 	fun onPlayerDamage(e: EntityDamageEvent) {
+		if (e is EntityDamageByBlockEvent || e is EntityDamageByEntityEvent) return
 		val player = e.entity as? Player ?: return
+		if (!player.isRealPlayer) return
 
 		val knockoutEntity = player.knockout
 
@@ -65,6 +70,7 @@ class KnockoutListener(private val server: Server) : Listener {
 	@EventHandler(priority = MONITOR, ignoreCancelled = true)
 	fun onPlayerRightClick(e: PlayerInteractAtEntityEvent) {
 		val target = e.rightClicked as? Player ?: return
+		if (!target.isRealPlayer) return
 		val player = e.player
 		val knockoutEntity = target.knockout as? KnockoutPlayerDataEntity ?: return
 		if (knockoutEntity.isKnockedOut && !knockoutEntity.isBeingRevived) {

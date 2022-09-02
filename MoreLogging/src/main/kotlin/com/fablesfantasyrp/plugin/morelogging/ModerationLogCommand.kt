@@ -19,7 +19,7 @@ class ModerationLogCommand : CommandExecutor {
 		} catch(ex: IllegalArgumentException) {
 			return true
 		}
-		val message = args.getOrNull(1) ?: return true
+		val message = if (args.size > 1) args.slice(1 until args.size).joinToString(" ") else return true
 
 		MODERATION_LOGGER.log(level, message)
 		return true
