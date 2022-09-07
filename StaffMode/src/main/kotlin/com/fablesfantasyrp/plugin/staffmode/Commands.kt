@@ -27,10 +27,12 @@ class Commands {
 		val onDuty = players
 				.filter { it.isOnDuty }
 				.map { PlaceholderAPI.setPlaceholders(it, "%vault_prefix_color%${it.name}" + RESET) }
+				.map { translateAlternateColorCodes('&', it) }
 
 		val offDuty = players
 				.filter { !it.isOnDuty }
 				.map { PlaceholderAPI.setPlaceholders(it, "%vault_prefix_color%${it.name}" + RESET) }
+				.map { translateAlternateColorCodes('&', it) }
 
 		val sep = "${GRAY}, "
 		sender.sendMessage("${GREEN}On ${GRAY}duty: " + onDuty.joinToString(sep))
