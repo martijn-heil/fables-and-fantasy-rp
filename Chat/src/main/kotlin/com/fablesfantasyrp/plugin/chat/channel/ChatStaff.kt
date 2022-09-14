@@ -57,12 +57,7 @@ abstract class AbstractChatStaff : ChatChannel, RawChatChannel, CommandSenderCom
 					.let { legacyText(it) }
 		} else Component.text()
 
-		val chatSuffix = if (from is Player) {
-			vaultChat.getPlayerSuffix(from)
-					.let { ChatColor.translateAlternateColorCodes('&', it) }
-					.let { legacyText(it) }
-		} else Component.text()
-
+		val chatSuffix = if (from is Player) from.prefix else Component.text()
 		val teamName = if (channelName != "") channelName else null
 		val channelName = Component.text(listOfNotNull("ST", teamName).joinToString("#"))
 

@@ -42,11 +42,7 @@ object ChatOutOfCharacter : ChatChannel, RawChatChannel, ToggleableChatChannel, 
 	private fun formatMessage(from: CommandSender, message: String): Component = this.formatMessage(from, parseLinks(message))
 
 	private fun formatMessage(from: CommandSender, message: Component): Component {
-		val chatPrefix = if (from is Player) {
-			vaultChat.getPlayerPrefix(from)
-					.let { translateAlternateColorCodes('&', it) }
-					.let { legacyText(it) }
-		} else Component.text()
+		val chatPrefix = if (from is Player) from.prefix else Component.text()
 
 		val chatSuffix = if (from is Player) {
 			vaultChat.getPlayerSuffix(from)

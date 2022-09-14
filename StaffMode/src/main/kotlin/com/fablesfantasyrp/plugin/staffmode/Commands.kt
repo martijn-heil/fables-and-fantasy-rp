@@ -1,13 +1,16 @@
 package com.fablesfantasyrp.plugin.staffmode
 
+import com.fablesfantasyrp.plugin.text.join
+import com.fablesfantasyrp.plugin.text.miniMessage
+import com.fablesfantasyrp.plugin.text.playerNameStyle
 import com.gitlab.martijn_heil.nincommands.common.CommandTarget
 import com.gitlab.martijn_heil.nincommands.common.Sender
 import com.gitlab.martijn_heil.nincommands.common.Toggle
 import com.sk89q.intake.Command
 import com.sk89q.intake.Require
-import me.clip.placeholderapi.PlaceholderAPI
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Bukkit
-import org.bukkit.ChatColor.*
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -24,19 +27,21 @@ class Commands {
 		val players = Bukkit.getOnlinePlayers().asSequence()
 				.filter { it.hasPermission("fables.staffmode.command.duty") }
 
-		val onDuty = players
+		val onDuty = Component.text().append(players
 				.filter { it.isOnDuty }
-				.map { PlaceholderAPI.setPlaceholders(it, "%vault_prefix_color%${it.name}" + RESET) }
-				.map { translateAlternateColorCodes('&', it) }
+				.map { Component.text(it.name).style(it.playerNameStyle) }
+				.join(Component.text(", ")).toList())
 
-		val offDuty = players
+		val offDuty = Component.text().append(players
 				.filter { !it.isOnDuty }
-				.map { PlaceholderAPI.setPlaceholders(it, "%vault_prefix_color%${it.name}" + RESET) }
-				.map { translateAlternateColorCodes('&', it) }
+				.map { Component.text(it.name).style(it.playerNameStyle) }
+				.join(Component.text(", ")).toList())
 
-		val sep = "${GRAY}, "
-		sender.sendMessage("${GREEN}On ${GRAY}duty: " + onDuty.joinToString(sep))
-		sender.sendMessage("${RED}Off ${GRAY}duty: " + offDuty.joinToString(sep))
+		sender.sendMessage(miniMessage.deserialize(
+				"<green>On</green> <gray>duty: <onduty></gray><newline>" +
+						"<red>Off</red> <gray>duty: <offduty></gray>",
+				Placeholder.component("onduty", onDuty),
+				Placeholder.component("offduty", offDuty)))
 	}
 
 	@Command(aliases = ["updatecommands"], desc = "Execute org.bukkit.entity.Player#updateCommands() on a player")
