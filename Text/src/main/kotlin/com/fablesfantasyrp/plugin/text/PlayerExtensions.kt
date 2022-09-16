@@ -17,23 +17,21 @@ val CommandSender.nameStyle: Style
 		else -> Style.style().build()
 	}
 
-//val Player.playerNameStyle: Style
-//	get() = vaultChat.getPlayerPrefix(this)
-//				.let { ChatColor.translateAlternateColorCodes('&', it) }
-//				.let { ChatColor.getLastColors(it) }
-//				.let { legacyText(it).style() }
+private fun processVaultPrefixSuffix(s: String): Component {
+	val miniMessageLoose = MiniMessage.builder().strict(false).build()
+
+	return s.let { ChatColor.translateAlternateColorCodes('&', it) }
+			.let { legacyText(it) }
+			.let { miniMessageLoose.serialize(it) }
+			.let { it.replace("\\", "") }
+			.let { miniMessageLoose.deserialize(it) }
+}
 
 val Player.prefix: Component
-	get() {
-		val miniMessageLoose = MiniMessage.builder().strict(false).build()
+	get() = processVaultPrefixSuffix(vaultChat.getPlayerPrefix(this))
 
-		return vaultChat.getPlayerPrefix(this)
-				.let { ChatColor.translateAlternateColorCodes('&', it) }
-				.let { legacyText(it) }
-				.let { miniMessageLoose.serialize(it) }
-				.let { it.replace("\\", "") }
-				.let { miniMessageLoose.deserialize(it) }
-	}
+val Player.suffix: Component
+	get() = processVaultPrefixSuffix(vaultChat.getPlayerSuffix(this))
 
 val Player.playerNameStyle: Style
 	get() {

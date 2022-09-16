@@ -7,7 +7,6 @@ import net.kyori.adventure.text.minimessage.tag.Tag
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Bukkit
-import org.bukkit.ChatColor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.io.Serializable
@@ -51,13 +50,8 @@ abstract class AbstractChatStaff : ChatChannel, RawChatChannel, CommandSenderCom
 	}
 
 	private fun formatMessage(from: CommandSender, message: Component): Component {
-		val chatPrefix = if (from is Player) {
-			vaultChat.getPlayerPrefix(from)
-					.let { ChatColor.translateAlternateColorCodes('&', it) }
-					.let { legacyText(it) }
-		} else Component.text()
-
-		val chatSuffix = if (from is Player) from.prefix else Component.text()
+		val chatPrefix = if (from is Player) from.prefix else Component.text()
+		val chatSuffix = if (from is Player) from.suffix else Component.text()
 		val teamName = if (channelName != "") channelName else null
 		val channelName = Component.text(listOfNotNull("ST", teamName).joinToString("#"))
 
