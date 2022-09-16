@@ -12,12 +12,14 @@ class Commands {
 	@Command(aliases = ["knockout", "ko"], desc = "Knock out a player")
 	@Require(Permission.Command.Knockout)
 	fun knockout(target: Player, @CommandTarget by: Player?) {
-		target.knockout.knockout(EntityDamageEvent.DamageCause.CUSTOM, by)
+		val knockoutPlayer = target.knockout
+		if (!knockoutPlayer.isKnockedOut) knockoutPlayer.knockout(EntityDamageEvent.DamageCause.CUSTOM, by)
 	}
 
 	@Command(aliases = ["revive"], desc = "Knock out a player")
 	@Require(Permission.Command.Revive)
 	fun revive(target: Player, @CommandTarget by: Player?) {
-		target.knockout.revive(by)
+		val knockoutPlayer = target.knockout
+		if (knockoutPlayer.isKnockedOut) knockoutPlayer.revive(by)
 	}
 }
