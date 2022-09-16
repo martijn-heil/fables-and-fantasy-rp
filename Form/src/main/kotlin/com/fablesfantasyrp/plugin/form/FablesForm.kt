@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.form
 
-import com.github.shynixn.mccoroutine.SuspendingJavaPlugin
+import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
+
 
 internal val PLUGIN get() = FablesForm.instance
 

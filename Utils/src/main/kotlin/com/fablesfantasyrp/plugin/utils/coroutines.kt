@@ -2,8 +2,8 @@
 
 package com.fablesfantasyrp.plugin.utils
 
-import com.github.shynixn.mccoroutine.SuspendingJavaPlugin
-import com.github.shynixn.mccoroutine.launch
+import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
+import com.github.shynixn.mccoroutine.bukkit.launch
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import java.lang.Long.max

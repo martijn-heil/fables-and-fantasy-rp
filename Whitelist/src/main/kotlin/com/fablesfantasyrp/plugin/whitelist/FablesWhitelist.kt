@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.whitelist
 
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
-import com.github.shynixn.mccoroutine.SuspendingJavaPlugin
+import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 
 internal val PLUGIN: FablesWhitelist
 	get() = FablesWhitelist.instance

@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.monitoring
 
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
-import com.github.shynixn.mccoroutine.SuspendingJavaPlugin
+import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import org.apache.logging.log4j.LogManager
 
 private val rootLogger: org.apache.logging.log4j.core.Logger?

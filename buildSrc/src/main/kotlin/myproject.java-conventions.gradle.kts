@@ -117,9 +117,9 @@ dependencies {
 		exclude(group = "io.papermc")
 	}
 	implementation("me.clip:placeholderapi:2.10.0")
-	implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:1.6.0")
-	implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:1.6.0")
-	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
-	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.0")
+	implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.5.0")
+	implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.5.0")
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4")
 	implementation(urlFile(URL("https://github.com/Gecolay/GSit/releases/download/1.2.4/GSit-1.2.4.jar"), "GSit.jar"))
 }

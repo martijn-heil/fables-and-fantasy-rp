@@ -3,7 +3,7 @@ package com.fablesfantasyrp.plugin.whitelist
 import com.fablesfantasyrp.plugin.utils.every
 import com.fablesfantasyrp.plugin.whitelist.event.WhitelistAddedPlayerEvent
 import com.fablesfantasyrp.plugin.whitelist.event.WhitelistRemovedPlayerEvent
-import com.github.shynixn.mccoroutine.SuspendingJavaPlugin
+import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
 import kotlin.time.Duration.Companion.milliseconds
