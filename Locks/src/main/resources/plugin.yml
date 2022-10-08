@@ -1,0 +1,10 @@
+name: FablesLocks
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+  - FablesDenizenInterop
+  - FablesDatabase
+main: com.fablesfantasyrp.plugin.locks.FablesLocks
+api-version: @bukkit_api_version@

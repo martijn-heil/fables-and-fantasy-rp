@@ -20,4 +20,5 @@ include("HorseLimits",
 		"Form",
 		"Text",
 		"Monitoring",
-		"Knockout")
+		"Knockout",
+		"Locks")
