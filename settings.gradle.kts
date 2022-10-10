@@ -21,4 +21,5 @@ include("HorseLimits",
 		"Text",
 		"Monitoring",
 		"Knockout",
-		"Locks")
+		"Locks",
+		"Distances")
