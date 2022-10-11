@@ -91,7 +91,7 @@ class Commands(private val plugin: Plugin) {
 
 		val blockTarget = sender.getTargetBlock(110) ?: return null
 
-		val distance = blockTarget.location.distance(from.location).roundToInt()
+		val distance = blockTarget.location.toCenterLocation().add(0.0, 0.5, 0.0).distance(from.location).roundToInt()
 		if (distance > 100) return null
 
 		return Pair(blockTarget, distance)
