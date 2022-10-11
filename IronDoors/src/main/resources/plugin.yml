@@ -1,0 +1,10 @@
+name: FablesIronDoors
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+  - FablesLocks
+  - FablesDatabase
+main: com.fablesfantasyrp.plugin.irondoors.FablesIronDoors
+api-version: @bukkit_api_version@
