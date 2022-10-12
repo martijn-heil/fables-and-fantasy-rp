@@ -7,6 +7,7 @@ import com.fablesfantasyrp.plugin.chat.channel.*
 import com.fablesfantasyrp.plugin.chat.data.ChatPlayerData
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
+import com.fablesfantasyrp.plugin.form.completeWaitForChat
 import com.fablesfantasyrp.plugin.knockout.knockout
 import com.fablesfantasyrp.plugin.text.sendError
 import me.neznamy.tab.api.TabAPI
@@ -117,6 +118,7 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 				this.disabledChannels = this.disabledChannels.filter { it != channel }.toSet()
 			}
 			channel.sendMessage(player, content)
+			player.completeWaitForChat()
 		} else {
 			this.channel = channel
 		}

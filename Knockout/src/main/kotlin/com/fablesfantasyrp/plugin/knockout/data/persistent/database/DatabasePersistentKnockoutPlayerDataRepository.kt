@@ -32,7 +32,7 @@ class DatabasePersistentKnockoutPlayerDataRepository(private val server: Server,
 		}
 	}
 
-	override fun create(v: PersistentKnockoutPlayerData) {
+	override fun create(v: PersistentKnockoutPlayerData): PersistentKnockoutPlayerData {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME " +
 					"(id, state, knocked_out_at, knockout_cause, damager) " +
@@ -47,6 +47,7 @@ class DatabasePersistentKnockoutPlayerDataRepository(private val server: Server,
 			stmnt.setObject(5, damager?.uniqueId)
 			stmnt.executeUpdate()
 		}
+		return v
 	}
 
 	override fun forOfflinePlayer(offlinePlayer: OfflinePlayer): PersistentKnockoutPlayerData {

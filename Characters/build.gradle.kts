@@ -12,4 +12,5 @@ dependencies {
     implementation(project(":KotlinRuntime"))
     implementation(project(":Text"))
     implementation("com.gitlab.martijn-heil:NinCommands:-SNAPSHOT")
+    api(project(":Database"))
 }

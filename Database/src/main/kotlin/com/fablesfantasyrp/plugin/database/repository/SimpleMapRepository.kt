@@ -12,6 +12,6 @@ open class SimpleMapRepository<K, T: Identifiable<K>> : MutableRepository<T>, Ke
 	override fun allIds(): Collection<K> = lock.readLock().withLock { contents.keys }
 	override fun all(): Collection<T> = lock.readLock().withLock { contents.values }
 	override fun destroy(v: T) { lock.writeLock().withLock { contents.remove(v.id) } }
-	override fun create(v: T) { lock.writeLock().withLock { contents[v.id] = v } }
+	override fun create(v: T): T { lock.writeLock().withLock { contents[v.id] = v }; return v }
 	override fun update(v: T) { lock.writeLock().withLock { contents[v.id] = v } }
 }

@@ -14,14 +14,14 @@ abstract class ResultProducingGui<T>(plugin: JavaPlugin, title: String, rows: Ar
 			if (!result.isCompleted) {
 				result.cancel(CancellationException("Cancelled by player"))
 			}
-			false
+			true
 		}
 	}
 
 	suspend fun execute(who: HumanEntity): T {
 		this.show(who)
 		val result = result.await()
-		this.close(true)
+		this.close(false)
 		return result
 	}
 }

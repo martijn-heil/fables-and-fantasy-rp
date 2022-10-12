@@ -5,7 +5,6 @@ import com.fablesfantasyrp.plugin.characters.data.CharacterStatKind
 import com.fablesfantasyrp.plugin.chat.chat
 import com.fablesfantasyrp.plugin.chat.getPlayersWithinRange
 import com.fablesfantasyrp.plugin.rolls.ROLL_RANGE
-import com.fablesfantasyrp.plugin.rolls.getRollModifierFor
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.gitlab.martijn_heil.nincommands.common.FixedSuggestions
 import com.gitlab.martijn_heil.nincommands.common.Sender
@@ -21,8 +20,6 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
-import kotlin.random.Random
-import kotlin.random.nextInt
 
 class Commands {
 	@Command(aliases = ["roll", "dice"], desc = "Roll the dice!")
@@ -32,8 +29,9 @@ class Commands {
 			 @Optional kind: CharacterStatKind?) {
 		val stats = sender.currentPlayerCharacter!!.stats
 
-		val random = Random.nextInt(1..dice)
-		val result = if (kind != null) random + kind.getRollModifierFor(stats[kind]) else random
+		val roll = com.fablesfantasyrp.plugin.rolls.roll(dice.toUInt(), kind, stats)
+		val random = roll.first
+		val result = roll.second
 
 		val prefix = "<bold><gold>[</gold> <blue>ROLL</blue> <gold>]</gold></bold> "
 

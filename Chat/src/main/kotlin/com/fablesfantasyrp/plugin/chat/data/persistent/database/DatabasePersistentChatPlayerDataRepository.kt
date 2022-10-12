@@ -36,7 +36,7 @@ class DatabasePersistentChatPlayerDataRepository(private val server: Server, pri
 		}
 	}
 
-	override fun create(v: PersistentChatPlayerData) {
+	override fun create(v: PersistentChatPlayerData): PersistentChatPlayerData {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME (id, channel, disabled_channels, reception_indicator_enabled) " +
 					"VALUES (?, ?, ?, ?)")
@@ -46,6 +46,7 @@ class DatabasePersistentChatPlayerDataRepository(private val server: Server, pri
 			stmnt.setBoolean(4, v.isReceptionIndicatorEnabled)
 			stmnt.executeUpdate()
 		}
+		return v
 	}
 
 	override fun forOfflinePlayer(offlinePlayer: OfflinePlayer): PersistentChatPlayerData {
