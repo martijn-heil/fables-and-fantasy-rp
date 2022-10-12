@@ -2,6 +2,9 @@ name: FablesForm
 version: @version@
 authors: [@authors@]
 depend:
+  - FablesKotlinRuntime
   - FablesGui
+  - FablesText
+  - NinCommands
 main: com.fablesfantasyrp.plugin.form.FablesForm
 api-version: @bukkit_api_version@

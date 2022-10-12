@@ -1,0 +1,8 @@
+name: FablesMath
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+main: com.fablesfantasyrp.plugin.math.FablesMath
+api-version: @bukkit_api_version@

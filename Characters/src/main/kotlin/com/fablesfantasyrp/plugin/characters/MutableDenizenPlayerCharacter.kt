@@ -5,15 +5,18 @@ import com.denizenscript.denizencore.objects.core.ElementTag
 import com.denizenscript.denizencore.objects.core.MapTag
 import com.fablesfantasyrp.plugin.characters.data.CharacterStats
 import com.fablesfantasyrp.plugin.characters.data.Gender
-import com.fablesfantasyrp.plugin.characters.data.PlayerCharacter
+import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterData
 import com.fablesfantasyrp.plugin.characters.data.Race
 import com.fablesfantasyrp.plugin.denizeninterop.dFlags
 import org.bukkit.Location
 import org.bukkit.OfflinePlayer
 
-class DenizenPlayerCharacter(override val id: ULong, override val player: OfflinePlayer) : PlayerCharacter {
+class MutableDenizenPlayerCharacter(override val id: ULong, override val player: OfflinePlayer) : PlayerCharacterData {
 	private val dataMap: MapTag
 		get() = (player.dFlags.getFlagValue("characters") as MapTag).getObject(id.toString()) as MapTag
+
+	val isDeleted: Boolean
+		get() = (player.dFlags.getFlagValue("characters") as? MapTag)?.getObject(id.toString()) == null
 
 	override var name: String
 		get() = dataMap.getObject("name").asElement().asString()
@@ -47,7 +50,7 @@ class DenizenPlayerCharacter(override val id: ULong, override val player: Offlin
 	}
 
 	override fun equals(other: Any?): Boolean {
-		return if (other is DenizenPlayerCharacter) {
+		return if (other is MutableDenizenPlayerCharacter) {
 			other.id == id
 		} else false
 	}

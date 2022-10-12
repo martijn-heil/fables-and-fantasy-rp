@@ -33,11 +33,12 @@ open class SimpleEntityRepository<K, T: Identifiable<K>, C>(private var child: C
 		}
 	}
 
-	override fun create(v: T) {
-		child.create(v)
+	override fun create(v: T): T {
+		val result = child.create(v)
 		lock.writeLock().withLock {
-			cache[v.id] = WeakReference(v)
+			cache[result.id] = WeakReference(result)
 		}
+		return result
 	}
 
 	private fun saveNWeakDirty(n: Int) {

@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.database
 
+import com.dieselpoint.norm.Database
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import org.flywaydb.core.Flyway
@@ -33,6 +34,13 @@ class FablesDatabase : JavaPlugin() {
 			this.isEnabled = false
 			return
 		}
+
+		norm = Database()
+		norm.sqlMaker = FablesSQLMaker()
+		norm.setJdbcUrl(dbUrl)
+		norm.setDriverClassName("org.h2.Driver")
+		norm.setUser(dbUsername)
+		norm.setPassword(dbPassword)
 	}
 
 	override fun onDisable() {
@@ -47,6 +55,8 @@ class FablesDatabase : JavaPlugin() {
 
 		lateinit var fablesDatabase: DataSource
 			private set
+
+		lateinit var norm: Database
 	}
 }
 

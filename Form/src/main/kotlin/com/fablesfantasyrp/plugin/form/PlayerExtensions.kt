@@ -5,6 +5,7 @@ import kotlinx.coroutines.CompletableDeferred
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
 
+private val currentChatWaitMap = HashMap<Player, CompletableDeferred<Unit>>()
 private val currentChatInputFormMap = HashMap<Player, CompletableDeferred<String>>()
 
 var Player.currentChatInputForm: CompletableDeferred<String>?
@@ -16,6 +17,15 @@ var Player.currentChatInputForm: CompletableDeferred<String>?
 			currentChatInputFormMap.remove(this)
 		}
 	}
+
+suspend fun Player.waitForChat() {
+	val deferred = currentChatWaitMap.getOrPut(this) { CompletableDeferred() }
+	deferred.await()
+}
+
+fun Player.completeWaitForChat() {
+	currentChatWaitMap.remove(this)?.complete(Unit)
+}
 
 suspend fun Player.promptChat(query: String) = promptChat(this, query)
 suspend fun Player.promptChat(query: Component) = promptChat(this, query)

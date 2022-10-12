@@ -57,8 +57,9 @@ class DenizenSimpleLockDataRepository : SimpleLockDataRepository {
 		))
 	}
 
-	override fun create(v: SimpleLockData) {
+	override fun create(v: SimpleLockData): SimpleLockData {
 		this.update(v)
+		return v
 	}
 
 	override fun update(v: SimpleLockData) {

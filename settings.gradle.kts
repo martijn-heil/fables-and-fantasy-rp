@@ -6,7 +6,6 @@ include("HorseLimits",
 		"Halt",
 		"Utils",
 		"Characters",
-		"Magic",
 		"Whitelist",
 		"Chat",
 		"StaffMode",
@@ -22,4 +21,6 @@ include("HorseLimits",
 		"Monitoring",
 		"Knockout",
 		"IronDoors",
-		"Locks")
+		"Locks",
+		"Math")
+

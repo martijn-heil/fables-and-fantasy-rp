@@ -6,7 +6,7 @@ import com.fablesfantasyrp.plugin.characters.FablesCharacters
 import com.fablesfantasyrp.plugin.characters.Permission
 import com.fablesfantasyrp.plugin.characters.SYSPREFIX
 import com.fablesfantasyrp.plugin.characters.data.CharacterStats
-import com.fablesfantasyrp.plugin.characters.data.PlayerCharacter
+import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterData
 import com.fablesfantasyrp.plugin.characters.gui.CharacterStatsGui
 import com.fablesfantasyrp.plugin.characters.playerCharacters
 import com.fablesfantasyrp.plugin.denizeninterop.denizenRun
@@ -27,7 +27,7 @@ import org.bukkit.entity.Player
 class Commands(private val plugin: SuspendingJavaPlugin) {
 	@Command(aliases = ["cardother"], desc = "Show another character's card")
 	@Require(Permission.Command.Cardother)
-	fun cardother(@Sender sender: Player, target: PlayerCharacter) {
+	fun cardother(@Sender sender: Player, target: PlayerCharacterData) {
 		denizenRun("characters_print_card", mapOf(
 				Pair("player", PlayerTag(sender)),
 				Pair("target", PlayerTag(target.player)),
@@ -59,7 +59,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 
 	@Command(aliases = ["updatestats"], desc = "Update a player's character stats")
 	@Require(Permission.Command.Updatestats)
-	fun updatestats(@Sender sender: Player, target: PlayerCharacter) {
+	fun updatestats(@Sender sender: Player, target: PlayerCharacterData) {
 		val minimums = target.race.boosters + CharacterStats(2U, 2U, 2U, 2U)
 		var initialSliderValues = target.stats - minimums
 		if (initialSliderValues.strength > 8U ||

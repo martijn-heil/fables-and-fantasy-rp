@@ -10,11 +10,11 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 
 
-class GuiMultipleEnumChoice<E: Enum<E>>(plugin: JavaPlugin,
-													  title: String,
-													  values: Sequence<E>,
-													  getItemStack: (value: E) -> ItemStack,
-													  getText: ((value: E) -> String)? = null
+open class GuiSingleChoice<E>(plugin: JavaPlugin,
+						 title: String,
+						 values: Sequence<E>,
+						 getItemStack: (value: E) -> ItemStack,
+						 getText: ((value: E) -> String)? = null
 )
 	: ResultProducingGui<E>(plugin, title,
 		arrayOf("ggggggggg",

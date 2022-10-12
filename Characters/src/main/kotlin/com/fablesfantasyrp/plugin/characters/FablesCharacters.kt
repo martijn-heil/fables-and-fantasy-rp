@@ -1,10 +1,10 @@
 package com.fablesfantasyrp.plugin.characters
 
-import com.denizenscript.denizencore.objects.core.MapTag
 import com.fablesfantasyrp.plugin.characters.command.Commands
 import com.fablesfantasyrp.plugin.characters.command.provider.PlayerCharacterModule
-import com.fablesfantasyrp.plugin.characters.data.PlayerCharacter
-import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterRepository
+import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterData
+import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterDataRepository
+import com.fablesfantasyrp.plugin.characters.data.persistent.denizen.DenizenPlayerCharacterRepository
 import com.fablesfantasyrp.plugin.denizeninterop.dFlags
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
@@ -23,7 +23,7 @@ import org.bukkit.Server
 
 internal val SYSPREFIX = "$GOLD[ $GREEN${BOLD}CHARACTERS $GOLD] $GRAY"
 
-lateinit var playerCharacterRepository: PlayerCharacterRepository
+lateinit var playerCharacterRepository: PlayerCharacterDataRepository
 	private set
 
 internal val PLUGIN get() = FablesCharacters.instance
@@ -33,6 +33,8 @@ class FablesCharacters : SuspendingJavaPlugin() {
 	override fun onEnable() {
 		enforceDependencies(this)
 		instance = this
+
+		playerCharacterRepository = DenizenPlayerCharacterRepository(server)
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())
@@ -59,25 +61,15 @@ class FablesCharacters : SuspendingJavaPlugin() {
 	}
 }
 
-val OfflinePlayer.currentPlayerCharacter: PlayerCharacter?
+val OfflinePlayer.currentPlayerCharacter: PlayerCharacterData?
 	get() {
 		val currentCharacter = dFlags.getFlagValue("characters_current") ?: return null
 		val id = currentCharacter.asElement().asLong().toULong()
-		return DenizenPlayerCharacter(id, this)
+		return playerCharacterRepository.forId(id)!!
 	}
 
-val OfflinePlayer.playerCharacters: List<PlayerCharacter>
-	get() {
-		val characters = dFlags.getFlagValue("characters") as? MapTag ?: return emptyList()
-		return characters.keys().mapNotNull {
-			if (it.matches(Regex("\\d+"))) { // Yes, this was necessary
-				DenizenPlayerCharacter(it.toULong(), this)
-			} else {
-				//FablesCharacters.instance.logger.severe("For player: $uniqueId (${name}) Ignoring corrupt player character data: $it")
-				null
-			}
-		}
-	}
+val OfflinePlayer.playerCharacters: Collection<PlayerCharacterData>
+	get() = playerCharacterRepository.forOfflinePlayer(this)
 
-val Server.playerCharacters: List<PlayerCharacter>
-	get() = offlinePlayers.asSequence().map { it.playerCharacters }.flatten().toList()
+val Server.playerCharacters: Collection<PlayerCharacterData>
+	get() = playerCharacterRepository.all()
