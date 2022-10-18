@@ -18,5 +18,4 @@ dependencies {
     implementation("com.github.MilkBowl:VaultAPI:1.7") {
         exclude(group = "org.bukkit")
     }
-    implementation("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT") { isChanging = true }
 }
