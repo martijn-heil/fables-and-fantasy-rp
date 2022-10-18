@@ -20,4 +20,8 @@ class MemorySimpleTargetingPlayerDataRepository(private val glowingManager: Glow
 			added.forEach { glowingManager.glowFor(it, player) }
 		}
 	}
+
+	override fun forId(id: OfflinePlayer): SimpleTargetingPlayerData? {
+		return super.forId(id) ?: SimpleTargetingPlayerData(id, emptyList(), false)
+	}
 }

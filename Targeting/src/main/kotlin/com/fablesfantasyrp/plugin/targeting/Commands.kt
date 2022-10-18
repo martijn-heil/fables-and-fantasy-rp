@@ -21,7 +21,7 @@ class Commands {
 			}
 		}
 
-		@Command(aliases = ["select"], desc = "Remove a player from target list")
+		@Command(aliases = ["remove"], desc = "Remove a player from target list")
 		@Require(Permission.Command.Target.Remove)
 		fun remove(@Sender sender: Player, @AllowCharacterName target: Player) {
 			val data = repo.forOfflinePlayer(sender)
@@ -29,7 +29,7 @@ class Commands {
 			sender.sendMessage("$SYSPREFIX removed ${target.name} from your target list.")
 		}
 
-		@Command(aliases = ["select"], desc = "Add a player to target list")
+		@Command(aliases = ["add"], desc = "Add a player to target list")
 		@Require(Permission.Command.Target.Add)
 		fun add(@Sender sender: Player, @AllowCharacterName target: Player) {
 			val data = repo.forOfflinePlayer(sender)

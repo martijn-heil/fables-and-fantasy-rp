@@ -24,10 +24,14 @@ fun denizenRun(task: String, definitions: Map<String, ObjectTag>) {
 }
 
 fun ex(entry: String) {
-	val entries: List<Any> = listOf(entry)
-	val scriptEntries = ScriptBuilder.buildScriptEntries(entries, null, null)
+	ex(emptyMap(), entry)
+}
+
+fun ex(definitions: Map<String, ObjectTag>, vararg entries: String) {
+	val scriptEntries = ScriptBuilder.buildScriptEntries(entries.toList() as List<Any>, null, null)
 	scriptEntries.forEach { it.shouldDebugBool = false }
 	val queue = InstantQueue("EXFUNCTION")
+	definitions.forEach { queue.addDefinition(it.key, it.value) }
 	queue.addEntries(scriptEntries)
 	queue.start()
 }

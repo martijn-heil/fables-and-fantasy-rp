@@ -27,7 +27,7 @@ class FablesTargeting : JavaPlugin() {
 		enforceDependencies(this)
 		instance = this
 
-		val glowingManager = PacketGlowingManager()
+		val glowingManager = DenizenGlowingManager()
 		targetingPlayerDataRepository = MemorySimpleTargetingPlayerDataRepository(glowingManager)
 
 		val injector = Intake.createInjector()
