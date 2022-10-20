@@ -1,10 +1,13 @@
 package com.fablesfantasyrp.plugin.targeting
 
+import com.fablesfantasyrp.plugin.targeting.data.SimpleTargetingPlayerData
 import com.fablesfantasyrp.plugin.text.sendError
+import com.fablesfantasyrp.plugin.utils.isRealPlayer
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
+import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 import java.util.*
@@ -19,8 +22,21 @@ class TargetingListener : Listener {
 		return false
 	}
 
+	private fun removeOrAddTarget(data: SimpleTargetingPlayerData, target: Player) {
+		val player = data.offlinePlayer.player
+
+		val targets = data.targets.toMutableSet()
+		if(!targets.remove(target)) {
+			targets.add(target)
+			player?.sendMessage("$SYSPREFIX Added ${target.name} to your target list.")
+		} else {
+			player?.sendMessage("$SYSPREFIX Removed ${target.name} from your target list.")
+		}
+		targetingPlayerDataRepository.update(data.copy(targets = targets))
+	}
+
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
-	fun onPlayerRightClick(e: PlayerInteractEvent) {
+	fun onPlayerInteract(e: PlayerInteractEvent) {
 		if (e.hand != EquipmentSlot.HAND) return
 		if (rightClickCoolDown(e.player)) return
 
@@ -34,13 +50,25 @@ class TargetingListener : Listener {
 			return
 		}
 
-		val targets = data.targets.toMutableSet()
-		if(!targets.remove(target)) {
-			targets.add(target)
-			e.player.sendMessage("$SYSPREFIX Added ${target.name} to your target list.")
-		} else {
-			e.player.sendMessage("$SYSPREFIX Removed ${target.name} from your target list.")
+		if(!target.isRealPlayer) {
+			e.player.sendError("Target is not a real player.")
+			return
 		}
-		targetingPlayerDataRepository.update(data.copy(targets = targets))
+
+		removeOrAddTarget(data, target)
+	}
+
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	fun onPlayerDamageEntity(e: EntityDamageByEntityEvent) {
+		val damager = e.damager
+		val target = e.entity
+		if (damager !is Player || !damager.isRealPlayer) return
+		if (target !is Player || !target.isRealPlayer) return
+
+		val data = targetingPlayerDataRepository.forOfflinePlayer(damager)
+		if (data.isSelecting) {
+			e.isCancelled = true
+			removeOrAddTarget(data, target)
+		}
 	}
 }

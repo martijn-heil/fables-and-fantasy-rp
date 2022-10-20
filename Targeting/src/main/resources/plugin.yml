@@ -7,5 +7,5 @@ depend:
   - NinCommands
 softdepend:
   - FablesMoreLogging
-main: com.fablesfantasyrp.plugin.targeting.FablesTargeting
+main: com.fablesfantasyrp.plugin.com.fablesfantasyrp.plugin.targeting.getTargeting.FablesTargeting
 api-version: @bukkit_api_version@

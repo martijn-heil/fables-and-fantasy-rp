@@ -6,4 +6,6 @@ import org.bukkit.OfflinePlayer
 interface TargetingPlayerData : Identifiable<OfflinePlayer> {
 	val targets: Set<OfflinePlayer>
 	val isSelecting: Boolean
+
+	val offlinePlayer get() = id
 }
