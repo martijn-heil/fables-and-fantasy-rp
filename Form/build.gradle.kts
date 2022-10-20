@@ -7,5 +7,5 @@ dependencies {
     implementation(project(":Gui"))
     implementation(project(":KotlinRuntime"))
     implementation(project(":Text"))
-    implementation("com.gitlab.martijn-heil:NinCommands:-SNAPSHOT")
+    implementation("com.gitlab.martijn-heil:NinCommands:1.0-SNAPSHOT") { isChanging = true }
 }

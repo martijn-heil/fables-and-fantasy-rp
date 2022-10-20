@@ -9,5 +9,5 @@ dependencies {
     implementation(project(":Characters"))
     implementation(project(":Text"))
     implementation(project(":DenizenInterop"))
-    implementation("com.gitlab.martijn-heil:NinCommands:-SNAPSHOT")
+    implementation("com.gitlab.martijn-heil:NinCommands:1.0-SNAPSHOT") { isChanging = true }
 }
