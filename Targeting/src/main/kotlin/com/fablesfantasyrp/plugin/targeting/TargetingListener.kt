@@ -19,16 +19,14 @@ class TargetingListener : Listener {
 		return false
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = false)
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
 	fun onPlayerRightClick(e: PlayerInteractEvent) {
 		if (e.hand != EquipmentSlot.HAND) return
-		if (rightClickCoolDown(e.player)) {
-			e.player.sendError("You are clicking too fast.")
-			return
-		}
+		if (rightClickCoolDown(e.player)) return
 
 		val data = targetingPlayerDataRepository.forOfflinePlayer(e.player)
 		if (!data.isSelecting) return
+		e.isCancelled = true
 
 		val target = e.player.getTargetEntity(100) as? Player
 		if (target == null) {
@@ -36,9 +34,13 @@ class TargetingListener : Listener {
 			return
 		}
 
-
-		val targets = data.targets.toMutableList()
-		if(!targets.remove(target)) { targets.add(target) }
+		val targets = data.targets.toMutableSet()
+		if(!targets.remove(target)) {
+			targets.add(target)
+			e.player.sendMessage("$SYSPREFIX Added ${target.name} to your target list.")
+		} else {
+			e.player.sendMessage("$SYSPREFIX Removed ${target.name} from your target list.")
+		}
 		targetingPlayerDataRepository.update(data.copy(targets = targets))
 	}
 }

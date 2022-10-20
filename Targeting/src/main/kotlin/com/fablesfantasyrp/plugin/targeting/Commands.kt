@@ -5,6 +5,7 @@ import com.fablesfantasyrp.plugin.targeting.data.SimpleTargetingPlayerDataReposi
 import com.gitlab.martijn_heil.nincommands.common.Sender
 import com.sk89q.intake.Command
 import com.sk89q.intake.Require
+import com.sk89q.intake.parametric.annotation.Switch
 import org.bukkit.entity.Player
 
 class Commands {
@@ -42,6 +43,23 @@ class Commands {
 		fun list(@Sender sender: Player) {
 			val data = repo.forOfflinePlayer(sender)
 			sender.sendMessage("$SYSPREFIX Targets:\n${data.targets.joinToString("\n") { "  ${it.name}" }}")
+		}
+
+		@Command(aliases = ["clear"], desc = "Clear your target list")
+		@Require(Permission.Command.Target.Clear)
+		fun clear(@Sender sender: Player) {
+			val data = repo.forOfflinePlayer(sender)
+			repo.update(data.copy(targets = emptySet()))
+		}
+
+		@Command(aliases = ["foreach"], desc = "Run a command on each target")
+		@Require(Permission.Command.Target.Foreach)
+		fun foreach(@Sender sender: Player, @Switch('i') replaceMe: String?, command: String) {
+			val targets = repo.forOfflinePlayer(sender).targets
+			targets.asSequence()
+					.map { it.name }
+					.map { if(replaceMe != null) command.replace(replaceMe, it) else command.plus(" $it") }
+					.forEach { sender.performCommand(it) }
 		}
 	}
 }

@@ -56,7 +56,7 @@ class FablesStaffMode : JavaPlugin() {
 				.graph()
 				.dispatcher
 
-		registerCommand(dispatcher, this, dispatcher.aliases.toList())
+		dispatcher.commands.forEach { registerCommand(it.callable, this, it.allAliases.toList()) }
 
 		// This is the only reliable way I've managed to solve this problem
 		server.scheduler.scheduleSyncRepeatingTask(this, {

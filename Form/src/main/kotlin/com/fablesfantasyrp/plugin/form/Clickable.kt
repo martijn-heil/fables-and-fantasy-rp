@@ -81,7 +81,7 @@ internal class ClickableManager(private val plugin: Plugin) {
 				.graph()
 				.dispatcher
 
-		registerCommand(dispatcher, plugin, dispatcher.aliases.toList())
+		dispatcher.commands.forEach { registerCommand(it.callable, plugin, it.allAliases.toList()) }
 
 		server.scheduler.scheduleSyncRepeatingTask(plugin, {
 			val now = Instant.now()

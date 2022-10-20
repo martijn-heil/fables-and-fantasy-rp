@@ -53,7 +53,7 @@ class FablesCharacters : SuspendingJavaPlugin() {
 				.graph()
 				.dispatcher
 
-		dispatcher.commands.forEach { registerCommand(dispatcher, this, it.allAliases.toList()) }
+		dispatcher.commands.forEach { registerCommand(it.callable, this, it.allAliases.toList()) }
 	}
 
 	companion object {

@@ -68,7 +68,7 @@ class FablesChat : JavaPlugin() {
 				.graph()
 				.dispatcher
 
-		dispatcher.commands.forEach { registerCommand(dispatcher, this, it.allAliases.toList()) }
+		dispatcher.commands.forEach { registerCommand(it.callable, this, it.allAliases.toList()) }
 
 		server.pluginManager.registerEvents(ChatListener(server), this)
 		this.getCommand("ic")!!.setExecutor(Commands.CommandChatInCharacter())

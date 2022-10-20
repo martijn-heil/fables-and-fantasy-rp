@@ -2,6 +2,7 @@ package com.fablesfantasyrp.plugin.rolls
 
 import com.fablesfantasyrp.plugin.characters.command.provider.PlayerCharacterModule
 import com.fablesfantasyrp.plugin.rolls.command.Commands
+import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.FixedSuggestionsModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
@@ -20,6 +21,7 @@ internal val ROLL_RANGE = 15U
 class FablesRolls : JavaPlugin() {
 
 	override fun onEnable() {
+		enforceDependencies(this)
 		instance = this
 
 		val injector = Intake.createInjector()
@@ -40,7 +42,7 @@ class FablesRolls : JavaPlugin() {
 				.graph()
 				.dispatcher
 
-		registerCommand(dispatcher, this, dispatcher.aliases.toList())
+		dispatcher.commands.forEach { registerCommand(it.callable, this, it.allAliases.toList()) }
 	}
 
 	companion object {

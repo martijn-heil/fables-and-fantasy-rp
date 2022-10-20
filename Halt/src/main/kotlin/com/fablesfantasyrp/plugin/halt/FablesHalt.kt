@@ -2,6 +2,7 @@ package com.fablesfantasyrp.plugin.halt
 
 import com.fablesfantasyrp.plugin.characters.command.provider.PlayerCharacterModule
 import com.fablesfantasyrp.plugin.characters.currentPlayerCharacter
+import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.BukkitModule
@@ -21,6 +22,7 @@ val SYSPREFIX = "${DARK_RED}${BOLD}[${RED}${BOLD} HALT ${DARK_RED}${BOLD}]${GRAY
 class FablesHalt : JavaPlugin() {
 
 	override fun onEnable() {
+		enforceDependencies(this)
 		instance = this
 
 		val injector = Intake.createInjector()
@@ -40,7 +42,7 @@ class FablesHalt : JavaPlugin() {
 				.graph()
 				.dispatcher
 
-		registerCommand(dispatcher, this, dispatcher.aliases.toList())
+		dispatcher.commands.forEach { registerCommand(it.callable, this, it.allAliases.toList()) }
 	}
 
 	companion object {

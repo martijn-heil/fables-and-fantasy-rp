@@ -43,6 +43,7 @@ class FablesTargeting : JavaPlugin() {
 		rootDispatcherNode.group("target").registerMethods(Commands.Target(targetingPlayerDataRepository))
 		val dispatcher = rootDispatcherNode.dispatcher
 
+		dispatcher.commands.forEach { registerCommand(it.callable, this, it.allAliases.toList()) }
 		registerCommand(dispatcher, this, dispatcher.aliases.toList())
 		server.pluginManager.registerEvents(TargetingListener(), this)
 	}

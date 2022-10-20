@@ -2,6 +2,7 @@ package com.fablesfantasyrp.plugin.targeting
 
 object Permission {
 	const val prefix = "fables.targeting"
+	const val Glowingvisuals = "${prefix}.glowingvisuals"
 
 	object Command {
 		private const val prefix = Permission.prefix + ".command"
@@ -11,6 +12,8 @@ object Permission {
 			const val Remove = "${prefix}.remove"
 			const val Select = "${prefix}.select"
 			const val List = "${prefix}.list"
+			const val Clear = "${prefix}.clear"
+			const val Foreach = "${prefix}.foreach"
 		}
 	}
 }
