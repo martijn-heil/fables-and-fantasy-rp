@@ -5,13 +5,11 @@ import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDataba
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.magic.command.Commands
 import com.fablesfantasyrp.plugin.magic.command.provider.MagicModule
-import com.fablesfantasyrp.plugin.magic.data.SimpleMapTearDataRepository
+import com.fablesfantasyrp.plugin.magic.data.MapTearRepository
 import com.fablesfantasyrp.plugin.magic.data.SimpleSpellDataRepository
-import com.fablesfantasyrp.plugin.magic.data.entity.MageMapper
-import com.fablesfantasyrp.plugin.magic.data.entity.MageRepository
-import com.fablesfantasyrp.plugin.magic.data.entity.TearMapper
-import com.fablesfantasyrp.plugin.magic.data.entity.TearRepository
-import com.fablesfantasyrp.plugin.magic.data.persistent.H2SimpleMageDataRepository
+import com.fablesfantasyrp.plugin.magic.data.entity.EntityMageRepository
+import com.fablesfantasyrp.plugin.magic.data.entity.EntityTearRepository
+import com.fablesfantasyrp.plugin.magic.data.persistent.H2MageRepository
 import com.fablesfantasyrp.plugin.magic.data.persistent.YamlSimpleSpellDataRepository
 import com.fablesfantasyrp.plugin.magic.denizen.FablesMagicBridge
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
@@ -32,9 +30,9 @@ val MAX_TEARS_PER_MAGE = 10
 
 val PLUGIN: FablesMagic get() = FablesMagic.instance
 
-lateinit var tearRepository: TearRepository<*>
+lateinit var tearRepository: EntityTearRepository<*>
 lateinit var spellRepository: SimpleSpellDataRepository
-lateinit var mageRepository: MageRepository<*>
+lateinit var mageRepository: EntityMageRepository<*>
 
 
 class FablesMagic : SuspendingJavaPlugin() {
@@ -54,9 +52,9 @@ class FablesMagic : SuspendingJavaPlugin() {
 		spellsDirectory.mkdirs()
 
 		spellRepository = YamlSimpleSpellDataRepository(spellsDirectory)
-		mageRepository = MageRepository(this, MageMapper(H2SimpleMageDataRepository(server, fablesDatabase)))
+		mageRepository = EntityMageRepository(this, H2MageRepository(server, fablesDatabase))
 		mageRepository.init()
-		tearRepository = TearRepository(TearMapper(SimpleMapTearDataRepository()))
+		tearRepository = EntityTearRepository(MapTearRepository())
 		tearRepository.all().forEach { it.spawn() }
 
 		TearClosureManager(this, tearRepository)

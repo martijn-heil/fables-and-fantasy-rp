@@ -4,5 +4,5 @@ plugins {
 
 dependencies {
     // internal module dependencies
-    implementation("com.gitlab.martijn-heil:NinCommands:-SNAPSHOT")
+    implementation("com.gitlab.martijn-heil:NinCommands:1.0-SNAPSHOT")
 }

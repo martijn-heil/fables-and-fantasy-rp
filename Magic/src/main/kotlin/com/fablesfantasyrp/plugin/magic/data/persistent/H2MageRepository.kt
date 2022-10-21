@@ -1,28 +1,32 @@
 package com.fablesfantasyrp.plugin.magic.data.persistent
 
 import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterData
+import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
+import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
 import com.fablesfantasyrp.plugin.magic.MagicPath
-import com.fablesfantasyrp.plugin.magic.data.SimpleMageData
-import com.fablesfantasyrp.plugin.magic.data.SimpleMageDataRepository
+import com.fablesfantasyrp.plugin.magic.data.entity.Mage
+import com.fablesfantasyrp.plugin.magic.data.entity.MageRepository
 import com.fablesfantasyrp.plugin.magic.spellRepository
 import org.bukkit.Server
 import java.sql.ResultSet
 import javax.sql.DataSource
 
-class H2SimpleMageDataRepository(private val server: Server, private val dataSource: DataSource) : SimpleMageDataRepository {
+class H2MageRepository(private val server: Server, private val dataSource: DataSource) : MageRepository, HasDirtyMarker<Mage> {
 	val TABLE_NAME = "FABLES_MAGIC.MAGES"
 
-	override fun all(): Collection<SimpleMageData> {
+	override var dirtyMarker: DirtyMarker<Mage>? = null
+
+	override fun all(): Collection<Mage> {
 		return dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME")
 			val result = stmnt.executeQuery()
-			val all = ArrayList<SimpleMageData>()
+			val all = ArrayList<Mage>()
 			while (result.next()) all.add(fromRow(result))
 			all
 		}
 	}
 
-	override fun destroy(v: SimpleMageData) {
+	override fun destroy(v: Mage) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("DELETE FROM $TABLE_NAME WHERE id = ?")
 			stmnt.setObject(1, v.id)
@@ -30,7 +34,7 @@ class H2SimpleMageDataRepository(private val server: Server, private val dataSou
 		}
 	}
 
-	override fun create(v: SimpleMageData): SimpleMageData {
+	override fun create(v: Mage): Mage {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME " +
 					"(id, magic_path, magic_level, spells) " +
@@ -41,18 +45,25 @@ class H2SimpleMageDataRepository(private val server: Server, private val dataSou
 			stmnt.setArray(4, connection.createArrayOf("VARCHAR ARRAY", v.spells.toTypedArray()))
 			stmnt.executeUpdate()
 		}
+		v.dirtyMarker = dirtyMarker
 		return v
 	}
 
-	override fun forPlayerCharacter(playerCharacter: PlayerCharacterData): SimpleMageData {
-		return forId(playerCharacter.id.toLong())!!
+	override fun forPlayerCharacter(c: PlayerCharacterData): Mage {
+		return forId(c.id.toLong())!!
 	}
 
-	override fun forId(id: Long): SimpleMageData? {
+	override fun forPlayerCharacterOrCreate(c: PlayerCharacterData): Mage {
+		return forIdMaybe(c.id.toLong()) ?: run {
+			this.create(Mage(0, MagicPath.AEROMANCY, 1, emptyList()))
+		}
+	}
+
+	override fun forId(id: Long): Mage? {
 		return this.forIdMaybe(id)
 	}
 
-	private fun forIdMaybe(id: Long): SimpleMageData? {
+	private fun forIdMaybe(id: Long): Mage? {
 		return dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE id = ?")
 			stmnt.setObject(1, id)
@@ -72,7 +83,7 @@ class H2SimpleMageDataRepository(private val server: Server, private val dataSou
 		}
 	}
 
-	override fun update(v: SimpleMageData) {
+	override fun update(v: Mage) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("UPDATE $TABLE_NAME SET " +
 					"magic_path = ?, " +
@@ -87,7 +98,7 @@ class H2SimpleMageDataRepository(private val server: Server, private val dataSou
 		}
 	}
 
-	private fun fromRow(row: ResultSet): SimpleMageData {
+	private fun fromRow(row: ResultSet): Mage {
 		val id = row.getLong("id")
 
 		val magicPath = row.getString("magic_path").let { MagicPath.valueOf(it) }
@@ -97,7 +108,7 @@ class H2SimpleMageDataRepository(private val server: Server, private val dataSou
 				.map { it as String }
 				.mapNotNull { spellRepository.forId(it) }
 
-		return SimpleMageData(
+		return Mage(
 				id = id,
 				magicPath = magicPath,
 				magicLevel = magicLevel,

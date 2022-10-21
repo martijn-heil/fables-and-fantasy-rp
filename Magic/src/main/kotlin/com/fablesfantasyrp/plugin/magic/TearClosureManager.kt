@@ -1,11 +1,11 @@
 package com.fablesfantasyrp.plugin.magic
 
 import com.fablesfantasyrp.plugin.characters.currentPlayerCharacter
+import com.fablesfantasyrp.plugin.magic.data.entity.EntityTearRepository
 import com.fablesfantasyrp.plugin.magic.data.entity.Tear
-import com.fablesfantasyrp.plugin.magic.data.entity.TearRepository
 import org.bukkit.plugin.Plugin
 
-class TearClosureManager(private val plugin: Plugin, private val tearRepository: TearRepository<*>) {
+class TearClosureManager(private val plugin: Plugin, private val tearRepository: EntityTearRepository<*>) {
 	private val server = plugin.server
 	private val tearsScheduledForRemoval = HashMap<Tear, Long>()
 

@@ -9,14 +9,14 @@ import java.util.concurrent.locks.ReadWriteLock
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.withLock
 
-open class SimpleEntityRepository<K, T: Identifiable<K>, C>(private var child: C) : EntityRepository<K, T>
+open class SimpleEntityRepository<K, T: Identifiable<K>, C>(protected var child: C) : EntityRepository<K, T>
 		where C : KeyedRepository<K, T>,
 			  C : MutableRepository<T>,
 			  C: HasDirtyMarker<T> {
-	private val cache = HashMap<K, WeakReference<T>>()
-	private val strongCache = HashSet<T>()
-	private val dirty = LinkedHashSet<T>()
-	private val lock: ReadWriteLock = ReentrantReadWriteLock()
+	protected val cache = HashMap<K, WeakReference<T>>()
+	protected val strongCache = HashSet<T>()
+	protected val dirty = LinkedHashSet<T>()
+	protected val lock: ReadWriteLock = ReentrantReadWriteLock()
 
 	fun init(): SimpleEntityRepository<K, T, C> {
 		child.dirtyMarker = this
@@ -81,7 +81,7 @@ open class SimpleEntityRepository<K, T: Identifiable<K>, C>(private var child: C
 		}
 	}
 
-	private fun fromCache(id: K): T? {
+	protected fun fromCache(id: K): T? {
 		lock.readLock().withLock {
 			return cache[id]?.get()
 		}
