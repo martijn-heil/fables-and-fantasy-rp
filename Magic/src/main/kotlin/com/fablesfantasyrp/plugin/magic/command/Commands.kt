@@ -10,9 +10,11 @@ import com.fablesfantasyrp.plugin.magic.exception.OpenTearException
 import com.fablesfantasyrp.plugin.magic.gui.SpellbookGui
 import com.fablesfantasyrp.plugin.math.*
 import com.fablesfantasyrp.plugin.text.join
+import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.sendError
 import com.fablesfantasyrp.plugin.utils.humanReadable
 import com.github.shynixn.mccoroutine.bukkit.launch
+import com.gitlab.martijn_heil.nincommands.common.CommandTarget
 import com.gitlab.martijn_heil.nincommands.common.Sender
 import com.sk89q.intake.Command
 import com.sk89q.intake.Require
@@ -20,6 +22,7 @@ import com.sk89q.intake.parametric.annotation.Optional
 import com.sk89q.intake.parametric.annotation.Range
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Color
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -141,5 +144,39 @@ class Commands {
 	fun setmagiclevel(@Sender sender: CommandSender, target: Mage, @Range(min = 0.00) magicLevel: Int) {
 		target.magicLevel = magicLevel
 		sender.sendMessage("$SYSPREFIX set ${target.playerCharacter.name}'s magic path to $magicLevel")
+	}
+
+	class Ability {
+		@Command(aliases = ["setmagiclevel"], desc = "Set a character's magic level.")
+		@Require(Permission.Command.Ability.List)
+		fun list(@Sender sender: CommandSender, @CommandTarget(Permission.Command.Ability.List + ".others") target: Mage) {
+			val allAbilities = MageAbilities.forPath(target.magicPath)
+			if (allAbilities == null) {
+				sender.sendError("This mage does not have access to any abilities")
+				return
+			}
+
+			fun activeInactiveComponent(isActive: Boolean): Component {
+				return if (isActive) {
+					miniMessage.deserialize("<green>[ACTIVE]</green>")
+				} else {
+					miniMessage.deserialize("<red>[INACTIVE]</red>")
+				}
+			}
+
+			allAbilities
+					.map { Pair(it, target.activeAbilities.contains(it)) }
+					.sortedBy { it.second }
+					.map {
+						val ability = it.first
+						val isActive = it.second
+						miniMessage.deserialize("<ability_name>: <active>",
+								Placeholder.unparsed("ability_name", ability.displayName),
+								Placeholder.component("active", activeInactiveComponent(isActive)))
+					}
+
+			sender.sendMessage(miniMessage.deserialize("<prefix> <mage_name>'s abilities:\n<abilities>",
+				Placeholder.component("")))
+		}
 	}
 }

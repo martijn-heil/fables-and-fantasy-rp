@@ -21,4 +21,5 @@ include("HorseLimits",
 		"Monitoring",
 		"Knockout",
 		"Locks",
-		"Math")
+		"Math",
+		"Magic")

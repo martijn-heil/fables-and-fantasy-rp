@@ -13,5 +13,10 @@ internal object Permission {
 		const val Setmagicpath = "${prefix}.setmagictype"
 		const val Setmagiclevel = "${prefix}.setmagiclevel"
 		const val Tears = "${prefix}.tears"
+
+		object Ability {
+			private const val prefix = Permission.prefix + ".ability"
+			const val List = "${Command.prefix}.list"
+		}
 	}
 }

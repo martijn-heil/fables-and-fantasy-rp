@@ -11,6 +11,8 @@ import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
 import com.fablesfantasyrp.plugin.form.YesNoChatPrompt
 import com.fablesfantasyrp.plugin.magic.*
+import com.fablesfantasyrp.plugin.magic.ability.MageAbility
+import com.fablesfantasyrp.plugin.magic.ability.aeromancy.Cloud
 import com.fablesfantasyrp.plugin.magic.data.MageData
 import com.fablesfantasyrp.plugin.magic.data.SpellData
 import com.fablesfantasyrp.plugin.magic.exception.NoSpaceForTearException
@@ -44,6 +46,8 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 	override var magicLevel: Int
 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 	override var spells: List<SpellData>
+		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
+	override var activeAbilities: Set<MageAbility> = emptySet()
 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 
 	override var id: Long
@@ -211,7 +215,10 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 			val particlesJob = this.startSpellCastingParticles(spell)
 			try {
 				player.awaitEmote(legacyText("$SYSPREFIX Please emote to try to cast a spell:"))
-				val castingRoll = roll(20U, CharacterStatKind.INTELLIGENCE, stats).second + this.spellCastingBonus
+				val additionalBonus = if (this.activeAbilities.contains(Cloud)) 1U else 0U
+				val castingRoll = roll(20U, CharacterStatKind.INTELLIGENCE, stats).second +
+						this.spellCastingBonus +
+						additionalBonus
 				val success = castingRoll >= spell.castingValue.toUInt()
 
 				val effectivenessRoll = roll(20U, CharacterStatKind.INTELLIGENCE, stats).second + this.spellCastingBonus
