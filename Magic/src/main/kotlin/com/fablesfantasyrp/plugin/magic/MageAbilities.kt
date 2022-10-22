@@ -17,4 +17,5 @@ object MageAbilities {
 
 	val all = data.values.flatten()
 	fun forPath(magicPath: MagicPath) = data[magicPath]
+	fun forId(id: String) = all.find { it.id == id }
 }

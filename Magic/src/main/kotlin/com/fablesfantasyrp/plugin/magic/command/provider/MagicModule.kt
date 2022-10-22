@@ -3,6 +3,7 @@ package com.fablesfantasyrp.plugin.magic.command.provider
 import com.fablesfantasyrp.plugin.characters.command.provider.PlayerCharacterProvider
 import com.fablesfantasyrp.plugin.magic.MagicPath
 import com.fablesfantasyrp.plugin.magic.MagicType
+import com.fablesfantasyrp.plugin.magic.ability.MageAbility
 import com.fablesfantasyrp.plugin.magic.data.SimpleSpellData
 import com.fablesfantasyrp.plugin.magic.data.entity.Mage
 import com.fablesfantasyrp.plugin.magic.spellRepository
@@ -19,5 +20,6 @@ class MagicModule(private val server: Server) : AbstractModule() {
 				.toProvider(OwnSpellDataProvider(SpellDataProvider(spellRepository)))
 		bind(MagicType::class.java).toProvider(EnumProvider(MagicType::class.java))
 		bind(MagicPath::class.java).toProvider(EnumProvider(MagicPath::class.java))
+		bind(MageAbility::class.java).toProvider(MageAbilityProvider())
 	}
 }

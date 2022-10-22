@@ -17,6 +17,8 @@ internal object Permission {
 		object Ability {
 			private const val prefix = Permission.prefix + ".ability"
 			const val List = "${Command.prefix}.list"
+			const val Activate = "${Command.prefix}.activate"
+			const val Deactiviate = "${Command.prefix}.deactivate"
 		}
 	}
 }

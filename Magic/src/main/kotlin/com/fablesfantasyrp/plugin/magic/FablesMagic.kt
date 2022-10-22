@@ -70,13 +70,11 @@ class FablesMagic : SuspendingJavaPlugin() {
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()
 
-		val dispatcher = CommandGraph()
-				.builder(builder)
-				.commands()
-				.registerMethods(Commands())
-				.graph()
-				.dispatcher
+		val rootDispatcherNode = CommandGraph().builder(builder).commands()
+		rootDispatcherNode.registerMethods(Commands())
+		rootDispatcherNode.group("ability").registerMethods(Commands.Ability())
 
+		val dispatcher = rootDispatcherNode.dispatcher
 		dispatcher.commands.forEach { registerCommand(dispatcher, this, it.allAliases.toList()) }
 
 		FablesMagicBridge().init()

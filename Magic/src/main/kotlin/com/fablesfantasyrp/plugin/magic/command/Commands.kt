@@ -2,7 +2,9 @@ package com.fablesfantasyrp.plugin.magic.command
 
 import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterData
 import com.fablesfantasyrp.plugin.magic.*
+import com.fablesfantasyrp.plugin.magic.ability.MageAbility
 import com.fablesfantasyrp.plugin.magic.animations.NecromancyBlightAnimation
+import com.fablesfantasyrp.plugin.magic.command.provider.OwnAbility
 import com.fablesfantasyrp.plugin.magic.command.provider.OwnSpell
 import com.fablesfantasyrp.plugin.magic.data.SimpleSpellData
 import com.fablesfantasyrp.plugin.magic.data.entity.Mage
@@ -10,6 +12,7 @@ import com.fablesfantasyrp.plugin.magic.exception.OpenTearException
 import com.fablesfantasyrp.plugin.magic.gui.SpellbookGui
 import com.fablesfantasyrp.plugin.math.*
 import com.fablesfantasyrp.plugin.text.join
+import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.sendError
 import com.fablesfantasyrp.plugin.utils.humanReadable
@@ -164,19 +167,38 @@ class Commands {
 				}
 			}
 
-			allAbilities
+			val abilitiesComponent = Component.text().append(allAbilities
+					.asSequence()
 					.map { Pair(it, target.activeAbilities.contains(it)) }
 					.sortedBy { it.second }
 					.map {
 						val ability = it.first
 						val isActive = it.second
-						miniMessage.deserialize("<ability_name>: <active>",
+						miniMessage.deserialize("<gray><ability_name>: <active></gray>",
 								Placeholder.unparsed("ability_name", ability.displayName),
 								Placeholder.component("active", activeInactiveComponent(isActive)))
-					}
+					}.join(Component.text(", ")).toList())
 
-			sender.sendMessage(miniMessage.deserialize("<prefix> <mage_name>'s abilities:\n<abilities>",
-				Placeholder.component("")))
+			sender.sendMessage(miniMessage.deserialize("<gray><prefix> <mage_name>'s abilities:\n<abilities></gray>",
+				Placeholder.component("prefix", legacyText(SYSPREFIX)),
+				Placeholder.unparsed("mage_name", target.playerCharacter.name),
+				Placeholder.component("abilities", abilitiesComponent)))
+		}
+
+		@Command(aliases = ["activate"], desc = "Activate an ability.")
+		@Require(Permission.Command.Ability.Activate)
+		fun activate(@Sender sender: Mage,
+					 @OwnAbility ability: MageAbility) {
+			sender.activeAbilities = sender.activeAbilities.plus(ability)
+			sender.playerCharacter.player.player!!.sendMessage("$SYSPREFIX Activated ${ability.displayName}")
+		}
+
+		@Command(aliases = ["deactivate"], desc = "Deactivate an ability.")
+		@Require(Permission.Command.Ability.Deactiviate)
+		fun deactiviate(@Sender sender: Mage,
+					 @OwnAbility ability: MageAbility) {
+			sender.activeAbilities = sender.activeAbilities.minus(ability)
+			sender.playerCharacter.player.player!!.sendMessage("$SYSPREFIX Deactivated ${ability.displayName}")
 		}
 	}
 }
