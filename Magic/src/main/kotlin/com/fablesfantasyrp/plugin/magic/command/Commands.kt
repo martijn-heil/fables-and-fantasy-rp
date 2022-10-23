@@ -146,11 +146,11 @@ class Commands {
 	@Require(Permission.Command.Setmagiclevel)
 	fun setmagiclevel(@Sender sender: CommandSender, target: Mage, @Range(min = 0.00) magicLevel: Int) {
 		target.magicLevel = magicLevel
-		sender.sendMessage("$SYSPREFIX set ${target.playerCharacter.name}'s magic path to $magicLevel")
+		sender.sendMessage("$SYSPREFIX set ${target.playerCharacter.name}'s magic level to $magicLevel")
 	}
 
 	class Ability {
-		@Command(aliases = ["setmagiclevel"], desc = "Set a character's magic level.")
+		@Command(aliases = ["list"], desc = "List your abilities")
 		@Require(Permission.Command.Ability.List)
 		fun list(@Sender sender: CommandSender, @CommandTarget(Permission.Command.Ability.List + ".others") target: Mage) {
 			val allAbilities = MageAbilities.forPath(target.magicPath)
@@ -174,7 +174,7 @@ class Commands {
 					.map {
 						val ability = it.first
 						val isActive = it.second
-						miniMessage.deserialize("<gray><ability_name>: <active></gray>",
+						miniMessage.deserialize("    <gray><ability_name>: <active></gray>",
 								Placeholder.unparsed("ability_name", ability.displayName),
 								Placeholder.component("active", activeInactiveComponent(isActive)))
 					}.join(Component.text(", ")).toList())
@@ -195,7 +195,7 @@ class Commands {
 
 		@Command(aliases = ["deactivate"], desc = "Deactivate an ability.")
 		@Require(Permission.Command.Ability.Deactiviate)
-		fun deactiviate(@Sender sender: Mage,
+		fun deactivate(@Sender sender: Mage,
 					 @OwnAbility ability: MageAbility) {
 			sender.activeAbilities = sender.activeAbilities.minus(ability)
 			sender.playerCharacter.player.player!!.sendMessage("$SYSPREFIX Deactivated ${ability.displayName}")

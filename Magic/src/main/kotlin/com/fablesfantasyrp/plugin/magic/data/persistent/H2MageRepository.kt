@@ -108,11 +108,13 @@ class H2MageRepository(private val server: Server, private val dataSource: DataS
 				.map { it as String }
 				.mapNotNull { spellRepository.forId(it) }
 
-		return Mage(
+		val mage = Mage(
 				id = id,
 				magicPath = magicPath,
 				magicLevel = magicLevel,
 				spells = spells.toList(),
 		)
+		mage.dirtyMarker = dirtyMarker
+		return mage
 	}
 }

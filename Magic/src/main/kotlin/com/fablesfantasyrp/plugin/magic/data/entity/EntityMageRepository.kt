@@ -12,6 +12,16 @@ class EntityMageRepository<C>(private val plugin: Plugin, child: C) : SimpleEnti
 	where C: KeyedRepository<Long, Mage>,
 		  C: MutableRepository<Mage>,
 		  C: HasDirtyMarker<Mage> {
+	init {
+		this.all().forEach { this.markStrong(it) }
+	}
+
+	override fun create(v: Mage): Mage {
+		val created = super.create(v)
+		this.markStrong(created)
+		return created
+	}
+
 	fun forIdOrCreate(id: Long): Mage {
 		val maybe = this.forId(id)
 		return if (maybe != null) {
