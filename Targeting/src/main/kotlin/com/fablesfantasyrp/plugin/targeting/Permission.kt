@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.targeting
 
 object Permission {
-	const val prefix = "fables.com.fablesfantasyrp.plugin.targeting.getTargeting"
+	const val prefix = "fables.targeting"
 	const val Glowingvisuals = "${prefix}.glowingvisuals"
 
 	object Command {

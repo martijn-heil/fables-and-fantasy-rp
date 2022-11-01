@@ -58,7 +58,7 @@ class TargetingListener : Listener {
 		removeOrAddTarget(data, target)
 	}
 
-	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
 	fun onPlayerDamageEntity(e: EntityDamageByEntityEvent) {
 		val damager = e.damager
 		val target = e.entity

@@ -38,16 +38,16 @@ class FablesTargeting : JavaPlugin() {
 		injector.install(BukkitModule(server))
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
+		injector.install(EnumModule())
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()
 
 		val rootDispatcherNode = CommandGraph().builder(builder).commands()
-		rootDispatcherNode.group("target").registerMethods(Commands.Target(targetingPlayerDataRepository))
+		rootDispatcherNode.group("target", "ftarget", "ta").registerMethods(Commands.Target(targetingPlayerDataRepository))
 		val dispatcher = rootDispatcherNode.dispatcher
 
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
-		registerCommand(dispatcher, this, dispatcher.aliases.toList())
 		server.pluginManager.registerEvents(TargetingListener(), this)
 	}
 
