@@ -18,6 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin
 internal val SYSPREFIX = "${ChatColor.GOLD}[${ChatColor.DARK_AQUA}${ChatColor.BOLD} DISTANCES ${ChatColor.GOLD}] ${ChatColor.GRAY}"
 
 class FablesDistances : JavaPlugin() {
+	private lateinit var commands: Collection<Command>
 
 	override fun onEnable() {
 		instance = this
@@ -40,7 +41,11 @@ class FablesDistances : JavaPlugin() {
 				.graph()
 				.dispatcher
 
-		registerCommand(dispatcher, this, dispatcher.aliases.toList())
+		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
+	}
+
+	override fun onDisable() {
+		commands.forEach { unregisterCommand(it) }
 	}
 
 	companion object {

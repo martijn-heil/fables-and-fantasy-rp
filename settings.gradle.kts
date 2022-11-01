@@ -23,5 +23,5 @@ include("HorseLimits",
 		"Locks",
 		"Math",
 		"Targeting",
-		"Glowing"
+		"Glowing",
 		"Distances")
