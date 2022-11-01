@@ -50,6 +50,7 @@ class Commands {
 		fun clear(@Sender sender: Player) {
 			val data = repo.forOfflinePlayer(sender)
 			repo.update(data.copy(targets = emptySet()))
+			sender.sendMessage("$SYSPREFIX Cleared your target list.")
 		}
 
 		@Command(aliases = ["foreach"], desc = "Run a command on each target")

@@ -46,7 +46,7 @@ class TargetingListener : Listener {
 
 		val target = e.player.getTargetEntity(100) as? Player
 		if (target == null) {
-			e.player.sendError("Please aim at a player and right-click.")
+			e.player.sendError("Please aim at a player and left-click.")
 			return
 		}
 
