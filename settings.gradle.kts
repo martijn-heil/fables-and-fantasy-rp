@@ -17,11 +17,11 @@ include("HorseLimits",
 		"UtilsOffline",
 		"MoreLogging",
 		"Form",
-		"Text",
 		"Monitoring",
 		"Knockout",
 		"IronDoors",
 		"Locks",
 		"Math",
 		"Targeting",
-		"Glowing")
+		"Glowing"
+		"Distances")
