@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.targeting.data
 
 import com.fablesfantasyrp.plugin.database.repository.SimpleMapRepository
-import com.fablesfantasyrp.plugin.targeting.GlowingManager
+import com.fablesfantasyrp.plugin.glowing.GlowingManager
 import com.fablesfantasyrp.plugin.targeting.Permission
 import org.bukkit.OfflinePlayer
 
