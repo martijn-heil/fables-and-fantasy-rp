@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.targeting
 
+import com.fablesfantasyrp.plugin.glowing.FablesGlowing
 import com.fablesfantasyrp.plugin.targeting.data.MemorySimpleTargetingPlayerDataRepository
 import com.fablesfantasyrp.plugin.targeting.data.SimpleTargetingPlayerDataRepository
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
@@ -30,8 +31,7 @@ class FablesTargeting : JavaPlugin() {
 		enforceDependencies(this)
 		instance = this
 
-		val glowingManager = DenizenGlowingManager()
-		targetingPlayerDataRepository = MemorySimpleTargetingPlayerDataRepository(glowingManager)
+		targetingPlayerDataRepository = MemorySimpleTargetingPlayerDataRepository(FablesGlowing.instance.glowingManager)
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())

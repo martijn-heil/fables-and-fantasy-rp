@@ -23,4 +23,5 @@ include("HorseLimits",
 		"IronDoors",
 		"Locks",
 		"Math",
-		"Targeting")
+		"Targeting",
+		"Glowing")

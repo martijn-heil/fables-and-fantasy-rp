@@ -18,8 +18,8 @@ class MemorySimpleTargetingPlayerDataRepository(private val glowingManager: Glow
 			val added = v.targets.minus(current.targets.toSet())
 
 			if (player.hasPermission(Permission.Glowingvisuals)) {
-				removed.forEach { glowingManager.unglowFor(it, player) }
-				added.forEach { glowingManager.glowFor(it, player) }
+				removed.forEach { glowingManager.setIsGlowingFor(it, player, false) }
+				added.forEach { glowingManager.setIsGlowingFor(it, player, true) }
 			}
 		}
 	}
