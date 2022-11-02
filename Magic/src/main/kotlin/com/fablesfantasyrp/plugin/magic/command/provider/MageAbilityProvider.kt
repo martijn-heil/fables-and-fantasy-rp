@@ -27,9 +27,19 @@ class MageAbilityProvider : Provider<MageAbility> {
 	}
 
 	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
-		return MageAbilities.all.asSequence()
-				.map { it.id }
-				.filter { it.startsWith(prefix) }
-				.toList()
+		if (modifiers.find { it is OwnAbility } != null) {
+			val player = locals.get("sender") as? Player ?: return emptyList()
+			val character = player.currentPlayerCharacter ?: return emptyList()
+			val mage = mageRepository.forPlayerCharacter(character) ?: return emptyList()
+			return MageAbilities.forPath(mage.magicPath)?.asSequence()
+					?.map { it.id }
+					?.filter { it.startsWith(prefix) }
+					?.toList() ?: emptyList()
+		} else {
+			return MageAbilities.all.asSequence()
+					.map { it.id }
+					.filter { it.startsWith(prefix) }
+					.toList()
+		}
 	}
 }

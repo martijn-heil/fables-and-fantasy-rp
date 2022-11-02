@@ -26,7 +26,7 @@ import com.sk89q.intake.parametric.provider.PrimitivesModule
 import org.bukkit.ChatColor.*
 import org.bukkit.command.Command
 
-val SYSPREFIX = "${DARK_PURPLE}${BOLD}[${AQUA}${BOLD}MAGIC${DARK_PURPLE}${BOLD}]${GRAY}"
+val SYSPREFIX = "${DARK_PURPLE}${BOLD}[ ${AQUA}${BOLD}MAGIC${DARK_PURPLE}${BOLD} ]${GRAY}"
 val MAX_TEARS_PER_MAGE = 10
 
 val PLUGIN: FablesMagic get() = FablesMagic.instance
@@ -74,10 +74,10 @@ class FablesMagic : SuspendingJavaPlugin() {
 
 		val rootDispatcherNode = CommandGraph().builder(builder).commands()
 		rootDispatcherNode.group("ability").registerMethods(Commands.Ability())
+		rootDispatcherNode.registerMethods(Commands())
 		val dispatcher = rootDispatcherNode.dispatcher
 
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
-		registerCommand(dispatcher, this, dispatcher.aliases.toList())
 	}
 
 	override fun onDisable() {

@@ -1,6 +1,5 @@
 package com.fablesfantasyrp.plugin.magic.command
 
-import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterData
 import com.fablesfantasyrp.plugin.magic.*
 import com.fablesfantasyrp.plugin.magic.ability.MageAbility
 import com.fablesfantasyrp.plugin.magic.animations.NecromancyBlightAnimation
@@ -21,7 +20,6 @@ import com.gitlab.martijn_heil.nincommands.common.CommandTarget
 import com.gitlab.martijn_heil.nincommands.common.Sender
 import com.sk89q.intake.Command
 import com.sk89q.intake.Require
-import com.sk89q.intake.parametric.annotation.Optional
 import com.sk89q.intake.parametric.annotation.Range
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
@@ -131,22 +129,21 @@ class Commands {
 
 	@Command(aliases = ["setmagicpath"], desc = "Set a character's magic path.")
 	@Require(Permission.Command.Setmagicpath)
-	fun setmagicpath(@Sender sender: CommandSender, target: PlayerCharacterData, @Optional magicPath: MagicPath?) {
-		if (magicPath != null) {
-			val mage = mageRepository.forPlayerCharacterOrCreate(target)
-			mage.magicPath = magicPath
-			sender.sendMessage("$SYSPREFIX set ${target.name}'s magic path to $magicPath")
-		} else {
-			mageRepository.forPlayerCharacter(target)?.let { mageRepository.destroy(it) }
-			sender.sendMessage("$SYSPREFIX removed magic from ${target.name}")
-		}
+	fun setmagicpath(@Sender sender: CommandSender, magicPath: MagicPath, target: Mage) {
+		target.magicPath = magicPath
+		sender.sendMessage("$SYSPREFIX set ${target.playerCharacter.name}'s magic path to $magicPath")
 	}
 
 	@Command(aliases = ["setmagiclevel"], desc = "Set a character's magic level.")
 	@Require(Permission.Command.Setmagiclevel)
 	fun setmagiclevel(@Sender sender: CommandSender, target: Mage, @Range(min = 0.00) magicLevel: Int) {
-		target.magicLevel = magicLevel
-		sender.sendMessage("$SYSPREFIX set ${target.playerCharacter.name}'s magic level to $magicLevel")
+		if (magicLevel != 0) {
+			target.magicLevel = magicLevel
+			sender.sendMessage("$SYSPREFIX set ${target.playerCharacter.name}'s magic level to $magicLevel")
+		} else {
+			mageRepository.destroy(target)
+			sender.sendMessage("$SYSPREFIX removed magic from ${target.playerCharacter.name}")
+		}
 	}
 
 	class Ability {
@@ -174,7 +171,7 @@ class Commands {
 					.map {
 						val ability = it.first
 						val isActive = it.second
-						miniMessage.deserialize("    <gray><ability_name>: <active></gray>",
+						miniMessage.deserialize("    <gray><ability_name>: <active></gray><newline>",
 								Placeholder.unparsed("ability_name", ability.displayName),
 								Placeholder.component("active", activeInactiveComponent(isActive)))
 					}.join(Component.text(", ")).toList())

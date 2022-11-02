@@ -11,7 +11,7 @@ import com.sk89q.intake.parametric.Provider
 import org.bukkit.entity.Player
 
 class MageSenderProvider : Provider<Mage> {
-	override fun isProvided(): Boolean = false
+	override fun isProvided(): Boolean = true
 
 	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): Mage {
 		val player = BukkitSenderProvider(Player::class.java).get(arguments, modifiers)!!
