@@ -6,10 +6,10 @@ enum class SpellEffectiveness(val displayName: String) {
 	CRITICAL_SUCCESS("critical success");
 
 	companion object {
-		fun fromRoll(roll: UInt) = when {
-					roll <= 6U -> CRITICAL_FAILURE
-					roll in 7U..15U -> SUCCESS
-					roll >= 16U -> CRITICAL_SUCCESS
+		fun fromRoll(roll: Int) = when {
+					roll <= 6 -> CRITICAL_FAILURE
+					roll in 7..15 -> SUCCESS
+					roll >= 16 -> CRITICAL_SUCCESS
 					else -> throw IllegalStateException()
 				}
 	}

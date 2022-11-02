@@ -95,10 +95,10 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 			return true
 		} else {
 			val myRoll = roll(10U, CharacterStatKind.INTELLIGENCE, myStats)
-			val myResult = myRoll.second + this.spellCastingBonus
+			val myResult = myRoll.second + this.spellCastingBonus.toInt()
 
 			val theirRoll = roll(10U, CharacterStatKind.INTELLIGENCE, theirStats)
-			val theirResult = theirRoll.second + them.spellCastingBonus
+			val theirResult = theirRoll.second + them.spellCastingBonus.toInt()
 
 			val success = myResult > theirResult
 			val resultMessage = if (success) {
@@ -217,11 +217,11 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 				player.awaitEmote(legacyText("$SYSPREFIX Please emote to try to cast a spell:"))
 				val additionalBonus = if (this.activeAbilities.contains(Cloud)) 1U else 0U
 				val castingRoll = roll(20U, CharacterStatKind.INTELLIGENCE, stats).second +
-						this.spellCastingBonus +
-						additionalBonus
-				val success = castingRoll >= spell.castingValue.toUInt()
+						this.spellCastingBonus.toInt() +
+						additionalBonus.toInt()
+				val success = castingRoll >= spell.castingValue
 
-				val effectivenessRoll = roll(20U, CharacterStatKind.INTELLIGENCE, stats).second + this.spellCastingBonus
+				val effectivenessRoll = roll(20U, CharacterStatKind.INTELLIGENCE, stats).second + this.spellCastingBonus.toInt()
 				val effectiveness = if (!success) null else SpellEffectiveness.fromRoll(effectivenessRoll)
 
 				val message = getSpellCastingMessage(playerCharacter, spell, success, effectiveness)
