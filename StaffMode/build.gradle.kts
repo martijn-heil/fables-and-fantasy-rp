@@ -7,5 +7,6 @@ dependencies {
     implementation(project(":Utils"))
     implementation(project(":Text"))
     implementation(project(":MoreLogging"))
-    implementation("com.gitlab.martijn-heil:NinCommands:1.0-SNAPSHOT")
+    implementation("com.gitlab.martijn-heil:NinCommands:1.0-SNAPSHOT") { isChanging = true }
+
 }

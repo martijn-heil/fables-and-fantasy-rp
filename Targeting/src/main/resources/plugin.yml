@@ -1,0 +1,12 @@
+name: FablesTargeting
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesGlowing
+  - FablesUtils
+  - NinCommands
+softdepend:
+  - FablesMoreLogging
+main: com.fablesfantasyrp.plugin.targeting.FablesTargeting
+api-version: @bukkit_api_version@

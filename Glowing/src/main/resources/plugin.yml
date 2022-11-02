@@ -1,0 +1,9 @@
+name: FablesGlowing
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesDenizenInterop
+  - FablesUtils
+main: com.fablesfantasyrp.plugin.glowing.FablesGlowing
+api-version: @bukkit_api_version@

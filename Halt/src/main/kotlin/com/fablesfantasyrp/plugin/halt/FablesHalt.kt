@@ -2,25 +2,30 @@ package com.fablesfantasyrp.plugin.halt
 
 import com.fablesfantasyrp.plugin.characters.command.provider.PlayerCharacterModule
 import com.fablesfantasyrp.plugin.characters.currentPlayerCharacter
+import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.BukkitModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.sender.BukkitSenderModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.registerCommand
+import com.gitlab.martijn_heil.nincommands.common.bukkit.unregisterCommand
 import com.sk89q.intake.Intake
 import com.sk89q.intake.fluent.CommandGraph
 import com.sk89q.intake.parametric.ParametricBuilder
 import com.sk89q.intake.parametric.provider.PrimitivesModule
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor.*
+import org.bukkit.command.Command
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 
 val SYSPREFIX = "${DARK_RED}${BOLD}[${RED}${BOLD} HALT ${DARK_RED}${BOLD}]${GRAY}"
 
 class FablesHalt : JavaPlugin() {
+	private lateinit var commands: Collection<Command>
 
 	override fun onEnable() {
+		enforceDependencies(this)
 		instance = this
 
 		val injector = Intake.createInjector()
@@ -40,7 +45,11 @@ class FablesHalt : JavaPlugin() {
 				.graph()
 				.dispatcher
 
-		registerCommand(dispatcher, this, dispatcher.aliases.toList())
+		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
+	}
+
+	override fun onDisable() {
+		commands.forEach { unregisterCommand(it) }
 	}
 
 	companion object {

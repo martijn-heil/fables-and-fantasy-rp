@@ -14,5 +14,6 @@ depend:
   - TAB
   - ProtocolLib
   - Vault
+  - GSit
 main: com.fablesfantasyrp.plugin.knockout.FablesKnockout
 api-version: @bukkit_api_version@

@@ -11,6 +11,6 @@ dependencies {
     implementation(project(":Form"))
     implementation(project(":KotlinRuntime"))
     implementation(project(":Text"))
-    implementation("com.gitlab.martijn-heil:NinCommands:1.0-SNAPSHOT")
+    implementation("com.gitlab.martijn-heil:NinCommands:1.0-SNAPSHOT") { isChanging = true }
     api(project(":Database"))
 }
