@@ -126,6 +126,14 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 
 	suspend fun tryUnbindCast(spell: SpellData, enemy: Mage, castingRoll: Int): Boolean {
 		val player = this.playerCharacter.player.player!!
+
+		try {
+			val tear = this.findTear() ?: this.openTear()
+		} catch(e: OpenTearException) {
+			player.sendMessage("Couldn't open a tear: ${e.message}")
+			return false
+		}
+
 		player.awaitEmote(legacyText("$SYSPREFIX Please emote to try and unbind " +
 				"${enemy.playerCharacter.name}'s ${spell.displayName} spell"))
 
@@ -202,10 +210,7 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 		try {
 			val stats = playerCharacter.stats
 
-			val tear = tearRepository.all().asSequence()
-					.filter { it.magicType == this.magicPath.magicType }
-					.filter { it.location.world == player.location.world }
-					.find { it.location.distance(player.location) <= 15 }
+			val tear = this.findTear()
 			if (tear == null) {
 				player.sendError("No tear found within 15 blocks. Please open a tear with first with /opentear.")
 				this.isCasting = false
@@ -267,7 +272,7 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 	}
 
 	@Throws(OpenTearException::class)
-	suspend fun openTear() {
+	suspend fun openTear(): Tear {
 		val player = playerCharacter.player.player
 		check(player != null)
 		if (tearRepository.forOwner(this).size >= MAX_TEARS_PER_MAGE) throw TooManyTearsException()
@@ -275,7 +280,14 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 		player.awaitEmote(legacyText("$SYSPREFIX Please emote to open a tear:"))
 
 		val location = calculateTearLocation(player.eyeLocation) ?: throw NoSpaceForTearException()
-		val tear = tearRepository.create(Tear(0, location, magicPath.magicType, this))
+		return tearRepository.create(Tear(0, location, magicPath.magicType, this))
+	}
+
+	fun findTear(): Tear? {
+		return tearRepository.all().asSequence()
+				.filter { it.magicType == this.magicPath.magicType }
+				.filter { it.location.world == player.location.world }
+				.find { it.location.distance(player.location) <= 15 }
 	}
 
 	override fun equals(other: Any?): Boolean = other is MageData && other.id == this.id

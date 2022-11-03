@@ -14,10 +14,9 @@ import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.Style
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 
-// TODO finish
 suspend fun PlayerCharacterData.tryDefendAgainstSpellCast(spell: SpellData, enemy: Mage, castingRoll: Int): Boolean {
 	val player = this.player.player!!
-	player.awaitEmote(legacyText("$SYSPREFIX Please emote to try and defend " +
+	player.awaitEmote(legacyText("$SYSPREFIX Please emote to try and defend against" +
 			"${enemy.playerCharacter.name}'s ${spell.displayName} spell"))
 
 	val roll = roll(20U, CharacterStatKind.INTELLIGENCE, this.stats).second.toInt()
@@ -26,7 +25,7 @@ suspend fun PlayerCharacterData.tryDefendAgainstSpellCast(spell: SpellData, enem
 			.plus(getPlayersWithinRange(enemy.playerCharacter.player.player!!.location, 15U)).distinct()
 
 	if (roll > castingRoll) {
-		val message = miniMessage.deserialize("<yellow><my_name></yellow> <green>successfully</green> unbound " +
+		val message = miniMessage.deserialize("<yellow><my_name></yellow> <green>successfully</green> defended against " +
 				"<yellow><enemy_name>'s</yellow> <spell> cast.",
 				Placeholder.unparsed("my_name", this.name),
 				Placeholder.unparsed("enemy_name", enemy.playerCharacter.name),
@@ -35,7 +34,7 @@ suspend fun PlayerCharacterData.tryDefendAgainstSpellCast(spell: SpellData, enem
 		messageTargets.forEach { it.sendMessage(message) }
 		return true
 	} else {
-		val message = miniMessage.deserialize("<yellow><my_name></yellow> <red>failed</red> to unbind " +
+		val message = miniMessage.deserialize("<yellow><my_name></yellow> <red>failed</red> to defend against " +
 				"<yellow><enemy_name>'s</yellow> <spell> cast.",
 				Placeholder.unparsed("my_name", this.name),
 				Placeholder.unparsed("enemy_name", enemy.playerCharacter.name),
