@@ -10,5 +10,4 @@ dependencies {
     implementation(project(":Text"))
     implementation(project(":DenizenInterop"))
     implementation(project(":Glowing"))
-    implementation("com.gitlab.martijn-heil:NinCommands:1.0-SNAPSHOT") { isChanging = true }
 }
