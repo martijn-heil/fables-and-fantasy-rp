@@ -9,5 +9,4 @@ dependencies {
     implementation(project(":Chat"))
     implementation(project(":Characters"))
     implementation(project(":Database"))
-    implementation("com.gitlab.martijn-heil:NinCommands:-SNAPSHOT")
 }

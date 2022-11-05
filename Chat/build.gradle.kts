@@ -13,7 +13,6 @@ dependencies {
     implementation(project(":DenizenInterop"))
     implementation(project(":Text"))
     implementation(project(":Form"))
-    implementation("com.gitlab.martijn-heil:NinCommands:1.0-SNAPSHOT") { isChanging = true }
     implementation("me.neznamy:tab-api:3.0.2")
     implementation("com.github.MilkBowl:VaultAPI:1.7") {
         exclude(group = "org.bukkit")

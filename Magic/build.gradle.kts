@@ -16,5 +16,4 @@ dependencies {
     implementation(project(":Text"))
     implementation(project(":Gui"))
     implementation(project(":Targeting"))
-    implementation("com.gitlab.martijn-heil:NinCommands:1.0-SNAPSHOT")
 }
