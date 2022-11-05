@@ -40,7 +40,7 @@ fun spellDisplay(spell: SpellData): Component = Component.text(spell.displayName
 		.hoverEvent(HoverEvent.showText(spellCard(spell)))
 
 fun getSpellCastingMessage(playerCharacter: PlayerCharacterData, spell: SpellData,
-								   success: Boolean, effectiveness: SpellEffectiveness? = null): Component {
+								   success: Boolean, castingRoll: Int, effectiveness: SpellEffectiveness? = null): Component {
 	require(!success || effectiveness != null)
 	val player = playerCharacter.player.player!!
 
@@ -54,7 +54,8 @@ fun getSpellCastingMessage(playerCharacter: PlayerCharacterData, spell: SpellDat
 
 	return miniMessage.deserialize(
 			"<yellow><character_name></yellow> attempts to cast <spell_name> " +
-					"and gets a <result>.",
+					"and gets a <result> with casting roll value <casting_roll>.",
+			Placeholder.unparsed("casting_roll", "$castingRoll"),
 			Placeholder.unparsed("character_name", playerCharacter.name),
 			Placeholder.component("spell_name", spellDisplay(spell)),
 			Placeholder.component("result", resultMessage)).style(player.chat.chatStyle ?: Style.style(NamedTextColor.YELLOW))

@@ -19,6 +19,7 @@ import com.fablesfantasyrp.plugin.magic.exception.NoSpaceForTearException
 import com.fablesfantasyrp.plugin.magic.exception.OpenTearException
 import com.fablesfantasyrp.plugin.magic.exception.TooManyTearsException
 import com.fablesfantasyrp.plugin.rolls.roll
+import com.fablesfantasyrp.plugin.targeting.targeting
 import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.sendError
@@ -34,11 +35,9 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 
 
 class Mage : MageData, HasDirtyMarker<Mage> {
-	@get:javax.persistence.Transient
 	val playerCharacter: PlayerCharacterData
 		get() = playerCharacterRepository.forId(id.toULong())!!
 
-	@get:javax.persistence.Transient
 	var isDeleted: Boolean = false
 
 	override var magicPath: MagicPath
@@ -61,7 +60,6 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 		this.spells = spells
 	}
 
-	@get:javax.persistence.Transient
 	override var dirtyMarker: DirtyMarker<Mage>? = null
 
 	private fun startSpellCastingParticles(spell: SpellData): Job {
@@ -229,25 +227,26 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 				val effectivenessRoll = roll(20U, CharacterStatKind.INTELLIGENCE, stats).second + this.spellCastingBonus.toInt()
 				val effectiveness = if (!success) null else SpellEffectiveness.fromRoll(effectivenessRoll)
 
-				val message = getSpellCastingMessage(playerCharacter, spell, success, effectiveness)
+				val message = getSpellCastingMessage(playerCharacter, spell, success, castingRoll, effectiveness)
 				val messageTargets = getPlayersWithinRange(player.location, 15U).toList()
+
+				val spellTargets = player.targeting.targets
 
 				if (success) {
 					val startMessage = miniMessage.deserialize(
-							"<yellow><character_name></yellow> starts an attempt to cast <spell_name> ",
+							"<yellow><character_name></yellow> starts an attempt to cast <spell_name> " +
+									"targeting the following players: <gray><targets></gray>",
 							Placeholder.unparsed("character_name", playerCharacter.name),
-							Placeholder.component("spell_name", spellDisplay(spell)))
+							Placeholder.component("spell_name", spellDisplay(spell)),
+							Placeholder.unparsed("targets", spellTargets.joinToString(", ") { "\"${it.name}\"" }))
 							.style(player.chat.chatStyle ?: Style.style(NamedTextColor.YELLOW))
 					messageTargets.forEach { it.sendMessage(startMessage) }
 
-					if(awaitUnbindAttempts(spell, castingRoll.toInt())) {
+					if(awaitUnbindAttempts(spell, castingRoll)) {
 						particlesJob.cancel()
 						this.isCasting = false
 						return false
 					}
-
-					//val spellTargets = messageTargets.mapNotNull { it.currentPlayerCharacter } // TODO
-					//awaitSpellDefence(spell, spellTargets)
 
 					messageTargets.forEach { it.sendMessage(message) }
 				} else {
@@ -284,6 +283,7 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 	}
 
 	fun findTear(): Tear? {
+		val player = playerCharacter.player.player ?: throw IllegalStateException()
 		return tearRepository.all().asSequence()
 				.filter { it.magicType == this.magicPath.magicType }
 				.filter { it.location.world == player.location.world }
