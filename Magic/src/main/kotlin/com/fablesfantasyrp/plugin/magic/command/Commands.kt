@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.magic.command
 
+import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterData
 import com.fablesfantasyrp.plugin.magic.*
 import com.fablesfantasyrp.plugin.magic.ability.MageAbility
 import com.fablesfantasyrp.plugin.magic.animations.NecromancyBlightAnimation
@@ -129,9 +130,10 @@ class Commands {
 
 	@Command(aliases = ["setmagicpath"], desc = "Set a character's magic path.")
 	@Require(Permission.Command.Setmagicpath)
-	fun setmagicpath(@Sender sender: CommandSender, magicPath: MagicPath, target: Mage) {
-		target.magicPath = magicPath
-		sender.sendMessage("$SYSPREFIX set ${target.playerCharacter.name}'s magic path to $magicPath")
+	fun setmagicpath(@Sender sender: CommandSender, magicPath: MagicPath, target: PlayerCharacterData) {
+		val mage = mageRepository.forPlayerCharacterOrCreate(target)
+		mage.magicPath = magicPath
+		sender.sendMessage("$SYSPREFIX set ${target.name}'s magic path to $magicPath")
 	}
 
 	@Command(aliases = ["setmagiclevel"], desc = "Set a character's magic level.")
