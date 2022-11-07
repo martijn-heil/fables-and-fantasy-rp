@@ -39,6 +39,12 @@ class EntityMageRepository<C>(private val plugin: Plugin, child: C) : SimpleEnti
 		}
 	}
 
+	override fun forId(id: Long): Mage? {
+		val result = super.forId(id)
+		if (result != null) this.markStrong(result)
+		return result
+	}
+
 	override fun forPlayerCharacter(c: PlayerCharacterData): Mage? {
 		return this.forId(c.id.toLong())
 	}
