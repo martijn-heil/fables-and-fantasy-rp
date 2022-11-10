@@ -1,0 +1,8 @@
+name: FablesWorldGuardInterop
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - WorldGuard
+main: com.fablesfantasyrp.plugin.worldguardinterop.FablesWorldGuardInterop
+api-version: @bukkit_api_version@
