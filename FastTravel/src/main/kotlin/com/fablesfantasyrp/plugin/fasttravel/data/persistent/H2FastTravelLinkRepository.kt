@@ -1,0 +1,123 @@
+package com.fablesfantasyrp.plugin.fasttravel.data.persistent
+
+import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
+import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
+import com.fablesfantasyrp.plugin.fasttravel.data.entity.FastTravelLink
+import com.fablesfantasyrp.plugin.fasttravel.data.entity.FastTravelLinkRepository
+import com.fablesfantasyrp.plugin.worldguardinterop.WorldGuardRegion
+import com.sk89q.worldedit.bukkit.BukkitAdapter
+import com.sk89q.worldguard.protection.regions.RegionContainer
+import org.bukkit.Location
+import org.bukkit.Server
+import java.sql.ResultSet
+import java.sql.Statement
+import java.util.*
+import javax.sql.DataSource
+import kotlin.time.Duration.Companion.seconds
+
+class H2FastTravelLinkRepository(private val server: Server,
+								 private val dataSource: DataSource,
+								 private val regionContainer: RegionContainer) : FastTravelLinkRepository, HasDirtyMarker<FastTravelLink> {
+	override var dirtyMarker: DirtyMarker<FastTravelLink>? = null
+	private val TABLE_NAME = "FABLES_FASTTRAVEL.FASTTRAVEL"
+
+	override fun forOriginRegion(region: WorldGuardRegion): FastTravelLink? {
+		return dataSource.connection.use { connection ->
+			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE from_region = ?")
+			stmnt.setString(1, "${region.region.id},${region.world.uid}")
+			val result = stmnt.executeQuery()
+			if (!result.next()) return null
+			fromRow(result)
+		}
+	}
+
+	override fun all(): Collection<FastTravelLink> {
+		return dataSource.connection.use { connection ->
+			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME")
+			val result = stmnt.executeQuery()
+			val all = ArrayList<FastTravelLink>()
+			while (result.next()) all.add(fromRow(result))
+			all
+		}
+	}
+
+	override fun destroy(v: FastTravelLink) {
+		dataSource.connection.use { connection ->
+			val stmnt = connection.prepareStatement("DELETE FROM $TABLE_NAME WHERE id = ?")
+			stmnt.setObject(1, v.id)
+			stmnt.executeUpdate()
+			v.isDestroyed = true
+		}
+	}
+
+	override fun create(v: FastTravelLink): FastTravelLink {
+		dataSource.connection.use { connection ->
+			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME " +
+					"(from_region, to_x, to_y, to_z, to_yaw, to_pitch, to_world, travel_duration) " +
+					"VALUES (?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)
+			stmnt.setString(1, "${v.from.region.id},${v.from.world.uid}")
+			stmnt.setDouble(2, v.to.x)
+			stmnt.setDouble(3, v.to.y)
+			stmnt.setDouble(4, v.to.z)
+			stmnt.setFloat(5, v.to.yaw)
+			stmnt.setFloat(6, v.to.pitch)
+			stmnt.setObject(7, v.to.world.uid)
+			stmnt.setInt(8, v.travelDuration.inWholeSeconds.toInt())
+			stmnt.executeUpdate()
+			val rs = stmnt.generatedKeys
+			rs.next()
+			val id = rs.getInt(1)
+			return FastTravelLink(
+					id = id,
+					from = v.from,
+					to = v.to,
+					travelDuration = v.travelDuration,
+					dirtyMarker = dirtyMarker
+			)
+		}
+	}
+
+	override fun update(v: FastTravelLink) {
+		throw NotImplementedError()
+	}
+
+	override fun forId(id: Int): FastTravelLink? {
+		return dataSource.connection.use { connection ->
+			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE id = ?")
+			stmnt.setInt(1, id)
+			val result = stmnt.executeQuery()
+			if (!result.next()) return null
+			fromRow(result)
+		}
+	}
+
+	override fun allIds(): Collection<Int> {
+		return dataSource.connection.use { connection ->
+			val stmnt = connection.prepareStatement("SELECT id FROM $TABLE_NAME")
+			val result = stmnt.executeQuery()
+			val all = ArrayList<Int>()
+			while (result.next()) all.add(result.getInt("id"))
+			all
+		}
+	}
+
+	private fun fromRow(row: ResultSet): FastTravelLink {
+		val id = row.getInt("id")
+		val fromRegionString = row.getString("from_region")
+		val fromRegionStringSplit = fromRegionString.split(",")
+		val regionName = fromRegionStringSplit[0]
+		val fromWorld = server.getWorld(UUID.fromString(fromRegionStringSplit[1])) ?: throw IllegalStateException()
+		val fromRegion = regionContainer.get(BukkitAdapter.adapt(fromWorld))!!.getRegion(regionName)!!
+		val travelDuration = row.getInt("travel_duration").seconds
+
+		val toX = row.getDouble("to_x")
+		val toY = row.getDouble("to_y")
+		val toZ = row.getDouble("to_z")
+		val toYaw = row.getFloat("to_yaw")
+		val toPitch = row.getFloat("to_pitch")
+		val toWorld = server.getWorld(row.getObject("to_world", UUID::class.java)) ?: throw IllegalStateException()
+		val toLocation = Location(toWorld, toX, toY, toZ, toYaw, toPitch)
+
+		return FastTravelLink(from = WorldGuardRegion(fromWorld, fromRegion), to = toLocation, travelDuration = travelDuration, id = id)
+	}
+}

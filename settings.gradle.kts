@@ -24,4 +24,7 @@ include("HorseLimits",
 		"Math",
 		"Targeting",
 		"Glowing",
-		"Distances")
+		"Distances",
+		"FastTravel",
+		"Timers",
+		"WorldGuardInterop")

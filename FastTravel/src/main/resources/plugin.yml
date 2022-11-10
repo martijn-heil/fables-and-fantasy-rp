@@ -1,0 +1,13 @@
+name: FablesFastTravel
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+  - FablesTimers
+  - FablesText
+  - FablesWorldGuardInterop
+  - NinCommands
+  - WorldGuard
+main: com.fablesfantasyrp.plugin.fasttravel.FablesFastTravel
+api-version: @bukkit_api_version@

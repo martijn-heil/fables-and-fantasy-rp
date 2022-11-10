@@ -68,6 +68,7 @@ repositories {
 	maven { url = URI("https://repo.dmulloy2.net/repository/public/") }
 	maven { url = URI("https://repo.essentialsx.net/releases/") }
 	maven { url = URI("https://repo.codemc.io/repository/maven-public/") }
+	maven { url = URI("https://maven.enginehub.org/repo/")}
 	mavenLocal()
 	maven { url = URI("https://jitpack.io") }
 
