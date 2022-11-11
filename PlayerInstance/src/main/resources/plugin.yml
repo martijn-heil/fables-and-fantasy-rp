@@ -1,0 +1,11 @@
+name: FablesPlayerInstance
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+  - FablesTimers
+  - FablesText
+  - NinCommands
+main: com.fablesfantasyrp.plugin.playerinstance.FablesPlayerInstance
+api-version: @bukkit_api_version@
