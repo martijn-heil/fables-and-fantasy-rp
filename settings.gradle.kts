@@ -27,4 +27,5 @@ include("HorseLimits",
 		"Distances",
 		"FastTravel",
 		"Timers",
-		"WorldGuardInterop")
+		"WorldGuardInterop",
+		"PlayerInstance")
