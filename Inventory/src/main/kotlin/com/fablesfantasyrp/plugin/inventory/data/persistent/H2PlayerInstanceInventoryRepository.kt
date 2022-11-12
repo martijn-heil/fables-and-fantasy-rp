@@ -1,32 +1,30 @@
-package com.fablesfantasyrp.plugin.playerinstance.data.persistent
+package com.fablesfantasyrp.plugin.inventory.data.persistent
 
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
-import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstanceInventory
-import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstanceRepository
-import org.bukkit.OfflinePlayer
-import org.bukkit.Server
+import com.fablesfantasyrp.plugin.inventory.PassthroughPlayerInventory
+import com.fablesfantasyrp.plugin.inventory.data.entity.FablesInventoryRepository
+import com.fablesfantasyrp.plugin.inventory.data.entity.PlayerInstanceInventory
+import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
 import java.sql.ResultSet
-import java.sql.Statement
-import java.util.*
 import javax.sql.DataSource
 
-class H2PlayerInstanceRepository(private val server: Server,
-								 private val dataSource: DataSource) : PlayerInstanceRepository, HasDirtyMarker<PlayerInstanceInventory> {
+class H2PlayerInstanceInventoryRepository(private val dataSource: DataSource)
+	: FablesInventoryRepository, HasDirtyMarker<PlayerInstanceInventory> {
 	override var dirtyMarker: DirtyMarker<PlayerInstanceInventory>? = null
-	private val TABLE_NAME = "FABLES_PLAYERINSTANCE.PLAYERINSTANCE"
+	private val TABLE_NAME = "FABLES_INVENTORY.INVENTORY"
 
-	override fun forOwner(offlinePlayer: OfflinePlayer): Collection<PlayerInstanceInventory> {
-		return dataSource.connection.use { connection ->
-			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE owner = ?")
-			stmnt.setObject(1, offlinePlayer.uniqueId)
-			val result = stmnt.executeQuery()
-			val results = ArrayList<PlayerInstanceInventory>()
-			while (result.next()) {
-				results.add(fromRow(result))
-			}
-			results
+	override fun forOwner(playerInstance: PlayerInstance): PlayerInstanceInventory {
+		check(!playerInstance.isDestroyed)
+		val offlinePlayer = playerInstance.owner
+		val player = offlinePlayer.player
+		val inventory = this.forId(playerInstance.id) ?: run {
+			this.create(PlayerInstanceInventory(playerInstance.id, PassthroughPlayerInventory.createEmpty()))
 		}
+		if (offlinePlayer.isOnline && player != null) {
+			inventory.delegate.bukkitInventory = player.inventory
+		}
+		return inventory
 	}
 
 	override fun all(): Collection<PlayerInstanceInventory> {
@@ -51,23 +49,31 @@ class H2PlayerInstanceRepository(private val server: Server,
 	override fun create(v: PlayerInstanceInventory): PlayerInstanceInventory {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME " +
-					"(owner) " +
-					"VALUES (?)", Statement.RETURN_GENERATED_KEYS)
-			stmnt.setObject(1, v.owner.uniqueId)
+					"(id, inventory) " +
+					"VALUES (?, ?)")
+			stmnt.setInt(1, v.id)
+			stmnt.setObject(2, v.delegate)
 			stmnt.executeUpdate()
 			val rs = stmnt.generatedKeys
 			rs.next()
 			val id = rs.getInt(1)
 			return PlayerInstanceInventory(
 					id = id,
-					owner = v.owner,
+					delegate = v.delegate,
 					dirtyMarker = dirtyMarker
 			)
 		}
 	}
 
 	override fun update(v: PlayerInstanceInventory) {
-		throw NotImplementedError()
+		return dataSource.connection.use { connection ->
+			val stmnt = connection.prepareStatement("UPDATE $TABLE_NAME SET " +
+				"inventory = ? " +
+				"WHERE id = ?")
+			stmnt.setObject(1, v.delegate)
+			stmnt.setInt(1, v.id)
+			stmnt.executeUpdate()
+		}
 	}
 
 	override fun forId(id: Int): PlayerInstanceInventory? {
@@ -92,11 +98,11 @@ class H2PlayerInstanceRepository(private val server: Server,
 
 	private fun fromRow(row: ResultSet): PlayerInstanceInventory {
 		val id = row.getInt("id")
-		val owner = server.getOfflinePlayer(row.getObject(2, UUID::class.java))
+		val inventory = row.getObject("inventory", PassthroughPlayerInventory::class.java)
 
 		return PlayerInstanceInventory(
 				id = id,
-				owner = owner,
+				delegate = inventory,
 				dirtyMarker = dirtyMarker
 		)
 	}

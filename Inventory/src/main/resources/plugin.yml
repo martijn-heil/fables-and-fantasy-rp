@@ -1,0 +1,10 @@
+name: FablesPlayerInstanceInventory
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+  - FablesPlayerInstance
+  - NinCommands
+main: com.fablesfantasyrp.plugin.inventory.FablesInventoryPlugin
+api-version: @bukkit_api_version@

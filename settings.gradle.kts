@@ -28,4 +28,5 @@ include("HorseLimits",
 		"FastTravel",
 		"Timers",
 		"WorldGuardInterop",
-		"PlayerInstance")
+		"PlayerInstance",
+		"Inventory")

@@ -19,14 +19,18 @@ import com.sk89q.intake.parametric.ParametricBuilder
 import com.sk89q.intake.parametric.provider.PrimitivesModule
 import org.bukkit.ChatColor.*
 import org.bukkit.command.Command
+import org.bukkit.entity.Player
 
 val SYSPREFIX = "${GOLD}${BOLD}[${LIGHT_PURPLE}${BOLD} PLAYER INSTANCE ${GOLD}${BOLD}]${GRAY}"
 internal val PLUGIN get() = FablesPlayerInstance.instance
 
+private lateinit var playerInstanceManager: PlayerInstanceManager
+lateinit var playersInstances: PlayerInstanceRepository
+	private set
+
 class FablesPlayerInstance : SuspendingJavaPlugin() {
 	private lateinit var commands: Collection<Command>
-	lateinit var playersInstances: PlayerInstanceRepository
-		private set
+
 
 	override fun onEnable() {
 		enforceDependencies(this)
@@ -69,3 +73,13 @@ class FablesPlayerInstance : SuspendingJavaPlugin() {
 		lateinit var instance: FablesPlayerInstance
 	}
 }
+
+var Player.currentPlayerInstance
+	get() = playerInstanceManager.getCurrentForPlayer(this)
+	set(value) {
+		if (value != null) {
+			playerInstanceManager.setCurrentForPlayer(this, value)
+		} else {
+			playerInstanceManager.stopTracking(this)
+		}
+	}
