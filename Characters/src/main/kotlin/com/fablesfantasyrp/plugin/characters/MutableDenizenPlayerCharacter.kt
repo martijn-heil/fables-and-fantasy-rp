@@ -8,12 +8,18 @@ import com.fablesfantasyrp.plugin.characters.data.Gender
 import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterData
 import com.fablesfantasyrp.plugin.characters.data.Race
 import com.fablesfantasyrp.plugin.denizeninterop.dFlags
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.OfflinePlayer
 
-class MutableDenizenPlayerCharacter(override val id: ULong, override val player: OfflinePlayer) : PlayerCharacterData {
+class MutableDenizenPlayerCharacter(override val id: ULong, player: OfflinePlayer) : PlayerCharacterData {
 	private val dataMap: MapTag
 		get() = (player.dFlags.getFlagValue("characters") as MapTag).getObject(id.toString()) as MapTag
+
+	val playerUuid = player.uniqueId
+
+	override val player: OfflinePlayer
+		get() = Bukkit.getOfflinePlayer(playerUuid)
 
 	val isDeleted: Boolean
 		get() = (player.dFlags.getFlagValue("characters") as? MapTag)?.getObject(id.toString()) == null

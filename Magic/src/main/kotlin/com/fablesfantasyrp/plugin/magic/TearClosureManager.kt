@@ -12,7 +12,7 @@ class TearClosureManager(private val plugin: Plugin, private val tearRepository:
 	init {
 		server.scheduler.scheduleSyncRepeatingTask(plugin, {
 			tearsScheduledForRemoval
-					.filter { System.currentTimeMillis() - it.value >= 60 * 1 * 1000 }
+					.filter { System.currentTimeMillis() - it.value >= 60 * 10 * 1000 }
 					.forEach { tearsScheduledForRemoval.remove(it.key); tearRepository.destroy(it.key) }
 
 			val all = tearRepository.all()
