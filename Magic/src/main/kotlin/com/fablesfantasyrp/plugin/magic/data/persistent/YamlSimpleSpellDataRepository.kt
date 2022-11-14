@@ -13,7 +13,7 @@ class YamlSimpleSpellDataRepository(private val directory: File) : SimpleSpellDa
 	}
 
 	override fun forLevelAndPath(level: Int, path: MagicPath): Collection<SimpleSpellData>
-		= this.all().filter { it.level == level && (it.magicPath == path || it.magicPath.basePath == path) }
+		= this.all().filter { it.level == level && (it.magicPath == path || path.basePath == it.magicPath) }
 
 	override fun forId(id: String): SimpleSpellData? {
 		if (!isValidId(id)) return null
@@ -67,8 +67,10 @@ class YamlSimpleSpellDataRepository(private val directory: File) : SimpleSpellDa
 		val displayName = yaml.getString("display_name")!!
 		val description = yaml.getString("description")!!
 		val magicPath = MagicPath.valueOf(yaml.getString("magic_path")!!)
-		val level = yaml.getInt("level")
-		val castingValue = yaml.getInt("casting_value")
+		val level = yaml.getInt("level", Int.MAX_VALUE)
+		val castingValue = yaml.getInt("casting_value", Int.MAX_VALUE)
+		check(level != Int.MAX_VALUE)
+		check(castingValue != Int.MAX_VALUE)
 		return SimpleSpellData(
 				id = file.nameWithoutExtension,
 				displayName = displayName,

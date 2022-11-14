@@ -27,7 +27,7 @@ import org.bukkit.ChatColor.*
 import org.bukkit.command.Command
 
 val SYSPREFIX = "${DARK_PURPLE}${BOLD}[ ${AQUA}${BOLD}MAGIC${DARK_PURPLE}${BOLD} ]${GRAY}"
-val MAX_TEARS_PER_MAGE = 10
+val MAX_TEARS_PER_MAGE = 3
 
 val PLUGIN: FablesMagic get() = FablesMagic.instance
 

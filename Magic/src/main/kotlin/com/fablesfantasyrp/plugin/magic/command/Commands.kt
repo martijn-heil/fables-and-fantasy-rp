@@ -77,6 +77,8 @@ class Commands {
 				sender.openTear()
 			} catch (ex: OpenTearException) {
 				sender.playerCharacter.player.player?.sendError(ex.message ?: "Unknown error (${ex.javaClass.simpleName})")
+			} catch (ex: Exception) {
+				ex.printStackTrace()
 			}
 		}
 	}

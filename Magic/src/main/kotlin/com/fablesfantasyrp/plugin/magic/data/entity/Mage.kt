@@ -123,7 +123,13 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 	}
 
 	suspend fun tryUnbindCast(spell: SpellData, enemy: Mage, castingRoll: Int): Boolean {
-		val player = this.playerCharacter.player.player!!
+		val player = this.playerCharacter.player.player ?: throw IllegalStateException()
+		check(player.isOnline)
+
+		if (this.isCasting) {
+			player.sendError("Could not unbind, you are busy casting a spell")
+			return false
+		}
 
 		try {
 			val tear = this.findTear() ?: this.openTear()
@@ -135,7 +141,7 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 		player.awaitEmote(legacyText("$SYSPREFIX Please emote to try and unbind " +
 				"${enemy.playerCharacter.name}'s ${spell.displayName} spell"))
 
-		val roll = roll(20U, CharacterStatKind.INTELLIGENCE, this.playerCharacter.stats).second.toInt()
+		val roll = roll(20U, CharacterStatKind.INTELLIGENCE, this.playerCharacter.stats).second
 
 		val messageTargets = getPlayersWithinRange(player.location, 15U)
 				.plus(getPlayersWithinRange(enemy.playerCharacter.player.player!!.location, 15U)).distinct()
@@ -162,7 +168,8 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 	}
 
 	suspend fun awaitUnbindAttempts(spell: SpellData, castingRoll: Int): Boolean {
-		val player = this.playerCharacter.player.player!!
+		val player = this.playerCharacter.player.player ?: throw IllegalStateException()
+		check(player.isOnline)
 		val otherMages = getPlayersWithinRange(player.location, 15U)
 				.mapNotNull { it.currentPlayerCharacter }
 				.mapNotNull { mageRepository.forPlayerCharacter(it) }
@@ -198,7 +205,8 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 	}
 
 	suspend fun tryCastSpell(spell: SpellData): Boolean {
-		val player = playerCharacter.player.player!!
+		val player = playerCharacter.player.player ?: throw IllegalStateException()
+		check(player.isOnline)
 		if (this.isCasting) {
 			player.sendError("You are already busy casting a spell.")
 			return false
@@ -224,7 +232,7 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 						additionalBonus.toInt()
 				val success = castingRoll >= spell.castingValue
 
-				val effectivenessRoll = roll(20U, CharacterStatKind.INTELLIGENCE, stats).second + this.spellCastingBonus.toInt()
+				val effectivenessRoll = roll(20U, CharacterStatKind.INTELLIGENCE, stats).second
 				val effectiveness = if (!success) null else SpellEffectiveness.fromRoll(effectivenessRoll)
 
 				val message = getSpellCastingMessage(playerCharacter, spell, success, castingRoll, effectiveness)
@@ -272,8 +280,8 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 
 	@Throws(OpenTearException::class)
 	suspend fun openTear(): Tear {
-		val player = playerCharacter.player.player
-		check(player != null)
+		val player = playerCharacter.player.player ?: throw IllegalStateException()
+		check(player.isOnline)
 		if (tearRepository.forOwner(this).size >= MAX_TEARS_PER_MAGE) throw TooManyTearsException()
 
 		player.awaitEmote(legacyText("$SYSPREFIX Please emote to open a tear:"))
@@ -284,6 +292,7 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 
 	fun findTear(): Tear? {
 		val player = playerCharacter.player.player ?: throw IllegalStateException()
+		check(player.isOnline)
 		return tearRepository.all().asSequence()
 				.filter { it.magicType == this.magicPath.magicType }
 				.filter { it.location.world == player.location.world }

@@ -50,8 +50,6 @@ fun getSpellCastingMessage(playerCharacter: PlayerCharacterData, spell: SpellDat
 		Component.text(effectiveness!!.displayName).color(effectiveness.color)
 	}
 
-	val spellCard = spellCard(spell)
-
 	return miniMessage.deserialize(
 			"<yellow><character_name></yellow> attempts to cast <spell_name> " +
 					"and gets a <result> with casting roll value <casting_roll>.",
