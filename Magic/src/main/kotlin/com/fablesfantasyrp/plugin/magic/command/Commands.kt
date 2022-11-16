@@ -171,14 +171,14 @@ class Commands {
 			val abilitiesComponent = Component.text().append(allAbilities
 					.asSequence()
 					.map { Pair(it, target.activeAbilities.contains(it)) }
-					.sortedBy { it.second }
+					.sortedByDescending { it.second }
 					.map {
 						val ability = it.first
 						val isActive = it.second
-						miniMessage.deserialize("    <gray><ability_name>: <active></gray><newline>",
+						miniMessage.deserialize("    <gray><ability_name>: <active></gray>",
 								Placeholder.unparsed("ability_name", ability.displayName),
 								Placeholder.component("active", activeInactiveComponent(isActive)))
-					}.join(Component.text(", ")).toList())
+					}.join(Component.newline()).toList())
 
 			sender.sendMessage(miniMessage.deserialize("<gray><prefix> <mage_name>'s abilities:\n<abilities></gray>",
 				Placeholder.component("prefix", legacyText(SYSPREFIX)),
