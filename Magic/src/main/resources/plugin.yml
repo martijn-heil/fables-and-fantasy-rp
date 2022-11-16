@@ -1,6 +1,18 @@
 name: FablesMagic
 version: @version@
 authors: [@authors@]
-depend: [FablesKotlinRuntime, FablesUtils, FablesCharacters, NinCommands]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+  - FablesMath
+  - FablesCharacters
+  - FablesRolls
+  - FablesChat
+  - FablesForm
+  - FablesText
+  - FablesGui
+  - FablesTargeting
+  - FablesDenizenInterop
+  - NinCommands
 main: com.fablesfantasyrp.plugin.magic.FablesMagic
 api-version: @bukkit_api_version@
