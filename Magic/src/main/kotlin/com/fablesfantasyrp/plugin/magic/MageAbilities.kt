@@ -3,17 +3,53 @@ package com.fablesfantasyrp.plugin.magic
 import com.fablesfantasyrp.plugin.magic.ability.aeromancy.Cloud
 import com.fablesfantasyrp.plugin.magic.ability.aeromancy.lunarmancy.CleansingTouch
 import com.fablesfantasyrp.plugin.magic.ability.aeromancy.tempestacy.LightningReflexes
+import com.fablesfantasyrp.plugin.magic.ability.aquamancy.PurifyingProwess
+import com.fablesfantasyrp.plugin.magic.ability.aquamancy.frigumancy.IcyMold
+import com.fablesfantasyrp.plugin.magic.ability.aquamancy.marinamancy.AquaticBlessing
+import com.fablesfantasyrp.plugin.magic.ability.geomancy.EarthlyAwareness
+import com.fablesfantasyrp.plugin.magic.ability.geomancy.biomancy.CalmingAura
+import com.fablesfantasyrp.plugin.magic.ability.geomancy.petromancy.CrystallineHands
+import com.fablesfantasyrp.plugin.magic.ability.hemomancy.IchorFriend
+import com.fablesfantasyrp.plugin.magic.ability.hemomancy.houseofbeast.*
+import com.fablesfantasyrp.plugin.magic.ability.hemomancy.houseofblood.BloodFlame
+import com.fablesfantasyrp.plugin.magic.ability.hemomancy.houseofnight.*
+import com.fablesfantasyrp.plugin.magic.ability.necromancy.SoulsBlessing
+import com.fablesfantasyrp.plugin.magic.ability.necromancy.deathdestined.NecromanticResistance
+import com.fablesfantasyrp.plugin.magic.ability.necromancy.souldestined.Fragmentation
 import com.fablesfantasyrp.plugin.magic.ability.pyromancy.FlamingFamiliar
-import com.fablesfantasyrp.plugin.magic.ability.pyromancy.RunningHot
+import com.fablesfantasyrp.plugin.magic.ability.pyromancy.magmamancy.RunningHot
 import com.fablesfantasyrp.plugin.magic.ability.pyromancy.solarmancy.BrilliantRadiance
 
 object MageAbilities {
-	private val data = listOf(Cloud,
-			LightningReflexes,
+	private val data = listOf(
 			CleansingTouch,
+			LightningReflexes,
+			Cloud,
+			IcyMold,
+			AquaticBlessing,
+			PurifyingProwess,
+			CalmingAura,
+			CrystallineHands,
+			EarthlyAwareness,
+			ApexInstinct,
+			Claws,
+			FightOrFlight,
+			PreyingScents,
+			ProtectiveCoat,
+			BloodFlame,
+			BloodSucker,
+			BloodyNails,
+			CrimsonEyes,
+			VampiricHover,
+			VampiricSkin,
+			IchorFriend,
+			RunningHot,
 			BrilliantRadiance,
 			FlamingFamiliar,
-			RunningHot).groupBy { it.magicPath }.mapValues { it.value.toSet() }
+			NecromanticResistance,
+			Fragmentation,
+			SoulsBlessing
+	).groupBy { it.magicPath }.mapValues { it.value.toSet() }
 
 	val all = data.values.flatten()
 	fun forPath(magicPath: MagicPath) = data[magicPath]
