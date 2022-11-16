@@ -12,6 +12,8 @@ var Player.currentChatInputForm: CompletableDeferred<String>?
 	get() = currentChatInputFormMap[this]
 	set(value) {
 		if (value != null) {
+			val current = currentChatInputForm
+			if (current != null && !current.isCancelled) current.cancel()
 			currentChatInputFormMap[this] = value
 		} else {
 			currentChatInputFormMap.remove(this)

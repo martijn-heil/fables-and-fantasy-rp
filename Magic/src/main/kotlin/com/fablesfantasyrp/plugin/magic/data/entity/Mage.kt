@@ -15,6 +15,7 @@ import com.fablesfantasyrp.plugin.magic.ability.MageAbility
 import com.fablesfantasyrp.plugin.magic.ability.aeromancy.Cloud
 import com.fablesfantasyrp.plugin.magic.data.MageData
 import com.fablesfantasyrp.plugin.magic.data.SpellData
+import com.fablesfantasyrp.plugin.magic.exception.CasterBusyException
 import com.fablesfantasyrp.plugin.magic.exception.NoSpaceForTearException
 import com.fablesfantasyrp.plugin.magic.exception.OpenTearException
 import com.fablesfantasyrp.plugin.magic.exception.TooManyTearsException
@@ -280,6 +281,7 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 
 	@Throws(OpenTearException::class)
 	suspend fun openTear(): Tear {
+		if (this.isCasting) throw CasterBusyException()
 		val player = playerCharacter.player.player ?: throw IllegalStateException()
 		check(player.isOnline)
 		if (tearRepository.forOwner(this).size >= MAX_TEARS_PER_MAGE) throw TooManyTearsException()
