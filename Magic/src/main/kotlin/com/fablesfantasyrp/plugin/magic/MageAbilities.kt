@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.magic
 
+import com.fablesfantasyrp.plugin.magic.ability.MageAbility
 import com.fablesfantasyrp.plugin.magic.ability.aeromancy.Cloud
 import com.fablesfantasyrp.plugin.magic.ability.aeromancy.lunarmancy.CleansingTouch
 import com.fablesfantasyrp.plugin.magic.ability.aeromancy.tempestacy.LightningReflexes
@@ -52,6 +53,11 @@ object MageAbilities {
 	).groupBy { it.magicPath }.mapValues { it.value.toSet() }
 
 	val all = data.values.flatten()
-	fun forPath(magicPath: MagicPath) = data[magicPath]
+	fun forPath(magicPath: MagicPath): Collection<MageAbility> {
+		val all = ArrayList<MageAbility>()
+		data[magicPath]?.let { all.addAll(it) }
+		data[magicPath.basePath]?.let { all.addAll(it) }
+		return all.distinct()
+	}
 	fun forId(id: String) = all.find { it.id == id }
 }
