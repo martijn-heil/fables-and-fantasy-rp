@@ -16,7 +16,7 @@ class Commands {
 			val data = repo.forOfflinePlayer(sender)
 			repo.update(data.copy(isSelecting = !data.isSelecting))
 			if (!data.isSelecting) {
-				sender.sendMessage("$SYSPREFIX You are now selecting targets. Right click a player to select/deselect.")
+				sender.sendMessage("$SYSPREFIX You are now selecting targets. Left click a player to select/deselect.")
 			} else {
 				sender.sendMessage("$SYSPREFIX You are no longer selecting targets")
 			}
