@@ -25,6 +25,7 @@ import com.fablesfantasyrp.plugin.targeting.targeting
 import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.sendError
+import com.fablesfantasyrp.plugin.utils.isVanished
 import com.github.shynixn.mccoroutine.bukkit.launch
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
@@ -34,6 +35,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.Style
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import org.bukkit.GameMode
 
 
 class Mage : MageData, HasDirtyMarker<Mage> {
@@ -176,6 +178,8 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 				.mapNotNull { it.currentPlayerCharacter }
 				.mapNotNull { mageRepository.forPlayerCharacter(it) }
 				.filter { it != this }
+				.filter { !it.playerCharacter.player.player!!.isVanished }
+				.filter { it.playerCharacter.player.player!!.gameMode != GameMode.SPECTATOR }
 
 		val prompt = legacyText("$SYSPREFIX Do you want to unbind ${this.playerCharacter.name}'s casting attempt?: ")
 		val prompts = otherMages
