@@ -11,6 +11,7 @@ depend:
   - FablesForm
   - FablesText
   - FablesGui
+  - FablesDatabase
   - FablesTargeting
   - FablesDenizenInterop
   - NinCommands
