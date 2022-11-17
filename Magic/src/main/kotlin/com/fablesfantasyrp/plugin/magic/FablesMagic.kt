@@ -53,7 +53,7 @@ class FablesMagic : SuspendingJavaPlugin() {
 		val spellsDirectory = this.dataFolder.resolve("spells")
 		spellsDirectory.mkdirs()
 
-		spellRepository = YamlSimpleSpellDataRepository(spellsDirectory)
+		spellRepository = YamlSimpleSpellDataRepository(this, spellsDirectory)
 		mageRepository = EntityMageRepository(this, H2MageRepository(server, fablesDatabase))
 		mageRepository.init()
 		tearRepository = EntityTearRepository(MapTearRepository())
