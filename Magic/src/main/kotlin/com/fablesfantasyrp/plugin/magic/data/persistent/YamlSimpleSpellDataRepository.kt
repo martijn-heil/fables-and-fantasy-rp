@@ -4,9 +4,11 @@ import com.fablesfantasyrp.plugin.magic.MagicPath
 import com.fablesfantasyrp.plugin.magic.data.SimpleSpellData
 import com.fablesfantasyrp.plugin.magic.data.SimpleSpellDataRepository
 import org.bukkit.configuration.file.YamlConfiguration
+import org.bukkit.plugin.Plugin
+import org.yaml.snakeyaml.error.YAMLException
 import java.io.File
 
-class YamlSimpleSpellDataRepository(private val directory: File) : SimpleSpellDataRepository {
+class YamlSimpleSpellDataRepository(private val plugin: Plugin, private val directory: File) : SimpleSpellDataRepository {
 	private fun fileForId(id: String): File {
 		require(isValidId(id))
 		return directory.resolve("${id}.yml")
@@ -20,7 +22,7 @@ class YamlSimpleSpellDataRepository(private val directory: File) : SimpleSpellDa
 		val file = fileForId(id)
 		if (!file.exists()) return null
 
-		return fromFile(file)
+		return fromFileMaybe(file)
 	}
 
 	override fun allIds(): Collection<String> {
@@ -28,7 +30,7 @@ class YamlSimpleSpellDataRepository(private val directory: File) : SimpleSpellDa
 	}
 
 	override fun all(): Collection<SimpleSpellData> {
-		return directory.listFiles()!!.map { fromFile(it) }
+		return directory.listFiles()!!.mapNotNull { fromFileMaybe(it) }
 	}
 
 	override fun destroy(v: SimpleSpellData) {
@@ -62,15 +64,39 @@ class YamlSimpleSpellDataRepository(private val directory: File) : SimpleSpellDa
 		yaml.set("description", v.description)
 	}
 
+	private fun fromFileMaybe(file: File): SimpleSpellData? {
+		return try {
+			fromFile(file)
+		} catch (ex: Exception) {
+			plugin.logger.warning("Encountered exception parsing spell data from file: ")
+			ex.printStackTrace()
+			plugin.logger.warning("Skipping this spell")
+			null
+		}
+	}
+
+	@Throws(YAMLException::class, IllegalStateException::class)
 	private fun fromFile(file: File): SimpleSpellData {
 		val yaml = YamlConfiguration.loadConfiguration(file)
-		val displayName = yaml.getString("display_name")!!
-		val description = yaml.getString("description")!!
-		val magicPath = MagicPath.valueOf(yaml.getString("magic_path")!!)
+
+		fun missingField(fieldName: String): Nothing {
+			throw IllegalStateException("$fieldName is missing from file '${file.path}'")
+		}
+
+		val displayName = yaml.getString("display_name") ?: missingField("display_name")
+		val description = yaml.getString("description") ?: missingField("description")
+		val magicPath = try {
+			yaml.getString("magic_path")?.let { MagicPath.valueOf(it) } ?: missingField("magic_path")
+		} catch (ex: IllegalArgumentException) {
+			throw IllegalStateException("Invalid value for magic_path in file '${file.path}'")
+		}
+
 		val level = yaml.getInt("level", Int.MAX_VALUE)
 		val castingValue = yaml.getInt("casting_value", Int.MAX_VALUE)
-		check(level != Int.MAX_VALUE)
-		check(castingValue != Int.MAX_VALUE)
+		if (level == Int.MAX_VALUE) missingField("level")
+		if (castingValue == Int.MAX_VALUE) missingField("casting_value")
+
+
 		return SimpleSpellData(
 				id = file.nameWithoutExtension,
 				displayName = displayName,
