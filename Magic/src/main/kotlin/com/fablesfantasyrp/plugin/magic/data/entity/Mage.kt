@@ -13,6 +13,7 @@ import com.fablesfantasyrp.plugin.form.YesNoChatPrompt
 import com.fablesfantasyrp.plugin.magic.*
 import com.fablesfantasyrp.plugin.magic.ability.MageAbility
 import com.fablesfantasyrp.plugin.magic.ability.aeromancy.Cloud
+import com.fablesfantasyrp.plugin.magic.ability.pyromancy.FlamingFamiliar
 import com.fablesfantasyrp.plugin.magic.data.MageData
 import com.fablesfantasyrp.plugin.magic.data.SpellData
 import com.fablesfantasyrp.plugin.magic.exception.CasterBusyException
@@ -227,7 +228,7 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 			val particlesJob = this.startSpellCastingParticles(spell)
 			try {
 				player.awaitEmote(legacyText("$SYSPREFIX Please emote to try to cast a spell:"))
-				val additionalBonus = if (this.activeAbilities.contains(Cloud)) 1U else 0U
+				val additionalBonus = if (this.activeAbilities.any { it == Cloud || it == FlamingFamiliar }) 1U else 0U
 				val castingRoll = roll(20U, CharacterStatKind.INTELLIGENCE, stats).second +
 						this.spellCastingBonus.toInt() +
 						additionalBonus.toInt()
