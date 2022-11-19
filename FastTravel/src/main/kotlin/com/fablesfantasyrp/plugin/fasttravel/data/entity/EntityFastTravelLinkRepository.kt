@@ -6,7 +6,7 @@ import com.fablesfantasyrp.plugin.database.repository.KeyedRepository
 import com.fablesfantasyrp.plugin.database.repository.MutableRepository
 import com.fablesfantasyrp.plugin.worldguardinterop.WorldGuardRegion
 
-class EntityFastTravelLinkRepository<C>(private val child: C) : MassivelyCachingEntityRepository<Int, FastTravelLink, C>(child), FastTravelLinkRepository
+class EntityFastTravelLinkRepository<C>(child: C) : MassivelyCachingEntityRepository<Int, FastTravelLink, C>(child), FastTravelLinkRepository
 		where C: KeyedRepository<Int, FastTravelLink>,
 			  C: MutableRepository<FastTravelLink>,
 			  C: HasDirtyMarker<FastTravelLink>,

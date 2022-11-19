@@ -29,4 +29,5 @@ include("HorseLimits",
 		"Timers",
 		"WorldGuardInterop",
 		"PlayerInstance",
-		"Inventory")
+		"Inventory",
+		"Magic")

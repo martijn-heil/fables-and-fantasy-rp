@@ -45,7 +45,7 @@ class Clickable(val validUntil: Instant, val execute: (clicker: Player) -> Unit)
 
 fun Component.clickable(clickable: Clickable) = clickable.applyTo(this)
 
-private class ClickableCommands {
+class ClickableCommands {
 	@Command(aliases = ["fablesclickable"], desc = "Execute a clickable")
 	@Require("fables.form.command.clickable")
 	fun fablesclickable(@Sender sender: Player, id: String) {

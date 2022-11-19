@@ -6,8 +6,10 @@ import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterData
 import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterDataRepository
 import com.fablesfantasyrp.plugin.characters.data.simple.SimplePlayerCharacterData
 import com.fablesfantasyrp.plugin.denizeninterop.dFlags
+import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.Server
+import java.util.*
 
 private fun MutableDenizenPlayerCharacter.asSimple(): SimplePlayerCharacterData {
 	return SimplePlayerCharacterData(
@@ -25,17 +27,17 @@ private fun MutableDenizenPlayerCharacter.asSimple(): SimplePlayerCharacterData 
 }
 
 class DenizenPlayerCharacterRepository(private val server: Server) : PlayerCharacterDataRepository {
-	private val idCache = HashMap<ULong, OfflinePlayer>()
+	private val idCache = HashMap<ULong, UUID>()
 
 	override fun forOfflinePlayer(offlinePlayer: OfflinePlayer): Collection<PlayerCharacterData> {
 		val characters = offlinePlayer.dFlags.getFlagValue("characters") as? MapTag ?: return emptyList()
 		return characters.keys()
 				.filter { it.matches(Regex("\\d+")) }
-				.map { MutableDenizenPlayerCharacter(it.toULong(), offlinePlayer).asSimple() }
+				.map { MutableDenizenPlayerCharacter(it.toULong(), server.getOfflinePlayer(offlinePlayer.uniqueId)).asSimple() }
 	}
 
 	override fun forId(id: ULong): PlayerCharacterData? {
-		val player = idCache[id]
+		val player = idCache[id]?.let { Bukkit.getOfflinePlayer(it) }
 		return if (player != null) {
 			val result = MutableDenizenPlayerCharacter(id, player)
 			if (!result.isDeleted) {
@@ -46,7 +48,7 @@ class DenizenPlayerCharacterRepository(private val server: Server) : PlayerChara
 			}
 		} else {
 			val result = this.all().find { it.id == id }
-			if (result != null) idCache[id] = result.player
+			if (result != null) idCache[id] = result.player.uniqueId
 			result
 		}
 	}

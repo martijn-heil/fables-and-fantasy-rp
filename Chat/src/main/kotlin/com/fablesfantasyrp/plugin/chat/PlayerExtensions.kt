@@ -11,13 +11,19 @@ val OfflinePlayer.chat: ChatPlayerEntity
 	get() = chatPlayerDataManager.forId(uniqueId)!!
 
 suspend fun Player.awaitEmote(prompt: String) {
-	chat.channel = ChatInCharacter
+	val chatEntity = chat
+	val oldChannel = chatEntity.channel
+	chatEntity.channel = ChatInCharacter
 	val message = this.promptChat(prompt)
 	ChatInCharacter.sendMessage(this, message)
+	chatEntity.channel = oldChannel
 }
 
 suspend fun Player.awaitEmote(prompt: Component) {
-	chat.channel = ChatInCharacter
+	val chatEntity = chat
+	val oldChannel = chatEntity.channel
+	chatEntity.channel = ChatInCharacter
 	val message = this.promptChat(prompt)
 	ChatInCharacter.sendMessage(this, message)
+	chatEntity.channel = oldChannel
 }
