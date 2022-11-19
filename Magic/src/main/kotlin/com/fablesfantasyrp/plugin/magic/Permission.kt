@@ -15,7 +15,7 @@ internal object Permission {
 		const val Tears = "$prefix.tears"
 
 		object Ability {
-			private const val prefix = Permission.prefix + ".ability"
+			private const val prefix = Command.prefix + ".ability"
 			const val List = "$prefix.list"
 			const val Activate = "$prefix.activate"
 			const val Deactiviate = "$prefix.deactivate"
