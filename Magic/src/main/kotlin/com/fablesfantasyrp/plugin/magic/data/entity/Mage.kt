@@ -202,6 +202,9 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 					prompts.remove(mage)
 					if (answer) {
 						if (mage.tryUnbindCast(spell, this@Mage, castingRoll)) return@withTimeout true
+					} else {
+						val answerPlayer = mage.playerCharacter.player.player ?: continue
+						answerPlayer.sendMessage("$SYSPREFIX You will not try to unbind.")
 					}
 				}
 				return@withTimeout false
