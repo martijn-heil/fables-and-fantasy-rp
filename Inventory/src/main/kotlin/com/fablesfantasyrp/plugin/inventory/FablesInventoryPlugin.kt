@@ -54,7 +54,7 @@ class FablesInventoryPlugin : SuspendingJavaPlugin() {
 
 //		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
 
-		server.pluginManager.registerEvents(PlayerInstanceInventoryListener(), this)
+		server.pluginManager.registerEvents(PlayerInstanceInventoryListener(inventories), this)
 	}
 
 	override fun onDisable() {

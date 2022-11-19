@@ -6,7 +6,7 @@ import com.fablesfantasyrp.plugin.database.repository.KeyedRepository
 import com.fablesfantasyrp.plugin.database.repository.MutableRepository
 import org.bukkit.OfflinePlayer
 
-class EntityPlayerInstanceRepository<C>(private val child: C) : MassivelyCachingEntityRepository<Int, PlayerInstance, C>(child), PlayerInstanceRepository
+class EntityPlayerInstanceRepository<C>(child: C) : MassivelyCachingEntityRepository<Int, PlayerInstance, C>(child), PlayerInstanceRepository
 		where C: KeyedRepository<Int, PlayerInstance>,
 			  C: MutableRepository<PlayerInstance>,
 			  C: HasDirtyMarker<PlayerInstance>,

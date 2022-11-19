@@ -2,7 +2,7 @@ package com.fablesfantasyrp.plugin.playerinstance.data.persistent
 
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
-import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstanceInventory
+import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstanceRepository
 import org.bukkit.OfflinePlayer
 import org.bukkit.Server
@@ -12,16 +12,16 @@ import java.util.*
 import javax.sql.DataSource
 
 class H2PlayerInstanceRepository(private val server: Server,
-								 private val dataSource: DataSource) : PlayerInstanceRepository, HasDirtyMarker<PlayerInstanceInventory> {
-	override var dirtyMarker: DirtyMarker<PlayerInstanceInventory>? = null
+								 private val dataSource: DataSource) : PlayerInstanceRepository, HasDirtyMarker<PlayerInstance> {
+	override var dirtyMarker: DirtyMarker<PlayerInstance>? = null
 	private val TABLE_NAME = "FABLES_PLAYERINSTANCE.PLAYERINSTANCE"
 
-	override fun forOwner(offlinePlayer: OfflinePlayer): Collection<PlayerInstanceInventory> {
+	override fun forOwner(offlinePlayer: OfflinePlayer): Collection<PlayerInstance> {
 		return dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE owner = ?")
 			stmnt.setObject(1, offlinePlayer.uniqueId)
 			val result = stmnt.executeQuery()
-			val results = ArrayList<PlayerInstanceInventory>()
+			val results = ArrayList<PlayerInstance>()
 			while (result.next()) {
 				results.add(fromRow(result))
 			}
@@ -29,17 +29,17 @@ class H2PlayerInstanceRepository(private val server: Server,
 		}
 	}
 
-	override fun all(): Collection<PlayerInstanceInventory> {
+	override fun all(): Collection<PlayerInstance> {
 		return dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME")
 			val result = stmnt.executeQuery()
-			val all = ArrayList<PlayerInstanceInventory>()
+			val all = ArrayList<PlayerInstance>()
 			while (result.next()) all.add(fromRow(result))
 			all
 		}
 	}
 
-	override fun destroy(v: PlayerInstanceInventory) {
+	override fun destroy(v: PlayerInstance) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("DELETE FROM $TABLE_NAME WHERE id = ?")
 			stmnt.setObject(1, v.id)
@@ -48,7 +48,7 @@ class H2PlayerInstanceRepository(private val server: Server,
 		}
 	}
 
-	override fun create(v: PlayerInstanceInventory): PlayerInstanceInventory {
+	override fun create(v: PlayerInstance): PlayerInstance {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME " +
 					"(owner) " +
@@ -58,7 +58,7 @@ class H2PlayerInstanceRepository(private val server: Server,
 			val rs = stmnt.generatedKeys
 			rs.next()
 			val id = rs.getInt(1)
-			return PlayerInstanceInventory(
+			return PlayerInstance(
 					id = id,
 					owner = v.owner,
 					dirtyMarker = dirtyMarker
@@ -66,11 +66,11 @@ class H2PlayerInstanceRepository(private val server: Server,
 		}
 	}
 
-	override fun update(v: PlayerInstanceInventory) {
+	override fun update(v: PlayerInstance) {
 		throw NotImplementedError()
 	}
 
-	override fun forId(id: Int): PlayerInstanceInventory? {
+	override fun forId(id: Int): PlayerInstance? {
 		return dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE id = ?")
 			stmnt.setInt(1, id)
@@ -90,11 +90,11 @@ class H2PlayerInstanceRepository(private val server: Server,
 		}
 	}
 
-	private fun fromRow(row: ResultSet): PlayerInstanceInventory {
+	private fun fromRow(row: ResultSet): PlayerInstance {
 		val id = row.getInt("id")
 		val owner = server.getOfflinePlayer(row.getObject(2, UUID::class.java))
 
-		return PlayerInstanceInventory(
+		return PlayerInstance(
 				id = id,
 				owner = owner,
 				dirtyMarker = dirtyMarker
