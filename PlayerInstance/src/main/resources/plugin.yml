@@ -6,6 +6,8 @@ depend:
   - FablesUtils
   - FablesTimers
   - FablesText
+  - FablesForm
+  - FablesGui
   - NinCommands
 main: com.fablesfantasyrp.plugin.playerinstance.FablesPlayerInstance
 api-version: @bukkit_api_version@
