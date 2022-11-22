@@ -10,17 +10,18 @@ import com.github.shynixn.mccoroutine.bukkit.launch
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import net.kyori.adventure.text.Component
+import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import java.util.*
 
 class FastTravelPlayer : DataEntity<UUID, FastTravelPlayer> {
 	override var dirtyMarker: DirtyMarker<FastTravelPlayer>? = null
 	override val id: UUID
-	private val player: Player
+	private val offlinePlayer: OfflinePlayer get() = PLUGIN.server.getOfflinePlayer(id)
+	private val onlinePlayer: Player? get() = offlinePlayer.player
 
 	constructor(id: UUID, dirtyMarker: DirtyMarker<FastTravelPlayer>? = null) {
 		this.id = id
-		this.player = PLUGIN.server.getPlayer(id)!!
 		this.dirtyMarker = dirtyMarker
 	}
 
@@ -33,6 +34,9 @@ class FastTravelPlayer : DataEntity<UUID, FastTravelPlayer> {
 	}
 
 	fun useLink(link: FastTravelLinkData) {
+		val player = onlinePlayer
+		check(offlinePlayer.isOnline && player != null)
+
 		fastTravelTask = PLUGIN.launch {
 			delay(1)
 			player.countdown(

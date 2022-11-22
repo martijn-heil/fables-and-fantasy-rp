@@ -70,7 +70,7 @@ open class SimpleEntityRepository<K, T: Identifiable<K>, C>(protected var child:
 	}
 
 	override fun allIds(): Collection<K> = child.allIds()
-	override fun all(): Collection<T> = child.allIds().map { this.forId(it)!! }
+	override fun all(): Collection<T> = child.allIds().mapNotNull { this.forId(it) }
 	override fun forId(id: K): T? = fromCache(id) ?: run {
 		lock.writeLock().withLock {
 			fromCache(id) ?: run {

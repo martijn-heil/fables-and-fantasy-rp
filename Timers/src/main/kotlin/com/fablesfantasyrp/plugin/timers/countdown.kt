@@ -16,10 +16,7 @@ import org.bukkit.event.EventPriority.NORMAL
 import org.bukkit.event.HandlerList
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByBlockEvent
-import org.bukkit.event.player.PlayerChatEvent
-import org.bukkit.event.player.PlayerCommandPreprocessEvent
-import org.bukkit.event.player.PlayerEvent
-import org.bukkit.event.player.PlayerMoveEvent
+import org.bukkit.event.player.*
 
 private val countdowns = HashMap<Player, CountdownJob>()
 
@@ -80,6 +77,8 @@ suspend fun Player.countdown(duration: UInt,
 	val job = CountdownJob(cancelReasons, preventions, PLUGIN.launch {
 		try {
 			for (i in duration downTo 1U) {
+				if(!isOnline) throw CancellationException("Player left the game")
+
 				if (shouldCancel()) {
 					cancelEffect()
 					future.complete(false)
@@ -134,6 +133,11 @@ internal class CountdownListener : Listener {
 	fun onPlayerCommandPreProcess(e: PlayerCommandPreprocessEvent) {
 		val job = e.player.currentCountdown ?: return
 		if (job.countdownPreventions.contains(CountdownPrevention.COMMAND)) e.isCancelled = true
+	}
+
+	@EventHandler(priority = NORMAL, ignoreCancelled = true)
+	fun onPlayerQuit(e: PlayerQuitEvent) {
+		e.player.currentCountdown?.cancel(CancellationException("Player left the game"))
 	}
 }
 
