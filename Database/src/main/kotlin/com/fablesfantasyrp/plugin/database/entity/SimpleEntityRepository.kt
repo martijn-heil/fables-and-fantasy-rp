@@ -33,6 +33,13 @@ open class SimpleEntityRepository<K, T: Identifiable<K>, C>(protected var child:
 		}
 	}
 
+	fun saveAll() {
+		lock.writeLock().withLock {
+			cache.mapNotNull { it.value.get() }.forEach { this.update(it) }
+			dirty.clear()
+		}
+	}
+
 	override fun create(v: T): T {
 		val result = child.create(v)
 		lock.writeLock().withLock {

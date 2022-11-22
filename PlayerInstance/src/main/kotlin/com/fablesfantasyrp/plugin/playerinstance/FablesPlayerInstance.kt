@@ -45,7 +45,7 @@ class FablesPlayerInstance : SuspendingJavaPlugin() {
 		}
 
 		playersInstances = EntityPlayerInstanceRepository(H2PlayerInstanceRepository(server, fablesDatabase))
-		playerInstanceManager = PlayerInstanceManager()
+		playerInstanceManager = PlayerInstanceManager(server)
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())

@@ -3,15 +3,14 @@ package com.fablesfantasyrp.plugin.inventory
 import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.inventory.data.entity.EntityFablesInventoryRepository
-import com.fablesfantasyrp.plugin.inventory.data.entity.FablesInventoryRepository
 import com.fablesfantasyrp.plugin.inventory.data.persistent.H2PlayerInstanceInventoryRepository
+import com.fablesfantasyrp.plugin.playerinstance.currentPlayerInstance
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.BukkitModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.sender.BukkitSenderModule
-import com.gitlab.martijn_heil.nincommands.common.bukkit.unregisterCommand
 import com.sk89q.intake.Intake
 import com.sk89q.intake.parametric.ParametricBuilder
 import com.sk89q.intake.parametric.provider.PrimitivesModule
@@ -21,7 +20,7 @@ internal val PLUGIN get() = FablesInventoryPlugin.instance
 
 class FablesInventoryPlugin : SuspendingJavaPlugin() {
 	private lateinit var commands: Collection<Command>
-	lateinit var inventories: FablesInventoryRepository
+	lateinit var inventories: EntityFablesInventoryRepository<*>
 		private set
 
 	override fun onEnable() {
@@ -58,7 +57,12 @@ class FablesInventoryPlugin : SuspendingJavaPlugin() {
 	}
 
 	override fun onDisable() {
-		commands.forEach { unregisterCommand(it) }
+		//commands.forEach { unregisterCommand(it) }
+		server.onlinePlayers.forEach {
+			val instance = it.currentPlayerInstance ?: return@forEach
+			instance.inventory.delegate.bukkitInventory = null
+		}
+		inventories.saveAll()
 	}
 
 	companion object {

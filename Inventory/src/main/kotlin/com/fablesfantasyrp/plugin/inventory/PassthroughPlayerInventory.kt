@@ -35,6 +35,7 @@ class PassthroughPlayerInventory constructor(private val persistentContent: Arra
 	override var bukkitInventory: Inventory? = null
 		set(value) {
 			check(value == null || value is PlayerInventory)
+			if (value == field) return
 			val newInventory = value as? PlayerInventory
 			val oldInventory = field as? PlayerInventory
 			field = null

@@ -12,5 +12,11 @@ class EntityFablesInventoryRepository<C>(child: C)
 			  C: MutableRepository<PlayerInstanceInventory>,
 			  C: HasDirtyMarker<PlayerInstanceInventory>,
 			  C: FablesInventoryRepository {
-	override fun forOwner(playerInstance: PlayerInstance) = child.forOwner(playerInstance)
+	override fun forOwner(playerInstance: PlayerInstance): PlayerInstanceInventory {
+		return this.forId(playerInstance.id) ?: run {
+			val result = child.forOwner(playerInstance)
+			this.markStrong(result)
+			result
+		}
+	}
 }

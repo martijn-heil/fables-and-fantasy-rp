@@ -40,7 +40,7 @@ class H2PlayerInstanceInventoryRepository(private val dataSource: DataSource)
 	override fun destroy(v: PlayerInstanceInventory) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("DELETE FROM $TABLE_NAME WHERE id = ?")
-			stmnt.setObject(1, v.id)
+			stmnt.setInt(1, v.id)
 			stmnt.executeUpdate()
 			v.isDestroyed = true
 		}
@@ -54,11 +54,8 @@ class H2PlayerInstanceInventoryRepository(private val dataSource: DataSource)
 			stmnt.setInt(1, v.id)
 			stmnt.setObject(2, v.delegate)
 			stmnt.executeUpdate()
-			val rs = stmnt.generatedKeys
-			rs.next()
-			val id = rs.getInt(1)
 			return PlayerInstanceInventory(
-					id = id,
+					id = v.id,
 					delegate = v.delegate,
 					dirtyMarker = dirtyMarker
 			)
@@ -71,7 +68,7 @@ class H2PlayerInstanceInventoryRepository(private val dataSource: DataSource)
 				"inventory = ? " +
 				"WHERE id = ?")
 			stmnt.setObject(1, v.delegate)
-			stmnt.setInt(1, v.id)
+			stmnt.setInt(2, v.id)
 			stmnt.executeUpdate()
 		}
 	}
