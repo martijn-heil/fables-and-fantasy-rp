@@ -2,8 +2,9 @@ package com.fablesfantasyrp.plugin.playerinstance
 
 import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
 import com.fablesfantasyrp.plugin.database.applyMigrations
+import com.fablesfantasyrp.plugin.playerinstance.command.Commands
+import com.fablesfantasyrp.plugin.playerinstance.command.provider.PlayerInstanceModule
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.EntityPlayerInstanceRepository
-import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstanceRepository
 import com.fablesfantasyrp.plugin.playerinstance.data.persistent.H2PlayerInstanceRepository
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
@@ -25,7 +26,7 @@ val SYSPREFIX = "${GOLD}${BOLD}[${LIGHT_PURPLE}${BOLD} PLAYER INSTANCE ${GOLD}${
 internal val PLUGIN get() = FablesPlayerInstance.instance
 
 private lateinit var playerInstanceManager: PlayerInstanceManager
-lateinit var playersInstances: PlayerInstanceRepository
+lateinit var playersInstances: EntityPlayerInstanceRepository<*>
 	private set
 
 class FablesPlayerInstance : SuspendingJavaPlugin() {
@@ -52,12 +53,13 @@ class FablesPlayerInstance : SuspendingJavaPlugin() {
 		injector.install(BukkitModule(server))
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
+		injector.install(PlayerInstanceModule(playersInstances))
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()
 
 		val rootDispatcherNode = CommandGraph().builder(builder).commands()
-		rootDispatcherNode.group("playerinstance").registerMethods(Commands.PlayerInstance(playersInstances))
+		rootDispatcherNode.group("playerinstance").registerMethods(Commands.CommandPlayerInstance(playersInstances))
 		rootDispatcherNode.registerMethods(Commands())
 		val dispatcher = rootDispatcherNode.dispatcher
 
