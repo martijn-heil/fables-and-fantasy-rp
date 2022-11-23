@@ -9,6 +9,7 @@ class PlayerInstanceManager(private val server: Server) {
 
 	fun getCurrentForPlayer(player: Player) = currentInstances[player]
 	fun setCurrentForPlayer(player: Player, playerInstance: PlayerInstance) {
+		if (this.getCurrentForPlayer(player) == playerInstance) return
 		val event = PlayerSwitchPlayerInstanceEvent(player, getCurrentForPlayer(player), playerInstance)
 		server.pluginManager.callEvent(event)
 		currentInstances[player] = playerInstance
