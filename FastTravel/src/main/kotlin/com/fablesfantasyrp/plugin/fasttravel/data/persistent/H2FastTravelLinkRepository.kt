@@ -9,6 +9,7 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldguard.protection.regions.RegionContainer
 import org.bukkit.Location
 import org.bukkit.Server
+import java.sql.Connection
 import java.sql.ResultSet
 import java.sql.Statement
 import java.util.*
@@ -27,7 +28,7 @@ class H2FastTravelLinkRepository(private val server: Server,
 			stmnt.setString(1, "${region.region.id},${region.world.uid}")
 			val result = stmnt.executeQuery()
 			if (!result.next()) return null
-			fromRow(result)
+			fromRowOrDelete(result, connection)
 		}
 	}
 
@@ -36,7 +37,10 @@ class H2FastTravelLinkRepository(private val server: Server,
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME")
 			val result = stmnt.executeQuery()
 			val all = ArrayList<FastTravelLink>()
-			while (result.next()) all.add(fromRow(result))
+			while (result.next()) {
+				val parsed = fromRowOrDelete(result, connection)
+				if (parsed != null) all.add(parsed)
+			}
 			all
 		}
 	}
@@ -87,7 +91,7 @@ class H2FastTravelLinkRepository(private val server: Server,
 			stmnt.setInt(1, id)
 			val result = stmnt.executeQuery()
 			if (!result.next()) return null
-			fromRow(result)
+			fromRowOrDelete(result, connection)
 		}
 	}
 
@@ -101,13 +105,13 @@ class H2FastTravelLinkRepository(private val server: Server,
 		}
 	}
 
-	private fun fromRow(row: ResultSet): FastTravelLink {
+	private fun fromRow(row: ResultSet): FastTravelLink? {
 		val id = row.getInt("id")
 		val fromRegionString = row.getString("from_region")
 		val fromRegionStringSplit = fromRegionString.split(",")
 		val regionName = fromRegionStringSplit[0]
-		val fromWorld = server.getWorld(UUID.fromString(fromRegionStringSplit[1])) ?: throw IllegalStateException()
-		val fromRegion = regionContainer.get(BukkitAdapter.adapt(fromWorld))!!.getRegion(regionName)!!
+		val fromWorld = server.getWorld(UUID.fromString(fromRegionStringSplit[1])) ?: return null
+		val fromRegion = regionContainer.get(BukkitAdapter.adapt(fromWorld))?.getRegion(regionName) ?: return null
 		val travelDuration = row.getInt("travel_duration").seconds
 
 		val toX = row.getDouble("to_x")
@@ -115,9 +119,22 @@ class H2FastTravelLinkRepository(private val server: Server,
 		val toZ = row.getDouble("to_z")
 		val toYaw = row.getFloat("to_yaw")
 		val toPitch = row.getFloat("to_pitch")
-		val toWorld = server.getWorld(row.getObject("to_world", UUID::class.java)) ?: throw IllegalStateException()
+		val toWorld = server.getWorld(row.getObject("to_world", UUID::class.java)) ?: return null
 		val toLocation = Location(toWorld, toX, toY, toZ, toYaw, toPitch)
 
 		return FastTravelLink(from = WorldGuardRegion(fromWorld, fromRegion), to = toLocation, travelDuration = travelDuration, id = id)
+	}
+
+	private fun fromRowOrDelete(row: ResultSet, connection: Connection): FastTravelLink? {
+		val parsed = fromRow(row)
+		return if (parsed != null) {
+			parsed
+		} else {
+			val id = row.getInt("id")
+			val deleteStmnt = connection.prepareStatement("DELETE FROM $TABLE_NAME WHERE id = ?")
+			deleteStmnt.setInt(1, id)
+			deleteStmnt.executeUpdate()
+			null
+		}
 	}
 }

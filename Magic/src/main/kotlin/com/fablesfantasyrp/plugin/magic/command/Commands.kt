@@ -1,6 +1,8 @@
 package com.fablesfantasyrp.plugin.magic.command
 
 import com.fablesfantasyrp.plugin.characters.data.CharacterData
+import com.fablesfantasyrp.plugin.characters.currentPlayerCharacter
+import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterData
 import com.fablesfantasyrp.plugin.magic.*
 import com.fablesfantasyrp.plugin.magic.ability.MageAbility
 import com.fablesfantasyrp.plugin.magic.animations.NecromancyBlightAnimation
@@ -104,9 +106,8 @@ class Commands {
 
 	@Command(aliases = ["grimoire", "spellbook"], desc = "Show your grimoire.")
 	@Require(Permission.Command.Spellbook)
-	fun spellbook(@Sender sender: Mage) {
-		val player = sender.playerCharacter.player.player!!
-		SpellbookGui(PLUGIN, sender).show(player)
+	fun spellbook(@Sender sender: Player, @CommandTarget(Permission.Command.Spellbook + ".others") mage: Mage) {
+		SpellbookGui(PLUGIN, mage, readOnly = sender.currentPlayerCharacter != mage.playerCharacter).show(sender)
 	}
 
 	@Command(aliases = ["resetspellbook", "resetgrimoire"], desc = "Reset a mage's grimoire.")

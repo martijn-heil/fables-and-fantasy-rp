@@ -12,12 +12,14 @@ import org.bukkit.event.player.PlayerQuitEvent
 
 
 suspend fun promptChat(p: Player, query: Component): String {
-	val deferred = CompletableDeferred<String>()
-	p.currentChatInputForm = deferred
-	p.sendMessage(query)
-	val result = deferred.await()
-	p.currentChatInputForm = null
-	return result
+	return try {
+		val deferred = CompletableDeferred<String>()
+		p.currentChatInputForm = deferred
+		p.sendMessage(query)
+		deferred.await()
+	} finally {
+		p.currentChatInputForm = null
+	}
 }
 
 suspend fun promptChat(p: Player, query: String): String {
@@ -28,8 +30,10 @@ class ChatInputListener : Listener {
 	@EventHandler(priority = EventPriority.LOWEST)
 	fun onPlayerChat(e: PlayerChatEvent) {
 		val form = e.player.currentChatInputForm ?: return
-		e.isCancelled = true
-		if (!form.isCompleted) form.complete(e.message)
+		if (!form.isCompleted) {
+			e.isCancelled = true
+			form.complete(e.message)
+		}
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)

@@ -1,10 +1,12 @@
 package com.fablesfantasyrp.plugin.magic.gui
 
-import com.fablesfantasyrp.plugin.characters.currentPlayerCharacter
 import com.fablesfantasyrp.plugin.form.promptGui
-import com.fablesfantasyrp.plugin.magic.*
+import com.fablesfantasyrp.plugin.magic.PLUGIN
 import com.fablesfantasyrp.plugin.magic.data.SpellData
 import com.fablesfantasyrp.plugin.magic.data.entity.Mage
+import com.fablesfantasyrp.plugin.magic.getMaxSpells
+import com.fablesfantasyrp.plugin.magic.getRequiredMageLevel
+import com.fablesfantasyrp.plugin.magic.spellRepository
 import com.github.shynixn.mccoroutine.bukkit.launch
 import de.themoep.inventorygui.*
 import org.bukkit.ChatColor
@@ -15,7 +17,8 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.function.Function
 
-class SpellbookGui(plugin: JavaPlugin, private val mage: Mage) : InventoryGui(plugin, "Your grimoire",
+class SpellbookGui(plugin: JavaPlugin, private val mage: Mage, private val readOnly: Boolean = false)
+	: InventoryGui(plugin, "${mage.playerCharacter.name}'s grimoire",
 		arrayOf("agggggggg",
 				"bhhhhhhhh",
 				"cjjjjjjjj",
@@ -31,7 +34,7 @@ class SpellbookGui(plugin: JavaPlugin, private val mage: Mage) : InventoryGui(pl
 			val spellsInLevel = spells[spellLevel] ?: emptyList()
 			for (slot in 1..getMaxSpells(10, spellLevel)) {
 				val spell = spellsInLevel.getOrNull(slot-1)
-				slots[slot] = DynamicSpellSlotElement(spellLevel, slot, spell == null, spell, mage)
+				slots[slot] = DynamicSpellSlotElement(spellLevel, slot, spell == null, spell, mage, readOnly)
 			}
 
 			spellLevels[spellLevel] = slots
@@ -57,15 +60,17 @@ class SpellbookGui(plugin: JavaPlugin, private val mage: Mage) : InventoryGui(pl
 		this.addElement(SpellLevelTitleElement(4, 'd'))
 		this.addElement(SpellLevelTitleElement(5, 'e'))
 
-		this.addElement(StaticGuiElement('y', ItemStack(Material.GREEN_WOOL), {
-			this.confirm()
-			true
-		}, "${ChatColor.GREEN}Confirm"))
+		if (!readOnly) {
+			this.addElement(StaticGuiElement('y', ItemStack(Material.GREEN_WOOL), {
+				this.confirm()
+				true
+			}, "${ChatColor.GREEN}Confirm"))
 
-		this.addElement(StaticGuiElement('n', ItemStack(Material.RED_WOOL), {
-			this.cancel()
-			true
-		}, "${ChatColor.RED}Cancel"))
+			this.addElement(StaticGuiElement('n', ItemStack(Material.RED_WOOL), {
+				this.cancel()
+				true
+			}, "${ChatColor.RED}Cancel"))
+		}
 	}
 
 	fun confirm() {
@@ -84,7 +89,8 @@ class SpellbookGui(plugin: JavaPlugin, private val mage: Mage) : InventoryGui(pl
 										  val n: Int,
 										  val isMutable: Boolean,
 										  var content: SpellData?,
-										  private val mage: Mage)
+										  private val mage: Mage,
+										  private val readOnly: Boolean = false)
 		: DynamicGuiElement('e', { who -> StaticGuiElement('e', ItemStack(Material.GRAY_STAINED_GLASS_PANE)) }) {
 		init {
 			check(n <= getMaxSpells(10, spellLevel))
@@ -98,7 +104,6 @@ class SpellbookGui(plugin: JavaPlugin, private val mage: Mage) : InventoryGui(pl
 
 		private val chooseSpellAction: GuiElement.Action = GuiElement.Action { click ->
 			val player = click.whoClicked as? Player ?: return@Action true
-			val mage = player.currentPlayerCharacter?.let { mageRepository.forPlayerCharacter(it) } ?: return@Action true
 			PLUGIN.launch {
 				val mappedSpellSlots = spellSlots.values.map { it.content }
 				val gui = SpellSelectorGui(PLUGIN, spellRepository.forLevelAndPath(spellLevel, mage.magicPath)
@@ -134,8 +139,13 @@ class SpellbookGui(plugin: JavaPlugin, private val mage: Mage) : InventoryGui(pl
 				return@Function StaticGuiElement('e', ItemStack(Material.RED_STAINED_GLASS_PANE),
 						"Slot available from mage level $requiredMageLevel")
 			} else {
-				return@Function StaticGuiElement('e', ItemStack(Material.GREEN_STAINED_GLASS_PANE), chooseSpellAction,
-						"${ChatColor.RESET}Available slot.\n${ChatColor.GREEN}Click to choose a spell!")
+				if (!readOnly) {
+					return@Function StaticGuiElement('e', ItemStack(Material.GREEN_STAINED_GLASS_PANE), chooseSpellAction,
+							"${ChatColor.RESET}Available slot.\n${ChatColor.GREEN}Click to choose a spell!")
+				} else {
+					return@Function StaticGuiElement('e', ItemStack(Material.GREEN_STAINED_GLASS_PANE),
+							"${ChatColor.RESET}Available slot.")
+				}
 			}
 		}
 

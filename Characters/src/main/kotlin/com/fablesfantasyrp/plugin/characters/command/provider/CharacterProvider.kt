@@ -12,16 +12,23 @@ import com.sk89q.intake.parametric.Provider
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.permissions.Permissible
 
 class CharacterProvider(private val server: Server) : Provider<Character> {
 	override fun isProvided(): Boolean = false
 
 	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): Character? {
 		val sender = arguments.namespace.get("sender") as CommandSender
-		val targetAnnotation = modifiers.find { it is CommandTarget }
+		val targetAnnotation = modifiers.find { it is CommandTarget } as? CommandTarget
 
 		if (arguments.hasNext()) {
 			val name = arguments.next()
+			val permissible = arguments.namespace.get(Permissible::class.java)!!
+
+			if (targetAnnotation != null && targetAnnotation.value.isNotBlank() && !permissible.hasPermission(targetAnnotation.value)) {
+				throw ArgumentParseException("You need " + targetAnnotation.value)
+			}
+
 			return server.playerCharacters.asSequence().filter { it.name == name }.firstOrNull()
 					?: throw ArgumentParseException("A character called '$name' could not be found")
 		} else if (targetAnnotation != null && sender is Player && sender.currentPlayerCharacter != null) {
