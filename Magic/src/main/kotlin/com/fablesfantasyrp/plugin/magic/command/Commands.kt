@@ -2,7 +2,6 @@ package com.fablesfantasyrp.plugin.magic.command
 
 import com.fablesfantasyrp.plugin.characters.data.CharacterData
 import com.fablesfantasyrp.plugin.characters.currentPlayerCharacter
-import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterData
 import com.fablesfantasyrp.plugin.magic.*
 import com.fablesfantasyrp.plugin.magic.ability.MageAbility
 import com.fablesfantasyrp.plugin.magic.animations.NecromancyBlightAnimation
