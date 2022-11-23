@@ -15,7 +15,7 @@ open class MassivelyCachingEntityRepository<K, T: Identifiable<K>, C>(child: C) 
 
 	override fun create(v: T): T {
 		val result = child.create(v)
-		this.markStrong(v)
+		this.markStrong(result)
 		return result
 	}
 }
