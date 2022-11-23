@@ -25,7 +25,7 @@ import org.bukkit.entity.Player
 val SYSPREFIX = "${GOLD}${BOLD}[${LIGHT_PURPLE}${BOLD} PLAYER INSTANCE ${GOLD}${BOLD}]${GRAY}"
 internal val PLUGIN get() = FablesPlayerInstance.instance
 
-private lateinit var playerInstanceManager: PlayerInstanceManager
+lateinit var playerInstanceManager: PlayerInstanceManager
 lateinit var playersInstances: EntityPlayerInstanceRepository<*>
 	private set
 

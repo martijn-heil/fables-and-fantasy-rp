@@ -30,4 +30,5 @@ include("HorseLimits",
 		"WorldGuardInterop",
 		"PlayerInstance",
 		"Inventory",
-		"Magic")
+		"Magic",
+		"Location")

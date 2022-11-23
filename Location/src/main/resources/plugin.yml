@@ -1,0 +1,9 @@
+name: FablesLocation
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+  - FablesPlayerInstance
+main: com.fablesfantasyrp.plugin.location.FablesLocation
+api-version: @bukkit_api_version@
