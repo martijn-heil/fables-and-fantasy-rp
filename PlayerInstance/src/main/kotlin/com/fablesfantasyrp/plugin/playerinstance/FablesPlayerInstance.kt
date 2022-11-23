@@ -26,7 +26,7 @@ val SYSPREFIX = "${GOLD}${BOLD}[${LIGHT_PURPLE}${BOLD} PLAYER INSTANCE ${GOLD}${
 internal val PLUGIN get() = FablesPlayerInstance.instance
 
 lateinit var playerInstanceManager: PlayerInstanceManager
-lateinit var playersInstances: EntityPlayerInstanceRepository<*>
+lateinit var playerInstances: EntityPlayerInstanceRepository<*>
 	private set
 
 class FablesPlayerInstance : SuspendingJavaPlugin() {
@@ -45,7 +45,7 @@ class FablesPlayerInstance : SuspendingJavaPlugin() {
 			return
 		}
 
-		playersInstances = EntityPlayerInstanceRepository(H2PlayerInstanceRepository(server, fablesDatabase))
+		playerInstances = EntityPlayerInstanceRepository(H2PlayerInstanceRepository(server, fablesDatabase))
 		playerInstanceManager = PlayerInstanceManager(server)
 
 		val injector = Intake.createInjector()
@@ -53,13 +53,13 @@ class FablesPlayerInstance : SuspendingJavaPlugin() {
 		injector.install(BukkitModule(server))
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
-		injector.install(PlayerInstanceModule(playersInstances))
+		injector.install(PlayerInstanceModule(playerInstances))
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()
 
 		val rootDispatcherNode = CommandGraph().builder(builder).commands()
-		rootDispatcherNode.group("playerinstance").registerMethods(Commands.CommandPlayerInstance(playersInstances))
+		rootDispatcherNode.group("playerinstance").registerMethods(Commands.CommandPlayerInstance(playerInstances))
 		rootDispatcherNode.registerMethods(Commands())
 		val dispatcher = rootDispatcherNode.dispatcher
 

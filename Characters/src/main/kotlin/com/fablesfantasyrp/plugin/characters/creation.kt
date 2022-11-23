@@ -86,7 +86,7 @@ suspend fun promptNewCharacterInfo(player: Player): NewCharacterData {
 		val description = player.promptChat(miniMessage.deserialize("<gray>What is the description of <yellow><name></yellow>?</gray>",
 				Placeholder.unparsed("name", name)))
 
-		player.sendMessage(miniMessage.deserialize("<gray>Your character's description is <yellow<description></yellow></gray>",
+		player.sendMessage(miniMessage.deserialize("<gray>Your character's description is <yellow><description></yellow></gray>",
 				Placeholder.unparsed("description", description)))
 
 		val baseStats = CharacterStats(2U, 2U, 2U, 2U) + race.boosters

@@ -6,8 +6,9 @@ import com.fablesfantasyrp.plugin.characters.data.CharacterData
 import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
 import com.fablesfantasyrp.plugin.characters.data.persistent.H2CharacterRepository
 import com.fablesfantasyrp.plugin.database.FablesDatabase
+import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.denizeninterop.dFlags
-import com.fablesfantasyrp.plugin.playerinstance.playersInstances
+import com.fablesfantasyrp.plugin.playerinstance.playerInstances
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
@@ -39,9 +40,16 @@ class FablesCharacters : SuspendingJavaPlugin() {
 		enforceDependencies(this)
 		instance = this
 
+		try {
+			applyMigrations(this, "FABLES_CHARACTERS", this.classLoader)
+		} catch (e: Exception) {
+			this.isEnabled = false
+			return
+		}
+
 		//playerCharacterRepository = DenizenCharacterRepository(server)
 		playerCharacterRepository = EntityCharacterRepository(
-				H2CharacterRepository(server, FablesDatabase.fablesDatabase, playersInstances), playersInstances)
+				H2CharacterRepository(server, FablesDatabase.fablesDatabase, playerInstances), playerInstances)
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())
@@ -53,12 +61,11 @@ class FablesCharacters : SuspendingJavaPlugin() {
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()
 
-		val dispatcher = CommandGraph()
-				.builder(builder)
-				.commands()
-				.registerMethods(Commands(this))
-				.graph()
-				.dispatcher
+		val rootDispatcherNode = CommandGraph().builder(builder).commands()
+		rootDispatcherNode.group("characters", "chars", "fchars", "fcharacters")
+				.registerMethods(Commands.Characters(this, playerInstances))
+		rootDispatcherNode.registerMethods(Commands(this))
+		val dispatcher = rootDispatcherNode.dispatcher
 
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
 	}

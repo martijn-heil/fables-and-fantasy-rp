@@ -16,7 +16,7 @@ class PlayerInstanceListener : Listener {
 			if (!e.player.isOnline) return@launch
 			VanishAPI.hidePlayer(e.player)
 			e.player.currentPlayerInstance = e.player.promptGui(PlayerInstanceSelectionGui(PLUGIN,
-					playersInstances.forOwner(e.player).asSequence()))
+					playerInstances.forOwner(e.player).asSequence()))
 			VanishAPI.showPlayer(e.player)
 		}
 	}

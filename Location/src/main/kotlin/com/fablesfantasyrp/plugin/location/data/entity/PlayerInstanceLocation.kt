@@ -15,6 +15,7 @@ class PlayerInstanceLocation : DataEntity<Int, PlayerInstanceLocation>, PlayerIn
 	var player: Player? = null
 		set(newValue) {
 			val oldValue = field
+			if (newValue == oldValue) return
 			field = null
 			if (oldValue != null) location = oldValue.location
 			if (newValue != null) newValue.teleport(location)

@@ -1,4 +1,4 @@
-CREATE TABLE player_characters (
+CREATE TABLE characters (
 	id						BIGINT NOT NULL,
 	is_alive				BOOLEAN NOT NULL DEFAULT TRUE,
 	name					VARCHAR(32) NOT NULL,

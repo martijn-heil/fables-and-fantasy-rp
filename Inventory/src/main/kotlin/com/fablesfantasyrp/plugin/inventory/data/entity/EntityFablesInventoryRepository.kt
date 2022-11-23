@@ -5,6 +5,8 @@ import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.KeyedRepository
 import com.fablesfantasyrp.plugin.database.repository.MutableRepository
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
+import java.lang.ref.WeakReference
+import kotlin.concurrent.withLock
 
 class EntityFablesInventoryRepository<C>(child: C)
 	: MassivelyCachingEntityRepository<Int, PlayerInstanceInventory, C>(child), FablesInventoryRepository
@@ -15,6 +17,9 @@ class EntityFablesInventoryRepository<C>(child: C)
 	override fun forOwner(playerInstance: PlayerInstance): PlayerInstanceInventory {
 		return this.forId(playerInstance.id) ?: run {
 			val result = child.forOwner(playerInstance)
+			lock.writeLock().withLock {
+				cache[result.id] = WeakReference(result)
+			}
 			this.markStrong(result)
 			result
 		}

@@ -41,7 +41,7 @@ class H2CharacterRepository(private val server: Server,
 
 	override fun create(v: Character): Character {
 		dataSource.connection.use { connection ->
-			val stmnt = connection.prepareStatement("INSERT INTO fables_characters " +
+			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME " +
 					"(id, " +
 					"name, " +
 					"description, " +
