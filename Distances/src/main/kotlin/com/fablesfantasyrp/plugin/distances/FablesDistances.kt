@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.distances
 
-import com.fablesfantasyrp.plugin.characters.command.provider.PlayerCharacterModule
+import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
 import com.fablesfantasyrp.plugin.distances.command.Commands
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.FixedSuggestionsModule
@@ -31,7 +31,7 @@ class FablesDistances : JavaPlugin() {
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
 		injector.install(FixedSuggestionsModule(injector))
-		injector.install(PlayerCharacterModule(server))
+		injector.install(CharacterModule(server))
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()

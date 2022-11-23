@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.magic
 
-import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterData
+import com.fablesfantasyrp.plugin.characters.data.CharacterData
 import com.fablesfantasyrp.plugin.chat.chat
 import com.fablesfantasyrp.plugin.chat.getPlayersWithinRange
 import com.fablesfantasyrp.plugin.magic.data.SpellData
@@ -39,8 +39,8 @@ fun spellDisplay(spell: SpellData): Component = Component.text(spell.displayName
 		.color(NamedTextColor.DARK_PURPLE)
 		.hoverEvent(HoverEvent.showText(spellCard(spell)))
 
-fun getSpellCastingMessage(playerCharacter: PlayerCharacterData, spell: SpellData,
-								   success: Boolean, castingRoll: Int, effectiveness: SpellEffectiveness? = null): Component {
+fun getSpellCastingMessage(playerCharacter: CharacterData, spell: SpellData,
+						   success: Boolean, castingRoll: Int, effectiveness: SpellEffectiveness? = null): Component {
 	require(!success || effectiveness != null)
 	val player = playerCharacter.player.player!!
 

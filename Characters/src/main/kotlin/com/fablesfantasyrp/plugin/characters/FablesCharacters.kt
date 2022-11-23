@@ -1,11 +1,13 @@
 package com.fablesfantasyrp.plugin.characters
 
 import com.fablesfantasyrp.plugin.characters.command.Commands
-import com.fablesfantasyrp.plugin.characters.command.provider.PlayerCharacterModule
-import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterData
-import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterDataRepository
-import com.fablesfantasyrp.plugin.characters.data.persistent.denizen.DenizenPlayerCharacterRepository
+import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
+import com.fablesfantasyrp.plugin.characters.data.CharacterData
+import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
+import com.fablesfantasyrp.plugin.characters.data.persistent.H2CharacterRepository
+import com.fablesfantasyrp.plugin.database.FablesDatabase
 import com.fablesfantasyrp.plugin.denizeninterop.dFlags
+import com.fablesfantasyrp.plugin.playerinstance.playersInstances
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
@@ -25,7 +27,7 @@ import org.bukkit.command.Command
 
 internal val SYSPREFIX = "$GOLD[ $GREEN${BOLD}CHARACTERS $GOLD] $GRAY"
 
-lateinit var playerCharacterRepository: PlayerCharacterDataRepository
+lateinit var playerCharacterRepository: EntityCharacterRepository<*>
 	private set
 
 internal val PLUGIN get() = FablesCharacters.instance
@@ -37,14 +39,16 @@ class FablesCharacters : SuspendingJavaPlugin() {
 		enforceDependencies(this)
 		instance = this
 
-		playerCharacterRepository = DenizenPlayerCharacterRepository(server)
+		//playerCharacterRepository = DenizenCharacterRepository(server)
+		playerCharacterRepository = EntityCharacterRepository(
+				H2CharacterRepository(server, FablesDatabase.fablesDatabase, playersInstances), playersInstances)
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())
 		injector.install(BukkitModule(server))
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
-		injector.install(PlayerCharacterModule(server))
+		injector.install(CharacterModule(server))
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()
@@ -68,15 +72,15 @@ class FablesCharacters : SuspendingJavaPlugin() {
 	}
 }
 
-val OfflinePlayer.currentPlayerCharacter: PlayerCharacterData?
+val OfflinePlayer.currentPlayerCharacter: CharacterData?
 	get() {
 		val currentCharacter = dFlags.getFlagValue("characters_current") ?: return null
 		val id = currentCharacter.asElement().asLong().toULong()
 		return playerCharacterRepository.forId(id)!!
 	}
 
-val OfflinePlayer.playerCharacters: Collection<PlayerCharacterData>
-	get() = playerCharacterRepository.forOfflinePlayer(this)
+val OfflinePlayer.playerCharacters: Collection<CharacterData>
+	get() = playerCharacterRepository.forOwner(this)
 
-val Server.playerCharacters: Collection<PlayerCharacterData>
+val Server.playerCharacters: Collection<CharacterData>
 	get() = playerCharacterRepository.all()

@@ -2,7 +2,7 @@ package com.fablesfantasyrp.plugin.magic.data.entity
 
 import com.fablesfantasyrp.plugin.characters.currentPlayerCharacter
 import com.fablesfantasyrp.plugin.characters.data.CharacterStatKind
-import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterData
+import com.fablesfantasyrp.plugin.characters.data.CharacterData
 import com.fablesfantasyrp.plugin.characters.playerCharacterRepository
 import com.fablesfantasyrp.plugin.chat.awaitEmote
 import com.fablesfantasyrp.plugin.chat.chat
@@ -39,7 +39,7 @@ import org.bukkit.GameMode
 
 
 class Mage : MageData, HasDirtyMarker<Mage> {
-	val playerCharacter: PlayerCharacterData
+	val playerCharacter: CharacterData
 		get() = playerCharacterRepository.forId(id.toULong())!!
 
 	var isDeleted: Boolean = false

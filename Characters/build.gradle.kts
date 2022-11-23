@@ -11,5 +11,7 @@ dependencies {
     implementation(project(":Form"))
     implementation(project(":KotlinRuntime"))
     implementation(project(":Text"))
+    implementation(project(":PlayerInstance"))
+    implementation(project(":Location"))
     api(project(":Database"))
 }

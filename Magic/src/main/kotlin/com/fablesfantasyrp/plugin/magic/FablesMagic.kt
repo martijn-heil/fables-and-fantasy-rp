@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.magic
 
-import com.fablesfantasyrp.plugin.characters.command.provider.PlayerCharacterModule
+import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
 import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.magic.command.Commands
@@ -66,7 +66,7 @@ class FablesMagic : SuspendingJavaPlugin() {
 		injector.install(BukkitModule(server))
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
-		injector.install(PlayerCharacterModule(server))
+		injector.install(CharacterModule(server))
 		injector.install(MagicModule(server))
 
 		val builder = ParametricBuilder(injector)

@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.characters.command.provider
 
 import com.fablesfantasyrp.plugin.characters.currentPlayerCharacter
-import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterData
+import com.fablesfantasyrp.plugin.characters.data.CharacterData
 import com.fablesfantasyrp.plugin.characters.playerCharacters
 import com.gitlab.martijn_heil.nincommands.common.CommandTarget
 import com.sk89q.intake.argument.ArgumentParseException
@@ -12,10 +12,10 @@ import org.bukkit.Server
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class PlayerCharacterProvider(private val server: Server) : Provider<PlayerCharacterData> {
+class CharacterProvider(private val server: Server) : Provider<CharacterData> {
 	override fun isProvided(): Boolean = false
 
-	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): PlayerCharacterData? {
+	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): CharacterData? {
 		val sender = arguments.namespace.get("sender") as CommandSender
 		val targetAnnotation = modifiers.find { it is CommandTarget }
 

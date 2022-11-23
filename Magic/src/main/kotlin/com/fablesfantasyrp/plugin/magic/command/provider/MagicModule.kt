@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.magic.command.provider
 
-import com.fablesfantasyrp.plugin.characters.command.provider.PlayerCharacterProvider
+import com.fablesfantasyrp.plugin.characters.command.provider.CharacterProvider
 import com.fablesfantasyrp.plugin.magic.MagicPath
 import com.fablesfantasyrp.plugin.magic.MagicType
 import com.fablesfantasyrp.plugin.magic.ability.MageAbility
@@ -14,7 +14,7 @@ import org.bukkit.Server
 
 class MagicModule(private val server: Server) : AbstractModule() {
 	override fun configure() {
-		bind(Mage::class.java).toProvider(MageProvider(PlayerCharacterProvider(server)))
+		bind(Mage::class.java).toProvider(MageProvider(CharacterProvider(server)))
 		bind(Mage::class.java).annotatedWith(Sender::class.java).toProvider(MageSenderProvider())
 		bind(SimpleSpellData::class.java).annotatedWith(OwnSpell::class.java)
 				.toProvider(OwnSpellDataProvider(SpellDataProvider(spellRepository)))

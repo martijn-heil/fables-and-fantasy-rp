@@ -2,14 +2,15 @@ package com.fablesfantasyrp.plugin.characters.command
 
 import com.denizenscript.denizen.objects.PlayerTag
 import com.denizenscript.denizencore.objects.core.ElementTag
-import com.fablesfantasyrp.plugin.characters.FablesCharacters
-import com.fablesfantasyrp.plugin.characters.Permission
-import com.fablesfantasyrp.plugin.characters.SYSPREFIX
+import com.fablesfantasyrp.plugin.characters.*
+import com.fablesfantasyrp.plugin.characters.data.CharacterData
 import com.fablesfantasyrp.plugin.characters.data.CharacterStats
-import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterData
+import com.fablesfantasyrp.plugin.characters.data.entity.Character
 import com.fablesfantasyrp.plugin.characters.gui.CharacterStatsGui
-import com.fablesfantasyrp.plugin.characters.playerCharacters
 import com.fablesfantasyrp.plugin.denizeninterop.denizenRun
+import com.fablesfantasyrp.plugin.playerinstance.currentPlayerInstance
+import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
+import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstanceRepository
 import com.fablesfantasyrp.plugin.text.join
 import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
@@ -23,11 +24,12 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
+import java.time.Instant
 
 class Commands(private val plugin: SuspendingJavaPlugin) {
 	@Command(aliases = ["cardother"], desc = "Show another character's card")
 	@Require(Permission.Command.Cardother)
-	fun cardother(@Sender sender: Player, target: PlayerCharacterData) {
+	fun cardother(@Sender sender: Player, target: CharacterData) {
 		denizenRun("characters_print_card", mapOf(
 				Pair("player", PlayerTag(sender)),
 				Pair("target", PlayerTag(target.player)),
@@ -59,7 +61,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 
 	@Command(aliases = ["updatestats"], desc = "Update a player's character stats")
 	@Require(Permission.Command.Updatestats)
-	fun updatestats(@Sender sender: Player, target: PlayerCharacterData) {
+	fun updatestats(@Sender sender: Player, target: CharacterData) {
 		val minimums = target.race.boosters + CharacterStats(2U, 2U, 2U, 2U)
 		var initialSliderValues = target.stats - minimums
 		if (initialSliderValues.strength > 8U ||
@@ -83,6 +85,36 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 					Pair("agility", ElementTag(result.agility.toInt())),
 					Pair("intelligence", ElementTag(result.intelligence.toInt()))
 			))
+		}
+	}
+
+	class Characters(private val plugin: SuspendingJavaPlugin,
+					 private val playerInstanceRepository: PlayerInstanceRepository) {
+		@Command(aliases = ["new"], desc = "Create a new character!")
+		@Require(Permission.Command.Characters.New)
+		fun new(@Sender sender: Player) {
+			plugin.launch {
+				val info = promptNewCharacterInfo(sender)
+				sender.sendMessage(info.toString())
+
+				val playerInstance = playerInstanceRepository.create(PlayerInstance(
+						id = 0,
+						owner = sender
+				))
+
+				val character = playerCharacterRepository.create(Character(
+						id = playerInstance.id.toULong(),
+						name = info.name,
+						age = info.age,
+						description = info.description,
+						gender = info.gender,
+						race = info.race,
+						stats = info.stats,
+						playerInstance = playerInstance,
+						createdAt = Instant.now()))
+
+				sender.currentPlayerInstance = playerInstance
+			}
 		}
 	}
 }

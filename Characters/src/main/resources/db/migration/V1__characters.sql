@@ -1,0 +1,21 @@
+CREATE TABLE player_characters (
+	id						BIGINT NOT NULL,
+	is_alive				BOOLEAN NOT NULL DEFAULT TRUE,
+	name					VARCHAR(32) NOT NULL,
+	description				TEXT,
+	age						INTEGER NOT NULL,
+	race					VARCHAR(32) NOT NULL,
+	gender					INTEGER NOT NULL,
+	created_at				TIMESTAMP WITH TIME ZONE,
+	last_seen				TIMESTAMP WITH TIME ZONE,
+	stat_strength			TINYINT NOT NULL,
+	stat_defense			TINYINT NOT NULL,
+	stat_agility			TINYINT NOT NULL,
+	stat_intelligence		TINYINT NOT NULL,
+	PRIMARY KEY (id),
+	UNIQUE (name),
+	CHECK (stat_strength > 0),
+	CHECK (stat_defense > 0),
+	CHECK (stat_agility > 0),
+	CHECK (stat_intelligence > 0)
+);
