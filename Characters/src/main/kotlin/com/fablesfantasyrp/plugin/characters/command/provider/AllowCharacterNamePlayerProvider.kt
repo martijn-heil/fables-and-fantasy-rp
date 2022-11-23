@@ -35,7 +35,7 @@ class AllowCharacterNamePlayerProvider(private val server: Server,
 
 	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
 		return server.playerCharacters.asSequence()
-				.filter { it.player.isOnline && it.player.currentPlayerCharacter == it }
+				.filter { it.player.isOnline && it.player.player?.currentPlayerCharacter == it }
 				.map { it.name }
 				.plus(playerProvider.getSuggestions(prefix, locals, modifiers))
 				.filter { it.startsWith(prefix.removePrefix("\""), true) }

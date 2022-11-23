@@ -7,7 +7,7 @@ import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterReposito
 import com.fablesfantasyrp.plugin.characters.data.persistent.H2CharacterRepository
 import com.fablesfantasyrp.plugin.database.FablesDatabase
 import com.fablesfantasyrp.plugin.database.applyMigrations
-import com.fablesfantasyrp.plugin.denizeninterop.dFlags
+import com.fablesfantasyrp.plugin.playerinstance.playerInstanceManager
 import com.fablesfantasyrp.plugin.playerinstance.playerInstances
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
@@ -25,6 +25,7 @@ import org.bukkit.ChatColor.*
 import org.bukkit.OfflinePlayer
 import org.bukkit.Server
 import org.bukkit.command.Command
+import org.bukkit.entity.Player
 
 internal val SYSPREFIX = "$GOLD[ $GREEN${BOLD}CHARACTERS $GOLD] $GRAY"
 
@@ -79,11 +80,14 @@ class FablesCharacters : SuspendingJavaPlugin() {
 	}
 }
 
-val OfflinePlayer.currentPlayerCharacter: Character?
+var Player.currentPlayerCharacter: Character?
 	get() {
-		val currentCharacter = dFlags.getFlagValue("characters_current") ?: return null
-		val id = currentCharacter.asElement().asLong().toULong()
-		return playerCharacterRepository.forId(id)!!
+		return playerInstanceManager.getCurrentForPlayer(this)
+				?.let { playerCharacterRepository.forId(it.id.toULong()) }
+	}
+	set(value) {
+		require(value != null)
+		playerInstanceManager.setCurrentForPlayer(this, playerInstances.forId(value.id.toInt())!!)
 	}
 
 val OfflinePlayer.playerCharacters: Collection<Character>

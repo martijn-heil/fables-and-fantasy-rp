@@ -2,6 +2,7 @@ package com.fablesfantasyrp.plugin.characters
 
 import com.fablesfantasyrp.plugin.characters.data.CharacterStatKind
 import com.fablesfantasyrp.plugin.characters.data.entity.Character
+import com.fablesfantasyrp.plugin.playerinstance.playerInstanceManager
 import com.fablesfantasyrp.plugin.text.join
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.parseLinks
@@ -32,7 +33,8 @@ fun characterCard(character: Character): Component {
 					"Stats:<newline>" +
 					"<stats><newline>" +
 					"</green>",
-			Placeholder.unparsed("player_name", character.player.name ?: "(unknown player)"),
+			Placeholder.unparsed("player_name",
+					playerInstanceManager.getCurrentForPlayerInstance(character.playerInstance)?.name ?: "(unknown player)"),
 			Placeholder.unparsed("id", character.id.toString()),
 			Placeholder.unparsed("name", character.name),
 			Placeholder.unparsed("age", character.age.toString()),
