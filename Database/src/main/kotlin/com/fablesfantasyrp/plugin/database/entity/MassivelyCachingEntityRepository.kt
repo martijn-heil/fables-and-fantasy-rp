@@ -15,6 +15,9 @@ open class MassivelyCachingEntityRepository<K, T: Identifiable<K>, C>(child: C) 
 
 	override fun create(v: T): T {
 		val result = child.create(v)
+		lock.writeLock().withLock {
+			cache[result.id] = WeakReference(result)
+		}
 		this.markStrong(result)
 		return result
 	}
