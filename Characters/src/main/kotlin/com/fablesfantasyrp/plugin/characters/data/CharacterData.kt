@@ -14,4 +14,6 @@ interface CharacterData : Identifiable<ULong> {
 	val location: Location
 	val money: ULong
 	val player: OfflinePlayer
+
+	val maximumHealth: UInt get() = (12 + CharacterStatKind.STRENGTH.getRollModifierFor(stats.strength)).toUInt()
 }

@@ -2,7 +2,7 @@ package com.fablesfantasyrp.plugin.characters
 
 import com.fablesfantasyrp.plugin.characters.command.Commands
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
-import com.fablesfantasyrp.plugin.characters.data.CharacterData
+import com.fablesfantasyrp.plugin.characters.data.entity.Character
 import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
 import com.fablesfantasyrp.plugin.characters.data.persistent.H2CharacterRepository
 import com.fablesfantasyrp.plugin.database.FablesDatabase
@@ -79,15 +79,15 @@ class FablesCharacters : SuspendingJavaPlugin() {
 	}
 }
 
-val OfflinePlayer.currentPlayerCharacter: CharacterData?
+val OfflinePlayer.currentPlayerCharacter: Character?
 	get() {
 		val currentCharacter = dFlags.getFlagValue("characters_current") ?: return null
 		val id = currentCharacter.asElement().asLong().toULong()
 		return playerCharacterRepository.forId(id)!!
 	}
 
-val OfflinePlayer.playerCharacters: Collection<CharacterData>
+val OfflinePlayer.playerCharacters: Collection<Character>
 	get() = playerCharacterRepository.forOwner(this)
 
-val Server.playerCharacters: Collection<CharacterData>
+val Server.playerCharacters: Collection<Character>
 	get() = playerCharacterRepository.all()

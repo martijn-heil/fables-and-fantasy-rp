@@ -34,7 +34,7 @@ class H2CharacterRepository(private val server: Server,
 	override fun destroy(v: Character) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("DELETE FROM $TABLE_NAME WHERE id = ?")
-			stmnt.setObject(1, v.id)
+			stmnt.setLong(1, v.id.toLong())
 			stmnt.executeUpdate()
 		}
 	}
@@ -75,7 +75,7 @@ class H2CharacterRepository(private val server: Server,
 	override fun forId(id: ULong): Character? {
 		return dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE id = ?")
-			stmnt.setObject(1, id)
+			stmnt.setLong(1, id.toLong())
 			val result = stmnt.executeQuery()
 			if (!result.next()) {
 				return null
