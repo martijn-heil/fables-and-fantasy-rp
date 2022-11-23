@@ -6,9 +6,11 @@ object Permission {
 	object Command {
 		private const val prefix = Permission.prefix + ".command"
 
-		object FastTravel {
+		object CommandPlayerInstance {
 			private const val prefix = Permission.Command.prefix + ".playerinstance"
 			const val List = "${prefix}.list"
+			const val New = "${prefix}.new"
+			const val Become = "${prefix}.become"
 		}
 	}
 }
