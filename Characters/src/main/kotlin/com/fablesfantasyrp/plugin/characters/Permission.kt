@@ -15,6 +15,7 @@ object Permission {
 			object Stats {
 				private const val prefix = Permission.Command.Characters.prefix + ".characters"
 				const val Set = "${Command.prefix}.set"
+				const val Edit = "${Command.prefix}.edit"
 			}
 		}
 	}

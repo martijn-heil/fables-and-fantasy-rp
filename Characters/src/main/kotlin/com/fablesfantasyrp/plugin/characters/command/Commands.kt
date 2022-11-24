@@ -101,7 +101,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 			sender.sendMessage(characterCard(target))
 		}
 
-		class Stats {
+		class Stats(private val plugin: SuspendingJavaPlugin) {
 			@Command(aliases = ["set"], desc = "Set character stats")
 			@Require(Permission.Command.Characters.Stats.Set)
 			fun set(@Sender sender: CommandSender,
@@ -110,6 +110,26 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 					@CommandTarget(Permission.Command.Characters.Stats.Set + ".others") target: Character) {
 				target.stats = target.stats.with(stat, value.toUInt())
 				sender.sendMessage("$SYSPREFIX Set ${target.name}'s ${stat.toString().lowercase()} to $value")
+			}
+
+			@Command(aliases = ["edit"], desc = "Edit character stats")
+			@Require(Permission.Command.Characters.Stats.Edit)
+			fun edit(@Sender sender: Player,
+					@CommandTarget(Permission.Command.Characters.Stats.Edit + ".others") target: Character) {
+				val minimums = target.race.boosters + CharacterStats(2U, 2U, 2U, 2U)
+				var initialSliderValues = target.stats - minimums
+				if (initialSliderValues.strength > 8U ||
+						initialSliderValues.defense > 8U ||
+						initialSliderValues.agility > 8U ||
+						initialSliderValues.intelligence > 8u) {
+					sender.sendMessage("$SYSPREFIX Detected that you will be editing legacy player stats, starting with a clean slate.")
+					initialSliderValues = CharacterStats(0U, 0U, 0U, 0U)
+				}
+
+				val gui = CharacterStatsGui(FablesCharacters.instance, minimums, "#${target.id} ${target.name}'s stats",
+						initialSliderValues)
+
+				plugin.launch { target.stats = gui.execute(sender) }
 			}
 		}
 	}

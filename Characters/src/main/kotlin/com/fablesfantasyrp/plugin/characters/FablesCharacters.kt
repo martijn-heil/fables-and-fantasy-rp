@@ -65,7 +65,7 @@ class FablesCharacters : SuspendingJavaPlugin() {
 		val rootDispatcherNode = CommandGraph().builder(builder).commands()
 		val charactersCommand = rootDispatcherNode.group("characters", "chars", "fchars", "fcharacters")
 		charactersCommand.registerMethods(Commands.Characters(this, playerInstances))
-		charactersCommand.group("stats").registerMethods(Commands.Characters.Stats())
+		charactersCommand.group("stats").registerMethods(Commands.Characters.Stats(this))
 		rootDispatcherNode.registerMethods(Commands(this))
 		val dispatcher = rootDispatcherNode.dispatcher
 
