@@ -12,6 +12,10 @@ object Permission {
 			const val New = "${Command.prefix}.new"
 			const val List = "${Command.prefix}.list"
 			const val Card = "${Command.prefix}.card"
+			object Stats {
+				private const val prefix = Permission.Command.Characters.prefix + ".characters"
+				const val Set = "${Command.prefix}.set"
+			}
 		}
 	}
 }

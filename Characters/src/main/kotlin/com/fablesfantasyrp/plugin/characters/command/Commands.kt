@@ -4,6 +4,7 @@ import com.denizenscript.denizen.objects.PlayerTag
 import com.denizenscript.denizencore.objects.core.ElementTag
 import com.fablesfantasyrp.plugin.characters.*
 import com.fablesfantasyrp.plugin.characters.data.CharacterData
+import com.fablesfantasyrp.plugin.characters.data.CharacterStatKind
 import com.fablesfantasyrp.plugin.characters.data.CharacterStats
 import com.fablesfantasyrp.plugin.characters.data.entity.Character
 import com.fablesfantasyrp.plugin.characters.gui.CharacterStatsGui
@@ -17,6 +18,7 @@ import com.gitlab.martijn_heil.nincommands.common.CommandTarget
 import com.gitlab.martijn_heil.nincommands.common.Sender
 import com.sk89q.intake.Command
 import com.sk89q.intake.Require
+import com.sk89q.intake.parametric.annotation.Range
 import org.bukkit.ChatColor
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
@@ -97,6 +99,18 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 		fun card(@Sender sender: CommandSender,
 				@CommandTarget(Permission.Command.Characters.Card + ".others") target: Character) {
 			sender.sendMessage(characterCard(target))
+		}
+
+		class Stats {
+			@Command(aliases = ["set"], desc = "Set character stats")
+			@Require(Permission.Command.Characters.Stats.Set)
+			fun set(@Sender sender: CommandSender,
+					stat: CharacterStatKind,
+					@Range(min = 0.0) value: Int,
+					@CommandTarget(Permission.Command.Characters.Stats.Set + ".others") target: Character) {
+				target.stats = target.stats.with(stat, value.toUInt())
+				sender.sendMessage("$SYSPREFIX Set ${target.name}'s ${stat.toString().lowercase()} to $value")
+			}
 		}
 	}
 }

@@ -63,8 +63,9 @@ class FablesCharacters : SuspendingJavaPlugin() {
 		builder.authorizer = BukkitAuthorizer()
 
 		val rootDispatcherNode = CommandGraph().builder(builder).commands()
-		rootDispatcherNode.group("characters", "chars", "fchars", "fcharacters")
-				.registerMethods(Commands.Characters(this, playerInstances))
+		val charactersCommand = rootDispatcherNode.group("characters", "chars", "fchars", "fcharacters")
+		charactersCommand.registerMethods(Commands.Characters(this, playerInstances))
+		charactersCommand.group("stats").registerMethods(Commands.Characters.Stats())
 		rootDispatcherNode.registerMethods(Commands(this))
 		val dispatcher = rootDispatcherNode.dispatcher
 

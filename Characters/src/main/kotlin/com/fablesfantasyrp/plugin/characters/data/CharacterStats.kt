@@ -11,6 +11,13 @@ data class CharacterStats(	val strength: UInt = 0U,
 		CharacterStatKind.INTELLIGENCE -> intelligence
 	}
 
+	fun with(kind: CharacterStatKind, value: UInt): CharacterStats = when (kind) {
+		CharacterStatKind.STRENGTH -> this.copy(strength = value)
+		CharacterStatKind.DEFENSE -> this.copy(defense = value)
+		CharacterStatKind.AGILITY -> this.copy(agility = value)
+		CharacterStatKind.INTELLIGENCE -> this.copy(intelligence = value)
+	}
+
 	operator fun plus(other: CharacterStats) = CharacterStats(
 			strength = other.strength + this.strength,
 			defense = other.defense + this.defense,
