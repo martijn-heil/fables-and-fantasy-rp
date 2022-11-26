@@ -2,6 +2,7 @@ package com.fablesfantasyrp.plugin.inventory.data.persistent
 
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
+import com.fablesfantasyrp.plugin.inventory.PassthroughInventory
 import com.fablesfantasyrp.plugin.inventory.PassthroughPlayerInventory
 import com.fablesfantasyrp.plugin.inventory.data.entity.FablesInventoryRepository
 import com.fablesfantasyrp.plugin.inventory.data.entity.PlayerInstanceInventory
@@ -19,10 +20,15 @@ class H2PlayerInstanceInventoryRepository(private val dataSource: DataSource)
 		val offlinePlayer = playerInstance.owner
 		val player = offlinePlayer.player
 		val inventory = this.forId(playerInstance.id) ?: run {
-			this.create(PlayerInstanceInventory(playerInstance.id, PassthroughPlayerInventory.createEmpty()))
+			this.create(PlayerInstanceInventory(
+					id = playerInstance.id,
+					inventory = PassthroughPlayerInventory.createEmpty(),
+					enderChest = PassthroughInventory(arrayOfNulls(27), 27))
+			)
 		}
 		if (offlinePlayer.isOnline && player != null) {
-			inventory.delegate.bukkitInventory = player.inventory
+			inventory.inventory.bukkitInventory = player.inventory
+			inventory.enderChest.bukkitInventory = player.enderChest
 		}
 		return inventory
 	}
@@ -49,14 +55,16 @@ class H2PlayerInstanceInventoryRepository(private val dataSource: DataSource)
 	override fun create(v: PlayerInstanceInventory): PlayerInstanceInventory {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME " +
-					"(id, inventory) " +
-					"VALUES (?, ?)")
+					"(id, inventory, ender_chest) " +
+					"VALUES (?, ?, ?)")
 			stmnt.setInt(1, v.id)
-			stmnt.setObject(2, v.delegate)
+			stmnt.setObject(2, v.inventory)
+			stmnt.setObject(3, v.enderChest)
 			stmnt.executeUpdate()
 			return PlayerInstanceInventory(
 					id = v.id,
-					delegate = v.delegate,
+					inventory = v.inventory,
+					enderChest = v.enderChest,
 					dirtyMarker = dirtyMarker
 			)
 		}
@@ -65,10 +73,12 @@ class H2PlayerInstanceInventoryRepository(private val dataSource: DataSource)
 	override fun update(v: PlayerInstanceInventory) {
 		return dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("UPDATE $TABLE_NAME SET " +
-				"inventory = ? " +
-				"WHERE id = ?")
-			stmnt.setObject(1, v.delegate)
-			stmnt.setInt(2, v.id)
+					"inventory = ?, " +
+					"ender_chest = ? " +
+					"WHERE id = ?")
+			stmnt.setObject(1, v.inventory)
+			stmnt.setObject(2, v.enderChest)
+			stmnt.setInt(3, v.id)
 			stmnt.executeUpdate()
 		}
 	}
@@ -96,10 +106,12 @@ class H2PlayerInstanceInventoryRepository(private val dataSource: DataSource)
 	private fun fromRow(row: ResultSet): PlayerInstanceInventory {
 		val id = row.getInt("id")
 		val inventory = row.getObject("inventory", PassthroughPlayerInventory::class.java)
+		val enderChest = row.getObject("ender_chest", PassthroughInventory::class.java)
 
 		return PlayerInstanceInventory(
 				id = id,
-				delegate = inventory,
+				inventory = inventory,
+				enderChest = enderChest,
 				dirtyMarker = dirtyMarker
 		)
 	}

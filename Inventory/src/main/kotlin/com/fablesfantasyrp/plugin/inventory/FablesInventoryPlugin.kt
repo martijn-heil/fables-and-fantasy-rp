@@ -60,7 +60,8 @@ class FablesInventoryPlugin : SuspendingJavaPlugin() {
 		//commands.forEach { unregisterCommand(it) }
 		server.onlinePlayers.forEach {
 			val instance = it.currentPlayerInstance ?: return@forEach
-			instance.inventory.delegate.bukkitInventory = null
+			instance.inventory.inventory.bukkitInventory = null
+			instance.inventory.enderChest.bukkitInventory = null
 		}
 		inventories.saveAll()
 	}

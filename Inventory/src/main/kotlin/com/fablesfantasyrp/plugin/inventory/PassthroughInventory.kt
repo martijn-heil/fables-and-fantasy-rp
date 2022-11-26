@@ -14,13 +14,14 @@ constructor(private val persistentContent: Array<SerializableItemStack?>, size: 
 
 	@Transient
 	open var bukkitInventory: Inventory? = null
-		set(newInventory) {
+		set(value) {
+			if (value == field) return
+			val newInventory = value
 			val oldInventory = field
-			if (oldInventory == newInventory) return
+			field = null
 
 			if (oldInventory != null) {
 				oldInventory.contents!!.map { it?.let { SerializableItemStack(it) } }.toTypedArray().copyInto(persistentContent)
-				oldInventory.clear()
 			}
 
 			if (newInventory != null) {

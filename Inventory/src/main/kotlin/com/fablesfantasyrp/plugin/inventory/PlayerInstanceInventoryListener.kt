@@ -12,7 +12,14 @@ class PlayerInstanceInventoryListener(private val inventories: FablesInventoryRe
 		val old = e.old
 		val new = e.new
 
-		if (old != null) old.inventory.delegate.bukkitInventory = null
-		if (new != null) new.inventory.delegate.bukkitInventory = e.player.inventory
+		if (old != null) {
+			old.inventory.inventory.bukkitInventory = null
+			old.inventory.enderChest.bukkitInventory = null
+		}
+
+		if (new != null) {
+			new.inventory.inventory.bukkitInventory = e.player.inventory
+			new.inventory.enderChest.bukkitInventory = e.player.enderChest
+		}
 	}
 }
