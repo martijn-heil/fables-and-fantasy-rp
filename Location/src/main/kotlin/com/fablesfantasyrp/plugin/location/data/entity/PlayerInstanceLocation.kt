@@ -3,6 +3,7 @@ package com.fablesfantasyrp.plugin.location.data.entity
 import com.fablesfantasyrp.plugin.database.entity.DataEntity
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.location.data.PlayerInstanceLocationData
+import com.fablesfantasyrp.plugin.utils.essentialsSpawn
 import org.bukkit.Location
 import org.bukkit.entity.Player
 
@@ -18,7 +19,13 @@ class PlayerInstanceLocation : DataEntity<Int, PlayerInstanceLocation>, PlayerIn
 			if (newValue == oldValue) return
 			field = null
 			if (oldValue != null) location = oldValue.location
-			if (newValue != null) newValue.teleport(location)
+			if (newValue != null) {
+				if (location.isWorldLoaded) {
+					newValue.teleport(location)
+				} else {
+					newValue.teleport(essentialsSpawn.getSpawn("default").toCenterLocation())
+				}
+			}
 			field = newValue
 		}
 

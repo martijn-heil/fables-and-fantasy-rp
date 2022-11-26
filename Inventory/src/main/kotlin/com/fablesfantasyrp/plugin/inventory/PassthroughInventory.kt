@@ -43,7 +43,7 @@ constructor(private val persistentContent: Array<SerializableItemStack?>, size: 
 			if (inventory != null) {
 				inventory.contents = value.toTypedArray()
 			} else {
-				super.contents = contents
+				super.contents = value
 			}
 		}
 

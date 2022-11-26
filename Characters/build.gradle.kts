@@ -13,5 +13,6 @@ dependencies {
     implementation(project(":Text"))
     implementation(project(":PlayerInstance"))
     implementation(project(":Location"))
+    implementation(project(":Inventory"))
     api(project(":Database"))
 }

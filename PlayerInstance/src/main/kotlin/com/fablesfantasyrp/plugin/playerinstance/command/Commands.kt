@@ -21,7 +21,7 @@ class Commands {
 		fun list(@Sender sender: Player,
 				 @CommandTarget(Permission.Command.CommandPlayerInstance.List + ".others") owner: OfflinePlayer) {
 			sender.sendMessage("$SYSPREFIX ${owner.name} has the following player instances:")
-			for (instance in instances.forOwner(sender)) {
+			for (instance in instances.forOwner(owner)) {
 				sender.sendMessage("${ChatColor.GRAY}#${instance.id}")
 			}
 		}

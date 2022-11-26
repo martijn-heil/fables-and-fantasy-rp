@@ -5,5 +5,6 @@ depend:
   - FablesKotlinRuntime
   - FablesUtils
   - FablesPlayerInstance
+  - EssentialsSpawn
 main: com.fablesfantasyrp.plugin.location.FablesLocation
 api-version: @bukkit_api_version@

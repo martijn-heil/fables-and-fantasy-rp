@@ -52,6 +52,8 @@ class FablesCharacters : SuspendingJavaPlugin() {
 		playerCharacterRepository = EntityCharacterRepository(
 				H2CharacterRepository(server, FablesDatabase.fablesDatabase, playerInstances), playerInstances)
 
+		migrateDenizenToSql(server, playerCharacterRepository, playerInstances)
+
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())
 		injector.install(BukkitModule(server))
