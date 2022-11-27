@@ -5,6 +5,7 @@ import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.playerinstance.command.Commands
 import com.fablesfantasyrp.plugin.playerinstance.command.provider.PlayerInstanceModule
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.EntityPlayerInstanceRepository
+import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
 import com.fablesfantasyrp.plugin.playerinstance.data.persistent.H2PlayerInstanceRepository
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
@@ -46,6 +47,7 @@ class FablesPlayerInstance : SuspendingJavaPlugin() {
 		}
 
 		playerInstances = EntityPlayerInstanceRepository(H2PlayerInstanceRepository(server, fablesDatabase))
+		playerInstances.init()
 		playerInstanceManager = PlayerInstanceManager(server)
 
 		val injector = Intake.createInjector()
@@ -85,4 +87,11 @@ var Player.currentPlayerInstance
 		} else {
 			playerInstanceManager.stopTracking(this)
 		}
+	}
+
+var PlayerInstance.currentPlayer: Player?
+	get() = playerInstanceManager.getCurrentForPlayerInstance(this)
+	set(value) {
+		require(value != null)
+		playerInstanceManager.setCurrentForPlayer(value, this)
 	}

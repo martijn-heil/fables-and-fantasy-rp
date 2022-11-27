@@ -1,6 +1,6 @@
 CREATE TABLE characters (
 	id						BIGINT NOT NULL,
-	is_alive				BOOLEAN NOT NULL DEFAULT TRUE,
+	is_dead					BOOLEAN NOT NULL DEFAULT FALSE,
 	name					VARCHAR(32) NOT NULL,
 	description				TEXT,
 	age						INTEGER NOT NULL,

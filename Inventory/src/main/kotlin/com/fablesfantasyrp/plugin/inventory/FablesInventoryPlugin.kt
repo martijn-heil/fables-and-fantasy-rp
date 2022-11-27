@@ -36,6 +36,7 @@ class FablesInventoryPlugin : SuspendingJavaPlugin() {
 		}
 
 		inventories = EntityFablesInventoryRepository(H2PlayerInstanceInventoryRepository(fablesDatabase))
+		inventories.init()
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())

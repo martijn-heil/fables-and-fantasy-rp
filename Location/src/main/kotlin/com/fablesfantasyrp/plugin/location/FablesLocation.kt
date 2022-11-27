@@ -33,6 +33,7 @@ class FablesLocation : SuspendingJavaPlugin() {
 
 		playerInstanceLocationRepository = EntityPlayerInstanceLocationRepository(
 				H2PlayerInstanceLocationRepository(fablesDatabase, server, playerInstanceManager, defaultLocation))
+		playerInstanceLocationRepository.init()
 
 		server.pluginManager.registerEvents(PlayerInstanceLocationListener(playerInstanceLocationRepository), this)
 	}

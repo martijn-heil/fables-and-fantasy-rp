@@ -43,5 +43,11 @@ class Commands {
 			sender.currentPlayerInstance = instance
 			sender.sendMessage("$SYSPREFIX You are now player instance #${instance.id}")
 		}
+
+		@Command(aliases = ["transfer"], desc = "Transfer a player instance")
+		@Require(Permission.Command.CommandPlayerInstance.Transfer)
+		fun transfer(@Sender sender: Player, instance: PlayerInstance, to: OfflinePlayer) {
+			instance.owner = to
+		}
 	}
 }

@@ -51,8 +51,9 @@ class FablesCharacters : SuspendingJavaPlugin() {
 		//playerCharacterRepository = DenizenCharacterRepository(server)
 		playerCharacterRepository = EntityCharacterRepository(
 				H2CharacterRepository(server, FablesDatabase.fablesDatabase, playerInstances), playerInstances)
+		playerCharacterRepository.init()
 
-		migrateDenizenToSql(server, playerCharacterRepository, playerInstances)
+		//migrateDenizenToSql(server, playerCharacterRepository, playerInstances)
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())
@@ -72,6 +73,8 @@ class FablesCharacters : SuspendingJavaPlugin() {
 		val dispatcher = rootDispatcherNode.dispatcher
 
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
+
+		server.pluginManager.registerEvents(CharactersListener(playerCharacterRepository), this)
 	}
 
 	override fun onDisable() {

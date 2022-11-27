@@ -93,6 +93,7 @@ internal fun migrateDenizenToSql(server: Server,
 					stats = it.stats,
 					age = it.age,
 					description = it.description,
+					createdAt = null
 			))
 
 			// TODO money?

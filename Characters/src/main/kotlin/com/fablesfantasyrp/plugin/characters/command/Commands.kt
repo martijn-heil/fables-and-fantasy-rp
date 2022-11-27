@@ -90,7 +90,8 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 				@CommandTarget(Permission.Command.Characters.List + ".others") owner: OfflinePlayer) {
 			sender.sendMessage("$SYSPREFIX ${owner.name} has the following characters:")
 			playerCharacterRepository.forOwner(owner).forEach {
-				sender.sendMessage("${ChatColor.GRAY}#${it.id} ${it.name}")
+				val dead = if (it.isDead) " ${ChatColor.RED}(dead)" else ""
+				sender.sendMessage("${ChatColor.GRAY}#${it.id} ${it.name}${dead}")
 			}
 		}
 
@@ -99,6 +100,22 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 		fun card(@Sender sender: CommandSender,
 				@CommandTarget(Permission.Command.Characters.Card + ".others") target: Character) {
 			sender.sendMessage(characterCard(target))
+		}
+
+		@Command(aliases = ["kill"], desc = "Kill a character")
+		@Require(Permission.Command.Characters.Kill)
+		fun kill(@Sender sender: CommandSender,
+				 @CommandTarget(Permission.Command.Characters.Kill + ".others") target: Character) {
+			target.isDead = true
+			sender.sendMessage("$SYSPREFIX Killed ${target.name}")
+		}
+
+		@Command(aliases = ["resurrect"], desc = "Resurrect a character")
+		@Require(Permission.Command.Characters.Resurrect)
+		fun resurrect(@Sender sender: CommandSender,
+				 @CommandTarget(Permission.Command.Characters.Resurrect + ".others") target: Character) {
+			target.isDead = false
+			sender.sendMessage("$SYSPREFIX Resurrected ${target.name}")
 		}
 
 		class Stats(private val plugin: SuspendingJavaPlugin) {

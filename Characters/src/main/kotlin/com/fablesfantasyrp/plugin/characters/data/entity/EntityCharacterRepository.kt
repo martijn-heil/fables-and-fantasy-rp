@@ -4,6 +4,7 @@ import com.fablesfantasyrp.plugin.database.entity.SimpleEntityRepository
 import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.KeyedRepository
 import com.fablesfantasyrp.plugin.database.repository.MutableRepository
+import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstanceRepository
 import org.bukkit.OfflinePlayer
 
@@ -14,5 +15,9 @@ class EntityCharacterRepository<C>(child: C, private val playerInstances: Player
 
 	override fun forOwner(offlinePlayer: OfflinePlayer): Collection<Character> {
 		return playerInstances.forOwner(offlinePlayer).mapNotNull { this.forId(it.id.toULong()) }
+	}
+
+	override fun forPlayerInstance(playerInstance: PlayerInstance): Character? {
+		return this.forId(playerInstance.id.toULong())
 	}
 }
