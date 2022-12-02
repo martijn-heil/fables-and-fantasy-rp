@@ -2,6 +2,7 @@ package com.fablesfantasyrp.plugin.characters.command.provider
 
 import com.fablesfantasyrp.plugin.characters.currentPlayerCharacter
 import com.fablesfantasyrp.plugin.characters.playerCharacters
+import com.fablesfantasyrp.plugin.utils.quoteCommandArgument
 import com.sk89q.intake.argument.ArgumentParseException
 import com.sk89q.intake.argument.CommandArgs
 import com.sk89q.intake.argument.Namespace
@@ -39,7 +40,7 @@ class AllowCharacterNamePlayerProvider(private val server: Server,
 				.map { it.name }
 				.plus(playerProvider.getSuggestions(prefix, locals, modifiers))
 				.filter { it.startsWith(prefix.removePrefix("\""), true) }
-				.map { quote(it) }
+				.map { quoteCommandArgument(it) }
 				.toList()
 	}
 }

@@ -1,0 +1,11 @@
+name: FablesEconomy
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+  - FablesPlayerInstance
+  - FablesCharacters
+  - EssentialsSpawn
+main: com.fablesfantasyrp.plugin.economy.FablesEconomy
+api-version: @bukkit_api_version@

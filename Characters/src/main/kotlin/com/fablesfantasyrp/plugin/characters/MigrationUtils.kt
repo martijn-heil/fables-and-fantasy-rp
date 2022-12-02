@@ -58,8 +58,8 @@ private fun denizenInventoryMapToArray(map: MapTag, size: UInt): Array<ItemStack
 }
 
 internal fun migrateDenizenToSql(server: Server,
-								 characters: EntityCharacterRepository<*>,
-								 playerInstances: EntityPlayerInstanceRepository<*>) {
+								 characters: EntityCharacterRepository,
+								 playerInstances: EntityPlayerInstanceRepository) {
 	val integrityViolations = ArrayList<MutableDenizenCharacter>()
 
 	val chars = server.denizenPlayerCharacters.toMutableList()

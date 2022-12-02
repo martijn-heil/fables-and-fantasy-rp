@@ -3,6 +3,7 @@ package com.fablesfantasyrp.plugin.characters.command.provider
 import com.fablesfantasyrp.plugin.characters.currentPlayerCharacter
 import com.fablesfantasyrp.plugin.characters.data.entity.Character
 import com.fablesfantasyrp.plugin.characters.playerCharacters
+import com.fablesfantasyrp.plugin.utils.quoteCommandArgument
 import com.gitlab.martijn_heil.nincommands.common.CommandTarget
 import com.sk89q.intake.argument.ArgumentParseException
 import com.sk89q.intake.argument.CommandArgs
@@ -43,7 +44,7 @@ class CharacterProvider(private val server: Server) : Provider<Character> {
 		return server.playerCharacters.asSequence()
 				.map { it.name }
 				.filter { it.startsWith(prefix.removePrefix("\""), true) }
-				.map { quote(it) }
+				.map { quoteCommandArgument(it) }
 				.toList()
 	}
 }

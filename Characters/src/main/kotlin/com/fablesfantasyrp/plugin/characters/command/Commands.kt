@@ -69,7 +69,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 						owner = sender
 				))
 
-				val character = playerCharacterRepository.create(Character(
+				val character = characterRepository.create(Character(
 						id = playerInstance.id.toULong(),
 						name = info.name,
 						age = info.age,
@@ -89,7 +89,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 		fun list(@Sender sender: CommandSender,
 				@CommandTarget(Permission.Command.Characters.List + ".others") owner: OfflinePlayer) {
 			sender.sendMessage("$SYSPREFIX ${owner.name} has the following characters:")
-			playerCharacterRepository.forOwner(owner).forEach {
+			characterRepository.forOwner(owner).forEach {
 				val dead = if (it.isDead) " ${ChatColor.RED}(dead)" else ""
 				sender.sendMessage("${ChatColor.GRAY}#${it.id} ${it.name}${dead}")
 			}

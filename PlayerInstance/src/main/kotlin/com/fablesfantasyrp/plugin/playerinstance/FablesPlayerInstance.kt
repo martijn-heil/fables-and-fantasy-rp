@@ -5,6 +5,7 @@ import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.playerinstance.command.Commands
 import com.fablesfantasyrp.plugin.playerinstance.command.provider.PlayerInstanceModule
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.EntityPlayerInstanceRepository
+import com.fablesfantasyrp.plugin.playerinstance.data.entity.EntityPlayerInstanceRepositoryImpl
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
 import com.fablesfantasyrp.plugin.playerinstance.data.persistent.H2PlayerInstanceRepository
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
@@ -13,6 +14,7 @@ import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.BukkitModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.sender.BukkitSenderModule
+import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.sender.BukkitSenderProvider
 import com.gitlab.martijn_heil.nincommands.common.bukkit.registerCommand
 import com.gitlab.martijn_heil.nincommands.common.bukkit.unregisterCommand
 import com.sk89q.intake.Intake
@@ -23,11 +25,11 @@ import org.bukkit.ChatColor.*
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
 
-val SYSPREFIX = "${GOLD}${BOLD}[${LIGHT_PURPLE}${BOLD} PLAYER INSTANCE ${GOLD}${BOLD}]${GRAY}"
+internal val SYSPREFIX = "${GOLD}${BOLD}[${LIGHT_PURPLE}${BOLD} PLAYER INSTANCE ${GOLD}${BOLD}]${GRAY}"
 internal val PLUGIN get() = FablesPlayerInstance.instance
 
 lateinit var playerInstanceManager: PlayerInstanceManager
-lateinit var playerInstances: EntityPlayerInstanceRepository<*>
+lateinit var playerInstances: EntityPlayerInstanceRepository
 	private set
 
 class FablesPlayerInstance : SuspendingJavaPlugin() {
@@ -46,8 +48,9 @@ class FablesPlayerInstance : SuspendingJavaPlugin() {
 			return
 		}
 
-		playerInstances = EntityPlayerInstanceRepository(H2PlayerInstanceRepository(server, fablesDatabase))
-		playerInstances.init()
+		val playerInstancesImpl = EntityPlayerInstanceRepositoryImpl(H2PlayerInstanceRepository(server, fablesDatabase))
+		playerInstancesImpl.init()
+		playerInstances = playerInstancesImpl
 		playerInstanceManager = PlayerInstanceManager(server)
 
 		val injector = Intake.createInjector()
@@ -55,7 +58,7 @@ class FablesPlayerInstance : SuspendingJavaPlugin() {
 		injector.install(BukkitModule(server))
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
-		injector.install(PlayerInstanceModule(playerInstances))
+		injector.install(PlayerInstanceModule(playerInstances, playerInstanceManager, BukkitSenderProvider(Player::class.java)))
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()

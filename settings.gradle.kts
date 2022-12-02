@@ -31,4 +31,5 @@ include("HorseLimits",
 		"PlayerInstance",
 		"Inventory",
 		"Magic",
-		"Location")
+		"Location",
+		"Economy")

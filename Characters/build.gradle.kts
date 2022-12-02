@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":KotlinRuntime"))
     implementation(project(":Text"))
     implementation(project(":PlayerInstance"))
+    api(project(":PlayerInstance"))
     implementation(project(":Location"))
     implementation(project(":Inventory"))
     api(project(":Database"))

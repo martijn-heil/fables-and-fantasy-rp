@@ -118,6 +118,11 @@ dependencies {
 		exclude(group = "org.spigotmc")
 		exclude(group = "io.papermc")
 	}
+	implementation("com.github.MilkBowl:VaultAPI:1.7") {
+		exclude(group = "org.bukkit")
+		exclude(group = "org.spigotmc")
+		exclude(group = "io.papermc")
+	}
 	implementation("me.clip:placeholderapi:2.10.0")
 	implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.5.0")
 	implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.5.0")

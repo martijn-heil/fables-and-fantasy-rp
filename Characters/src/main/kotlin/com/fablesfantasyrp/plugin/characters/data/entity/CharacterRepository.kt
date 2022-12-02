@@ -8,4 +8,6 @@ import org.bukkit.OfflinePlayer
 interface CharacterRepository : MutableRepository<Character>, KeyedRepository<ULong, Character>  {
 	fun forOwner(offlinePlayer: OfflinePlayer): Collection<Character>
 	fun forPlayerInstance(playerInstance: PlayerInstance): Character?
+	fun forName(name: String): Character?
+	fun allNames(): Collection<String>
 }

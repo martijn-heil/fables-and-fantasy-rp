@@ -1,96 +1,98 @@
-package com.fablesfantasyrp.plugin.magic
+package com.fablesfantasyrp.plugin.economy
 
 import com.fablesfantasyrp.plugin.characters.characterRepository
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
 import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
 import com.fablesfantasyrp.plugin.database.applyMigrations
-import com.fablesfantasyrp.plugin.magic.command.Commands
-import com.fablesfantasyrp.plugin.magic.command.provider.MagicModule
-import com.fablesfantasyrp.plugin.magic.data.MapTearRepository
-import com.fablesfantasyrp.plugin.magic.data.SimpleSpellDataRepository
-import com.fablesfantasyrp.plugin.magic.data.entity.EntityMageRepository
-import com.fablesfantasyrp.plugin.magic.data.entity.EntityTearRepository
-import com.fablesfantasyrp.plugin.magic.data.persistent.H2MageRepository
-import com.fablesfantasyrp.plugin.magic.data.persistent.YamlSimpleSpellDataRepository
+import com.fablesfantasyrp.plugin.economy.data.entity.EntityPlayerInstanceEconomyRepository
+import com.fablesfantasyrp.plugin.economy.data.persistent.H2PlayerInstanceEconomyRepository
+import com.fablesfantasyrp.plugin.playerinstance.command.provider.PlayerInstanceModule
 import com.fablesfantasyrp.plugin.playerinstance.command.provider.PlayerInstanceProvider
+import com.fablesfantasyrp.plugin.playerinstance.playerInstanceManager
 import com.fablesfantasyrp.plugin.playerinstance.playerInstances
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
+import com.fablesfantasyrp.plugin.utils.essentialsSpawn
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.BukkitModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.sender.BukkitSenderModule
+import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.sender.BukkitSenderProvider
 import com.gitlab.martijn_heil.nincommands.common.bukkit.registerCommand
 import com.gitlab.martijn_heil.nincommands.common.bukkit.unregisterCommand
 import com.sk89q.intake.Intake
 import com.sk89q.intake.fluent.CommandGraph
 import com.sk89q.intake.parametric.ParametricBuilder
 import com.sk89q.intake.parametric.provider.PrimitivesModule
+import net.milkbowl.vault.economy.Economy
 import org.bukkit.ChatColor.*
+import org.bukkit.Location
 import org.bukkit.command.Command
+import org.bukkit.entity.Player
+import org.bukkit.plugin.ServicePriority
 
-val SYSPREFIX = "${DARK_PURPLE}${BOLD}[ ${AQUA}${BOLD}MAGIC${DARK_PURPLE}${BOLD} ]${GRAY}"
-val MAX_TEARS_PER_MAGE = 3
+internal val PLUGIN get() = FablesEconomy.instance
 
-val PLUGIN: FablesMagic get() = FablesMagic.instance
+const val CURRENCY_SYMBOL = "Ⓐ"
 
-lateinit var tearRepository: EntityTearRepository<*>
-lateinit var spellRepository: SimpleSpellDataRepository
-lateinit var mageRepository: EntityMageRepository<*>
+internal val SYSPREFIX = "$GOLD$BOLD[$LIGHT_PURPLE$BOLD ECONOMY $GOLD$BOLD]$GRAY"
 
 
-class FablesMagic : SuspendingJavaPlugin() {
+class FablesEconomy : SuspendingJavaPlugin() {
 	private lateinit var commands: Collection<Command>
+
+	lateinit var playerInstanceEconomyRepository: EntityPlayerInstanceEconomyRepository<*>
+		private set
 
 	override fun onEnable() {
 		enforceDependencies(this)
 		instance = this
 
 		try {
-			applyMigrations(this, "FABLES_MAGIC", this.classLoader)
+			applyMigrations(this, "FABLES_ECONOMY", this.classLoader)
 		} catch (e: Exception) {
 			this.isEnabled = false
 			return
 		}
 
-		val spellsDirectory = this.dataFolder.resolve("spells")
-		spellsDirectory.mkdirs()
+		val defaultLocation: Location = essentialsSpawn.getSpawn("default").toCenterLocation()
 
-		spellRepository = YamlSimpleSpellDataRepository(this, spellsDirectory)
-		mageRepository = EntityMageRepository(this, H2MageRepository(server, fablesDatabase))
-		mageRepository.init()
-		tearRepository = EntityTearRepository(MapTearRepository())
-		tearRepository.all().forEach { it.spawn() }
+		playerInstanceEconomyRepository = EntityPlayerInstanceEconomyRepository(
+				H2PlayerInstanceEconomyRepository(fablesDatabase))
+		playerInstanceEconomyRepository.init()
 
-		TearClosureManager(this, tearRepository)
+		server.servicesManager.register(
+				Economy::class.java,
+				VaultPlayerInstanceEconomy(server),
+				this,
+				ServicePriority.Highest
+		)
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())
 		injector.install(BukkitModule(server))
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
+		injector.install(PlayerInstanceModule(playerInstances, playerInstanceManager, BukkitSenderProvider(Player::class.java)))
 		injector.install(CharacterModule(server, characterRepository, PlayerInstanceProvider(playerInstances)))
-		injector.install(MagicModule(server))
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()
 
 		val rootDispatcherNode = CommandGraph().builder(builder).commands()
-		rootDispatcherNode.group("ability").registerMethods(Commands.Ability())
-		rootDispatcherNode.registerMethods(Commands())
+		//rootDispatcherNode.group("playerinstance", "pi", "p").registerMethods(Commands.CommandPlayerInstance(playerInstances))
+		rootDispatcherNode.registerMethods(Commands(characterRepository))
 		val dispatcher = rootDispatcherNode.dispatcher
 
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
 	}
 
 	override fun onDisable() {
-		mageRepository.saveAllDirty()
-		tearRepository.saveAllDirty()
-		tearRepository.all().forEach { it.despawn() }
+		playerInstanceEconomyRepository.saveAll()
 		commands.forEach { unregisterCommand(it) }
 	}
 
 	companion object {
-		lateinit var instance: FablesMagic
+		lateinit var instance: FablesEconomy
 	}
 }

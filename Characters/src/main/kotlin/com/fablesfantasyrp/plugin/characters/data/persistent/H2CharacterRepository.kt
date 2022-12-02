@@ -79,6 +79,14 @@ class H2CharacterRepository(private val server: Server,
 		return this.forId(playerInstance.id.toULong())
 	}
 
+	override fun forName(name: String): Character? {
+		TODO("Not yet implemented")
+	}
+
+	override fun allNames(): Collection<String> {
+		TODO("Not yet implemented")
+	}
+
 	override fun forId(id: ULong): Character? {
 		return dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE id = ?")

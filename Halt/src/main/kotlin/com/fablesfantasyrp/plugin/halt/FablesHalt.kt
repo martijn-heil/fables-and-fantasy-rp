@@ -1,7 +1,10 @@
 package com.fablesfantasyrp.plugin.halt
 
+import com.fablesfantasyrp.plugin.characters.characterRepository
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
 import com.fablesfantasyrp.plugin.characters.currentPlayerCharacter
+import com.fablesfantasyrp.plugin.playerinstance.command.provider.PlayerInstanceProvider
+import com.fablesfantasyrp.plugin.playerinstance.playerInstances
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
@@ -33,7 +36,7 @@ class FablesHalt : JavaPlugin() {
 		injector.install(BukkitModule(server))
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
-		injector.install(CharacterModule(server))
+		injector.install(CharacterModule(server, characterRepository, PlayerInstanceProvider(playerInstances)))
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()
