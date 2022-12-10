@@ -6,6 +6,7 @@ import com.fablesfantasyrp.plugin.economy.data.entity.EntityPlayerInstanceEconom
 import com.fablesfantasyrp.plugin.economy.gui.bank.BankGuiMainMenu
 import com.fablesfantasyrp.plugin.playerinstance.currentPlayer
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
+import com.fablesfantasyrp.plugin.playerinstance.playerInstances
 import com.fablesfantasyrp.plugin.text.sendError
 import com.gitlab.martijn_heil.nincommands.common.CommandTarget
 import com.gitlab.martijn_heil.nincommands.common.Sender
@@ -32,9 +33,15 @@ class Commands(private val characters: EntityCharacterRepository) {
 		val character = characters.forPlayerInstance(target)
 		val displayName = character?.name ?: "#${target.id}"
 		val currentPlayer = sender.currentPlayer!!
+		val ownPlayerInstances = playerInstances.forOwner(currentPlayer)
 
 		if (sender.money < amount) {
 			currentPlayer.sendError("You cannot afford that!")
+			return
+		}
+
+		if (ownPlayerInstances.contains(target)) {
+			currentPlayer.sendError("You cannot pay a player instance that you own!")
 			return
 		}
 

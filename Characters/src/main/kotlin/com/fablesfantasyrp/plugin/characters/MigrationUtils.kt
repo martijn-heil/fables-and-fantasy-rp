@@ -17,6 +17,7 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.Server
 import org.bukkit.inventory.ItemStack
 import java.sql.SQLIntegrityConstraintViolationException
+import java.time.Instant
 
 @Deprecated("Legacy Denizen")
 val OfflinePlayer.denizenPlayerCharacters: List<MutableDenizenCharacter>
@@ -93,6 +94,7 @@ internal fun migrateDenizenToSql(server: Server,
 					stats = it.stats,
 					age = it.age,
 					description = it.description,
+					lastSeen = Instant.ofEpochMilli(it.player.lastLogin),
 					createdAt = null
 			))
 

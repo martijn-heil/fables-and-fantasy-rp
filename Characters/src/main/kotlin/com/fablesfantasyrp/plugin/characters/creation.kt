@@ -66,10 +66,12 @@ suspend fun promptNewCharacterInfo(player: Player): NewCharacterData {
 
 		val race = player.promptGui(GuiSingleChoice<Race>(FablesCharacters.instance,
 				"Please choose a race",
-				Race.values().asSequence(),
+				Race.values().asSequence().filter { it != Race.HUMAN },
 				{
 					ItemStack(when (it) {
-						Race.HUMAN -> Material.HAY_BLOCK
+						Race.ATTIAN_HUMAN -> Material.HAY_BLOCK
+						Race.KHADAN_HUMAN -> Material.HAY_BLOCK
+						Race.HINTERLANDER_HUMAN -> Material.HAY_BLOCK
 						Race.HIGH_ELF -> Material.PURPLE_TERRACOTTA
 						Race.DARK_ELF -> Material.COPPER_BLOCK
 						Race.WOOD_ELF -> Material.OAK_LOG
@@ -78,6 +80,7 @@ suspend fun promptNewCharacterInfo(player: Player): NewCharacterData {
 						Race.ORC -> Material.MOSS_BLOCK
 						Race.GOBLIN -> Material.LIGHT_GRAY_TERRACOTTA
 						Race.HALFLING -> Material.CRAFTING_TABLE
+						else -> throw IllegalStateException()
 					})
 				},
 				{ "${ChatColor.GOLD}$it" }
