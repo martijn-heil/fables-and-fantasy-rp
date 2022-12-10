@@ -9,4 +9,6 @@ dependencies {
     implementation(project(":Database"))
     implementation(project(":PlayerInstance"))
     implementation(project(":Characters"))
+    implementation(project(":Gui"))
+    implementation(project(":Form"))
 }

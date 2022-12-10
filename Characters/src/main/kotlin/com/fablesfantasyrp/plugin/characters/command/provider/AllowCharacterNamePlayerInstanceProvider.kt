@@ -64,7 +64,7 @@ class AllowCharacterNamePlayerInstanceProvider(private val server: Server,
 
 	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
 		return characterRepository.allNames()
-				.filter { it.startsWith(prefix) }
+				.filter { it.startsWith(prefix.removePrefix("\""), true) }
 				.map { quoteCommandArgument(it) }
 	}
 }

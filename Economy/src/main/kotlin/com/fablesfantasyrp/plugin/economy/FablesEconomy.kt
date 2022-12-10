@@ -4,7 +4,7 @@ import com.fablesfantasyrp.plugin.characters.characterRepository
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
 import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
 import com.fablesfantasyrp.plugin.database.applyMigrations
-import com.fablesfantasyrp.plugin.economy.data.entity.EntityPlayerInstanceEconomyRepository
+import com.fablesfantasyrp.plugin.economy.data.entity.EntityPlayerInstanceEconomyRepositoryImpl
 import com.fablesfantasyrp.plugin.economy.data.persistent.H2PlayerInstanceEconomyRepository
 import com.fablesfantasyrp.plugin.playerinstance.command.provider.PlayerInstanceModule
 import com.fablesfantasyrp.plugin.playerinstance.command.provider.PlayerInstanceProvider
@@ -41,7 +41,7 @@ internal val SYSPREFIX = "$GOLD$BOLD[$LIGHT_PURPLE$BOLD ECONOMY $GOLD$BOLD]$GRAY
 class FablesEconomy : SuspendingJavaPlugin() {
 	private lateinit var commands: Collection<Command>
 
-	lateinit var playerInstanceEconomyRepository: EntityPlayerInstanceEconomyRepository<*>
+	lateinit var playerInstanceEconomyRepository: EntityPlayerInstanceEconomyRepositoryImpl<*>
 		private set
 
 	override fun onEnable() {
@@ -57,7 +57,7 @@ class FablesEconomy : SuspendingJavaPlugin() {
 
 		val defaultLocation: Location = essentialsSpawn.getSpawn("default").toCenterLocation()
 
-		playerInstanceEconomyRepository = EntityPlayerInstanceEconomyRepository(
+		playerInstanceEconomyRepository = EntityPlayerInstanceEconomyRepositoryImpl(
 				H2PlayerInstanceEconomyRepository(fablesDatabase))
 		playerInstanceEconomyRepository.init()
 
@@ -80,7 +80,8 @@ class FablesEconomy : SuspendingJavaPlugin() {
 		builder.authorizer = BukkitAuthorizer()
 
 		val rootDispatcherNode = CommandGraph().builder(builder).commands()
-		//rootDispatcherNode.group("playerinstance", "pi", "p").registerMethods(Commands.CommandPlayerInstance(playerInstances))
+		rootDispatcherNode.group("feco").registerMethods(Commands.Eco(characterRepository))
+		rootDispatcherNode.group("bank").registerMethods(Commands.Bank(this, playerInstanceEconomyRepository))
 		rootDispatcherNode.registerMethods(Commands(characterRepository))
 		val dispatcher = rootDispatcherNode.dispatcher
 

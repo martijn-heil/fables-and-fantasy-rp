@@ -11,13 +11,13 @@ import javax.sql.DataSource
 class H2PlayerInstanceEconomyRepository(private val dataSource: DataSource)
 	: PlayerInstanceEconomyRepository, HasDirtyMarker<PlayerInstanceEconomy> {
 	override var dirtyMarker: DirtyMarker<PlayerInstanceEconomy>? = null
-	private val TABLE_NAME = "FABLES_ECONOMY.POCKET_MONEY"
+	private val TABLE_NAME = "FABLES_ECONOMY.MONEY"
 
 	override fun forPlayerInstance(playerInstance: PlayerInstance): PlayerInstanceEconomy {
 		check(!playerInstance.isDestroyed)
 
 		val economy = this.forId(playerInstance.id) ?: run {
-			this.create(PlayerInstanceEconomy(playerInstance.id, 0))
+			this.create(PlayerInstanceEconomy(playerInstance.id, 0, 0))
 		}
 
 		return economy
@@ -47,11 +47,13 @@ class H2PlayerInstanceEconomyRepository(private val dataSource: DataSource)
 			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME " +
 					"(" +
 					"id, " +
-					"pocket_money " +
+					"pocket_money, " +
+					"bank_money " +
 					") " +
-					"VALUES (?, ?)")
+					"VALUES (?, ?, ?)")
 			stmnt.setInt(1, v.id)
 			stmnt.setInt(2, v.money)
+			stmnt.setInt(3, v.bankMoney)
 			stmnt.executeUpdate()
 			v.dirtyMarker = dirtyMarker
 			return v
@@ -61,10 +63,12 @@ class H2PlayerInstanceEconomyRepository(private val dataSource: DataSource)
 	override fun update(v: PlayerInstanceEconomy) {
 		return dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("UPDATE $TABLE_NAME SET " +
-					"pocket_money = ? " +
+					"pocket_money = ?, " +
+					"bank_money = ? " +
 				"WHERE id = ?")
 			stmnt.setInt(1, v.money)
-			stmnt.setInt(2, v.id)
+			stmnt.setInt(2, v.bankMoney)
+			stmnt.setInt(3, v.id)
 			stmnt.executeUpdate()
 		}
 	}
@@ -92,10 +96,12 @@ class H2PlayerInstanceEconomyRepository(private val dataSource: DataSource)
 	private fun fromRow(row: ResultSet): PlayerInstanceEconomy {
 		val id = row.getInt("id")
 		val money = row.getInt("pocket_money")
+		val bankMoney = row.getInt("bank_money")
 
 		return PlayerInstanceEconomy(
 				id = id,
 				money = money,
+				bankMoney = bankMoney,
 				dirtyMarker = dirtyMarker
 		)
 	}

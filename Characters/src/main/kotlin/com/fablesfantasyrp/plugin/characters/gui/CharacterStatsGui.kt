@@ -2,7 +2,7 @@ package com.fablesfantasyrp.plugin.characters.gui
 
 import com.fablesfantasyrp.plugin.characters.data.CharacterStats
 import com.fablesfantasyrp.plugin.gui.GuiSlider
-import com.fablesfantasyrp.plugin.gui.ResultProducingGui
+import com.fablesfantasyrp.plugin.gui.ResultProducingInventoryGui
 import de.themoep.inventorygui.DynamicGuiElement
 import de.themoep.inventorygui.StaticGuiElement
 import org.bukkit.ChatColor.*
@@ -12,7 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class CharacterStatsGui(plugin: JavaPlugin, minimums: CharacterStats, title: String = "Character stats",
 						initial: CharacterStats = CharacterStats(0U, 0U, 0U, 0U)) :
-		ResultProducingGui<CharacterStats>(plugin, title,
+		ResultProducingInventoryGui<CharacterStats>(plugin, title,
 		arrayOf(
 				"szzzzzzzz", // strength
 				"dyyyyyyyy", // defense

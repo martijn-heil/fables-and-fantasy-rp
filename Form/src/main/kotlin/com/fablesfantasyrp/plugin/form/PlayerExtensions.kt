@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.form
 
-import com.fablesfantasyrp.plugin.gui.ResultProducingGui
+import com.fablesfantasyrp.plugin.gui.ResultProducingInventoryGui
 import kotlinx.coroutines.CompletableDeferred
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
@@ -32,4 +32,4 @@ fun Player.completeWaitForChat() {
 suspend fun Player.promptChat(query: String) = promptChat(this, query)
 suspend fun Player.promptChat(query: Component) = promptChat(this, query)
 
-suspend fun<T> Player.promptGui(gui: ResultProducingGui<T>) = promptGui(this, gui)
+suspend fun<T> Player.promptGui(gui: ResultProducingInventoryGui<T>) = promptGui(this, gui)
