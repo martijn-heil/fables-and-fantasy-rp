@@ -16,4 +16,5 @@ dependencies {
     implementation(project(":Location"))
     implementation(project(":Inventory"))
     api(project(":Database"))
+    implementation("com.github.LeonMangler:SuperVanish:6.2.6-4")
 }

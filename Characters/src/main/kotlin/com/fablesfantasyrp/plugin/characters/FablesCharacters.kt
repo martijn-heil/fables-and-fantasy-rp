@@ -78,6 +78,7 @@ class FablesCharacters : SuspendingJavaPlugin() {
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
 
 		server.pluginManager.registerEvents(CharactersListener(characterRepository), this)
+		server.pluginManager.registerEvents(CharactersLiveMigrationListener(characterRepository), this)
 	}
 
 	override fun onDisable() {
