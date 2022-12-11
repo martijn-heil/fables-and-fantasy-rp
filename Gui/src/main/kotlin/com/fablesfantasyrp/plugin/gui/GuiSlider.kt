@@ -7,8 +7,8 @@ import org.bukkit.ChatColor.*
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
-val FILLED_ITEM = ItemStack(Material.GREEN_STAINED_GLASS_PANE)
-val EMPTY_ITEM = ItemStack(Material.BLACK_STAINED_GLASS_PANE)
+private val FILLED_ITEM = ItemStack(Material.GREEN_STAINED_GLASS_PANE)
+private val EMPTY_ITEM = ItemStack(Material.BLACK_STAINED_GLASS_PANE)
 
 class GuiSlider(char: Char,
 				max: UInt,

@@ -23,11 +23,15 @@ class Character : DataEntity<ULong, Character>, CharacterData {
 	var lastSeen: Instant?
 		get() = if (playerInstance.currentPlayer != null) Instant.now() else field
 
+	var diedAt: Instant?
+	var shelvedAt: Instant?
+
 	var isDead: Boolean
 		set(value) {
 			if (field == value) return
 
 			if (value) {
+				diedAt = Instant.now()
 				val playerInstance = this.playerInstance
 				val player = playerInstance.currentPlayer
 				if (player != null) {
@@ -39,6 +43,28 @@ class Character : DataEntity<ULong, Character>, CharacterData {
 				inventory.inventory.clear()
 				inventory.enderChest.clear()
 				playerInstance.location = essentialsSpawn.getSpawn("default").toCenterLocation()
+			} else {
+				diedAt = null
+			}
+
+			field = value
+			dirtyMarker?.markDirty(this)
+		}
+
+	var isShelved: Boolean
+		set(value) {
+			if (field == value) return
+
+			if (value) {
+				shelvedAt = Instant.now()
+				val playerInstance = this.playerInstance
+				val player = playerInstance.currentPlayer
+				if (player != null) {
+					player.currentPlayerInstance = null
+					player.teleport(essentialsSpawn.getSpawn("defualt").toCenterLocation())
+				}
+			} else {
+				shelvedAt = null
 			}
 
 			field = value
@@ -78,6 +104,9 @@ class Character : DataEntity<ULong, Character>, CharacterData {
 				lastSeen: Instant? = null,
 				createdAt: Instant? = Instant.now(),
 				isDead: Boolean = false,
+				diedAt: Instant? = null,
+				isShelved: Boolean = false,
+				shelvedAt: Instant? = null,
 				dirtyMarker: DirtyMarker<Character>? = null) {
 		this.id = id
 		this.playerInstance = playerInstance
@@ -91,6 +120,9 @@ class Character : DataEntity<ULong, Character>, CharacterData {
 		this.lastSeen = lastSeen
 		this.createdAt = createdAt
 		this.isDead = isDead
+		this.isShelved = isShelved
+		this.diedAt = diedAt
+		this.shelvedAt = shelvedAt
 
 		this.dirtyMarker = dirtyMarker
 	}

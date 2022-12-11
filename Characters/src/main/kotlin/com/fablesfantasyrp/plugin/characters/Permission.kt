@@ -14,6 +14,8 @@ object Permission {
 			const val Card = "${Command.prefix}.card"
 			const val Kill = "${Command.prefix}.kill"
 			const val Resurrect = "${Command.prefix}.resurrect"
+			const val Shelf = "${Command.prefix}.shelf"
+			const val Unshelf = "${Command.prefix}.unshelf"
 			object Stats {
 				private const val prefix = Permission.Command.Characters.prefix + ".characters"
 				const val Set = "${Command.prefix}.set"

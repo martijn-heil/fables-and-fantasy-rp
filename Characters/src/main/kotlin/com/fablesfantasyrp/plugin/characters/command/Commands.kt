@@ -9,9 +9,13 @@ import com.fablesfantasyrp.plugin.characters.data.CharacterStats
 import com.fablesfantasyrp.plugin.characters.data.entity.Character
 import com.fablesfantasyrp.plugin.characters.gui.CharacterStatsGui
 import com.fablesfantasyrp.plugin.denizeninterop.denizenRun
+import com.fablesfantasyrp.plugin.form.YesNoChatPrompt
 import com.fablesfantasyrp.plugin.playerinstance.currentPlayerInstance
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstanceRepository
+import com.fablesfantasyrp.plugin.text.legacyText
+import com.fablesfantasyrp.plugin.text.miniMessage
+import com.fablesfantasyrp.plugin.text.sendError
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.gitlab.martijn_heil.nincommands.common.CommandTarget
@@ -19,10 +23,13 @@ import com.gitlab.martijn_heil.nincommands.common.Sender
 import com.sk89q.intake.Command
 import com.sk89q.intake.Require
 import com.sk89q.intake.parametric.annotation.Range
+import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.ChatColor
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import java.time.Duration
 import java.time.Instant
 
 class Commands(private val plugin: SuspendingJavaPlugin) {
@@ -116,6 +123,51 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 				 @CommandTarget(Permission.Command.Characters.Resurrect + ".others") target: Character) {
 			target.isDead = false
 			sender.sendMessage("$SYSPREFIX Resurrected ${target.name}")
+		}
+
+		@Command(aliases = ["shelf"], desc = "Shelf a character")
+		@Require(Permission.Command.Characters.Shelf)
+		fun shelf(@Sender sender: Player,
+					  @CommandTarget(Permission.Command.Characters.Shelf + ".others") target: Character) {
+			val owner = target.playerInstance.owner
+			val shelved = characterRepository.forOwner(owner).filter { it.isShelved && !it.isDead }.size
+			if (shelved >= 3) {
+				sender.sendError("You cannot shelve more than 3 characters!")
+				return
+			}
+
+			plugin.launch {
+				val prompt = YesNoChatPrompt(sender, miniMessage.deserialize(
+								"<prefix> Are you sure you want to shelf <green><character_name></green>?<newline>" +
+								"You will not be able to unshelf this character for 3 weeks.",
+						Placeholder.component("prefix", legacyText(SYSPREFIX)),
+						Placeholder.unparsed("character_name", target.name)).color(NamedTextColor.GRAY))
+				prompt.send()
+				val confirmation: Boolean = prompt.await()
+				if (!confirmation) return@launch
+
+				target.isShelved = true
+				sender.sendMessage("$SYSPREFIX Shelved ${target.name}")
+			}
+		}
+
+		@Command(aliases = ["unshelf"], desc = "Unshelf a character")
+		@Require(Permission.Command.Characters.Unshelf)
+		fun unshelf(@Sender sender: CommandSender,
+				  @CommandTarget(Permission.Command.Characters.Unshelf + ".others") target: Character) {
+			if (!target.isShelved) {
+				sender.sendError("${target.name} is not shelved.")
+				return
+			}
+
+			val daysLeft = 21 - Duration.between(target.shelvedAt, Instant.now()).toDays()
+			if (daysLeft > 0) {
+				sender.sendError("You must wait $daysLeft more days before you can unshelf ${target.name}.")
+				return
+			}
+
+			target.isShelved = false
+			sender.sendMessage("$SYSPREFIX Unshelved ${target.name}")
 		}
 
 		class Stats(private val plugin: SuspendingJavaPlugin) {

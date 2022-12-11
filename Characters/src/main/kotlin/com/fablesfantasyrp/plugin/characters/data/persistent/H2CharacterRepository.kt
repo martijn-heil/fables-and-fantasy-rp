@@ -120,6 +120,9 @@ class H2CharacterRepository(private val server: Server,
 					"created_at = ?, " +
 					"last_seen = ?, " +
 					"is_dead = ?, " +
+					"is_shelved = ?, " +
+					"died_at = ?, " +
+					"shelved_at = ?, " +
 					"stat_strength = ?, " +
 					"stat_defense = ?, " +
 					"stat_agility = ?, " +
@@ -133,12 +136,15 @@ class H2CharacterRepository(private val server: Server,
 			if (v.createdAt != null) stmnt.setTimestamp(6, Timestamp.from(v.createdAt))
 			if (v.lastSeen != null) stmnt.setTimestamp(7, Timestamp.from(v.lastSeen))
 			stmnt.setBoolean(8, v.isDead)
-			stmnt.setInt(9, v.stats.strength.toInt())
-			stmnt.setInt(10, v.stats.defense.toInt())
-			stmnt.setInt(11, v.stats.agility.toInt())
-			stmnt.setInt(12, v.stats.intelligence.toInt())
-			stmnt.setInt(13, v.stats.strength.toInt())
-			stmnt.setLong(14, v.id.toLong())
+			stmnt.setBoolean(9, v.isShelved)
+			if (v.diedAt != null) stmnt.setTimestamp(10, Timestamp.from(v.diedAt))
+			if (v.shelvedAt != null) stmnt.setTimestamp(11, Timestamp.from(v.shelvedAt))
+			stmnt.setInt(11, v.stats.strength.toInt())
+			stmnt.setInt(12, v.stats.defense.toInt())
+			stmnt.setInt(13, v.stats.agility.toInt())
+			stmnt.setInt(14, v.stats.intelligence.toInt())
+			stmnt.setInt(15, v.stats.strength.toInt())
+			stmnt.setLong(16, v.id.toLong())
 			stmnt.executeUpdate()
 		}
 	}
@@ -156,7 +162,10 @@ class H2CharacterRepository(private val server: Server,
 		val statIntelligence = result.getInt("stat_intelligence").toUInt()
 		val createdAt = result.getTimestamp("created_at")?.toInstant()
 		val lastSeen = result.getTimestamp("last_seen")?.toInstant()
+		val shelvedAt = result.getTimestamp("shelved_at")?.toInstant()
+		val diedAt = result.getTimestamp("died_at")?.toInstant()
 		val isDead = result.getBoolean("is_dead")
+		val isShelved = result.getBoolean("is_shelved")
 
 		return Character(
 				id = id,
@@ -169,6 +178,9 @@ class H2CharacterRepository(private val server: Server,
 				lastSeen = lastSeen,
 				stats = CharacterStats(statStrength, statDefense, statAgility, statIntelligence),
 				isDead = isDead,
+				isShelved = isShelved,
+				shelvedAt = shelvedAt,
+				diedAt = diedAt,
 				playerInstance = playerInstances.forId(id.toInt())!!,
 				dirtyMarker = dirtyMarker
 		)

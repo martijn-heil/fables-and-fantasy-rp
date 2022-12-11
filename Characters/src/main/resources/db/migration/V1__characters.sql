@@ -1,6 +1,7 @@
 CREATE TABLE characters (
 	id						BIGINT NOT NULL,
 	is_dead					BOOLEAN NOT NULL DEFAULT FALSE,
+	is_shelved				BOOLEAN NOT NULL DEFAULT FALSE,
 	name					VARCHAR(32) NOT NULL,
 	description				TEXT,
 	age						INTEGER NOT NULL,
@@ -8,6 +9,8 @@ CREATE TABLE characters (
 	gender					ENUM('FEMALE', 'MALE', 'OTHER') NOT NULL,
 	created_at				TIMESTAMP WITH TIME ZONE,
 	last_seen				TIMESTAMP WITH TIME ZONE,
+	died_at					TIMESTAMP WITH TIME ZONE,
+	shelved_at				TIMESTAMP WITH TIME ZONE,
 	stat_strength			TINYINT NOT NULL,
 	stat_defense			TINYINT NOT NULL,
 	stat_agility			TINYINT NOT NULL,
