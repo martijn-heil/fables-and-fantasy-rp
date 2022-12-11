@@ -1,14 +1,10 @@
 package com.fablesfantasyrp.plugin.characters.command
 
-import com.denizenscript.denizen.objects.PlayerTag
-import com.denizenscript.denizencore.objects.core.ElementTag
 import com.fablesfantasyrp.plugin.characters.*
-import com.fablesfantasyrp.plugin.characters.data.CharacterData
 import com.fablesfantasyrp.plugin.characters.data.CharacterStatKind
 import com.fablesfantasyrp.plugin.characters.data.CharacterStats
 import com.fablesfantasyrp.plugin.characters.data.entity.Character
 import com.fablesfantasyrp.plugin.characters.gui.CharacterStatsGui
-import com.fablesfantasyrp.plugin.denizeninterop.denizenRun
 import com.fablesfantasyrp.plugin.form.YesNoChatPrompt
 import com.fablesfantasyrp.plugin.playerinstance.currentPlayerInstance
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
@@ -69,7 +65,8 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 			sender.sendMessage("$SYSPREFIX ${owner.name} has the following characters:")
 			characterRepository.forOwner(owner).forEach {
 				val dead = if (it.isDead) " ${ChatColor.RED}(dead)" else ""
-				sender.sendMessage("${ChatColor.GRAY}#${it.id} ${it.name}${dead}")
+				val shelved = if (it.isShelved) " ${ChatColor.YELLOW}(shelved)" else ""
+				sender.sendMessage("${ChatColor.GRAY}#${it.id} ${it.name}${dead}${shelved}")
 			}
 		}
 
