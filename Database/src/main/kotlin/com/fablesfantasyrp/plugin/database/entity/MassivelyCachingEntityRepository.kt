@@ -4,6 +4,8 @@ import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.Identifiable
 import com.fablesfantasyrp.plugin.database.repository.KeyedRepository
 import com.fablesfantasyrp.plugin.database.repository.MutableRepository
+import java.lang.ref.WeakReference
+import kotlin.concurrent.withLock
 
 open class MassivelyCachingEntityRepository<K, T: Identifiable<K>, C>(child: C) : SimpleEntityRepository<K, T, C>(child)
 		where C : KeyedRepository<K, T>,
