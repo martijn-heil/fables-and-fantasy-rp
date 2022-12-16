@@ -12,9 +12,6 @@ class EntityMageRepository<C>(private val plugin: Plugin, child: C) : MassivelyC
 	where C: KeyedRepository<Long, Mage>,
 		  C: MutableRepository<Mage>,
 		  C: HasDirtyMarker<Mage> {
-	init {
-		this.all().forEach { this.markStrong(it) }
-	}
 
 	fun forIdOrCreate(id: Long): Mage {
 		val maybe = this.forId(id)

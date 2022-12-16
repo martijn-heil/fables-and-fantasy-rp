@@ -48,7 +48,11 @@ class FablesFastTravel : SuspendingJavaPlugin() {
 		}
 
 		players = MapFastTravelPlayerRepository()
-		links = EntityFastTravelLinkRepository(H2FastTravelLinkRepository(server, fablesDatabase, regionContainer))
+		links = run {
+			val repo = EntityFastTravelLinkRepository(H2FastTravelLinkRepository(server, fablesDatabase, regionContainer))
+			repo.init()
+			repo
+		}
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())

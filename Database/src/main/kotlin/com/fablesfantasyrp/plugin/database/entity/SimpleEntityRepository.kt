@@ -18,7 +18,7 @@ open class SimpleEntityRepository<K, T: Identifiable<K>, C>(protected var child:
 	protected val dirty = LinkedHashSet<T>()
 	protected val lock: ReadWriteLock = ReentrantReadWriteLock()
 
-	fun init(): SimpleEntityRepository<K, T, C> {
+	open fun init(): SimpleEntityRepository<K, T, C> {
 		child.dirtyMarker = this
 		return this
 	}
