@@ -36,8 +36,18 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 		@Require(Permission.Command.Characters.New)
 		fun new(@Sender sender: Player) {
 			plugin.launch {
-				val info = promptNewCharacterInfo(sender)
-				sender.sendMessage(info.toString())
+				var info: NewCharacterData
+				while (true) {
+					info = promptNewCharacterInfo(sender)
+					sender.sendMessage(info.toString())
+
+					if (characterRepository.allNames().contains(info.name)) {
+						sender.sendError("The name '${info.name}' is already in use, please enter a different name.")
+						continue
+					}
+
+					break
+				}
 
 				val playerInstance = playerInstanceRepository.create(PlayerInstance(
 						id = 0,
