@@ -3,6 +3,7 @@ package com.fablesfantasyrp.plugin.characters.command
 import com.fablesfantasyrp.plugin.characters.*
 import com.fablesfantasyrp.plugin.characters.data.CharacterStatKind
 import com.fablesfantasyrp.plugin.characters.data.CharacterStats
+import com.fablesfantasyrp.plugin.characters.data.Race
 import com.fablesfantasyrp.plugin.characters.data.entity.Character
 import com.fablesfantasyrp.plugin.characters.gui.CharacterStatsGui
 import com.fablesfantasyrp.plugin.form.YesNoChatPrompt
@@ -117,6 +118,14 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 				target.isShelved = true
 				sender.sendMessage("$SYSPREFIX Shelved ${target.name}")
 			}
+		}
+
+		@Command(aliases = ["setrace"], desc = "Set a character's race")
+		@Require(Permission.Command.Characters.SetRace)
+		fun setrace(@Sender sender: CommandSender, race: Race,
+					  @CommandTarget(Permission.Command.Characters.SetRace + ".others") target: Character) {
+			target.race = race
+			sender.sendMessage("$SYSPREFIX Set ${target.name}'s race to $race")
 		}
 
 		@Command(aliases = ["unshelf"], desc = "Unshelf a character")
