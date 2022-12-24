@@ -11,5 +11,8 @@ depend:
   - FablesDatabase
   - FablesPlayerInstance
   - NinCommands
+softdepend:
+  - TAB
+  - Denizen
 main: com.fablesfantasyrp.plugin.characters.FablesCharacters
 api-version: @bukkit_api_version@
