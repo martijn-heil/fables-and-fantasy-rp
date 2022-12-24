@@ -5,7 +5,7 @@ import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.KeyedRepository
 import com.fablesfantasyrp.plugin.database.repository.MutableRepository
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
-import java.lang.ref.WeakReference
+import java.lang.ref.SoftReference
 import kotlin.concurrent.withLock
 
 class EntityPlayerInstanceLocationRepository<C>(child: C)
@@ -18,7 +18,7 @@ class EntityPlayerInstanceLocationRepository<C>(child: C)
 		return this.forId(playerInstance.id) ?: run {
 			val result = child.forOwner(playerInstance)
 			lock.writeLock().withLock {
-				cache[result.id] = WeakReference(result)
+				cache[result.id] = SoftReference(result)
 			}
 			this.markStrong(result)
 			result
