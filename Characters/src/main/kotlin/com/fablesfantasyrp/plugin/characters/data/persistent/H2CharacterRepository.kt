@@ -13,6 +13,7 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.Server
 import java.sql.ResultSet
 import java.sql.Timestamp
+import java.time.Instant
 import javax.sql.DataSource
 
 class H2CharacterRepository(private val server: Server,
@@ -80,21 +81,36 @@ class H2CharacterRepository(private val server: Server,
 	}
 
 	override fun forName(name: String): Character? {
-		TODO("Not yet implemented")
+		return dataSource.connection.use { connection ->
+			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE name = ?")
+			stmnt.setString(1, name)
+			val result = stmnt.executeQuery()
+			if (!result.next()) return null
+			fromRow(result)
+		}
 	}
 
-	override fun allNames(): Collection<String> {
-		TODO("Not yet implemented")
-	}
+	override val nameMap: Map<String, ULong>
+		get() {
+			return dataSource.connection.use { connection ->
+				val stmnt = connection.prepareStatement("SELECT id, name FROM $TABLE_NAME")
+				val result = stmnt.executeQuery()
+				val map = HashMap<String, ULong>()
+				while (result.next()) {
+					val id = result.getLong("id").toULong()
+					val name = result.getString("name")
+					map[name] = id
+				}
+				map
+			}
+		}
 
 	override fun forId(id: ULong): Character? {
 		return dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE id = ?")
 			stmnt.setLong(1, id.toLong())
 			val result = stmnt.executeQuery()
-			if (!result.next()) {
-				return null
-			}
+			if (!result.next()) return null
 			fromRow(result)
 		}
 	}
@@ -133,17 +149,16 @@ class H2CharacterRepository(private val server: Server,
 			stmnt.setInt(3, v.age.toInt())
 			stmnt.setString(4, v.race.name)
 			stmnt.setString(5, v.gender.name)
-			if (v.createdAt != null) stmnt.setTimestamp(6, Timestamp.from(v.createdAt))
-			if (v.lastSeen != null) stmnt.setTimestamp(7, Timestamp.from(v.lastSeen))
+			stmnt.setObject(6, v.createdAt)
+			stmnt.setObject(7, v.lastSeen)
 			stmnt.setBoolean(8, v.isDead)
 			stmnt.setBoolean(9, v.isShelved)
-			if (v.diedAt != null) stmnt.setTimestamp(10, Timestamp.from(v.diedAt))
-			if (v.shelvedAt != null) stmnt.setTimestamp(11, Timestamp.from(v.shelvedAt))
-			stmnt.setInt(11, v.stats.strength.toInt())
-			stmnt.setInt(12, v.stats.defense.toInt())
-			stmnt.setInt(13, v.stats.agility.toInt())
-			stmnt.setInt(14, v.stats.intelligence.toInt())
-			stmnt.setInt(15, v.stats.strength.toInt())
+			stmnt.setObject(10, v.diedAt)
+			stmnt.setObject(11, v.shelvedAt)
+			stmnt.setInt(12, v.stats.strength.toInt())
+			stmnt.setInt(13, v.stats.defense.toInt())
+			stmnt.setInt(14, v.stats.agility.toInt())
+			stmnt.setInt(15, v.stats.intelligence.toInt())
 			stmnt.setLong(16, v.id.toLong())
 			stmnt.executeUpdate()
 		}
@@ -160,10 +175,10 @@ class H2CharacterRepository(private val server: Server,
 		val statDefense = result.getInt("stat_defense").toUInt()
 		val statAgility = result.getInt("stat_agility").toUInt()
 		val statIntelligence = result.getInt("stat_intelligence").toUInt()
-		val createdAt = result.getTimestamp("created_at")?.toInstant()
-		val lastSeen = result.getTimestamp("last_seen")?.toInstant()
-		val shelvedAt = result.getTimestamp("shelved_at")?.toInstant()
-		val diedAt = result.getTimestamp("died_at")?.toInstant()
+		val createdAt = result.getObject("created_at", Instant::class.java)
+		val lastSeen = result.getObject("last_seen", Instant::class.java)
+		val shelvedAt = result.getObject("shelved_at", Instant::class.java)
+		val diedAt = result.getObject("died_at", Instant::class.java)
 		val isDead = result.getBoolean("is_dead")
 		val isShelved = result.getBoolean("is_shelved")
 

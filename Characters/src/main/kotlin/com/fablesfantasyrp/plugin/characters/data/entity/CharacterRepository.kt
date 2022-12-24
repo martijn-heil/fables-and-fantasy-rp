@@ -9,5 +9,6 @@ interface CharacterRepository : MutableRepository<Character>, KeyedRepository<UL
 	fun forOwner(offlinePlayer: OfflinePlayer): Collection<Character>
 	fun forPlayerInstance(playerInstance: PlayerInstance): Character?
 	fun forName(name: String): Character?
-	fun allNames(): Collection<String>
+	fun allNames(): Set<String> = nameMap.keys
+	val nameMap: Map<String, ULong>
 }

@@ -41,11 +41,13 @@ class FablesKnockout : SuspendingJavaPlugin() {
 		instance = this
 		applyMigrations(this, "fables_knockout", this.classLoader)
 
-		knockoutPlayerDataManager = KnockoutPlayerDataEntityRepository(this,
+		val knockoutPlayerDatEntityRepository = KnockoutPlayerDataEntityRepository(this,
 				KnockoutPlayerDataEntityMapper(
 						DatabasePersistentKnockoutPlayerDataRepository(server, fablesDatabase)
 				)
-		).init()
+		)
+		knockoutPlayerDatEntityRepository.init()
+		knockoutPlayerDataManager = knockoutPlayerDatEntityRepository
 
 
 		val injector = Intake.createInjector()

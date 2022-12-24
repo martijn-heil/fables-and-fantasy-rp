@@ -46,11 +46,13 @@ class FablesChat : JavaPlugin() {
 		}
 
 		chatPreviewManager = ChatPreviewManager(this)
-		chatPlayerDataManager = ChatPlayerDataEntityRepository(this,
+		val chatPlayerDatEntityRepository = ChatPlayerDataEntityRepository(this,
 				ChatPlayerDataEntityMapper(
 						DatabasePersistentChatPlayerDataRepository(server, fablesDatabase)
 				)
-		).init()
+		)
+		chatPlayerDatEntityRepository.init()
+		chatPlayerDataManager  = chatPlayerDatEntityRepository
 
 		ChatReceptionIndicatorManager().start()
 

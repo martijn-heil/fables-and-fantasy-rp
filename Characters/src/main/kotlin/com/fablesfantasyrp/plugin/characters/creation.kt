@@ -31,8 +31,18 @@ suspend fun promptNewCharacterInfo(player: Player): NewCharacterData {
 
 	player.sendMessage(miniMessage.deserialize("<gray>Let's create your brand new character!</gray>"))
 
-	val name = player.promptChat(miniMessage.deserialize("<gray>What is the name of your character?</gray> " +
-			"<dark_gray>(max 32 characters)</dark_gray>"))
+	var name: String
+	while (true) {
+		name = player.promptChat(miniMessage.deserialize("<gray>What is the name of your character?</gray> " +
+				"<dark_gray>(max 32 characters)</dark_gray>"))
+
+		if (name.length > 32) {
+			player.sendError("Your character name must not be longer than 32 characters.")
+			continue
+		}
+
+		break
+	}
 
 	val age: UInt = flow {
 		val message = miniMessage.deserialize("<gray>What is the age of <yellow><character_name></yellow>?</gray> " +
