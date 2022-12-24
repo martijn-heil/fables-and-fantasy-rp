@@ -61,7 +61,7 @@ class Character : DataEntity<ULong, Character>, CharacterData {
 				val player = playerInstance.currentPlayer
 				if (player != null) {
 					player.currentPlayerInstance = null
-					player.teleport(essentialsSpawn.getSpawn("defualt").toCenterLocation())
+					player.teleport(essentialsSpawn.getSpawn("default").toCenterLocation())
 				}
 			} else {
 				shelvedAt = null
@@ -116,7 +116,6 @@ class Character : DataEntity<ULong, Character>, CharacterData {
 		this.stats = stats
 		this.age = age
 		this.description = description
-		this.location = location
 		this.lastSeen = lastSeen
 		this.createdAt = createdAt
 		this.isDead = isDead

@@ -51,8 +51,8 @@ class FablesCharacters : SuspendingJavaPlugin() {
 		}
 
 		//playerCharacterRepository = DenizenCharacterRepository(server)
-		val characterRepositoryImpl = EntityCharacterRepositoryImpl(
-				H2CharacterRepository(server, FablesDatabase.fablesDatabase, playerInstances), playerInstances)
+		val h2CharacterRepository = H2CharacterRepository(server, FablesDatabase.fablesDatabase, playerInstances)
+		val characterRepositoryImpl = EntityCharacterRepositoryImpl(h2CharacterRepository, playerInstances)
 		characterRepositoryImpl.init()
 		characterRepository = characterRepositoryImpl
 
@@ -79,10 +79,15 @@ class FablesCharacters : SuspendingJavaPlugin() {
 
 		server.pluginManager.registerEvents(CharactersListener(characterRepository), this)
 		server.pluginManager.registerEvents(CharactersLiveMigrationListener(characterRepository), this)
+
+		if (server.pluginManager.isPluginEnabled("TAB") && server.pluginManager.isPluginEnabled("Denizen") ) {
+			com.fablesfantasyrp.plugin.characters.nametags.NameTagManager().start()
+		}
 	}
 
 	override fun onDisable() {
 		commands.forEach { unregisterCommand(it) }
+		characterRepository.saveAllDirty()
 	}
 
 	companion object {

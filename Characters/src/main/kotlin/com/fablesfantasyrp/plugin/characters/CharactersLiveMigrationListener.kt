@@ -75,6 +75,7 @@ class CharactersLiveMigrationListener(private val characters: EntityCharacterRep
 									sequenceOf(Race.ATTIAN_HUMAN, Race.KHADAN_HUMAN, Race.HINTERLANDER_HUMAN),
 									{ ItemStack(Material.HAY_BLOCK) },
 									{ "${ChatColor.GOLD}$it" }))
+							character.race = newRace
 							break
 						} catch (_: CancellationException) {}
 					}
