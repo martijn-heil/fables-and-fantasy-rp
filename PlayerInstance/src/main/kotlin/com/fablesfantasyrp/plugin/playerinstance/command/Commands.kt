@@ -1,10 +1,12 @@
 package com.fablesfantasyrp.plugin.playerinstance.command
 
 import com.fablesfantasyrp.plugin.playerinstance.Permission
+import com.fablesfantasyrp.plugin.playerinstance.PlayerInstanceOccupiedException
 import com.fablesfantasyrp.plugin.playerinstance.SYSPREFIX
 import com.fablesfantasyrp.plugin.playerinstance.currentPlayerInstance
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstanceRepository
+import com.fablesfantasyrp.plugin.text.sendError
 import com.gitlab.martijn_heil.nincommands.common.CommandTarget
 import com.gitlab.martijn_heil.nincommands.common.Sender
 import com.sk89q.intake.Command
@@ -42,9 +44,13 @@ class Commands {
 		@Command(aliases = ["become"], desc = "Become a player instance")
 		@Require(Permission.Command.CommandPlayerInstance.Become)
 		fun become(@Sender sender: CommandSender, instance: PlayerInstance, @CommandTarget target: Player) {
-			target.currentPlayerInstance = instance
-			target.sendMessage("$SYSPREFIX You are now player instance #${instance.id}")
-			if (target != sender) sender.sendMessage("$SYSPREFIX ${target.name} is now player instance #${instance.id}")
+			try {
+				target.currentPlayerInstance = instance
+				target.sendMessage("$SYSPREFIX You are now player instance #${instance.id}")
+				if (target != sender) sender.sendMessage("$SYSPREFIX ${target.name} is now player instance #${instance.id}")
+			} catch (ex: PlayerInstanceOccupiedException) {
+				sender.sendError("This player instance is currently occupied")
+			}
 		}
 
 		@Command(aliases = ["transfer"], desc = "Transfer a player instance")

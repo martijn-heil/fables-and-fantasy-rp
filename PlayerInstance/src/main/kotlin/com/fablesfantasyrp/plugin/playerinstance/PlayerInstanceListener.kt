@@ -2,6 +2,7 @@ package com.fablesfantasyrp.plugin.playerinstance
 
 import com.fablesfantasyrp.plugin.form.promptGui
 import com.fablesfantasyrp.plugin.playerinstance.gui.PlayerInstanceSelectionGui
+import com.fablesfantasyrp.plugin.text.sendError
 import com.fablesfantasyrp.plugin.utils.isVanished
 import com.github.shynixn.mccoroutine.bukkit.launch
 import de.myzelyam.api.vanish.VanishAPI
@@ -25,6 +26,8 @@ class PlayerInstanceListener(private val server: Server) : Listener {
 					e.player.currentPlayerInstance = e.player.promptGui(PlayerInstanceSelectionGui(PLUGIN,
 							playerInstances.forOwner(e.player).asSequence().filter { it.isActive }))
 					if (!wasVanished) VanishAPI.showPlayer(e.player)
+				} catch (ex: PlayerInstanceOccupiedException) {
+					e.player.sendError("This player instance is currently occupied.")
 				} catch (_: CancellationException) {}
 			} while (e.player.currentPlayerInstance == null)
 		}

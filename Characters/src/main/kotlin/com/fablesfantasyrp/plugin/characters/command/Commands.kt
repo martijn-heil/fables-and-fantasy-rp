@@ -8,6 +8,7 @@ import com.fablesfantasyrp.plugin.characters.data.entity.Character
 import com.fablesfantasyrp.plugin.characters.gui.CharacterStatsGui
 import com.fablesfantasyrp.plugin.form.YesNoChatPrompt
 import com.fablesfantasyrp.plugin.form.promptChat
+import com.fablesfantasyrp.plugin.playerinstance.PlayerInstanceOccupiedException
 import com.fablesfantasyrp.plugin.playerinstance.currentPlayerInstance
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstanceRepository
@@ -179,7 +180,11 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 				return
 			}
 
-			who.currentPlayerInstance = target.playerInstance
+			try {
+				who.currentPlayerInstance = target.playerInstance
+			} catch (ex: PlayerInstanceOccupiedException) {
+				sender.sendError("This character is currently occupied")
+			}
 		}
 
 		@Command(aliases = ["unshelf"], desc = "Unshelf a character")
