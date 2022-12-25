@@ -25,7 +25,7 @@ import org.bukkit.inventory.ItemStack
 data class NewCharacterData(val name: String, val age: UInt, val gender: Gender, val race: Race,
 							val description: String, val stats: CharacterStats)
 
-suspend fun promptNewCharacterInfo(player: Player): NewCharacterData {
+suspend fun promptNewCharacterInfo(player: Player, allowedRaces: Collection<Race>): NewCharacterData {
 	player.sendMessage(miniMessage.deserialize("<gray>Welcome, <yellow><player_name></yellow>!</gray>",
 			Placeholder.unparsed("player_name", player.name)))
 
@@ -35,6 +35,8 @@ suspend fun promptNewCharacterInfo(player: Player): NewCharacterData {
 	while (true) {
 		name = player.promptChat(miniMessage.deserialize("<gray>What is the name of your character?</gray> " +
 				"<dark_gray>(max 32 characters)</dark_gray>"))
+				.replace("#", "")
+				.replace("&", "")
 
 		if (name.length > 32) {
 			player.sendError("Your character name must not be longer than 32 characters.")
@@ -78,7 +80,7 @@ suspend fun promptNewCharacterInfo(player: Player): NewCharacterData {
 
 	val race = player.promptGui(GuiSingleChoice<Race>(FablesCharacters.instance,
 			"Please choose a race",
-			Race.values().asSequence().filter { it != Race.HUMAN },
+			allowedRaces.asSequence(),
 			{
 				ItemStack(when (it) {
 					Race.ATTIAN_HUMAN -> Material.HAY_BLOCK
@@ -92,6 +94,7 @@ suspend fun promptNewCharacterInfo(player: Player): NewCharacterData {
 					Race.ORC -> Material.MOSS_BLOCK
 					Race.GOBLIN -> Material.LIGHT_GRAY_TERRACOTTA
 					Race.HALFLING -> Material.CRAFTING_TABLE
+					Race.OTHER -> Material.CARVED_PUMPKIN
 					else -> throw IllegalStateException()
 				})
 			},

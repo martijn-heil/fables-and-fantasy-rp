@@ -12,6 +12,7 @@ enum class Race(private val displayName: String, val boosters: CharacterStats) {
 	ORC("Orc", CharacterStats(strength = 3U)),
 	GOBLIN("Goblin", CharacterStats(defense = 1U, intelligence = 2U)),
 	HALFLING("Halfling", CharacterStats(defense = 1U, agility = 1U, intelligence = 1U)),
+	OTHER("Other", CharacterStats(defense = 0U, agility = 0U, intelligence = 0U)),
 
 	@Deprecated("legacy race")
 	HUMAN("Human", CharacterStats(strength = 1U, defense = 1U, agility = 1U));

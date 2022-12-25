@@ -23,7 +23,7 @@ class PlayerInstanceListener(private val server: Server) : Listener {
 					val wasVanished = e.player.isVanished
 					if (!wasVanished) VanishAPI.hidePlayer(e.player)
 					e.player.currentPlayerInstance = e.player.promptGui(PlayerInstanceSelectionGui(PLUGIN,
-							playerInstances.forOwner(e.player).asSequence()))
+							playerInstances.forOwner(e.player).asSequence().filter { it.isActive }))
 					if (!wasVanished) VanishAPI.showPlayer(e.player)
 				} catch (_: CancellationException) {}
 			} while (e.player.currentPlayerInstance == null)

@@ -48,7 +48,11 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 
 				var info: NewCharacterData
 				while (true) {
-					info = promptNewCharacterInfo(sender)
+					info = promptNewCharacterInfo(sender,
+							Race.values().asSequence()
+									.filter { it != Race.HUMAN }
+									.filter { if (!isStaffCharacter) it != Race.OTHER else true }
+									.toList())
 					sender.sendMessage(info.toString())
 
 					if (characterRepository.allNames().contains(info.name)) {
@@ -203,7 +207,13 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 			fun set(@Sender sender: CommandSender,
 					stat: CharacterStatKind,
 					@Range(min = 0.0) value: Int,
-					@CommandTarget(Permission.Command.Characters.Stats.Set + ".others") target: Character) {
+					@CommandTarget target: Character) {
+				if (!(target.playerInstance.owner == FABLES_ADMIN && sender.hasPermission(Permission.Staff))
+						&& !sender.hasPermission(Permission.Command.Characters.Stats.Set + ".others")) {
+					sender.sendError("You don't have permission to set the stats of this character")
+					return
+				}
+
 				target.stats = target.stats.with(stat, value.toUInt())
 				sender.sendMessage("$SYSPREFIX Set ${target.name}'s ${stat.toString().lowercase()} to $value")
 			}
