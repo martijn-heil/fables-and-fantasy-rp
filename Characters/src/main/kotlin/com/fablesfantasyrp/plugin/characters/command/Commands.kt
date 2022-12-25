@@ -138,6 +138,14 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 			sender.sendMessage("$SYSPREFIX Set ${target.name}'s race to $race")
 		}
 
+		@Command(aliases = ["setowner"], desc = "Set a character's owner")
+		@Require(Permission.Command.Characters.SetOwner)
+		fun setowner(@Sender sender: CommandSender, owner: OfflinePlayer,
+					@CommandTarget(Permission.Command.Characters.SetOwner + ".others") target: Character) {
+			target.playerInstance.owner = owner
+			sender.sendMessage("$SYSPREFIX Set ${target.name}'s owner to ${owner.name}")
+		}
+
 		@Command(aliases = ["unshelf"], desc = "Unshelf a character")
 		@Require(Permission.Command.Characters.Unshelf)
 		fun unshelf(@Sender sender: CommandSender,
