@@ -20,6 +20,7 @@ internal val PLUGIN get() = FablesInventoryPlugin.instance
 
 class FablesInventoryPlugin : SuspendingJavaPlugin() {
 	private lateinit var commands: Collection<Command>
+	lateinit var mirroredInventoryManager: MirroredInventoryManager
 	lateinit var inventories: EntityFablesInventoryRepository<*>
 		private set
 
@@ -55,6 +56,9 @@ class FablesInventoryPlugin : SuspendingJavaPlugin() {
 //		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
 
 		server.pluginManager.registerEvents(PlayerInstanceInventoryListener(inventories), this)
+
+		mirroredInventoryManager = MirroredInventoryManager(this)
+		mirroredInventoryManager.start()
 	}
 
 	override fun onDisable() {
@@ -65,6 +69,7 @@ class FablesInventoryPlugin : SuspendingJavaPlugin() {
 			instance.inventory.enderChest.bukkitInventory = null
 		}
 		inventories.saveAll()
+		mirroredInventoryManager.stop()
 	}
 
 	companion object {
