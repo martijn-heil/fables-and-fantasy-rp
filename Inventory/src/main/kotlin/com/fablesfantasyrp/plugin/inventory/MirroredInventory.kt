@@ -12,7 +12,7 @@ class MirroredInventory(val fablesInventory: FablesInventory, owner: InventoryHo
 	val bukkitInventory: Inventory = fablesInventory.asGenericInventoryCopy(owner, title)
 
 	fun tick() {
-		val currentState = bukkitInventory.contents.map { it?.clone() }.toTypedArray()
+		val currentState = bukkitInventory.contents!!.map { it?.clone() }.toTypedArray()
 		initialState.mapIndexed { index, itemStack -> Pair(index, Pair(itemStack, currentState[index])) }.forEach {
 			val index = it.first
 			val initialItemStack = it.second.first

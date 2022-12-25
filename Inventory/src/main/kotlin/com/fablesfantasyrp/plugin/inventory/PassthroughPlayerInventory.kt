@@ -87,6 +87,12 @@ class PassthroughPlayerInventory constructor(private val persistentContent: Arra
 		const val size = 41
 		fun createEmpty() = PassthroughPlayerInventory(arrayOfNulls(size))
 
+		fun copyOfBukkitInventory(inventory: PlayerInventory) =
+				PassthroughPlayerInventory(inventory.contents!!.map { it?.let { SerializableItemStack(it) }}.toTypedArray())
+
+		fun copyOfBukkitInventory(inventory: Inventory) =
+				PassthroughPlayerInventory(inventory.contents!!.map { it?.let { SerializableItemStack(it) }}.toTypedArray())
+
 		@JvmStatic
 		private val serialVersionUID = 1L
 	}

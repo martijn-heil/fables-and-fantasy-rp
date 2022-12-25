@@ -12,6 +12,9 @@ import com.fablesfantasyrp.plugin.location.location
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.EntityPlayerInstanceRepository
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
 import com.fablesfantasyrp.plugin.utils.SerializableItemStack
+import com.fablesfantasyrp.plugin.utilsoffline.location
+import com.fablesfantasyrp.plugin.utilsoffline.offlineEnderChest
+import com.fablesfantasyrp.plugin.utilsoffline.offlineInventory
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.Server
@@ -68,20 +71,30 @@ internal fun migrateDenizenToSql(server: Server,
 
 	chars.forEach {
 		try {
-			val inventory = (it.dataMap.getObject("inventory") as? MapTag)
-					?.let { denizenInventoryMapToArray(it, PassthroughPlayerInventory.size.toUInt()) }
-					?.map { if (it != null) SerializableItemStack(it) else null }
-					?.toTypedArray()
-					?.let { PassthroughPlayerInventory(it) } ?: PassthroughPlayerInventory.createEmpty()
+			val inventory: PassthroughPlayerInventory
+			val enderChest: PassthroughInventory
+			val player = it.player
+			val currentDenizenCharacter = player.currentDenizenPlayerCharacter
 
-			val enderChest = (it.dataMap.getObject("enderchest") as? MapTag)
-					?.let { denizenInventoryMapToArray(it, 27U) }
-					?.map { if (it != null) SerializableItemStack(it) else null }
-					?.toTypedArray()
-					?.let { PassthroughInventory(it, 27) } ?: PassthroughInventory(arrayOfNulls(27), 27)
+			if (currentDenizenCharacter == it) {
+				inventory = PassthroughPlayerInventory.copyOfBukkitInventory(player.offlineInventory)
+				enderChest = PassthroughInventory.copyOfBukkitInventory(player.offlineEnderChest)
+			} else {
+				inventory = (it.dataMap.getObject("inventory") as? MapTag)
+						?.let { denizenInventoryMapToArray(it, PassthroughPlayerInventory.size.toUInt()) }
+						?.map { if (it != null) SerializableItemStack(it) else null }
+						?.toTypedArray()
+						?.let { PassthroughPlayerInventory(it) } ?: PassthroughPlayerInventory.createEmpty()
 
-			val playerInstance = playerInstances.create(PlayerInstance(id = 0, owner = it.player))
-			playerInstance.location = it.location
+				enderChest = (it.dataMap.getObject("enderchest") as? MapTag)
+						?.let { denizenInventoryMapToArray(it, 27U) }
+						?.map { if (it != null) SerializableItemStack(it) else null }
+						?.toTypedArray()
+						?.let { PassthroughInventory(it, 27) } ?: PassthroughInventory(arrayOfNulls(27), 27)
+			}
+
+			val playerInstance = playerInstances.create(PlayerInstance(id = 0, owner = player))
+			playerInstance.location = if (currentDenizenCharacter != it) it.location else player.location
 			playerInstance.inventory.inventory.contents = inventory.contents
 			playerInstance.inventory.enderChest.contents = enderChest.contents
 

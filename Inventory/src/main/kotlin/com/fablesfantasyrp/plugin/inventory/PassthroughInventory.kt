@@ -68,5 +68,8 @@ constructor(private val persistentContent: Array<SerializableItemStack?>, size: 
 	companion object {
 		@JvmStatic
 		private val serialVersionUID = 1L
+
+		fun copyOfBukkitInventory(inventory: Inventory) =
+			PassthroughInventory(inventory.contents!!.map { it?.let { SerializableItemStack(it) }}.toTypedArray(), inventory.size)
 	}
 }
