@@ -146,6 +146,13 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 			sender.sendMessage("$SYSPREFIX Set ${target.name}'s owner to ${owner.name}")
 		}
 
+
+		@Command(aliases = ["become"], desc = "Become a character")
+		@Require(Permission.Command.Characters.Become)
+		fun become(@Sender sender: Player, target: Character) {
+			sender.currentPlayerInstance = target.playerInstance
+		}
+
 		@Command(aliases = ["unshelf"], desc = "Unshelf a character")
 		@Require(Permission.Command.Characters.Unshelf)
 		fun unshelf(@Sender sender: CommandSender,
