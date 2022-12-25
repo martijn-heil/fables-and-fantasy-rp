@@ -15,11 +15,15 @@ class PlayerInstanceManager(private val server: Server) {
 
 	@Throws(PlayerInstanceOccupiedException::class)
 	fun setCurrentForPlayer(player: Player, playerInstance: PlayerInstance) {
-		if (this.getCurrentForPlayer(player) == playerInstance) return
+		val currentPlayerInstance = this.getCurrentForPlayer(player)
+		if (currentPlayerInstance == playerInstance) return
 		val currentHolder = currentInstancesTwo[playerInstance]
 		if (currentHolder != null) throw PlayerInstanceOccupiedException()
+
 		val event = PlayerSwitchPlayerInstanceEvent(player, getCurrentForPlayer(player), playerInstance)
 		server.pluginManager.callEvent(event)
+
+		currentInstancesTwo.remove(currentPlayerInstance)
 		currentInstances[player.uniqueId] = playerInstance
 		currentInstancesTwo[playerInstance] = player.uniqueId
 	}
