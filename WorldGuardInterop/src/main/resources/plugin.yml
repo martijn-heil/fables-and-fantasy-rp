@@ -2,6 +2,7 @@ name: FablesWorldGuardInterop
 version: @version@
 authors: [@authors@]
 depend:
+  - FablesUtils
   - FablesKotlinRuntime
   - WorldGuard
 main: com.fablesfantasyrp.plugin.worldguardinterop.FablesWorldGuardInterop

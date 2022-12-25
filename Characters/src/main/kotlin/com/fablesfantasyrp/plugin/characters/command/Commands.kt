@@ -7,6 +7,7 @@ import com.fablesfantasyrp.plugin.characters.data.Race
 import com.fablesfantasyrp.plugin.characters.data.entity.Character
 import com.fablesfantasyrp.plugin.characters.gui.CharacterStatsGui
 import com.fablesfantasyrp.plugin.form.YesNoChatPrompt
+import com.fablesfantasyrp.plugin.form.promptChat
 import com.fablesfantasyrp.plugin.playerinstance.currentPlayerInstance
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstanceRepository
@@ -60,7 +61,9 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 
 				val playerInstance = playerInstanceRepository.create(PlayerInstance(
 						id = 0,
-						owner = if (!isStaffCharacter) sender else FABLES_ADMIN
+						owner = if (!isStaffCharacter) sender else FABLES_ADMIN,
+						description = info.name,
+						isActive = true
 				))
 
 				val character = characterRepository.create(Character(
@@ -146,18 +149,33 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 			sender.sendMessage("$SYSPREFIX Set ${target.name}'s race to $race")
 		}
 
-		@Command(aliases = ["setowner"], desc = "Set a character's owner")
-		@Require(Permission.Command.Characters.SetOwner)
-		fun setowner(@Sender sender: CommandSender, owner: OfflinePlayer,
-					@CommandTarget(Permission.Command.Characters.SetOwner + ".others") target: Character) {
-			target.playerInstance.owner = owner
-			sender.sendMessage("$SYSPREFIX Set ${target.name}'s owner to ${owner.name}")
+		@Command(aliases = ["changename"], desc = "Change your character's name")
+		@Require(Permission.Command.Characters.ChangeName)
+		fun changename(@Sender sender: Player,
+					   @CommandTarget(Permission.Command.Characters.ChangeName + ".others") target: Character) {
+			plugin.launch {
+				val oldName = target.name
+				val newName = sender.promptChat("$SYSPREFIX Please enter ${oldName}'s new name:")
+				target.name = newName
+				sender.sendMessage("$SYSPREFIX Changed $oldName's name to $newName")
+			}
 		}
 
 		@Command(aliases = ["become"], desc = "Become a character")
 		@Require(Permission.Command.Characters.Become)
-		fun become(@Sender sender: Player, target: Character) {
-			sender.currentPlayerInstance = target.playerInstance
+		fun become(@Sender sender: CommandSender, target: Character,
+				   @CommandTarget(Permission.Command.Characters.Become + ".others") who: Player) {
+			val owner = target.playerInstance.owner
+
+			if (owner == FABLES_ADMIN && !sender.hasPermission(Permission.Staff)) {
+				sender.sendError("You do not have permission to become a staff character.")
+				return
+			} else if (owner != sender && !sender.hasPermission(Permission.Any)) {
+				sender.sendError("You do not have permission to become a character that you don't own.")
+				return
+			}
+
+			who.currentPlayerInstance = target.playerInstance
 		}
 
 		@Command(aliases = ["unshelf"], desc = "Unshelf a character")

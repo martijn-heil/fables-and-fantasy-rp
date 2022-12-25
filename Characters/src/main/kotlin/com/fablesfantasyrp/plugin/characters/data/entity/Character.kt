@@ -48,6 +48,7 @@ class Character : DataEntity<ULong, Character>, CharacterData {
 			}
 
 			field = value
+			playerInstance.isActive = !(isShelved || isDead)
 			dirtyMarker?.markDirty(this)
 		}
 
@@ -68,6 +69,7 @@ class Character : DataEntity<ULong, Character>, CharacterData {
 			}
 
 			field = value
+			playerInstance.isActive = !(isShelved || isDead)
 			dirtyMarker?.markDirty(this)
 		}
 

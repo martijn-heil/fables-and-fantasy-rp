@@ -70,7 +70,7 @@ class FablesPlayerInstance : SuspendingJavaPlugin() {
 
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
 
-		server.pluginManager.registerEvents(PlayerInstanceListener(), this)
+		server.pluginManager.registerEvents(PlayerInstanceListener(server), this)
 	}
 
 	override fun onDisable() {

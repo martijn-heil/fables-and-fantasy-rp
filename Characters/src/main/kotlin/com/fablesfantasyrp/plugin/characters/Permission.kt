@@ -19,8 +19,8 @@ object Permission {
 			const val Shelf = "${Command.prefix}.shelf"
 			const val Unshelf = "${Command.prefix}.unshelf"
 			const val SetRace = "${Command.prefix}.setrace"
-			const val SetOwner = "${Command.prefix}.setowner"
 			const val Become = "${Command.prefix}.become"
+			const val ChangeName = "${Command.prefix}.changename"
 
 			object Stats {
 				private const val prefix = Permission.Command.Characters.prefix + ".characters"

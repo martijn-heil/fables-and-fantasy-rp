@@ -32,16 +32,19 @@ class Commands {
 				@CommandTarget(Permission.Command.CommandPlayerInstance.New + ".others") owner: OfflinePlayer) {
 			val result = instances.create(PlayerInstance(
 					id = 0,
-					owner = owner)
+					owner = owner,
+					isActive = true,
+					description = null)
 			)
 			sender.sendMessage("$SYSPREFIX Created player instance #${result.id} owned by ${owner.name}")
 		}
 
 		@Command(aliases = ["become"], desc = "Become a player instance")
 		@Require(Permission.Command.CommandPlayerInstance.Become)
-		fun become(@Sender sender: Player, instance: PlayerInstance) {
-			sender.currentPlayerInstance = instance
-			sender.sendMessage("$SYSPREFIX You are now player instance #${instance.id}")
+		fun become(@Sender sender: CommandSender, instance: PlayerInstance, @CommandTarget target: Player) {
+			target.currentPlayerInstance = instance
+			target.sendMessage("$SYSPREFIX You are now player instance #${instance.id}")
+			if (target != sender) sender.sendMessage("$SYSPREFIX ${target.name} is now player instance #${instance.id}")
 		}
 
 		@Command(aliases = ["transfer"], desc = "Transfer a player instance")

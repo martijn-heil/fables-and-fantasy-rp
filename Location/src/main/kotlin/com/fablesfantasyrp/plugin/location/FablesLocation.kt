@@ -6,10 +6,9 @@ import com.fablesfantasyrp.plugin.location.data.entity.EntityPlayerInstanceLocat
 import com.fablesfantasyrp.plugin.location.data.persistent.H2PlayerInstanceLocationRepository
 import com.fablesfantasyrp.plugin.playerinstance.currentPlayerInstance
 import com.fablesfantasyrp.plugin.playerinstance.playerInstanceManager
+import com.fablesfantasyrp.plugin.utils.SPAWN
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
-import com.fablesfantasyrp.plugin.utils.essentialsSpawn
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
-import org.bukkit.Location
 
 internal val PLUGIN get() = FablesLocation.instance
 
@@ -29,10 +28,8 @@ class FablesLocation : SuspendingJavaPlugin() {
 			return
 		}
 
-		val defaultLocation: Location = essentialsSpawn.getSpawn("default")
-
 		playerInstanceLocationRepository = EntityPlayerInstanceLocationRepository(
-				H2PlayerInstanceLocationRepository(fablesDatabase, server, playerInstanceManager, defaultLocation))
+				H2PlayerInstanceLocationRepository(fablesDatabase, server, playerInstanceManager, SPAWN))
 		playerInstanceLocationRepository.init()
 
 		server.pluginManager.registerEvents(PlayerInstanceLocationListener(playerInstanceLocationRepository), this)

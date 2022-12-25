@@ -102,7 +102,7 @@ class H2PlayerInstanceLocationRepository(private val dataSource: DataSource,
 			stmnt.setDouble(3, location.z)
 			stmnt.setFloat(4, location.pitch)
 			stmnt.setFloat(5, location.yaw)
-			stmnt.setObject(6, location.world.uid)
+			stmnt.setObject(6, (location.world ?: defaultLocation.world).uid)
 			stmnt.setInt(7, v.id)
 			stmnt.executeUpdate()
 		}

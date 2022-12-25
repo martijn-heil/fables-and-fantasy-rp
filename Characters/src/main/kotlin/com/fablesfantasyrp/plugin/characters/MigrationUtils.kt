@@ -93,7 +93,7 @@ internal fun migrateDenizenToSql(server: Server,
 						?.let { PassthroughInventory(it, 27) } ?: PassthroughInventory(arrayOfNulls(27), 27)
 			}
 
-			val playerInstance = playerInstances.create(PlayerInstance(id = 0, owner = player))
+			val playerInstance = playerInstances.create(PlayerInstance(id = 0, owner = player, description = it.name, isActive = true))
 			playerInstance.location = if (currentDenizenCharacter != it) it.location else player.location
 			playerInstance.inventory.inventory.contents = inventory.contents
 			playerInstance.inventory.enderChest.contents = enderChest.contents

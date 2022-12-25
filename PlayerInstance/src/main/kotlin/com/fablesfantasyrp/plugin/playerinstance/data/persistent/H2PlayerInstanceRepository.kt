@@ -51,9 +51,11 @@ class H2PlayerInstanceRepository(private val server: Server,
 	override fun create(v: PlayerInstance): PlayerInstance {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME " +
-					"(owner) " +
-					"VALUES (?)", Statement.RETURN_GENERATED_KEYS)
+					"(owner, description, active) " +
+					"VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS)
 			stmnt.setObject(1, v.owner.uniqueId)
+			stmnt.setString(2, v.description)
+			stmnt.setBoolean(3, v.isActive)
 			stmnt.executeUpdate()
 			val rs = stmnt.generatedKeys
 			rs.next()
@@ -61,6 +63,8 @@ class H2PlayerInstanceRepository(private val server: Server,
 			return PlayerInstance(
 					id = id,
 					owner = v.owner,
+					description = v.description,
+					isActive = v.isActive,
 					dirtyMarker = dirtyMarker
 			)
 		}
@@ -92,11 +96,15 @@ class H2PlayerInstanceRepository(private val server: Server,
 
 	private fun fromRow(row: ResultSet): PlayerInstance {
 		val id = row.getInt("id")
-		val owner = server.getOfflinePlayer(row.getObject(2, UUID::class.java))
+		val owner = server.getOfflinePlayer(row.getObject("owner", UUID::class.java))
+		val description = row.getString("description")
+		val isAccessible = row.getBoolean("active")
 
 		return PlayerInstance(
 				id = id,
 				owner = owner,
+				description = description,
+				isActive = isAccessible,
 				dirtyMarker = dirtyMarker
 		)
 	}
