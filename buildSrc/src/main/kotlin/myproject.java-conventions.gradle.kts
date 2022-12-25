@@ -69,6 +69,7 @@ repositories {
 	maven { url = URI("https://repo.essentialsx.net/releases/") }
 	maven { url = URI("https://repo.codemc.io/repository/maven-public/") }
 	maven { url = URI("https://maven.enginehub.org/repo/")}
+	maven { url = URI("https://oss.sonatype.org/content/repositories/snapshots/") }
 	mavenLocal()
 	maven { url = URI("https://jitpack.io") }
 
@@ -128,6 +129,7 @@ dependencies {
 	implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.5.0")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4")
+	implementation("org.ocpsoft.prettytime:prettytime:5.0.6.Final")
 	implementation(urlFile(URL("https://github.com/Gecolay/GSit/releases/download/1.2.4/GSit-1.2.4.jar"), "GSit.jar"))
 	//implementation("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT") { isChanging = true }
 	implementation("com.gitlab.martijn-heil:NinCommands:-SNAPSHOT") { isChanging = true }

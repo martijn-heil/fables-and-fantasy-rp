@@ -8,6 +8,7 @@ import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.parseLinks
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import org.ocpsoft.prettytime.PrettyTime
 
 fun characterCard(character: Character): Component {
 	val statsMessage = Component.text().append(CharacterStatKind.values().asSequence().map { statKind ->
@@ -28,6 +29,7 @@ fun characterCard(character: Character): Component {
 					"Age: <white><age></white><newline>" +
 					"Gender: <white><gender></white><newline>" +
 					"Race: <white><race></white><newline>" +
+					"Last seen: <white>${character.lastSeen?.let { PrettyTime().format(it) } ?: "unknown" }</white><newline>" +
 					"Description: <white><description></white><newline>" +
 					"Maximum health: <white><maximum_health></white><newline>" +
 					"Stats:<newline>" +
