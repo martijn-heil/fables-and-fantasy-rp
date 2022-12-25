@@ -48,12 +48,12 @@ suspend fun promptNewCharacterInfo(player: Player, allowedRaces: Collection<Race
 
 	val age: UInt = flow {
 		val message = miniMessage.deserialize("<gray>What is the age of <yellow><character_name></yellow>?</gray> " +
-				"<dark_gray>(between 10 and 1000)</dark_gray>",
+				"<dark_gray>(between 13 and 1000)</dark_gray>",
 				Placeholder.unparsed("character_name", name))
 
 		val num = player.promptChat(message).toUIntOrNull()
 		if (num == null) throw IllegalArgumentException("Could not parse integer")
-		if (num < 10U) throw IllegalArgumentException("Age must be at least 10")
+		if (num < 13U) throw IllegalArgumentException("Age must be at least 13")
 		if (num > 1000U) throw IllegalArgumentException("Age may not be greater than 1000")
 		emit(num)
 	}.retry {
