@@ -6,7 +6,9 @@ import com.fablesfantasyrp.plugin.playerinstance.playerInstanceManager
 import com.fablesfantasyrp.plugin.text.join
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.parseLinks
+import com.fablesfantasyrp.plugin.utils.FABLES_ADMIN
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.ocpsoft.prettytime.PrettyTime
 
@@ -23,6 +25,7 @@ fun characterCard(character: Character): Component {
 			"<newline>" +
 					"<gray>═════ <white><player_name></white> <dark_gray>Character #<id></dark_gray> ═════</gray><newline>" +
 					"<red>Please do not metagame this information.</red><newline>" +
+					"<staff_character>" +
 					"<newline>" +
 					"<green>" +
 					"Name: <white><name></white><newline>" +
@@ -37,6 +40,10 @@ fun characterCard(character: Character): Component {
 					"</green>",
 			Placeholder.unparsed("player_name",
 					playerInstanceManager.getCurrentForPlayerInstance(character.playerInstance)?.name ?: "(unknown player)"),
+			Placeholder.component("staff_character",
+					if (character.playerInstance.owner == FABLES_ADMIN)
+						Component.text("This is a staff character").color(NamedTextColor.YELLOW)
+					else Component.text()),
 			Placeholder.unparsed("id", character.id.toString()),
 			Placeholder.unparsed("name", character.name),
 			Placeholder.unparsed("age", character.age.toString()),

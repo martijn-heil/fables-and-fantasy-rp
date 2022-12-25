@@ -3,10 +3,12 @@ package com.fablesfantasyrp.plugin.utils
 import com.earth2me.essentials.User
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
+import java.util.*
 import java.util.concurrent.locks.Lock
 
 // This code is supported by SuperVanish, PremiumVanish, VanishNoPacket and a few more vanish plugins.
@@ -15,6 +17,8 @@ val Player.isVanished: Boolean
 
 val OfflinePlayer.ess: User
 	get() = essentials.getUser(uniqueId)
+
+val FABLES_ADMIN = Bukkit.getOfflinePlayer(UUID.fromString("bcdb5a59-269e-43df-914b-eed888597272"))
 
 fun enforceDependencies(plugin: Plugin) {
 	for (dependencyName in plugin.description.depend) {

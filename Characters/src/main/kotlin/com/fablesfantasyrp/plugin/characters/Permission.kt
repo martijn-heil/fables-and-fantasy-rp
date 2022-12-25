@@ -2,6 +2,8 @@ package com.fablesfantasyrp.plugin.characters
 
 object Permission {
 	const val prefix = "fables.characters"
+	const val Staff = "${prefix}.staff"
+	const val Any = "${prefix}.any"
 
 	object Command {
 		private const val prefix = Permission.prefix + ".command"

@@ -13,6 +13,7 @@ import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstanceRepos
 import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.sendError
+import com.fablesfantasyrp.plugin.utils.FABLES_ADMIN
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.gitlab.martijn_heil.nincommands.common.CommandTarget
@@ -36,6 +37,14 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 		@Require(Permission.Command.Characters.New)
 		fun new(@Sender sender: Player) {
 			plugin.launch {
+				val isStaffCharacter: Boolean = if (sender.hasPermission(Permission.Staff)) {
+					val prompt = YesNoChatPrompt(sender, miniMessage.deserialize(
+							"<prefix> Is this character a staff character?<newline>",
+							Placeholder.component("prefix", legacyText(SYSPREFIX))).color(NamedTextColor.GRAY))
+					prompt.send()
+					prompt.await()
+				} else false
+
 				var info: NewCharacterData
 				while (true) {
 					info = promptNewCharacterInfo(sender)
@@ -51,7 +60,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 
 				val playerInstance = playerInstanceRepository.create(PlayerInstance(
 						id = 0,
-						owner = sender
+						owner = if (!isStaffCharacter) sender else FABLES_ADMIN
 				))
 
 				val character = characterRepository.create(Character(
@@ -106,8 +115,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 
 		@Command(aliases = ["shelf"], desc = "Shelf a character")
 		@Require(Permission.Command.Characters.Shelf)
-		fun shelf(@Sender sender: Player,
-					  @CommandTarget(Permission.Command.Characters.Shelf + ".others") target: Character) {
+		fun shelf(@Sender sender: Player, @CommandTarget(Permission.Command.Characters.Shelf + ".others") target: Character) {
 			val owner = target.playerInstance.owner
 			val shelved = characterRepository.forOwner(owner).filter { it.isShelved && !it.isDead }.size
 			if (shelved >= 3) {
@@ -145,7 +153,6 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 			target.playerInstance.owner = owner
 			sender.sendMessage("$SYSPREFIX Set ${target.name}'s owner to ${owner.name}")
 		}
-
 
 		@Command(aliases = ["become"], desc = "Become a character")
 		@Require(Permission.Command.Characters.Become)
