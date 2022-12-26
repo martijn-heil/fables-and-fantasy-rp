@@ -2,6 +2,7 @@ package com.fablesfantasyrp.plugin.economy
 
 object Permission {
 	const val prefix = "fables.economy"
+	const val PayOwn = "${prefix}.payown"
 
 	object Command {
 		private const val prefix = Permission.prefix + ".command"

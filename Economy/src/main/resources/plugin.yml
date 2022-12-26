@@ -7,5 +7,6 @@ depend:
   - FablesPlayerInstance
   - FablesCharacters
   - EssentialsSpawn
+  - Bank
 main: com.fablesfantasyrp.plugin.economy.FablesEconomy
 api-version: @bukkit_api_version@

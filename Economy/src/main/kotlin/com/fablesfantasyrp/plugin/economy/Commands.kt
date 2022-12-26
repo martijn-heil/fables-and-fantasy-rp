@@ -40,7 +40,7 @@ class Commands(private val characters: EntityCharacterRepository) {
 			return
 		}
 
-		if (ownPlayerInstances.contains(target)) {
+		if (!currentPlayer.hasPermission(Permission.PayOwn) && ownPlayerInstances.contains(target)) {
 			currentPlayer.sendError("You cannot pay a player instance that you own!")
 			return
 		}
