@@ -12,10 +12,9 @@ open class MassivelyCachingEntityRepository<K, T: Identifiable<K>, C>(child: C) 
 			  C : MutableRepository<T>,
 			  C: HasDirtyMarker<T> {
 
-	override fun init(): SimpleEntityRepository<K, T, C> {
+	override fun init() {
 		super.init()
 		this.all().forEach { this.markStrong(it) }
-		return this
 	}
 
 	override fun create(v: T): T {

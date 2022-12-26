@@ -12,5 +12,5 @@ class EntityPlayerInstanceRepositoryImpl<C>(child: C) :
 			  C: MutableRepository<PlayerInstance>,
 			  C: HasDirtyMarker<PlayerInstance>,
 			  C: PlayerInstanceRepository {
-	override fun forOwner(offlinePlayer: OfflinePlayer): Collection<PlayerInstance> = child.forOwner(offlinePlayer)
+	override fun forOwner(offlinePlayer: OfflinePlayer): Collection<PlayerInstance> = child.forOwner(offlinePlayer).mapNotNull { this.forId(it.id) }
 }
