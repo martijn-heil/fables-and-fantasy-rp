@@ -10,10 +10,9 @@
 ## Structure
 The root project directory contains a number of Gradle subprojects, each one of which will produce a single Spigot plugin.
 the `buildSrc`, `examples` and `lib` directories are the only exceptions to this.
-- `buildSrc` is our Gradle 'conventions plugin', which allows us
+- `buildSrc` is our Gradle 'conventions plugin', which allows us to deduplicate and centralize Gradle behavioral rules between our different subprojects.
 - `examples` contains code examples
 - `lib` is a git submodule that contains third party plugin jars that are used as dependencies
-  to deduplicate and centralize Gradle behavioral rules between our different subprojects.
 
 ## Cloning
 To clone (using SSH) as well as set up all submodules:
@@ -35,6 +34,7 @@ Example: `./deployto.sh /to/my/testserver/plugins/`
 
 ## Code style
 We use tabs for indentation. Yes, really. blame 9front for making me this way.
+
 When using Intellij IDEA it should automatically take over the preconfigured style options.
 
 Try to keep line length below 120 columns.
