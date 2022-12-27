@@ -29,4 +29,5 @@ include("examples:BlankSystem",
 		"FastTravel",
 		"Timers",
 		"WorldGuardInterop",
-		"Magic")
+		"Magic",
+		"LeadBreakingSound")

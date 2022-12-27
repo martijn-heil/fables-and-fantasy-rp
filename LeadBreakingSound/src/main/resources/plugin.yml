@@ -1,0 +1,8 @@
+name: FablesLeadBreakingSound
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+main: com.fablesfantasyrp.plugin.leadbreakingsound.FablesLeadBreakingSound
+api-version: @bukkit_api_version@
