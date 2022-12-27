@@ -11,8 +11,8 @@ class SlidingDoor : DataEntity<Int, SlidingDoor> {
 	override val id: Int
 
 	var blocks: Collection<OffsetBlock> set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
-	var handleLocation: BlockLocation
-	var world: World
+	var handleLocation: BlockLocation 	set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
+	var world: World 					set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 
 	constructor(id: Int,
 				blocks: Collection<OffsetBlock>,
