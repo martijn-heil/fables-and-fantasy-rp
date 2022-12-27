@@ -6,11 +6,11 @@ import java.sql.ResultSet
 import java.util.*
 
 
-fun<T> ResultSet.getList(column: String): List<T>  {
+inline fun<reified T> ResultSet.getList(column: String): List<T>  {
 	return (this.getArray(column).array as Array<*>).map { it as T }
 }
 
-fun<T> ResultSet.getList(column: Int): List<T>  {
+inline fun<reified T> ResultSet.getList(column: Int): List<T>  {
 	return (this.getArray(column).array as Array<*>).map { it as T }
 }
 
