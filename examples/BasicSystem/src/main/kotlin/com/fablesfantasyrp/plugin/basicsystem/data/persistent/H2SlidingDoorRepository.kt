@@ -28,9 +28,9 @@ class H2SlidingDoorRepository(private val server: Server,
 			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME " +
 					"(" +
 					"handle_location_x, " +
-					"handle_location_y" +
-					"handle_location_z" +
-					"world" +
+					"handle_location_y, " +
+					"handle_location_z, " +
+					"world, " +
 					"blocks" +
 					") " +
 					"VALUES (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)
@@ -54,7 +54,22 @@ class H2SlidingDoorRepository(private val server: Server,
 	}
 
 	override fun update(v: SlidingDoor) {
-		throw NotImplementedError()
+		dataSource.connection.use { connection ->
+			val stmnt = connection.prepareStatement("UPDATE $TABLE_NAME SET" +
+					"handle_location_x = ?, " +
+					"handle_location_y = ?, " +
+					"handle_location_z = ?, " +
+					"world = ?, " +
+					"blocks = ?" +
+					"WHERE id = ?")
+			stmnt.setInt(1, v.handleLocation.x)
+			stmnt.setInt(2, v.handleLocation.y)
+			stmnt.setInt(3, v.handleLocation.z)
+			stmnt.setUuid(4, v.world.uid)
+			stmnt.setCollection(5, H2Type.JAVA_OBJECT, v.blocks)
+			stmnt.setObject(6, v.id)
+			stmnt.executeUpdate()
+		}
 	}
 
 	override fun forId(id: Int): SlidingDoor? {
