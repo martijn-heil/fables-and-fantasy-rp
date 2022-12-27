@@ -14,10 +14,13 @@ class Commands(private val players: EntityBasicSystemPlayerRepository) {
 	@Require(Permission.Command.Tryepicjump)
 	fun tryepicjump(@Sender sender: Player) {
 		val basicSystemPlayer = players.forPlayer(sender)
+
 		if (!basicSystemPlayer.isEpic) {
 			sender.sendError("You are not epic enough :(")
 			return
 		}
+
+		basicSystemPlayer.doEpicJump()
 	}
 
 	class Doors(private val doors: EntitySlidingDoorRepository) {
