@@ -46,3 +46,5 @@ fun Location.humanReadable() = "${blockX},${blockY},${blockZ},${world.name}"
 // Citizens NPC's are instances of Player too, but obviously, not real players
 // Citizens NPC's don't show up in the server.onlinePlayers list
 val Player.isRealPlayer: Boolean get() = server.onlinePlayers.contains(player)
+
+data class BlockLocation(val x: Int, val y: Int, val z: Int)

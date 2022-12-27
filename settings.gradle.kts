@@ -1,5 +1,6 @@
 rootProject.name = "fables-and-fantasy-rp-kotlin"
 include("examples:BlankSystem",
+		"examples:BasicSystem",
 		"HorseLimits",
 		"DenizenInterop",
 		"Database",

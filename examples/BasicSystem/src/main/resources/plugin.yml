@@ -1,0 +1,10 @@
+name: FablesBasicSystem
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+  - FablesDatabase
+  - NinCommands
+main: com.fablesfantasyrp.plugin.basicsystem.FablesBasicSystem
+api-version: @bukkit_api_version@
