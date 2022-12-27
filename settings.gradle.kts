@@ -1,5 +1,6 @@
 rootProject.name = "fables-and-fantasy-rp-kotlin"
-include("HorseLimits",
+include("examples:BlankSystem",
+		"HorseLimits",
 		"DenizenInterop",
 		"Database",
 		"KotlinRuntime",
