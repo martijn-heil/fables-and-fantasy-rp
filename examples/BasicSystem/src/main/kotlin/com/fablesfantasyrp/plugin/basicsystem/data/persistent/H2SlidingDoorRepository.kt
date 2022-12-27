@@ -20,7 +20,7 @@ import javax.sql.DataSource
 class H2SlidingDoorRepository(private val server: Server,
 							  private val dataSource: DataSource)
 	: BaseH2KeyedRepository<Int, SlidingDoor>(Int::class.java, dataSource), SlidingDoorRepository, HasDirtyMarker<SlidingDoor> {
-	override var dirtyMarker: DirtyMarker<SlidingDoor>? = null
+
 	override val TABLE_NAME = "FABLES_BASICSYSTEM.DOOR"
 
 	override fun create(v: SlidingDoor): SlidingDoor {
