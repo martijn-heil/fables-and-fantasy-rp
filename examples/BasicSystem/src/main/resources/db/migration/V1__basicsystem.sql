@@ -1,6 +1,6 @@
 CREATE TABLE player (
-	id										UUID NOT NULL PRIMARY KEY,
-	is_epic									BOOLEAN NOT NULL DEFAULT FALSE
+	id					UUID NOT NULL PRIMARY KEY,
+	is_epic				BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE door (
@@ -9,5 +9,5 @@ CREATE TABLE door (
 	handle_location_y	INT NOT NULL,
 	handle_location_z	INT NOT NULL,
 	world				UUID NOT NULL,
-	blocks				JAVA_OBJECT ARRAY NOT NULL,
+	blocks				JAVA_OBJECT ARRAY NOT NULL
 );

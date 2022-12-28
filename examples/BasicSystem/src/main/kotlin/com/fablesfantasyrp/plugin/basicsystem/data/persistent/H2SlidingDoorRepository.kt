@@ -6,7 +6,6 @@ import com.fablesfantasyrp.plugin.basicsystem.data.entity.SlidingDoorRepository
 import com.fablesfantasyrp.plugin.database.getList
 import com.fablesfantasyrp.plugin.database.getUuid
 import com.fablesfantasyrp.plugin.database.repository.BaseH2KeyedRepository
-import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
 import com.fablesfantasyrp.plugin.database.setCollection
 import com.fablesfantasyrp.plugin.database.setUuid
