@@ -55,3 +55,5 @@ val Player.isRealPlayer: Boolean get() = server.onlinePlayers.contains(player)
 fun quoteCommandArgument(s: String): String {
 	return if (s.contains(" ")) "\"$s\"" else s
 }
+
+data class BlockLocation(val x: Int, val y: Int, val z: Int)

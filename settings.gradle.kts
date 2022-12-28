@@ -1,5 +1,7 @@
 rootProject.name = "fables-and-fantasy-rp-kotlin"
-include("HorseLimits",
+include("examples:BlankSystem",
+		"examples:BasicSystem",
+		"HorseLimits",
 		"DenizenInterop",
 		"Database",
 		"KotlinRuntime",
@@ -32,4 +34,6 @@ include("HorseLimits",
 		"Inventory",
 		"Magic",
 		"Location",
-		"Economy")
+		"Economy",
+		"Magic",
+		"LeadBreakingSound")

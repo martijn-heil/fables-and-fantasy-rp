@@ -1,0 +1,8 @@
+name: FablesBlankSystem
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+main: com.fablesfantasyrp.plugin.blanksystem.FablesBlankSystem
+api-version: @bukkit_api_version@
