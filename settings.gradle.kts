@@ -36,4 +36,5 @@ include("examples:BlankSystem",
 		"Location",
 		"Economy",
 		"Magic",
-		"LeadBreakingSound")
+		"LeadBreakingSound",
+		"WorldBoundPlayerInstances")
