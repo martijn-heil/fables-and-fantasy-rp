@@ -10,7 +10,7 @@ import java.util.*
 class HackyVaultChat(child: Chat, perms: Permission) : DelegatedVaultChat(child, perms) {
 	private val NINJOH_NAME = "Ninjoh"
 	private val NINJOH_UUID = UUID.fromString("50d8fcf0-166e-4ab3-9176-c41fb575071a")
-	private val NINJOH_CHAT_PREFIX: String = ChatColor.RED.toString()
+	private val NINJOH_CHAT_PREFIX: String = ChatColor.DARK_RED.toString()
 
 	override fun getName(): String {
 		return "HackyVaultChat(${super.getName()})"
