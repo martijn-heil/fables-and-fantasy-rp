@@ -5,8 +5,9 @@ import org.bukkit.entity.HumanEntity
 import org.bukkit.inventory.ItemStack
 import java.io.Serializable
 
-open class SerializableInventory constructor(private val persistentContent: Array<SerializableItemStack?>,
-											 @Transient override val size: Int) : FablesInventory, Serializable {
+open class SerializableInventory constructor(private val persistentContent: Array<SerializableItemStack?>) : FablesInventory, Serializable {
+
+	override val size get() = persistentContent.size
 
 	override val viewers: List<HumanEntity> get() = emptyList()
 

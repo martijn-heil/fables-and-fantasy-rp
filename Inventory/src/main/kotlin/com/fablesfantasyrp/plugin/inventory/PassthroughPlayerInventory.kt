@@ -22,7 +22,7 @@ import org.bukkit.inventory.PlayerInventory
  * Though you can set off hand with this method using this index, you are encouraged to use the provided method for this slot.
  */
 class PassthroughPlayerInventory constructor(private val persistentContent: Array<SerializableItemStack?>) :
-		PassthroughInventory(persistentContent, size), FablesPlayerInventory {
+		PassthroughInventory(persistentContent), FablesPlayerInventory {
 
 	override var heldItemSlot: Int = 0
 		get() = bukkitPlayerInventory?.heldItemSlot ?: field

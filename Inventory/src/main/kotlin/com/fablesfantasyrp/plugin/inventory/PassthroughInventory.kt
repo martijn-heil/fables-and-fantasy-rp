@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack
  * A serializable inventory with read/write-through operation
  */
 open class PassthroughInventory
-constructor(private val persistentContent: Array<SerializableItemStack?>, size: Int) : SerializableInventory(persistentContent, size) {
+constructor(private val persistentContent: Array<SerializableItemStack?>) : SerializableInventory(persistentContent) {
 
 	@Transient
 	open var bukkitInventory: Inventory? = null
@@ -70,6 +70,6 @@ constructor(private val persistentContent: Array<SerializableItemStack?>, size: 
 		private val serialVersionUID = 1L
 
 		fun copyOfBukkitInventory(inventory: Inventory) =
-			PassthroughInventory(inventory.contents!!.map { it?.let { SerializableItemStack(it) }}.toTypedArray(), inventory.size)
+			PassthroughInventory(inventory.contents!!.map { it?.let { SerializableItemStack(it) }}.toTypedArray())
 	}
 }

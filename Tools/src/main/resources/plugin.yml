@@ -1,9 +1,13 @@
-name: FablesInventory
+name: FablesTools
 version: @version@
 authors: [@authors@]
 depend:
   - FablesKotlinRuntime
   - FablesUtils
+  - FablesCharacters
+  - FablesInventory
+  - FablesLocation
   - FablesPlayerInstance
-main: com.fablesfantasyrp.plugin.inventory.FablesInventoryPlugin
+  - NinCommands
+main: com.fablesfantasyrp.plugin.tools.FablesTools
 api-version: @bukkit_api_version@

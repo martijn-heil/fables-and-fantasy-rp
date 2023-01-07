@@ -3,6 +3,7 @@ package com.fablesfantasyrp.plugin.inventory
 import net.kyori.adventure.text.Component
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.InventoryHolder
+import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.Plugin
 import java.util.*
 
@@ -23,7 +24,11 @@ class MirroredInventory(val fablesInventory: FablesInventory, owner: InventoryHo
 		}
 
 		val newSnapshot = fablesInventory.map { it?.clone() }.toTypedArray()
-		bukkitInventory.contents = newSnapshot
+
+		val newContent = Array<ItemStack?>(bukkitInventory.size) { null }
+		newSnapshot.forEachIndexed { index, it -> newContent[index] = it?.clone() }
+		bukkitInventory.contents = newContent
+
 		initialState = newSnapshot.map { it?.clone() }.toTypedArray()
 	}
 }

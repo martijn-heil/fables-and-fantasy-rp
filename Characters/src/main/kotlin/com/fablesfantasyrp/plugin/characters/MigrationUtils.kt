@@ -90,7 +90,7 @@ internal fun migrateDenizenToSql(server: Server,
 						?.let { denizenInventoryMapToArray(it, 27U) }
 						?.map { if (it != null) SerializableItemStack(it) else null }
 						?.toTypedArray()
-						?.let { PassthroughInventory(it, 27) } ?: PassthroughInventory(arrayOfNulls(27), 27)
+						?.let { PassthroughInventory(it) } ?: PassthroughInventory(arrayOfNulls(27))
 			}
 
 			val playerInstance = playerInstances.create(PlayerInstance(id = 0, owner = player, description = it.name, isActive = true))

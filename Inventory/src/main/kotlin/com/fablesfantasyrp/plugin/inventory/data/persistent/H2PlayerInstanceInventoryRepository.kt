@@ -23,7 +23,7 @@ class H2PlayerInstanceInventoryRepository(private val dataSource: DataSource)
 			this.create(PlayerInstanceInventory(
 					id = playerInstance.id,
 					inventory = PassthroughPlayerInventory.createEmpty(),
-					enderChest = PassthroughInventory(arrayOfNulls(27), 27))
+					enderChest = PassthroughInventory(arrayOfNulls(27)))
 			)
 		}
 		if (offlinePlayer.isOnline && player != null) {

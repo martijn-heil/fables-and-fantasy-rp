@@ -4,12 +4,16 @@ authors: [@authors@]
 depend:
   - FablesKotlinRuntime
   - FablesUtils
+  - FablesUtilsOffline
   - FablesText
   - FablesForm
   - FablesGui
   - FablesDenizenInterop
   - FablesDatabase
   - FablesPlayerInstance
+  - FablesInventory
+  - FablesLocation
+  - SuperVanish
   - NinCommands
 softdepend:
   - TAB

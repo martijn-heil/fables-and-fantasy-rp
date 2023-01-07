@@ -26,7 +26,11 @@ interface FablesInventory : List<ItemStack?> {
 	}
 
 	fun asGenericInventoryCopy(owner: InventoryHolder, title: Component): Inventory {
-		val inventory = Bukkit.createInventory(owner, size, title)
+		// Generic inventories have to be of a size that is a multiple of 9
+		var calculatedSize = size
+		if (calculatedSize % 9 != 0) calculatedSize = calculatedSize / 9 * 9 + 9
+
+		val inventory = Bukkit.createInventory(owner, calculatedSize, title)
 		this.forEachIndexed { index, item -> inventory.setItem(index, item) }
 		return inventory
 	}
