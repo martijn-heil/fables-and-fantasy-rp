@@ -28,7 +28,7 @@ val OfflinePlayer.denizenPlayerCharacters: List<MutableDenizenCharacter>
 		val characters = dFlags.getFlagValue("characters") as? MapTag ?: return emptyList()
 		return characters.keys().mapNotNull {
 			if (it.matches(Regex("\\d+"))) { // Yes, this was necessary
-				MutableDenizenCharacter(it.toULong(), this)
+				MutableDenizenCharacter(it.toInt(), this)
 			} else {
 				FablesCharacters.instance.logger.severe("For player: $uniqueId (${name}) Ignoring corrupt player character data: $it")
 				null
@@ -40,7 +40,7 @@ val OfflinePlayer.denizenPlayerCharacters: List<MutableDenizenCharacter>
 val OfflinePlayer.currentDenizenPlayerCharacter: MutableDenizenCharacter?
 	get() {
 		val currentCharacter = dFlags.getFlagValue("characters_current") ?: return null
-		val id = currentCharacter.asElement().asLong().toULong()
+		val id = currentCharacter.asElement().asInt()
 		return MutableDenizenCharacter(id, this)
 	}
 
@@ -99,7 +99,7 @@ internal fun migrateDenizenToSql(server: Server,
 			playerInstance.inventory.enderChest.contents = enderChest.contents
 
 			val character = characters.create(Character(
-					id = playerInstance.id.toULong(),
+					id = playerInstance.id,
 					playerInstance = playerInstance,
 					name = it.name,
 					race = it.race,

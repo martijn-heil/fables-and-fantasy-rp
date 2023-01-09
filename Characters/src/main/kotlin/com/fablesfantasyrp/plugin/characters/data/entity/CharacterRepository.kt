@@ -5,10 +5,10 @@ import com.fablesfantasyrp.plugin.database.repository.MutableRepository
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
 import org.bukkit.OfflinePlayer
 
-interface CharacterRepository : MutableRepository<Character>, KeyedRepository<ULong, Character>  {
+interface CharacterRepository : MutableRepository<Character>, KeyedRepository<Int, Character>  {
 	fun forOwner(offlinePlayer: OfflinePlayer): Collection<Character>
 	fun forPlayerInstance(playerInstance: PlayerInstance): Character?
 	fun forName(name: String): Character?
 	fun allNames(): Set<String> = nameMap.keys
-	val nameMap: Map<String, ULong>
+	val nameMap: Map<String, Int>
 }

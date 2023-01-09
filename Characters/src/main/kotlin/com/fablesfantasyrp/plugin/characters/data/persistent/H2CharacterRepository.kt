@@ -36,7 +36,7 @@ class H2CharacterRepository(private val server: Server,
 	override fun destroy(v: Character) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("DELETE FROM $TABLE_NAME WHERE id = ?")
-			stmnt.setLong(1, v.id.toLong())
+			stmnt.setInt(1, v.id)
 			stmnt.executeUpdate()
 		}
 	}
@@ -54,7 +54,7 @@ class H2CharacterRepository(private val server: Server,
 					"last_seen, " +
 					"stat_strength, stat_defense, stat_agility, stat_intelligence) " +
 					"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
-			stmnt.setLong(1, v.playerInstance.id.toLong())
+			stmnt.setInt(1, v.playerInstance.id)
 			stmnt.setString(2, v.name)
 			stmnt.setString(3, v.description)
 			stmnt.setInt(4, v.age.toInt())
@@ -73,11 +73,11 @@ class H2CharacterRepository(private val server: Server,
 	}
 
 	override fun forOwner(offlinePlayer: OfflinePlayer): Collection<Character> {
-		return playerInstances.forOwner(offlinePlayer).mapNotNull { this.forId(it.id.toULong()) }
+		return playerInstances.forOwner(offlinePlayer).mapNotNull { this.forId(it.id) }
 	}
 
 	override fun forPlayerInstance(playerInstance: PlayerInstance): Character? {
-		return this.forId(playerInstance.id.toULong())
+		return this.forId(playerInstance.id)
 	}
 
 	override fun forName(name: String): Character? {
@@ -90,14 +90,14 @@ class H2CharacterRepository(private val server: Server,
 		}
 	}
 
-	override val nameMap: Map<String, ULong>
+	override val nameMap: Map<String, Int>
 		get() {
 			return dataSource.connection.use { connection ->
 				val stmnt = connection.prepareStatement("SELECT id, name FROM $TABLE_NAME")
 				val result = stmnt.executeQuery()
-				val map = HashMap<String, ULong>()
+				val map = HashMap<String, Int>()
 				while (result.next()) {
-					val id = result.getLong("id").toULong()
+					val id = result.getInt("id")
 					val name = result.getString("name")
 					map[name] = id
 				}
@@ -105,22 +105,22 @@ class H2CharacterRepository(private val server: Server,
 			}
 		}
 
-	override fun forId(id: ULong): Character? {
+	override fun forId(id: Int): Character? {
 		return dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE id = ?")
-			stmnt.setLong(1, id.toLong())
+			stmnt.setInt(1, id)
 			val result = stmnt.executeQuery()
 			if (!result.next()) return null
 			fromRow(result)
 		}
 	}
 
-	override fun allIds(): Collection<ULong> {
+	override fun allIds(): Collection<Int> {
 		return dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT id FROM $TABLE_NAME")
 			val result = stmnt.executeQuery()
-			val all = ArrayList<ULong>()
-			while (result.next()) all.add(result.getLong("id").toULong())
+			val all = ArrayList<Int>()
+			while (result.next()) all.add(result.getInt("id"))
 			all
 		}
 	}
@@ -159,13 +159,13 @@ class H2CharacterRepository(private val server: Server,
 			stmnt.setInt(13, v.stats.defense.toInt())
 			stmnt.setInt(14, v.stats.agility.toInt())
 			stmnt.setInt(15, v.stats.intelligence.toInt())
-			stmnt.setLong(16, v.id.toLong())
+			stmnt.setInt(16, v.id)
 			stmnt.executeUpdate()
 		}
 	}
 
 	private fun fromRow(result: ResultSet): Character {
-		val id = result.getLong("id").toULong()
+		val id = result.getInt("id")
 		val name = result.getString("name")
 		val age = result.getInt("age").toUInt()
 		val description = result.getString("description")

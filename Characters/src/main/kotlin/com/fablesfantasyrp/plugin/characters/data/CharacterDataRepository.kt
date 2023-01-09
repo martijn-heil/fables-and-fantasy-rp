@@ -5,7 +5,7 @@ import com.fablesfantasyrp.plugin.database.repository.MutableRepository
 import org.bukkit.OfflinePlayer
 
 interface CharacterDataRepository :
-		KeyedRepository<ULong, CharacterData>,
+		KeyedRepository<Int, CharacterData>,
 		MutableRepository<CharacterData> {
 	fun forOfflinePlayer(offlinePlayer: OfflinePlayer): Collection<CharacterData>
 }

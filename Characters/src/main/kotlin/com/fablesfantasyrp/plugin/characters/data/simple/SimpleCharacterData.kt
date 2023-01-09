@@ -1,13 +1,13 @@
 package com.fablesfantasyrp.plugin.characters.data.simple
 
+import com.fablesfantasyrp.plugin.characters.data.CharacterData
 import com.fablesfantasyrp.plugin.characters.data.CharacterStats
 import com.fablesfantasyrp.plugin.characters.data.Gender
-import com.fablesfantasyrp.plugin.characters.data.CharacterData
 import com.fablesfantasyrp.plugin.characters.data.Race
 import org.bukkit.Location
 import org.bukkit.OfflinePlayer
 
-data class SimpleCharacterData(override val id: ULong,
+data class SimpleCharacterData(override val id: Int,
 							   override var name: String,
 							   override var age: UInt,
 							   override var description: String,

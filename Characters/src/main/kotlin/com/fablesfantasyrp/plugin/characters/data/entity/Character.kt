@@ -16,7 +16,7 @@ import org.bukkit.Location
 import org.bukkit.OfflinePlayer
 import java.time.Instant
 
-class Character : DataEntity<ULong, Character>, CharacterData {
+class Character : DataEntity<Int, Character>, CharacterData {
 	val playerInstance: PlayerInstance
 
 	val createdAt: Instant?
@@ -92,10 +92,10 @@ class Character : DataEntity<ULong, Character>, CharacterData {
 		get() = playerInstance.location
 		set(value) { playerInstance.location = value }
 
-	override val id: ULong
+	override val id: Int
 	override var dirtyMarker: DirtyMarker<Character>? = null
 
-	constructor(id: ULong,
+	constructor(id: Int,
 				playerInstance: PlayerInstance,
 				name: String,
 				race: Race,

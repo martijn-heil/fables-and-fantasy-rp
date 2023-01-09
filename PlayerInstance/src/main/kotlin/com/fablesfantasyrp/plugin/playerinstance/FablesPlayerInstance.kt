@@ -24,6 +24,7 @@ import com.sk89q.intake.parametric.provider.PrimitivesModule
 import org.bukkit.ChatColor.*
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
+import org.bukkit.plugin.ServicePriority
 
 internal val SYSPREFIX = "${GOLD}${BOLD}[${LIGHT_PURPLE}${BOLD} PLAYER INSTANCE ${GOLD}${BOLD}]${GRAY}"
 internal val PLUGIN get() = FablesPlayerInstance.instance
@@ -51,7 +52,10 @@ class FablesPlayerInstance : SuspendingJavaPlugin() {
 		val playerInstancesImpl = EntityPlayerInstanceRepositoryImpl(H2PlayerInstanceRepository(server, fablesDatabase))
 		playerInstancesImpl.init()
 		playerInstances = playerInstancesImpl
+		server.servicesManager.register(EntityPlayerInstanceRepository::class.java, playerInstances, this, ServicePriority.Normal)
+
 		playerInstanceManager = PlayerInstanceManager(server)
+		server.servicesManager.register(PlayerInstanceManager::class.java, playerInstanceManager, this, ServicePriority.Normal)
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())

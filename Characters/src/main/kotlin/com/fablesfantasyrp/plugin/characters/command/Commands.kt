@@ -72,7 +72,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 				))
 
 				val character = characterRepository.create(Character(
-						id = playerInstance.id.toULong(),
+						id = playerInstance.id,
 						name = info.name,
 						age = info.age,
 						description = info.description,

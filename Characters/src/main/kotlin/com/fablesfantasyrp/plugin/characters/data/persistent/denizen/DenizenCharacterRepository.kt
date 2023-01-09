@@ -27,16 +27,16 @@ private fun MutableDenizenCharacter.asSimple(): SimpleCharacterData {
 }
 
 class DenizenCharacterRepository(private val server: Server) : CharacterDataRepository {
-	private val idCache = HashMap<ULong, UUID>()
+	private val idCache = HashMap<Int, UUID>()
 
 	override fun forOfflinePlayer(offlinePlayer: OfflinePlayer): Collection<CharacterData> {
 		val characters = offlinePlayer.dFlags.getFlagValue("characters") as? MapTag ?: return emptyList()
 		return characters.keys()
 				.filter { it.matches(Regex("\\d+")) }
-				.map { MutableDenizenCharacter(it.toULong(), server.getOfflinePlayer(offlinePlayer.uniqueId)).asSimple() }
+				.map { MutableDenizenCharacter(it.toInt(), server.getOfflinePlayer(offlinePlayer.uniqueId)).asSimple() }
 	}
 
-	override fun forId(id: ULong): CharacterData? {
+	override fun forId(id: Int): CharacterData? {
 		val player = idCache[id]?.let { Bukkit.getOfflinePlayer(it) }
 		return if (player != null) {
 			val result = MutableDenizenCharacter(id, player)
@@ -53,7 +53,7 @@ class DenizenCharacterRepository(private val server: Server) : CharacterDataRepo
 		}
 	}
 
-	override fun allIds(): Collection<ULong> {
+	override fun allIds(): Collection<Int> {
 		return this.all().map { it.id }
 	}
 

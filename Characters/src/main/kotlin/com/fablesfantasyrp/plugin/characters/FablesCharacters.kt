@@ -28,6 +28,7 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.Server
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
+import org.bukkit.plugin.ServicePriority
 
 internal val SYSPREFIX = "$GOLD[ $GREEN${BOLD}CHARACTERS $GOLD] $GRAY"
 
@@ -55,6 +56,7 @@ class FablesCharacters : SuspendingJavaPlugin() {
 		val characterRepositoryImpl = EntityCharacterRepositoryImpl(h2CharacterRepository, playerInstances)
 		characterRepositoryImpl.init()
 		characterRepository = characterRepositoryImpl
+		server.servicesManager.register(EntityCharacterRepository::class.java, characterRepository, this, ServicePriority.Normal)
 
 		migrateDenizenToSql(server, characterRepository, playerInstances)
 
@@ -98,7 +100,7 @@ class FablesCharacters : SuspendingJavaPlugin() {
 var Player.currentPlayerCharacter: Character?
 	get() {
 		return playerInstanceManager.getCurrentForPlayer(this)
-				?.let { characterRepository.forId(it.id.toULong()) }
+				?.let { characterRepository.forId(it.id) }
 	}
 	set(value) {
 		require(value != null)

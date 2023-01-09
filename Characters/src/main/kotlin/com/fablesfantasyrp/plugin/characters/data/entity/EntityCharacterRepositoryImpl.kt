@@ -7,11 +7,11 @@ import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstanceRepos
 import org.bukkit.OfflinePlayer
 
 class EntityCharacterRepositoryImpl<C>(child: C, private val playerInstances: PlayerInstanceRepository)
-	: SimpleEntityRepository<ULong, Character, C>(child), EntityCharacterRepository
+	: SimpleEntityRepository<Int, Character, C>(child), EntityCharacterRepository
 		where C: HasDirtyMarker<Character>,
               C: CharacterRepository {
 
-	override lateinit var nameMap: HashMap<String, ULong>
+	override lateinit var nameMap: HashMap<String, Int>
 
 	override fun init() {
 		super.init()
@@ -30,11 +30,11 @@ class EntityCharacterRepositoryImpl<C>(child: C, private val playerInstances: Pl
 	}
 
 	override fun forOwner(offlinePlayer: OfflinePlayer): Collection<Character> {
-		return playerInstances.forOwner(offlinePlayer).mapNotNull { this.forId(it.id.toULong()) }
+		return playerInstances.forOwner(offlinePlayer).mapNotNull { this.forId(it.id) }
 	}
 
 	override fun forPlayerInstance(playerInstance: PlayerInstance): Character? {
-		return this.forId(playerInstance.id.toULong())
+		return this.forId(playerInstance.id)
 	}
 
 	override fun forName(name: String): Character? {

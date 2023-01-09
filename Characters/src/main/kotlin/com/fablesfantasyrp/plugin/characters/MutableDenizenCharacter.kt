@@ -12,7 +12,7 @@ import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.OfflinePlayer
 
-class MutableDenizenCharacter(override val id: ULong, player: OfflinePlayer) : CharacterData {
+class MutableDenizenCharacter(override val id: Int, player: OfflinePlayer) : CharacterData {
 	internal val dataMap: MapTag
 		get() = (player.dFlags.getFlagValue("characters") as MapTag).getObject(id.toString()) as MapTag
 

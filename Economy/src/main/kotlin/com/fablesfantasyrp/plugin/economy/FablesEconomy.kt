@@ -4,6 +4,7 @@ import com.fablesfantasyrp.plugin.characters.characterRepository
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
 import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
 import com.fablesfantasyrp.plugin.database.applyMigrations
+import com.fablesfantasyrp.plugin.economy.data.entity.EntityPlayerInstanceEconomyRepository
 import com.fablesfantasyrp.plugin.economy.data.entity.EntityPlayerInstanceEconomyRepositoryImpl
 import com.fablesfantasyrp.plugin.economy.data.persistent.H2PlayerInstanceEconomyRepository
 import com.fablesfantasyrp.plugin.playerinstance.command.provider.PlayerInstanceModule
@@ -67,6 +68,13 @@ class FablesEconomy : SuspendingJavaPlugin() {
 				VaultPlayerInstanceEconomy(server),
 				this,
 				ServicePriority.Highest
+		)
+
+		server.servicesManager.register(
+				EntityPlayerInstanceEconomyRepository::class.java,
+				playerInstanceEconomyRepository,
+				this,
+				ServicePriority.Normal
 		)
 
 		val injector = Intake.createInjector()

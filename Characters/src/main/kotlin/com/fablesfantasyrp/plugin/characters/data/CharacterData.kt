@@ -4,7 +4,7 @@ import com.fablesfantasyrp.plugin.database.repository.Identifiable
 import org.bukkit.Location
 import org.bukkit.OfflinePlayer
 
-interface CharacterData : Identifiable<ULong> {
+interface CharacterData : Identifiable<Int> {
 	var name: String
 	var age: UInt
 	var description: String
