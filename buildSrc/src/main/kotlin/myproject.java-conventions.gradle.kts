@@ -132,7 +132,7 @@ dependencies {
 	implementation("org.ocpsoft.prettytime:prettytime:5.0.6.Final")
 	implementation("com.google.guava:guava:31.1-jre")
 	implementation(urlFile(URL("https://github.com/Gecolay/GSit/releases/download/1.2.4/GSit-1.2.4.jar"), "GSit.jar"))
-	//implementation("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT") { isChanging = true }
+	implementation("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT") { isChanging = true }
 	implementation("com.gitlab.martijn-heil:NinCommands:-SNAPSHOT") { isChanging = true }
 	implementation(fileTree("${project.projectDir.parent}/lib") { include("*.jar") })
 }

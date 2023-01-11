@@ -1,8 +1,10 @@
-name: FablesBlankSystem
+name: WorldboundPlayerInstances
 version: @version@
 authors: [@authors@]
 depend:
   - FablesKotlinRuntime
   - FablesUtils
-main: com.fablesfantasyrp.plugin.blanksystem.FablesBlankSystem
+  - FablesDatabase
+  - FablesPlayerInstance
+main: com.fablesfantasyrp.plugin.worldboundplayerinstances.WorldBoundPlayerInstances
 api-version: @bukkit_api_version@

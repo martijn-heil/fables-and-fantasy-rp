@@ -8,5 +8,5 @@ dependencies {
     implementation(project(":Utils"))
     implementation(project(":UtilsOffline"))
     implementation(project(":Text"))
-    implementation("com.github.LeonMangler:SuperVanish:6.2.6-4")
+    //implementation("com.github.LeonMangler:SuperVanish:6.2.6-4")
 }
