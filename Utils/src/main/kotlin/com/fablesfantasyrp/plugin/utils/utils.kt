@@ -21,10 +21,9 @@ val OfflinePlayer.ess: User
 
 val FABLES_ADMIN = Bukkit.getOfflinePlayer(UUID.fromString("bcdb5a59-269e-43df-914b-eed888597272"))
 val SPAWN: Location = essentialsSpawn.getSpawn("default")
-val FLATROOM_UUID = UUID.fromString("87DE3233893348B4B745D6930BD92EBD")
-val FLATROOM: World? = Bukkit.getWorld(FLATROOM_UUID)
-val PLOTS_UUID = UUID.fromString("3A542ECF33DB4D3DAC73421F4EAF65E6")
-val PLOTS: World? = Bukkit.getWorld(PLOTS_UUID)
+val FLATROOM: World? get() = Bukkit.getWorld("flatroom")
+val PLOTS: World? get() = Bukkit.getWorld("plots")
+val EDEN: World? get() = Bukkit.getWorld("Eden")
 
 fun enforceDependencies(plugin: Plugin) {
 	for (dependencyName in plugin.description.depend) {

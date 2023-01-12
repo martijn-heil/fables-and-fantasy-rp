@@ -11,11 +11,15 @@ import com.fablesfantasyrp.plugin.inventory.inventory
 import com.fablesfantasyrp.plugin.location.location
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.EntityPlayerInstanceRepository
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
+import com.fablesfantasyrp.plugin.utils.FLATROOM
+import com.fablesfantasyrp.plugin.utils.PLOTS
+import com.fablesfantasyrp.plugin.utils.SPAWN
 import com.fablesfantasyrp.plugin.utils.SerializableItemStack
 import com.fablesfantasyrp.plugin.utilsoffline.location
 import com.fablesfantasyrp.plugin.utilsoffline.offlineEnderChest
 import com.fablesfantasyrp.plugin.utilsoffline.offlineInventory
 import org.bukkit.Bukkit
+import org.bukkit.Location
 import org.bukkit.OfflinePlayer
 import org.bukkit.Server
 import org.bukkit.inventory.ItemStack
@@ -71,15 +75,25 @@ internal fun migrateDenizenToSql(server: Server,
 
 	chars.forEach {
 		try {
-			val inventory: PassthroughPlayerInventory
-			val enderChest: PassthroughInventory
+			var inventory: PassthroughPlayerInventory? = null
+			var enderChest: PassthroughInventory? = null
+			var location: Location? = null
 			val player = it.player
 			val currentDenizenCharacter = player.currentDenizenPlayerCharacter
 
-			if (currentDenizenCharacter == it) {
-				inventory = PassthroughPlayerInventory.copyOfBukkitInventory(player.offlineInventory)
-				enderChest = PassthroughInventory.copyOfBukkitInventory(player.offlineEnderChest)
-			} else {
+			var useOfflinePlayerData = currentDenizenCharacter == it
+
+			if (useOfflinePlayerData) {
+				try {
+					inventory = PassthroughPlayerInventory.copyOfBukkitInventory(player.offlineInventory)
+					enderChest = PassthroughInventory.copyOfBukkitInventory(player.offlineEnderChest)
+					location = player.location
+				} catch (ex: Exception) {
+					useOfflinePlayerData = false
+				}
+			}
+
+			if (!useOfflinePlayerData) {
 				inventory = (it.dataMap.getObject("inventory") as? MapTag)
 						?.let { denizenInventoryMapToArray(it, PassthroughPlayerInventory.size.toUInt()) }
 						?.map { if (it != null) SerializableItemStack(it) else null }
@@ -91,12 +105,13 @@ internal fun migrateDenizenToSql(server: Server,
 						?.map { if (it != null) SerializableItemStack(it) else null }
 						?.toTypedArray()
 						?.let { PassthroughInventory(it) } ?: PassthroughInventory(arrayOfNulls(27))
+				location = if(arrayOf(PLOTS, FLATROOM).contains(it.location.world)) SPAWN else it.location
 			}
 
-			val playerInstance = playerInstances.create(PlayerInstance(id = 0, owner = player, description = it.name, isActive = true))
-			playerInstance.location = if (currentDenizenCharacter != it) it.location else player.location
-			playerInstance.inventory.inventory.contents = inventory.contents
-			playerInstance.inventory.enderChest.contents = enderChest.contents
+			val playerInstance = playerInstances.create(PlayerInstance(id = it.id, owner = player, description = it.name, isActive = true))
+			playerInstance.location = location!!
+			playerInstance.inventory.inventory.contents = inventory!!.contents
+			playerInstance.inventory.enderChest.contents = enderChest!!.contents
 
 			val character = characters.create(Character(
 					id = playerInstance.id,
@@ -107,11 +122,9 @@ internal fun migrateDenizenToSql(server: Server,
 					stats = it.stats,
 					age = it.age,
 					description = it.description,
-					lastSeen = Instant.ofEpochMilli(it.player.lastLogin),
+					lastSeen = it.player.lastLogin.let { if (it != 0L) Instant.ofEpochMilli(it) else null },
 					createdAt = null
 			))
-
-			// TODO money?
 		} catch(e: SQLIntegrityConstraintViolationException) {
 			integrityViolations.add(it)
 			e.printStackTrace()

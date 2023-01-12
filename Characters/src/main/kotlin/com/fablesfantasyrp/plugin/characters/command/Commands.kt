@@ -65,7 +65,6 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 				}
 
 				val playerInstance = playerInstanceRepository.create(PlayerInstance(
-						id = 0,
 						owner = if (!isStaffCharacter) sender else FABLES_ADMIN,
 						description = info.name,
 						isActive = true

@@ -1,4 +1,4 @@
-name: WorldboundPlayerInstances
+name: FablesWorldBoundPlayerInstances
 version: @version@
 authors: [@authors@]
 depend:
@@ -6,5 +6,6 @@ depend:
   - FablesUtils
   - FablesDatabase
   - FablesPlayerInstance
-main: com.fablesfantasyrp.plugin.worldboundplayerinstances.WorldBoundPlayerInstances
+  - FablesLocation
+main: com.fablesfantasyrp.plugin.worldboundplayerinstances.FablesWorldBoundPlayerInstances
 api-version: @bukkit_api_version@

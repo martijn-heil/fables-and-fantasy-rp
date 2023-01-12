@@ -11,7 +11,9 @@ interface WorldRestrictionRuleRepository :
 		KeyedRepository<Pair<PlayerInstance, UUID>, WorldRestrictionRule>,
 		MutableRepository<WorldRestrictionRule> {
 	fun getBoundWorlds(playerInstance: PlayerInstance): Collection<World>
+	fun getBoundWorlds(playerInstances: Collection<PlayerInstance>): Map<PlayerInstance, Set<World>>
 	fun getExplicitlyAllowedPlayerInstances(world: World): Collection<PlayerInstance>
 	fun getExplicitlyAllowedPlayerInstances(world: World, player: Player): Collection<PlayerInstance>
 	fun updateOrCreate(v: WorldRestrictionRule): WorldRestrictionRule
+	fun forPlayerInstances(playerInstances: Collection<PlayerInstance>): Map<PlayerInstance, Collection<WorldRestrictionRule>>
 }

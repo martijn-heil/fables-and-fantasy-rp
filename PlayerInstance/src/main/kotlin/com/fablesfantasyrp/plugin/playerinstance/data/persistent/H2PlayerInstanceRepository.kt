@@ -50,23 +50,45 @@ class H2PlayerInstanceRepository(private val server: Server,
 
 	override fun create(v: PlayerInstance): PlayerInstance {
 		dataSource.connection.use { connection ->
-			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME " +
-					"(owner, description, active) " +
-					"VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS)
-			stmnt.setObject(1, v.owner.uniqueId)
-			stmnt.setString(2, v.description)
-			stmnt.setBoolean(3, v.isActive)
-			stmnt.executeUpdate()
-			val rs = stmnt.generatedKeys
-			rs.next()
-			val id = rs.getInt(1)
-			return PlayerInstance(
-					id = id,
-					owner = v.owner,
-					description = v.description,
-					isActive = v.isActive,
-					dirtyMarker = dirtyMarker
-			)
+			if (v.id == -1) {
+				val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME " +
+						"(owner, description, active) " +
+						"VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS)
+				stmnt.setObject(1, v.owner.uniqueId)
+				stmnt.setString(2, v.description)
+				stmnt.setBoolean(3, v.isActive)
+				stmnt.executeUpdate()
+				val rs = stmnt.generatedKeys
+				rs.next()
+				val id = rs.getInt(1)
+				return PlayerInstance(
+						id = id,
+						owner = v.owner,
+						description = v.description,
+						isActive = v.isActive,
+						dirtyMarker = dirtyMarker
+				)
+			} else {
+				val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME " +
+						"(id, owner, description, active) " +
+						"VALUES (?, ?, ?, ?)")
+				stmnt.setInt(1, v.id)
+				stmnt.setObject(2, v.owner.uniqueId)
+				stmnt.setString(3, v.description)
+				stmnt.setBoolean(4, v.isActive)
+				stmnt.executeUpdate()
+
+				val stmnt2 = connection.prepareStatement("ALTER TABLE $TABLE_NAME ALTER COLUMN id RESTART WITH (SELECT MAX(id) FROM $TABLE_NAME) + 1")
+				stmnt2.executeUpdate()
+
+				return PlayerInstance(
+						id = v.id,
+						owner = v.owner,
+						description = v.description,
+						isActive = v.isActive,
+						dirtyMarker = dirtyMarker
+				)
+			}
 		}
 	}
 

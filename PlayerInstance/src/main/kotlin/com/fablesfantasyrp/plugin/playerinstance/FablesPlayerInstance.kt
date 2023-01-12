@@ -57,6 +57,9 @@ class FablesPlayerInstance : SuspendingJavaPlugin() {
 		playerInstanceManager = PlayerInstanceManager(server)
 		server.servicesManager.register(PlayerInstanceManager::class.java, playerInstanceManager, this, ServicePriority.Normal)
 
+		val prompter = SimplePlayerInstanceSelectionPrompter(this)
+		server.servicesManager.register(PlayerInstanceSelectionPrompter::class.java, prompter, this, ServicePriority.Low);
+
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())
 		injector.install(BukkitModule(server))

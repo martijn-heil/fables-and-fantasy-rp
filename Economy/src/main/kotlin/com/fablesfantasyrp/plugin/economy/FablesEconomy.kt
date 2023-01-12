@@ -96,7 +96,7 @@ class FablesEconomy : SuspendingJavaPlugin() {
 
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
 
-		migrate(server, BankAPI.getInstance(), playerInstanceEconomyRepository)
+		migrate(server, BankAPI.getInstance(), playerInstanceEconomyRepository, characterRepository)
 	}
 
 	override fun onDisable() {

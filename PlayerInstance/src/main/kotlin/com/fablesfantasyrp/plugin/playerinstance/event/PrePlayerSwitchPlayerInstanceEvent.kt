@@ -1,11 +1,11 @@
-package com.fablesfantasyrp.plugin.playerinstance
+package com.fablesfantasyrp.plugin.playerinstance.event
 
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 
-class PlayerSwitchPlayerInstanceEvent(val player: Player, val old: PlayerInstance?, val new: PlayerInstance?) : Event() {
+class PrePlayerSwitchPlayerInstanceEvent(val player: Player, val old: PlayerInstance?, val new: PlayerInstance?) : Event() {
 	override fun getHandlers(): HandlerList = Companion.handlers
 
 	companion object {

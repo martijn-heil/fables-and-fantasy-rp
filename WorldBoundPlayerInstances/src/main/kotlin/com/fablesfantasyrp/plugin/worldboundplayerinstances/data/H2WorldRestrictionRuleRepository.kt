@@ -84,9 +84,40 @@ class H2WorldRestrictionRuleRepository(private val server: Server,
 		}
 	}
 
+	override fun getBoundWorlds(playerInstances: Collection<PlayerInstance>): Map<PlayerInstance, Set<World>> {
+		return dataSource.connection.use { connection ->
+			val stmnt = connection.prepareStatement("SELECT player_instance, world FROM $TABLE_NAME WHERE player_instance " +
+					"IN (${playerInstances.map { it.id }.joinToString(", ")}) AND action = 'BOUND'")
+			val result = stmnt.executeQuery()
+			val worlds = HashMap<PlayerInstance, HashSet<World>>()
+			while (result.next()) {
+				val playerInstance = playerInstanceRepository.forId(result.getInt("player_instance"))!!
+				val world = server.getWorld(result.getUuid("world")) ?: continue
+				worlds.putIfAbsent(playerInstance, HashSet())
+				worlds[playerInstance]!!.add(world)
+			}
+			worlds
+		}
+	}
+
+	override fun forPlayerInstances(playerInstances: Collection<PlayerInstance>): Map<PlayerInstance, Collection<WorldRestrictionRule>> {
+		return dataSource.connection.use { connection ->
+			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE player_instance " +
+					"IN (${playerInstances.map { it.id }.joinToString(", ")})")
+			val result = stmnt.executeQuery()
+			val worlds = HashMap<PlayerInstance, MutableCollection<WorldRestrictionRule>>()
+			while (result.next()) {
+				val row = fromRow(result)
+				worlds.putIfAbsent(row.id.first, HashSet())
+				worlds[row.id.first]!!.add(row)
+			}
+			worlds
+		}
+	}
+
 	override fun getExplicitlyAllowedPlayerInstances(world: World): Collection<PlayerInstance> {
 		return dataSource.connection.use { connection ->
-			val stmnt = connection.prepareStatement("SELECT player_instance FROM $TABLE_NAME WHERE world = ? AND action IN ('BOUND', 'ALLOWED')")
+			val stmnt = connection.prepareStatement("SELECT DISTINCT player_instance FROM $TABLE_NAME WHERE world = ? AND action IN ('BOUND', 'ALLOWED')")
 			stmnt.setUuid(1, world.uid)
 			val result = stmnt.executeQuery()
 			val instances = ArrayList<PlayerInstance>()
@@ -99,7 +130,7 @@ class H2WorldRestrictionRuleRepository(private val server: Server,
 		val ownedInstances = playerInstanceRepository.forOwner(player).map { it.id }.toHashSet()
 
 		return dataSource.connection.use { connection ->
-			val stmnt = connection.prepareStatement("SELECT player_instance FROM $TABLE_NAME WHERE world = ? AND action IN ('BOUND', 'ALLOWED')")
+			val stmnt = connection.prepareStatement("SELECT DISTINCT player_instance FROM $TABLE_NAME WHERE world = ? AND action IN ('BOUND', 'ALLOWED')")
 			stmnt.setUuid(1, world.uid)
 			val result = stmnt.executeQuery()
 			val instances = ArrayList<PlayerInstance>()

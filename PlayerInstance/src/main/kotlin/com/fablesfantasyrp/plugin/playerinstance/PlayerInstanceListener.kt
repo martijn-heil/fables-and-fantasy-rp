@@ -1,9 +1,8 @@
 package com.fablesfantasyrp.plugin.playerinstance
 
-import com.fablesfantasyrp.plugin.form.promptGui
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.EntityPlayerInstanceRepository
-import com.fablesfantasyrp.plugin.playerinstance.gui.PlayerInstanceSelectionGui
 import com.fablesfantasyrp.plugin.text.sendError
+import com.fablesfantasyrp.plugin.utils.SPAWN
 import com.fablesfantasyrp.plugin.utils.isVanished
 import com.github.shynixn.mccoroutine.bukkit.launch
 import de.myzelyam.api.vanish.VanishAPI
@@ -22,6 +21,7 @@ class PlayerInstanceListener(private val plugin: JavaPlugin,
 
 	@EventHandler(priority = MONITOR, ignoreCancelled = true)
 	fun onPlayerJoin(e: PlayerJoinEvent) {
+		e.player.teleport(SPAWN)
 		e.player.inventory.clear()
 		e.player.enderChest.clear()
 
@@ -32,11 +32,12 @@ class PlayerInstanceListener(private val plugin: JavaPlugin,
 
 		plugin.launch {
 			do {
+				val selector = server.servicesManager.getRegistration(PlayerInstanceSelectionPrompter::class.java)!!.provider
 				try {
 					if (!e.player.isOnline || server.isStopping) return@launch
 					val wasVanished = e.player.isVanished
 					if (!wasVanished) VanishAPI.hidePlayer(e.player)
-					playerInstanceManager.setCurrentForPlayer(e.player, e.player.promptGui(PlayerInstanceSelectionGui(plugin, ownedInstances.asSequence())))
+					playerInstanceManager.setCurrentForPlayer(e.player, selector.promptSelect(e.player, ownedInstances))
 					if (!wasVanished) VanishAPI.showPlayer(e.player)
 				} catch (ex: PlayerInstanceOccupiedException) {
 					e.player.sendError("This player instance is currently occupied.")

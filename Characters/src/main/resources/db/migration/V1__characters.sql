@@ -1,5 +1,5 @@
 CREATE TABLE characters (
-	id						BIGINT NOT NULL,
+	id						INT NOT NULL,
 	is_dead					BOOLEAN NOT NULL DEFAULT FALSE,
 	is_shelved				BOOLEAN NOT NULL DEFAULT FALSE,
 	name					VARCHAR(32) NOT NULL,

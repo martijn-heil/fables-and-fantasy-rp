@@ -1,6 +1,8 @@
 package com.fablesfantasyrp.plugin.playerinstance
 
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
+import com.fablesfantasyrp.plugin.playerinstance.event.PostPlayerSwitchPlayerInstanceEvent
+import com.fablesfantasyrp.plugin.playerinstance.event.PrePlayerSwitchPlayerInstanceEvent
 import org.bukkit.Server
 import org.bukkit.entity.Player
 import java.util.*
@@ -20,12 +22,13 @@ class PlayerInstanceManager(private val server: Server) {
 		val currentHolder = currentInstancesTwo[playerInstance]
 		if (currentHolder != null) throw PlayerInstanceOccupiedException()
 
-		val event = PlayerSwitchPlayerInstanceEvent(player, getCurrentForPlayer(player), playerInstance)
-		server.pluginManager.callEvent(event)
+		server.pluginManager.callEvent(PrePlayerSwitchPlayerInstanceEvent(player, getCurrentForPlayer(player), playerInstance))
 
 		currentInstancesTwo.remove(currentPlayerInstance)
 		currentInstances[player.uniqueId] = playerInstance
 		currentInstancesTwo[playerInstance] = player.uniqueId
+
+		server.pluginManager.callEvent(PostPlayerSwitchPlayerInstanceEvent(player, getCurrentForPlayer(player), playerInstance))
 	}
 
 	fun stopTracking(player: Player) {

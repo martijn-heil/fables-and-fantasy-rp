@@ -20,7 +20,7 @@ class PlayerInstance : DataEntity<Int, PlayerInstance>, PlayerInstanceData {
 	override var description: String? set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 	override var isActive: Boolean set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 
-	constructor(id: Int,
+	constructor(id: Int = -1,
 				owner: OfflinePlayer,
 				description: String?,
 				isActive: Boolean,

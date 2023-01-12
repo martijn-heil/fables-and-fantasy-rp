@@ -68,7 +68,19 @@ class H2CharacterRepository(private val server: Server,
 			stmnt.setInt(12, v.stats.intelligence.toInt())
 			stmnt.executeUpdate()
 			v.dirtyMarker = dirtyMarker
-			return v
+			return Character(
+					id = v.playerInstance.id,
+					name = v.name,
+					description = v.description,
+					age = v.age,
+					race = v.race,
+					gender = v.gender,
+					createdAt = v.createdAt,
+					lastSeen = v.lastSeen,
+					stats = v.stats,
+					playerInstance = v.playerInstance,
+					dirtyMarker = dirtyMarker
+			)
 		}
 	}
 
