@@ -23,6 +23,7 @@ import org.bukkit.Location
 import org.bukkit.OfflinePlayer
 import org.bukkit.Server
 import org.bukkit.inventory.ItemStack
+import org.bukkit.plugin.Plugin
 import java.sql.SQLIntegrityConstraintViolationException
 import java.time.Instant
 
@@ -65,9 +66,10 @@ private fun denizenInventoryMapToArray(map: MapTag, size: UInt): Array<ItemStack
 	return array
 }
 
-internal fun migrateDenizenToSql(server: Server,
+internal fun migrateDenizenToSql(plugin: Plugin,
 								 characters: EntityCharacterRepository,
 								 playerInstances: EntityPlayerInstanceRepository) {
+	val server = plugin.server
 	val integrityViolations = ArrayList<MutableDenizenCharacter>()
 
 	val chars = server.denizenPlayerCharacters.toMutableList()
@@ -108,6 +110,7 @@ internal fun migrateDenizenToSql(server: Server,
 				location = if(arrayOf(PLOTS, FLATROOM).contains(it.location.world)) SPAWN else it.location
 			}
 
+			plugin.logger.info("Migrating #${it.id}")
 			val playerInstance = playerInstances.create(PlayerInstance(id = it.id, owner = player, description = it.name, isActive = true))
 			playerInstance.location = location!!
 			playerInstance.inventory.inventory.contents = inventory!!.contents

@@ -97,7 +97,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 			}
 		}
 
-		@Command(aliases = ["card"], desc = "List characters owned by player")
+		@Command(aliases = ["card"], desc = "Display a character's card in chat.")
 		@Require(Permission.Command.Characters.Card)
 		fun card(@Sender sender: CommandSender,
 				@CommandTarget(Permission.Command.Characters.Card + ".others") target: Character) {
@@ -114,8 +114,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 
 		@Command(aliases = ["resurrect"], desc = "Resurrect a character")
 		@Require(Permission.Command.Characters.Resurrect)
-		fun resurrect(@Sender sender: CommandSender,
-				 @CommandTarget(Permission.Command.Characters.Resurrect + ".others") target: Character) {
+		fun resurrect(@Sender sender: CommandSender, target: Character) {
 			target.isDead = false
 			sender.sendMessage("$SYSPREFIX Resurrected ${target.name}")
 		}
@@ -153,7 +152,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 			sender.sendMessage("$SYSPREFIX Set ${target.name}'s race to $race")
 		}
 
-		@Command(aliases = ["changename"], desc = "Change your character's name")
+		@Command(aliases = ["changename"], desc = "Change a character's name")
 		@Require(Permission.Command.Characters.ChangeName)
 		fun changename(@Sender sender: Player,
 					   @CommandTarget(Permission.Command.Characters.ChangeName + ".others") target: Character) {

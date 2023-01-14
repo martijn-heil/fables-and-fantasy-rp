@@ -88,8 +88,7 @@ class Commands(private val characters: EntityCharacterRepository) {
 	class Bank(private val plugin: JavaPlugin, private val economyRepository: EntityPlayerInstanceEconomyRepository) {
 		@Command(aliases = ["open"], desc = "Open bank")
 		@Require(Permission.Command.Bank.Open)
-		fun open(@Sender sender: Player,
-				 @CommandTarget(Permission.Command.Bank.Open + ".others") @AllowCharacterName target: PlayerInstance) {
+		fun open(@Sender sender: Player, @AllowCharacterName target: PlayerInstance) {
 			BankGuiMainMenu(plugin, economyRepository.forPlayerInstance(target)).show(sender)
 		}
 	}

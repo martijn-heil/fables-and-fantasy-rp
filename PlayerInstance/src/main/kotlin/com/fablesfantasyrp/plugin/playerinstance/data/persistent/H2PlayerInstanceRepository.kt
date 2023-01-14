@@ -2,6 +2,7 @@ package com.fablesfantasyrp.plugin.playerinstance.data.persistent
 
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
+import com.fablesfantasyrp.plugin.database.setUuid
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstanceRepository
 import org.bukkit.OfflinePlayer
@@ -93,7 +94,18 @@ class H2PlayerInstanceRepository(private val server: Server,
 	}
 
 	override fun update(v: PlayerInstance) {
-		throw NotImplementedError()
+		dataSource.connection.use { connection ->
+			val stmnt = connection.prepareStatement("UPDATE $TABLE_NAME SET " +
+					"owner = ?, " +
+					"description = ?, " +
+					"active = ? " +
+					"WHERE id = ?")
+			stmnt.setUuid(1, v.owner.uniqueId)
+			stmnt.setString(2, v.description)
+			stmnt.setBoolean(3, v.isActive)
+			stmnt.setInt(4, v.id)
+			stmnt.executeUpdate()
+		}
 	}
 
 	override fun forId(id: Int): PlayerInstance? {

@@ -4,11 +4,13 @@ import com.fablesfantasyrp.plugin.characters.MutableDenizenCharacter
 import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
 import com.fablesfantasyrp.plugin.economy.data.entity.EntityPlayerInstanceEconomyRepository
 import me.dablakbandit.bank.api.BankAPI
-import org.bukkit.Server
+import org.bukkit.plugin.Plugin
 
-internal fun migrate(server: Server, bankApi: BankAPI,
+internal fun migrate(plugin: Plugin, bankApi: BankAPI,
 					 economyRepository: EntityPlayerInstanceEconomyRepository,
 					 characterRepository: EntityCharacterRepository) {
+	val server = plugin.server
+
 	for (player in server.offlinePlayers) {
 		val characters = characterRepository.forOwner(player).map { Pair(it, economyRepository.forPlayerInstance(it.playerInstance)) }
 		if (characters.isEmpty()) continue
@@ -21,6 +23,7 @@ internal fun migrate(server: Server, bankApi: BankAPI,
 	}
 
 	for (character in characterRepository.all()) {
+		plugin.logger.info("Migrating #${character.id}")
 		val pocketMoney = MutableDenizenCharacter(character.id, character.playerInstance.owner).money
 		val economy = economyRepository.forPlayerInstance(character.playerInstance)
 		economy.money = pocketMoney.toInt()

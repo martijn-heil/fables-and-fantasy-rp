@@ -22,18 +22,24 @@ class PlayerInstanceManager(private val server: Server) {
 		val currentHolder = currentInstancesTwo[playerInstance]
 		if (currentHolder != null) throw PlayerInstanceOccupiedException()
 
-		server.pluginManager.callEvent(PrePlayerSwitchPlayerInstanceEvent(player, getCurrentForPlayer(player), playerInstance))
+		server.pluginManager.callEvent(PrePlayerSwitchPlayerInstanceEvent(player, currentPlayerInstance, playerInstance))
 
 		currentInstancesTwo.remove(currentPlayerInstance)
 		currentInstances[player.uniqueId] = playerInstance
 		currentInstancesTwo[playerInstance] = player.uniqueId
 
-		server.pluginManager.callEvent(PostPlayerSwitchPlayerInstanceEvent(player, getCurrentForPlayer(player), playerInstance))
+		server.pluginManager.callEvent(PostPlayerSwitchPlayerInstanceEvent(player, currentPlayerInstance, playerInstance))
 	}
 
 	fun stopTracking(player: Player) {
+		val currentPlayerInstance = this.getCurrentForPlayer(player)
+
+		server.pluginManager.callEvent(PrePlayerSwitchPlayerInstanceEvent(player, currentPlayerInstance, null))
+
 		val result = currentInstances.remove(player.uniqueId)
 		currentInstancesTwo.remove(result)
+
+		server.pluginManager.callEvent(PostPlayerSwitchPlayerInstanceEvent(player, currentPlayerInstance, null))
 	}
 
 	fun getCurrentForPlayerInstance(instance: PlayerInstance): Player? {

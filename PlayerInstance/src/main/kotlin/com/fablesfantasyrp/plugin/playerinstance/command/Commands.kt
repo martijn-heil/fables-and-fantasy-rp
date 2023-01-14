@@ -55,7 +55,7 @@ class Commands {
 
 		@Command(aliases = ["transfer"], desc = "Transfer a player instance")
 		@Require(Permission.Command.CommandPlayerInstance.Transfer)
-		fun transfer(@Sender sender: Player, instance: PlayerInstance, to: OfflinePlayer) {
+		fun transfer(@Sender sender: CommandSender, instance: PlayerInstance, to: OfflinePlayer) {
 			instance.owner = to
 		}
 	}
