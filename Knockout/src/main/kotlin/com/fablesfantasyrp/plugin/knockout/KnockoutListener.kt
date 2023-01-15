@@ -6,6 +6,7 @@ import dev.geco.gsit.api.event.PreEntityGetUpSitEvent
 import org.bukkit.Server
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority.LOW
 import org.bukkit.event.EventPriority.MONITOR
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.*
@@ -113,6 +114,14 @@ class KnockoutListener(private val server: Server) : Listener {
 	fun onPlayerInteractAtEntity(e: PlayerInteractAtEntityEvent) {
 		val knockoutEntity = e.player.knockout
 		if (knockoutEntity.isKnockedOut) e.isCancelled = true
+	}
+
+	@EventHandler(priority = LOW, ignoreCancelled = true)
+	fun onPlayerDamageByPlayer(e: EntityDamageByEntityEvent) {
+		val damager = e.entity as? Player ?: return
+		if (!damager.isRealPlayer) return
+
+		if (damager.knockout.isKnockedOut) e.isCancelled = true
 	}
 
 	@EventHandler(ignoreCancelled = true)
