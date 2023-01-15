@@ -7,9 +7,8 @@ import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 
 class SimplePlayerInstanceSelectionPrompter(private val plugin: JavaPlugin) : PlayerInstanceSelectionPrompter {
-	private val server = plugin.server
-
 	override suspend fun promptSelect(player: Player, playerInstances: Collection<PlayerInstance>): PlayerInstance {
-		return player.promptGui(PlayerInstanceSelectionGui(plugin, playerInstances.asSequence()))
+		val gui = PlayerInstanceSelectionGui(plugin, playerInstances.asSequence())
+		return player.promptGui(gui)
 	}
 }

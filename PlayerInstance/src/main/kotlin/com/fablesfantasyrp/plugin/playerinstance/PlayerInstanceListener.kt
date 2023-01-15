@@ -27,6 +27,7 @@ class PlayerInstanceListener(private val plugin: JavaPlugin,
 		player.teleport(SPAWN)
 		player.inventory.clear()
 		player.enderChest.clear()
+		require(playerInstanceManager.getCurrentForPlayer(player) == null)
 
 		do {
 			val selector = server.servicesManager.getRegistration(PlayerInstanceSelectionPrompter::class.java)!!.provider
@@ -36,11 +37,13 @@ class PlayerInstanceListener(private val plugin: JavaPlugin,
 				if (!wasVanished) VanishAPI.hidePlayer(player)
 				val newInstance = selector.promptSelect(player, ownedInstances)
 				playerInstanceManager.setCurrentForPlayer(player, newInstance)
+				player.sendMessage("$SYSPREFIX You are now player instance #${newInstance.id}")
 				if (!wasVanished) VanishAPI.showPlayer(player)
 			} catch (ex: PlayerInstanceOccupiedException) {
 				player.sendError("This player instance is currently occupied.")
 			} catch (_: CancellationException) {}
 		} while (playerInstanceManager.getCurrentForPlayer(player) == null)
+		require(playerInstanceManager.getCurrentForPlayer(player) != null)
 	}
 
 	@EventHandler(priority = MONITOR, ignoreCancelled = true)
@@ -50,7 +53,10 @@ class PlayerInstanceListener(private val plugin: JavaPlugin,
 		val ownedInstances = instances.forOwner(e.player).filter { it.isActive }
 		if (ownedInstances.isEmpty()) return
 
-		plugin.launch { forcePlayerInstanceSelection(e.player, ownedInstances) }
+		server.scheduler.scheduleSyncDelayedTask(plugin, {
+			val player = server.getPlayer(e.player.uniqueId) ?: return@scheduleSyncDelayedTask
+			plugin.launch { forcePlayerInstanceSelection(player, ownedInstances) }
+		}, 1)
 	}
 
 	@EventHandler(priority = MONITOR, ignoreCancelled = true)

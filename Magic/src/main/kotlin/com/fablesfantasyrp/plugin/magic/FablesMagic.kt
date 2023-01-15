@@ -13,6 +13,7 @@ import com.fablesfantasyrp.plugin.magic.data.entity.EntityTearRepository
 import com.fablesfantasyrp.plugin.magic.data.persistent.H2MageRepository
 import com.fablesfantasyrp.plugin.magic.data.persistent.YamlSimpleSpellDataRepository
 import com.fablesfantasyrp.plugin.playerinstance.command.provider.PlayerInstanceProvider
+import com.fablesfantasyrp.plugin.playerinstance.playerInstanceManager
 import com.fablesfantasyrp.plugin.playerinstance.playerInstances
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
@@ -69,7 +70,7 @@ class FablesMagic : SuspendingJavaPlugin() {
 		injector.install(BukkitModule(server))
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
-		injector.install(CharacterModule(server, characterRepository, PlayerInstanceProvider(playerInstances)))
+		injector.install(CharacterModule(server, characterRepository, PlayerInstanceProvider(playerInstances, playerInstanceManager)))
 		injector.install(MagicModule(server))
 
 		val builder = ParametricBuilder(injector)

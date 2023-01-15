@@ -20,7 +20,7 @@ abstract class ResultProducingInventoryGui<T>(plugin: JavaPlugin, title: String,
 		}
 	}
 
-	suspend fun execute(who: HumanEntity): T {
+	open suspend fun execute(who: HumanEntity): T {
 		this.show(who)
 		val result = result.await()
 		this.close(false)

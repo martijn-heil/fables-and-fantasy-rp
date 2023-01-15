@@ -71,7 +71,7 @@ class FablesPlayerInstance : SuspendingJavaPlugin() {
 		builder.authorizer = BukkitAuthorizer()
 
 		val rootDispatcherNode = CommandGraph().builder(builder).commands()
-		rootDispatcherNode.group("playerinstance", "pi", "p").registerMethods(Commands.CommandPlayerInstance(playerInstances))
+		rootDispatcherNode.group("playerinstance", "pi", "p").registerMethods(Commands.CommandPlayerInstance(playerInstances, playerInstanceManager))
 		rootDispatcherNode.registerMethods(Commands())
 		val dispatcher = rootDispatcherNode.dispatcher
 
@@ -88,16 +88,6 @@ class FablesPlayerInstance : SuspendingJavaPlugin() {
 		lateinit var instance: FablesPlayerInstance
 	}
 }
-
-var Player.currentPlayerInstance
-	get() = playerInstanceManager.getCurrentForPlayer(this)
-	set(value) {
-		if (value != null) {
-			playerInstanceManager.setCurrentForPlayer(this, value)
-		} else {
-			playerInstanceManager.stopTracking(this)
-		}
-	}
 
 var PlayerInstance.currentPlayer: Player?
 	get() = playerInstanceManager.getCurrentForPlayerInstance(this)

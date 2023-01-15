@@ -65,7 +65,7 @@ class FablesEconomy : SuspendingJavaPlugin() {
 
 		server.servicesManager.register(
 				Economy::class.java,
-				VaultPlayerInstanceEconomy(server),
+				VaultPlayerInstanceEconomy(server, playerInstanceManager),
 				this,
 				ServicePriority.Highest
 		)
@@ -83,7 +83,7 @@ class FablesEconomy : SuspendingJavaPlugin() {
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
 		injector.install(PlayerInstanceModule(playerInstances, playerInstanceManager, BukkitSenderProvider(Player::class.java)))
-		injector.install(CharacterModule(server, characterRepository, PlayerInstanceProvider(playerInstances)))
+		injector.install(CharacterModule(server, characterRepository, PlayerInstanceProvider(playerInstances, playerInstanceManager)))
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()

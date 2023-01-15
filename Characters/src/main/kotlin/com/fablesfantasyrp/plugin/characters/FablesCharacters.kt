@@ -65,21 +65,21 @@ class FablesCharacters : SuspendingJavaPlugin() {
 		injector.install(BukkitModule(server))
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
-		injector.install(CharacterModule(server, characterRepository, PlayerInstanceProvider(playerInstances)))
+		injector.install(CharacterModule(server, characterRepository, PlayerInstanceProvider(playerInstances, playerInstanceManager)))
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()
 
 		val rootDispatcherNode = CommandGraph().builder(builder).commands()
 		val charactersCommand = rootDispatcherNode.group("characters", "chars", "fchars", "fcharacters")
-		charactersCommand.registerMethods(Commands.Characters(this, playerInstances))
+		charactersCommand.registerMethods(Commands.Characters(this, playerInstances, playerInstanceManager))
 		charactersCommand.group("stats").registerMethods(Commands.Characters.Stats(this))
 		rootDispatcherNode.registerMethods(Commands(this))
 		val dispatcher = rootDispatcherNode.dispatcher
 
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
 
-		server.pluginManager.registerEvents(CharactersListener(characterRepository), this)
+		server.pluginManager.registerEvents(CharactersListener(characterRepository, playerInstanceManager), this)
 		server.pluginManager.registerEvents(CharactersLiveMigrationListener(characterRepository), this)
 
 		if (server.pluginManager.isPluginEnabled("TAB") && server.pluginManager.isPluginEnabled("Denizen") ) {

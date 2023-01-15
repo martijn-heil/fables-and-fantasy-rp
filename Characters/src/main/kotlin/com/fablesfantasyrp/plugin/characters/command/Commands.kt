@@ -8,8 +8,8 @@ import com.fablesfantasyrp.plugin.characters.data.entity.Character
 import com.fablesfantasyrp.plugin.characters.gui.CharacterStatsGui
 import com.fablesfantasyrp.plugin.form.YesNoChatPrompt
 import com.fablesfantasyrp.plugin.form.promptChat
+import com.fablesfantasyrp.plugin.playerinstance.PlayerInstanceManager
 import com.fablesfantasyrp.plugin.playerinstance.PlayerInstanceOccupiedException
-import com.fablesfantasyrp.plugin.playerinstance.currentPlayerInstance
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstanceRepository
 import com.fablesfantasyrp.plugin.text.legacyText
@@ -34,7 +34,8 @@ import java.time.Instant
 
 class Commands(private val plugin: SuspendingJavaPlugin) {
 	class Characters(private val plugin: SuspendingJavaPlugin,
-					 private val playerInstanceRepository: PlayerInstanceRepository) {
+					 private val playerInstanceRepository: PlayerInstanceRepository,
+					 private val playerInstanceManager: PlayerInstanceManager) {
 		@Command(aliases = ["new"], desc = "Create a new character!")
 		@Require(Permission.Command.Characters.New)
 		fun new(@Sender sender: Player) {
@@ -81,7 +82,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 						playerInstance = playerInstance,
 						createdAt = Instant.now()))
 
-				sender.currentPlayerInstance = playerInstance
+				playerInstanceManager.setCurrentForPlayer(sender, playerInstance)
 			}
 		}
 
@@ -179,7 +180,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 			}
 
 			try {
-				who.currentPlayerInstance = target.playerInstance
+				playerInstanceManager.setCurrentForPlayer(who, target.playerInstance)
 			} catch (ex: PlayerInstanceOccupiedException) {
 				sender.sendError("This character is currently occupied")
 			}

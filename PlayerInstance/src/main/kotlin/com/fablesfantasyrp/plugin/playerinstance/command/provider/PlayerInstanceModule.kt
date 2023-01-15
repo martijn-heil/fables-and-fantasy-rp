@@ -12,7 +12,7 @@ class PlayerInstanceModule(private val playerInstances: EntityPlayerInstanceRepo
 						   private val playerInstanceManager: PlayerInstanceManager,
 						   private val senderProvider: Provider<Player>) : AbstractModule() {
 	override fun configure() {
-		bind(PlayerInstance::class.java).toProvider(PlayerInstanceProvider(playerInstances))
+		bind(PlayerInstance::class.java).toProvider(PlayerInstanceProvider(playerInstances, playerInstanceManager))
 		bind(PlayerInstance::class.java).annotatedWith(Sender::class.java)
 				.toProvider(PlayerInstanceSenderProvider(playerInstanceManager, senderProvider))
 	}

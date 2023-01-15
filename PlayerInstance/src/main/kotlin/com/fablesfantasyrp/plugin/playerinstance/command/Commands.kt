@@ -1,9 +1,6 @@
 package com.fablesfantasyrp.plugin.playerinstance.command
 
-import com.fablesfantasyrp.plugin.playerinstance.Permission
-import com.fablesfantasyrp.plugin.playerinstance.PlayerInstanceOccupiedException
-import com.fablesfantasyrp.plugin.playerinstance.SYSPREFIX
-import com.fablesfantasyrp.plugin.playerinstance.currentPlayerInstance
+import com.fablesfantasyrp.plugin.playerinstance.*
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstanceRepository
 import com.fablesfantasyrp.plugin.text.sendError
@@ -17,7 +14,8 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class Commands {
-	class CommandPlayerInstance(private val instances: PlayerInstanceRepository) {
+	class CommandPlayerInstance(private val instances: PlayerInstanceRepository,
+								private val playerInstanceManager: PlayerInstanceManager) {
 		@Command(aliases = ["list"], desc = "List player instances")
 		@Require(Permission.Command.CommandPlayerInstance.List)
 		fun list(@Sender sender: Player,
@@ -45,7 +43,7 @@ class Commands {
 		@Require(Permission.Command.CommandPlayerInstance.Become)
 		fun become(@Sender sender: CommandSender, instance: PlayerInstance, @CommandTarget target: Player) {
 			try {
-				target.currentPlayerInstance = instance
+				playerInstanceManager.setCurrentForPlayer(target, instance)
 				target.sendMessage("$SYSPREFIX You are now player instance #${instance.id}")
 				if (target != sender) sender.sendMessage("$SYSPREFIX ${target.name} is now player instance #${instance.id}")
 			} catch (ex: PlayerInstanceOccupiedException) {
@@ -57,6 +55,17 @@ class Commands {
 		@Require(Permission.Command.CommandPlayerInstance.Transfer)
 		fun transfer(@Sender sender: CommandSender, instance: PlayerInstance, to: OfflinePlayer) {
 			instance.owner = to
+		}
+
+		@Command(aliases = ["current"], desc = "Get current player instance for a player")
+		@Require(Permission.Command.CommandPlayerInstance.Current)
+		fun current(@Sender sender: CommandSender, @CommandTarget target: Player) {
+			val currentPlayerInstance = playerInstanceManager.getCurrentForPlayer(target)
+			if (currentPlayerInstance != null) {
+				sender.sendMessage("$SYSPREFIX ${target.name} is currently player instance #${currentPlayerInstance.id}")
+			} else {
+				sender.sendMessage("$SYSPREFIX ${target.name} is currently not a player instance")
+			}
 		}
 	}
 }

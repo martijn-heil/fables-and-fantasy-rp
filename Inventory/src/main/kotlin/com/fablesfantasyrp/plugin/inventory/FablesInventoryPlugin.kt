@@ -4,7 +4,7 @@ import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDataba
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.inventory.data.entity.EntityFablesInventoryRepository
 import com.fablesfantasyrp.plugin.inventory.data.persistent.H2PlayerInstanceInventoryRepository
-import com.fablesfantasyrp.plugin.playerinstance.currentPlayerInstance
+import com.fablesfantasyrp.plugin.playerinstance.playerInstanceManager
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 
@@ -38,7 +38,7 @@ class FablesInventoryPlugin : SuspendingJavaPlugin() {
 
 	override fun onDisable() {
 		server.onlinePlayers.forEach {
-			val instance = it.currentPlayerInstance ?: return@forEach
+			val instance = playerInstanceManager.getCurrentForPlayer(it) ?: return@forEach
 			instance.inventory.inventory.bukkitInventory = null
 			instance.inventory.enderChest.bukkitInventory = null
 		}

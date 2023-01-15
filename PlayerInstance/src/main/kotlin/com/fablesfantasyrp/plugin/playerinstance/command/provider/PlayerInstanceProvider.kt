@@ -1,9 +1,8 @@
 package com.fablesfantasyrp.plugin.playerinstance.command.provider
 
-import com.fablesfantasyrp.plugin.playerinstance.currentPlayerInstance
+import com.fablesfantasyrp.plugin.playerinstance.PlayerInstanceManager
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.EntityPlayerInstanceRepository
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
-import com.fablesfantasyrp.plugin.utils.quoteCommandArgument
 import com.gitlab.martijn_heil.nincommands.common.CommandTarget
 import com.sk89q.intake.argument.ArgumentParseException
 import com.sk89q.intake.argument.CommandArgs
@@ -13,7 +12,8 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.permissions.Permissible
 
-class PlayerInstanceProvider(private val playerInstances: EntityPlayerInstanceRepository) : Provider<PlayerInstance> {
+class PlayerInstanceProvider(private val playerInstances: EntityPlayerInstanceRepository,
+							 private val playerInstanceManager: PlayerInstanceManager) : Provider<PlayerInstance> {
 	override fun isProvided(): Boolean = false
 
 	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): PlayerInstance? {
@@ -30,8 +30,8 @@ class PlayerInstanceProvider(private val playerInstances: EntityPlayerInstanceRe
 
 			return playerInstances.forId(id)
 					?: throw ArgumentParseException("A player instance with id '$id' could not be found")
-		} else if (targetAnnotation != null && sender is Player && sender.currentPlayerInstance != null) {
-			return sender.currentPlayerInstance!!
+		} else if (targetAnnotation != null && sender is Player && playerInstanceManager.getCurrentForPlayer(sender) != null) {
+			return playerInstanceManager.getCurrentForPlayer(sender)!!
 		} else {
 			// Generate MissingArgumentException
 			arguments.next()

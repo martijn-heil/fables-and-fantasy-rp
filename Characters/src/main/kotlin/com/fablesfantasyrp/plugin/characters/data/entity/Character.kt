@@ -8,9 +8,10 @@ import com.fablesfantasyrp.plugin.database.entity.DataEntity
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.inventory.inventory
 import com.fablesfantasyrp.plugin.location.location
+import com.fablesfantasyrp.plugin.playerinstance.PlayerInstanceManager
 import com.fablesfantasyrp.plugin.playerinstance.currentPlayer
-import com.fablesfantasyrp.plugin.playerinstance.currentPlayerInstance
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
+import com.fablesfantasyrp.plugin.utils.Services
 import com.fablesfantasyrp.plugin.utils.essentialsSpawn
 import org.bukkit.Location
 import org.bukkit.OfflinePlayer
@@ -37,7 +38,7 @@ class Character : DataEntity<Int, Character>, CharacterData {
 				if (player != null) {
 					player.health = 0.0
 					player.spigot().respawn()
-					player.currentPlayerInstance = null
+					Services.get<PlayerInstanceManager>().stopTracking(player)
 				}
 				val inventory = playerInstance.inventory
 				inventory.inventory.clear()
@@ -61,8 +62,7 @@ class Character : DataEntity<Int, Character>, CharacterData {
 				val playerInstance = this.playerInstance
 				val player = playerInstance.currentPlayer
 				if (player != null) {
-					player.currentPlayerInstance = null
-					player.teleport(essentialsSpawn.getSpawn("default").toCenterLocation())
+					Services.get<PlayerInstanceManager>().stopTracking(player)
 				}
 			} else {
 				shelvedAt = null

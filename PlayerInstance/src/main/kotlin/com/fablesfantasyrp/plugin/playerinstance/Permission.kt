@@ -11,7 +11,8 @@ object Permission {
 			const val List = "${prefix}.list"
 			const val New = "${prefix}.new"
 			const val Become = "${prefix}.become"
-			const val Transfer = "${prefix}.become"
+			const val Transfer = "${prefix}.transfer"
+			const val Current = "${prefix}.current"
 		}
 	}
 }

@@ -19,6 +19,7 @@ class PlayerInstanceManager(private val server: Server) {
 	fun setCurrentForPlayer(player: Player, playerInstance: PlayerInstance) {
 		val currentPlayerInstance = this.getCurrentForPlayer(player)
 		if (currentPlayerInstance == playerInstance) return
+
 		val currentHolder = currentInstancesTwo[playerInstance]
 		if (currentHolder != null) throw PlayerInstanceOccupiedException()
 
@@ -32,7 +33,7 @@ class PlayerInstanceManager(private val server: Server) {
 	}
 
 	fun stopTracking(player: Player) {
-		val currentPlayerInstance = this.getCurrentForPlayer(player)
+		val currentPlayerInstance = this.getCurrentForPlayer(player) ?: return
 
 		server.pluginManager.callEvent(PrePlayerSwitchPlayerInstanceEvent(player, currentPlayerInstance, null))
 

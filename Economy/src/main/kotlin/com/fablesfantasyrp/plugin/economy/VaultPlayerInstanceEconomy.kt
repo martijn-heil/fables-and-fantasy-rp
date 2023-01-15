@@ -1,13 +1,13 @@
 package com.fablesfantasyrp.plugin.economy
 
-import com.fablesfantasyrp.plugin.playerinstance.currentPlayerInstance
+import com.fablesfantasyrp.plugin.playerinstance.PlayerInstanceManager
 import net.milkbowl.vault.economy.Economy
 import net.milkbowl.vault.economy.EconomyResponse
 import org.bukkit.OfflinePlayer
 import org.bukkit.Server
 import kotlin.math.roundToInt
 
-class VaultPlayerInstanceEconomy(private val server: Server) : Economy {
+class VaultPlayerInstanceEconomy(private val server: Server, private val playerInstanceManager: PlayerInstanceManager) : Economy {
 	private fun requirePlayedBefore(player: OfflinePlayer?, amount: Double): EconomyResponse? {
 		return if (player?.hasPlayedBefore() != true) {
 			EconomyResponse(amount, 0.00, EconomyResponse.ResponseType.FAILURE,
@@ -28,7 +28,7 @@ class VaultPlayerInstanceEconomy(private val server: Server) : Economy {
 	override fun createPlayerAccount(player: OfflinePlayer?, worldName: String?) = this.createPlayerAccount(player)
 
 	override fun getBalance(player: OfflinePlayer?): Double
-			= player?.player?.let { it.currentPlayerInstance?.money?.toDouble() } ?: 0.00
+			= player?.player?.let { playerInstanceManager.getCurrentForPlayer(it)?.money?.toDouble() } ?: 0.00
 	override fun getBalance(player: OfflinePlayer?, world: String?) = this.getBalance(player)
 	override fun has(player: OfflinePlayer?, amount: Double) = this.getBalance(player) >= amount
 	override fun has(player: OfflinePlayer?, worldName: String?, amount: Double) = this.has(player, amount)
@@ -38,7 +38,7 @@ class VaultPlayerInstanceEconomy(private val server: Server) : Economy {
 		requirePlayedBefore(player, amount)?.let { return it }
 		check(player != null)
 
-		val playerInstance = player.player?.currentPlayerInstance
+		val playerInstance = player.player?.let { playerInstanceManager.getCurrentForPlayer(it) }
 				?: return EconomyResponse(amount, this.getBalance(player), EconomyResponse.ResponseType.FAILURE,
 						"The target player is not online or does not currently have an active player instance!")
 
@@ -59,7 +59,7 @@ class VaultPlayerInstanceEconomy(private val server: Server) : Economy {
 		requirePlayedBefore(player, amount)?.let { return it }
 		check(player != null)
 
-		val playerInstance = player.player?.currentPlayerInstance
+		val playerInstance = player.player?.let { playerInstanceManager.getCurrentForPlayer(it) }
 				?: return EconomyResponse(amount, this.getBalance(player), EconomyResponse.ResponseType.FAILURE,
 						"The target player is not online or does not currently have an active player instance!")
 

@@ -4,7 +4,6 @@ import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDataba
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.location.data.entity.EntityPlayerInstanceLocationRepository
 import com.fablesfantasyrp.plugin.location.data.persistent.H2PlayerInstanceLocationRepository
-import com.fablesfantasyrp.plugin.playerinstance.currentPlayerInstance
 import com.fablesfantasyrp.plugin.playerinstance.playerInstanceManager
 import com.fablesfantasyrp.plugin.utils.SPAWN
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
@@ -37,7 +36,7 @@ class FablesLocation : SuspendingJavaPlugin() {
 
 	override fun onDisable() {
 		server.onlinePlayers.forEach {
-			val instance = it.currentPlayerInstance ?: return@forEach
+			val instance = playerInstanceManager.getCurrentForPlayer(it) ?: return@forEach
 			playerInstanceLocationRepository.forOwner(instance).player = null
 		}
 		playerInstanceLocationRepository.saveAll()
