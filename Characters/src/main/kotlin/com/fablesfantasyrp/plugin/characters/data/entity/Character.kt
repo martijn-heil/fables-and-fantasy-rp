@@ -8,8 +8,9 @@ import com.fablesfantasyrp.plugin.database.entity.DataEntity
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.inventory.inventory
 import com.fablesfantasyrp.plugin.location.location
-import com.fablesfantasyrp.plugin.playerinstance.currentPlayer
+import com.fablesfantasyrp.plugin.playerinstance.PlayerInstanceManager
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
+import com.fablesfantasyrp.plugin.utils.Services
 import org.bukkit.Location
 import org.bukkit.OfflinePlayer
 import java.time.Instant
@@ -19,7 +20,7 @@ class Character : DataEntity<Int, Character>, CharacterData {
 
 	val createdAt: Instant?
 	var lastSeen: Instant?
-		get() = if (playerInstance.currentPlayer != null) Instant.now() else field
+		get() = if (Services.get<PlayerInstanceManager>().getCurrentForPlayerInstance(playerInstance) != null) Instant.now() else field
 
 	var diedAt: Instant?
 	var shelvedAt: Instant?
@@ -31,7 +32,7 @@ class Character : DataEntity<Int, Character>, CharacterData {
 			if (value) {
 				diedAt = Instant.now()
 				val playerInstance = this.playerInstance
-				val player = playerInstance.currentPlayer
+				val player = Services.get<PlayerInstanceManager>().getCurrentForPlayerInstance(playerInstance)
 				if (player != null) {
 					player.health = 0.0
 					player.spigot().respawn()

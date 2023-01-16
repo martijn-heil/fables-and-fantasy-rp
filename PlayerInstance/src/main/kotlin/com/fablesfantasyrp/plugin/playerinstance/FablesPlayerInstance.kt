@@ -6,8 +6,8 @@ import com.fablesfantasyrp.plugin.playerinstance.command.Commands
 import com.fablesfantasyrp.plugin.playerinstance.command.provider.PlayerInstanceModule
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.EntityPlayerInstanceRepository
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.EntityPlayerInstanceRepositoryImpl
-import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
 import com.fablesfantasyrp.plugin.playerinstance.data.persistent.H2PlayerInstanceRepository
+import com.fablesfantasyrp.plugin.utils.Services
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
@@ -54,11 +54,11 @@ class FablesPlayerInstance : SuspendingJavaPlugin() {
 		playerInstances = playerInstancesImpl
 		server.servicesManager.register(EntityPlayerInstanceRepository::class.java, playerInstances, this, ServicePriority.Normal)
 
-		playerInstanceManager = PlayerInstanceManager(server)
-		server.servicesManager.register(PlayerInstanceManager::class.java, playerInstanceManager, this, ServicePriority.Normal)
+		playerInstanceManager = PlayerInstanceManagerImpl(server)
+		Services.register(PlayerInstanceManager::class, playerInstanceManager, this, ServicePriority.Normal)
 
 		val prompter = SimplePlayerInstanceSelectionPrompter(this)
-		server.servicesManager.register(PlayerInstanceSelectionPrompter::class.java, prompter, this, ServicePriority.Low);
+		Services.register(PlayerInstanceSelectionPrompter::class, prompter, this, ServicePriority.Low)
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())
@@ -89,9 +89,9 @@ class FablesPlayerInstance : SuspendingJavaPlugin() {
 	}
 }
 
-var PlayerInstance.currentPlayer: Player?
+/*var PlayerInstance.currentPlayer: Player?
 	get() = playerInstanceManager.getCurrentForPlayerInstance(this)
 	set(value) {
 		require(value != null)
 		playerInstanceManager.setCurrentForPlayer(value, this)
-	}
+	}*/

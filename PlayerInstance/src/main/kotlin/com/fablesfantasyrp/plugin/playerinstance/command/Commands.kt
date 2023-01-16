@@ -8,6 +8,7 @@ import com.gitlab.martijn_heil.nincommands.common.CommandTarget
 import com.gitlab.martijn_heil.nincommands.common.Sender
 import com.sk89q.intake.Command
 import com.sk89q.intake.Require
+import com.sk89q.intake.parametric.annotation.Switch
 import org.bukkit.ChatColor
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
@@ -41,9 +42,9 @@ class Commands {
 
 		@Command(aliases = ["become"], desc = "Become a player instance")
 		@Require(Permission.Command.CommandPlayerInstance.Become)
-		fun become(@Sender sender: CommandSender, instance: PlayerInstance, @CommandTarget target: Player) {
+		fun become(@Sender sender: CommandSender, @Switch('f') force: Boolean, instance: PlayerInstance, @CommandTarget target: Player) {
 			try {
-				playerInstanceManager.setCurrentForPlayer(target, instance)
+				playerInstanceManager.setCurrentForPlayer(target, instance, force = true)
 				target.sendMessage("$SYSPREFIX You are now player instance #${instance.id}")
 				if (target != sender) sender.sendMessage("$SYSPREFIX ${target.name} is now player instance #${instance.id}")
 			} catch (ex: PlayerInstanceOccupiedException) {

@@ -4,7 +4,7 @@ import com.fablesfantasyrp.plugin.characters.command.provider.AllowCharacterName
 import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
 import com.fablesfantasyrp.plugin.economy.data.entity.EntityPlayerInstanceEconomyRepository
 import com.fablesfantasyrp.plugin.economy.gui.bank.BankGuiMainMenu
-import com.fablesfantasyrp.plugin.playerinstance.currentPlayer
+import com.fablesfantasyrp.plugin.playerinstance.PlayerInstanceManager
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
 import com.fablesfantasyrp.plugin.playerinstance.playerInstances
 import com.fablesfantasyrp.plugin.text.sendError
@@ -17,13 +17,15 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 
-class Commands(private val characters: EntityCharacterRepository) {
+class Commands(private val characters: EntityCharacterRepository,
+			   private val playerInstanceManager: PlayerInstanceManager) {
 	@Command(aliases = ["balance", "bal", "fbalance", "fbal"], desc = "Show your balance")
 	@Require(Permission.Command.Balance)
 	fun balance(@Sender sender: CommandSender,
 				@CommandTarget(Permission.Command.Balance + ".others") @AllowCharacterName target: PlayerInstance) {
 		val character = characters.forPlayerInstance(target)
-		val start = if (target.currentPlayer == sender) "You have" else "${character?.name ?: "#${target.id}"} has"
+		val currentPlayer = playerInstanceManager.getCurrentForPlayerInstance(target)
+		val start = if (currentPlayer == sender) "You have" else "${character?.name ?: "#${target.id}"} has"
 		sender.sendMessage("$SYSPREFIX $start ${CURRENCY_SYMBOL}${target.money}")
 	}
 
@@ -32,7 +34,7 @@ class Commands(private val characters: EntityCharacterRepository) {
 	fun pay(@Sender sender: PlayerInstance, @AllowCharacterName target: PlayerInstance, @Range(min = 1.0) amount: Int) {
 		val character = characters.forPlayerInstance(target)
 		val displayName = character?.name ?: "#${target.id}"
-		val currentPlayer = sender.currentPlayer!!
+		val currentPlayer = playerInstanceManager.getCurrentForPlayerInstance(sender)!!
 		val ownPlayerInstances = playerInstances.forOwner(currentPlayer)
 
 		if (sender.money < amount) {

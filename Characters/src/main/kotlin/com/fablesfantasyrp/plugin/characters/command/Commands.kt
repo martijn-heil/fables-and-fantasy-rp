@@ -187,9 +187,16 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 
 		@Command(aliases = ["become"], desc = "Become a character")
 		@Require(Permission.Command.Characters.Become)
-		fun become(@Sender sender: CommandSender, target: Character,
+		fun become(@Sender sender: CommandSender,
+				   @Switch('f') force: Boolean,
+				   target: Character,
 				   @CommandTarget(Permission.Command.Characters.Become + ".others") who: Player) {
 			val owner = target.playerInstance.owner
+
+			if (force && !sender.hasPermission(Permission.Command.Characters.Become + ".force")) {
+				sender.sendError("Permission denied")
+				return
+			}
 
 			if (owner == FABLES_ADMIN && !sender.hasPermission(Permission.Staff)) {
 				sender.sendError("You do not have permission to become a staff character.")
@@ -210,7 +217,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 			}
 
 			try {
-				playerInstanceManager.setCurrentForPlayer(who, target.playerInstance)
+				playerInstanceManager.setCurrentForPlayer(who, target.playerInstance, force)
 			} catch (ex: PlayerInstanceOccupiedException) {
 				sender.sendError("This character is currently occupied by ${ex.by.name}")
 			}
