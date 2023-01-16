@@ -57,6 +57,12 @@ class Commands {
 			instance.owner = to
 		}
 
+		@Command(aliases = ["setactive"], desc = "Set active status of a player instance")
+		@Require(Permission.Command.CommandPlayerInstance.SetActive)
+		fun setactive(@Sender sender: CommandSender, instance: PlayerInstance, value: Boolean) {
+			instance.isActive = value
+		}
+
 		@Command(aliases = ["current"], desc = "Get current player instance for a player")
 		@Require(Permission.Command.CommandPlayerInstance.Current)
 		fun current(@Sender sender: CommandSender, @CommandTarget target: Player) {

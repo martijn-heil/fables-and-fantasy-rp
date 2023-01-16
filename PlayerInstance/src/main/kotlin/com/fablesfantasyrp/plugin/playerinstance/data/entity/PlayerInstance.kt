@@ -2,7 +2,9 @@ package com.fablesfantasyrp.plugin.playerinstance.data.entity
 
 import com.fablesfantasyrp.plugin.database.entity.DataEntity
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
+import com.fablesfantasyrp.plugin.playerinstance.PlayerInstanceManager
 import com.fablesfantasyrp.plugin.playerinstance.data.PlayerInstanceData
+import com.fablesfantasyrp.plugin.utils.Services
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import java.util.*
@@ -18,7 +20,17 @@ class PlayerInstance : DataEntity<Int, PlayerInstance>, PlayerInstanceData {
 		set(value) { if (ownerUUID != value.uniqueId) { ownerUUID = value.uniqueId; dirtyMarker?.markDirty(this) } }
 		get() = Bukkit.getOfflinePlayer(ownerUUID)
 	override var description: String? set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
-	override var isActive: Boolean set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
+	override var isActive: Boolean
+		set(value) {
+			if (field == value) return
+
+			val playerInstanceManager = Services.get<PlayerInstanceManager>()
+			val currentPlayer = playerInstanceManager.getCurrentForPlayerInstance(this)
+			if (currentPlayer != null && !value) playerInstanceManager.stopTracking(currentPlayer)
+
+			field = value
+			dirtyMarker?.markDirty(this)
+		}
 
 	constructor(id: Int = -1,
 				owner: OfflinePlayer,

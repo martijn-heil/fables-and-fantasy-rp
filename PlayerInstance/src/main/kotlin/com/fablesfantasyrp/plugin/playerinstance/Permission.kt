@@ -13,6 +13,7 @@ object Permission {
 			const val Become = "${prefix}.become"
 			const val Transfer = "${prefix}.transfer"
 			const val Current = "${prefix}.current"
+			const val SetActive = "${prefix}.setactive"
 		}
 	}
 }

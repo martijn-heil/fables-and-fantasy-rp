@@ -23,6 +23,7 @@ import com.gitlab.martijn_heil.nincommands.common.Sender
 import com.sk89q.intake.Command
 import com.sk89q.intake.Require
 import com.sk89q.intake.parametric.annotation.Range
+import com.sk89q.intake.parametric.annotation.Switch
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.ChatColor
@@ -100,15 +101,21 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 
 		@Command(aliases = ["card"], desc = "Display a character's card in chat.")
 		@Require(Permission.Command.Characters.Card)
-		fun card(@Sender sender: CommandSender,
-				@CommandTarget(Permission.Command.Characters.Card + ".others") target: Character) {
+		fun card(@Sender sender: CommandSender, @CommandTarget target: Character) {
 			sender.sendMessage(characterCard(target))
 		}
 
 		@Command(aliases = ["kill"], desc = "Kill a character")
 		@Require(Permission.Command.Characters.Kill)
-		fun kill(@Sender sender: CommandSender,
-				 @CommandTarget(Permission.Command.Characters.Kill + ".others") target: Character) {
+		fun kill(@Sender sender: CommandSender, @CommandTarget target: Character) {
+			val owner = target.playerInstance.owner
+
+			if (sender != owner &&
+					!(sender.hasPermission(Permission.Command.Characters.Kill + ".any") ||
+							(sender.hasPermission(Permission.Staff) && owner == FABLES_ADMIN))) {
+				sender.sendError("Permission denied")
+			}
+
 			target.isDead = true
 			sender.sendMessage("$SYSPREFIX Killed ${target.name}")
 		}
@@ -122,8 +129,21 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 
 		@Command(aliases = ["shelf"], desc = "Shelf a character")
 		@Require(Permission.Command.Characters.Shelf)
-		fun shelf(@Sender sender: Player, @CommandTarget(Permission.Command.Characters.Shelf + ".others") target: Character) {
+		fun shelf(@Sender sender: Player, @CommandTarget target: Character, @Switch('f') force: Boolean) {
 			val owner = target.playerInstance.owner
+
+			if (sender != owner &&
+					!(sender.hasPermission(Permission.Command.Characters.Shelf + ".any") ||
+							(sender.hasPermission(Permission.Staff) && owner == FABLES_ADMIN))) {
+				sender.sendError("Permission denied")
+				return
+			}
+
+			if (force && !sender.hasPermission(Permission.Command.Characters.Shelf + ".force")) {
+				sender.sendError("Permission denied")
+				return
+			}
+
 			val shelved = characterRepository.forOwner(owner).filter { it.isShelved && !it.isDead }.size
 			if (shelved >= 3) {
 				sender.sendError("You cannot shelve more than 3 characters!")
@@ -179,24 +199,40 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 				return
 			}
 
+			if (target.isShelved) {
+				sender.sendError("This character is currently shelved")
+				return
+			}
+
+			if (target.isDead) {
+				sender.sendError("This character is dead.")
+				return
+			}
+
 			try {
 				playerInstanceManager.setCurrentForPlayer(who, target.playerInstance)
 			} catch (ex: PlayerInstanceOccupiedException) {
-				sender.sendError("This character is currently occupied")
+				sender.sendError("This character is currently occupied by ${ex.by.name}")
 			}
 		}
 
 		@Command(aliases = ["unshelf"], desc = "Unshelf a character")
 		@Require(Permission.Command.Characters.Unshelf)
 		fun unshelf(@Sender sender: CommandSender,
-				  @CommandTarget(Permission.Command.Characters.Unshelf + ".others") target: Character) {
+				  @CommandTarget(Permission.Command.Characters.Unshelf + ".others") target: Character,
+					@Switch('f') force: Boolean) {
+			if (force && !sender.hasPermission(Permission.Command.Characters.Unshelf + ".force")) {
+				sender.sendError("Permission denied")
+				return
+			}
+
 			if (!target.isShelved) {
 				sender.sendError("${target.name} is not shelved.")
 				return
 			}
 
 			val daysLeft = 21 - Duration.between(target.shelvedAt, Instant.now()).toDays()
-			if (daysLeft > 0) {
+			if (!force && daysLeft > 0) {
 				sender.sendError("You must wait $daysLeft more days before you can unshelf ${target.name}.")
 				return
 			}

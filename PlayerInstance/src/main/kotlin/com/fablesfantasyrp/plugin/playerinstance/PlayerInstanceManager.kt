@@ -7,7 +7,7 @@ import org.bukkit.Server
 import org.bukkit.entity.Player
 import java.util.*
 
-class PlayerInstanceOccupiedException : Exception()
+class PlayerInstanceOccupiedException(val by: Player) : Exception()
 
 class PlayerInstanceManager(private val server: Server) {
 	private val currentInstances = HashMap<UUID, PlayerInstance>()
@@ -21,7 +21,7 @@ class PlayerInstanceManager(private val server: Server) {
 		if (currentPlayerInstance == playerInstance) return
 
 		val currentHolder = currentInstancesTwo[playerInstance]
-		if (currentHolder != null) throw PlayerInstanceOccupiedException()
+		if (currentHolder != null) throw PlayerInstanceOccupiedException(server.getPlayer(currentHolder)!!)
 
 		server.pluginManager.callEvent(PrePlayerSwitchPlayerInstanceEvent(player, currentPlayerInstance, playerInstance))
 
