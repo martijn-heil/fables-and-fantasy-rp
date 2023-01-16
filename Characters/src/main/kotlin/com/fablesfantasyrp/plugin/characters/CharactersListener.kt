@@ -1,6 +1,8 @@
 package com.fablesfantasyrp.plugin.characters
 
+import com.denizenscript.denizencore.objects.core.ElementTag
 import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
+import com.fablesfantasyrp.plugin.denizeninterop.dFlags
 import com.fablesfantasyrp.plugin.playerinstance.PlayerInstanceManager
 import com.fablesfantasyrp.plugin.playerinstance.event.PostPlayerSwitchPlayerInstanceEvent
 import com.fablesfantasyrp.plugin.utils.isRealPlayer
@@ -18,6 +20,12 @@ class CharactersListener(private val characters: EntityCharacterRepository,
 		val old = e.old ?: return
 		val character = characters.forPlayerInstance(old) ?: return
 		character.lastSeen = Instant.now()
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	fun onPlayerSwitchPlayerInstance2(e: PostPlayerSwitchPlayerInstanceEvent) {
+		val newCharacter = e.new?.let { characters.forPlayerInstance(it) }
+		e.player.dFlags.setFlag("characters_name", newCharacter?.let { ElementTag(it.name) }, null)
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
