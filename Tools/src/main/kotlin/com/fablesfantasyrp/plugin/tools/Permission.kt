@@ -9,5 +9,6 @@ object Permission {
 		const val Endersee = "$prefix.endersee"
 		const val Teleport = "$prefix.teleport"
 		const val Tphere = "$prefix.tphere"
+		const val Rigcheer = "$prefix.tphere"
 	}
 }

@@ -46,7 +46,7 @@ class WorldBoundPlayerInstancesListener(private val plugin: Plugin,
 			// player must choose a new player instance
 			val ownedPlayerInstances = playerInstanceRepository.forOwner(e.player)
 			val rules: Map<PlayerInstance, Collection<WorldRestrictionRule>> = worldRestrictionRuleRepository.forPlayerInstances(ownedPlayerInstances)
-			val possible = ownedPlayerInstances.filter {
+			val possible = ownedPlayerInstances.filter { it.isActive }.filter {
 				var isBoundAnywhere = false
 				var isBoundToDestination = false
 				var isAllowedToDestination = false
@@ -65,7 +65,7 @@ class WorldBoundPlayerInstancesListener(private val plugin: Plugin,
 			chooseNewAndTeleport(e.player, e.to, possible, selector)
 		} else if (e.to.world == FLATROOM || e.to.world == PLOTS) {
 			// the world the player is teleporting to requires selecting a player instance bound or explicitly allowed to that world
-			val allowed = worldRestrictionRuleRepository.getExplicitlyAllowedPlayerInstances(e.to.world, e.player)
+			val allowed = worldRestrictionRuleRepository.getExplicitlyAllowedPlayerInstances(e.to.world, e.player).filter { it.isActive }
 			if (allowed.contains(playerInstance)) return
 			e.isCancelled = true
 			chooseNewAndTeleport(e.player, e.to, allowed, selector)

@@ -65,7 +65,12 @@ class Character : DataEntity<Int, Character>, CharacterData {
 		}
 
 	override var name: String
-		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
+		set(value) {
+			if (field == value) return
+			field = value
+			dirtyMarker?.markDirty(this)
+			playerInstance.description = value
+		}
 
 	override val player: OfflinePlayer get() = throw NotImplementedError()
 

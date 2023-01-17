@@ -59,4 +59,8 @@ class Commands {
 	fun tphere(@Sender sender: Player, @AllowCharacterName who: PlayerInstance) {
 		who.location = sender.location
 	}
+
+	@Command(aliases = ["rigcheer"], desc = "Rig the cheer")
+	@Require(Permission.Command.Rigcheer)
+	fun rigcheer(@Sender sender: CommandSender, target: Player) {}
 }

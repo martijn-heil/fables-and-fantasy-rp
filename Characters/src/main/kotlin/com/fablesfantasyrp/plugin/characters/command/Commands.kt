@@ -55,6 +55,15 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 					prompt.await()
 				} else false
 
+				if (!isStaffCharacter) {
+					val usedSlotCount = characterRepository.forOwner(sender).filter { !(it.isDead || it.isShelved) }.size
+					val maxSlotCount = sender.characterSlotCount
+					if (usedSlotCount >= maxSlotCount) {
+						sender.sendError("You already have ${usedSlotCount}/${maxSlotCount} character slots occupied")
+						return@launch
+					}
+				}
+
 				var info: NewCharacterData
 				while (true) {
 					info = promptNewCharacterInfo(sender,
@@ -62,7 +71,6 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 									.filter { it != Race.HUMAN }
 									.filter { if (!isStaffCharacter) it != Race.OTHER else true }
 									.toList())
-					sender.sendMessage(info.toString())
 
 					if (characterRepository.allNames().contains(info.name)) {
 						sender.sendError("The name '${info.name}' is already in use, please enter a different name.")
@@ -196,6 +204,11 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 			plugin.launch {
 				val oldName = target.name
 				val newName = sender.promptChat("$SYSPREFIX Please enter ${oldName}'s new name:")
+
+				if (newName.length > 32) {
+					sender.sendError("Your character name cannot be longer than 32 characters")
+					return@launch
+				}
 
 				if (characterRepository.nameExists(newName)) {
 					sender.sendError("This name is already in use")

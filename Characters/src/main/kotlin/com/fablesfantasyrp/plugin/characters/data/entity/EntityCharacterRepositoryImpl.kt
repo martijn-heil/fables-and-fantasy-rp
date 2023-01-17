@@ -49,7 +49,8 @@ class EntityCharacterRepositoryImpl<C>(child: C, private val playerInstances: Pl
 
 	override fun markDirty(v: Character) {
 		lock.writeLock().withLock {
-			if (dirty.add(v)) nameMap.inverse()[v.id] = v.name
+			super.markDirty(v)
+			nameMap.inverse()[v.id] = v.name
 		}
 	}
 }

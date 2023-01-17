@@ -1,0 +1,12 @@
+name: FablesStaffPlayerInstances
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+  - FablesDatabase
+  - FablesPlayerInstance
+softdepend:
+  - FablesWorldBoundPlayerInstances
+main: com.fablesfantasyrp.plugin.staffplayerinstances.FablesStaffPlayerInstances
+api-version: @bukkit_api_version@

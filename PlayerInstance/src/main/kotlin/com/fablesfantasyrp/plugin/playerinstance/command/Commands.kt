@@ -32,7 +32,6 @@ class Commands {
 		fun new(@Sender sender: CommandSender,
 				@CommandTarget(Permission.Command.CommandPlayerInstance.New + ".others") owner: OfflinePlayer) {
 			val result = instances.create(PlayerInstance(
-					id = 0,
 					owner = owner,
 					isActive = true,
 					description = null)

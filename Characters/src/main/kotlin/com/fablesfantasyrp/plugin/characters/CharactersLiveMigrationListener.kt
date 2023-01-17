@@ -50,7 +50,7 @@ class CharactersLiveMigrationListener(private val plugin: Plugin,
 			val titleJob = server.scheduler.scheduleSyncRepeatingTask(plugin, {
 				e.player.showTitle(Title.title(Component.text("Welcome back!").color(NamedTextColor.LIGHT_PURPLE),
 						Component.text("Please follow the instructions in chat").color(NamedTextColor.YELLOW),
-						Title.Times.times(Duration.ZERO, Duration.ofSeconds(5), Duration.ofSeconds(2))))
+						Title.Times.times(Duration.ZERO, Duration.ofSeconds(2), Duration.ofSeconds(2))))
 			}, 0, 20)
 
 			blockMovement.add(player.uniqueId)

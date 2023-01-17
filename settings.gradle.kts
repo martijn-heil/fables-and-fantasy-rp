@@ -39,4 +39,5 @@ include("examples:BlankSystem",
 		"LeadBreakingSound",
 		"WorldBoundPlayerInstances",
 		"Tools",
-		"DailyRewards")
+		"DailyRewards",
+		"StaffPlayerInstances")
