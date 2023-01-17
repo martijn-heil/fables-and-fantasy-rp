@@ -45,6 +45,8 @@ class EntityCharacterRepositoryImpl<C>(child: C, private val playerInstances: Pl
 		return nameMap[name]?.let { this.forId(it) }
 	}
 
+	override fun nameExists(name: String): Boolean = nameMap.containsKey(name)
+
 	override fun markDirty(v: Character) {
 		lock.writeLock().withLock {
 			if (dirty.add(v)) nameMap.inverse()[v.id] = v.name

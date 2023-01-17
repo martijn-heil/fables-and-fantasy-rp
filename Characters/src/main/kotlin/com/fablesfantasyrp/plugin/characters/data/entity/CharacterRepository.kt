@@ -9,6 +9,7 @@ interface CharacterRepository : MutableRepository<Character>, KeyedRepository<In
 	fun forOwner(offlinePlayer: OfflinePlayer): Collection<Character>
 	fun forPlayerInstance(playerInstance: PlayerInstance): Character?
 	fun forName(name: String): Character?
+	fun nameExists(name: String): Boolean
 	fun allNames(): Set<String> = nameMap.keys
 	val nameMap: Map<String, Int>
 }

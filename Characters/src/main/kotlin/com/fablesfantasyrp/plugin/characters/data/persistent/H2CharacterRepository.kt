@@ -102,6 +102,9 @@ class H2CharacterRepository(private val server: Server,
 		}
 	}
 
+	// stub implementation
+	override fun nameExists(name: String): Boolean = this.forName(name) != null
+
 	override val nameMap: Map<String, Int>
 		get() {
 			return dataSource.connection.use { connection ->

@@ -196,6 +196,12 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 			plugin.launch {
 				val oldName = target.name
 				val newName = sender.promptChat("$SYSPREFIX Please enter ${oldName}'s new name:")
+
+				if (characterRepository.nameExists(newName)) {
+					sender.sendError("This name is already in use")
+					return@launch
+				}
+
 				target.name = newName
 				sender.sendMessage("$SYSPREFIX Changed $oldName's name to $newName")
 			}
