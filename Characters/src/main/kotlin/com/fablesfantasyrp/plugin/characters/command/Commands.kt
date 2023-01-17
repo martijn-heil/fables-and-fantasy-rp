@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.characters.command
 
 import com.fablesfantasyrp.plugin.characters.*
+import com.fablesfantasyrp.plugin.characters.command.provider.AllowCharacterName
 import com.fablesfantasyrp.plugin.characters.data.CharacterStatKind
 import com.fablesfantasyrp.plugin.characters.data.CharacterStats
 import com.fablesfantasyrp.plugin.characters.data.Race
@@ -10,11 +11,14 @@ import com.fablesfantasyrp.plugin.form.YesNoChatPrompt
 import com.fablesfantasyrp.plugin.form.promptChat
 import com.fablesfantasyrp.plugin.playerinstance.PlayerInstanceManager
 import com.fablesfantasyrp.plugin.playerinstance.PlayerInstanceOccupiedException
+import com.fablesfantasyrp.plugin.playerinstance.PlayerInstanceSelectionPrompter
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstanceRepository
 import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.sendError
+import com.fablesfantasyrp.plugin.timers.CancelReason
+import com.fablesfantasyrp.plugin.timers.countdown
 import com.fablesfantasyrp.plugin.utils.FABLES_ADMIN
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.github.shynixn.mccoroutine.bukkit.launch
@@ -22,6 +26,7 @@ import com.gitlab.martijn_heil.nincommands.common.CommandTarget
 import com.gitlab.martijn_heil.nincommands.common.Sender
 import com.sk89q.intake.Command
 import com.sk89q.intake.Require
+import com.sk89q.intake.parametric.annotation.Optional
 import com.sk89q.intake.parametric.annotation.Range
 import com.sk89q.intake.parametric.annotation.Switch
 import net.kyori.adventure.text.format.NamedTextColor
@@ -36,7 +41,8 @@ import java.time.Instant
 class Commands(private val plugin: SuspendingJavaPlugin) {
 	class Characters(private val plugin: SuspendingJavaPlugin,
 					 private val playerInstanceRepository: PlayerInstanceRepository,
-					 private val playerInstanceManager: PlayerInstanceManager) {
+					 private val playerInstanceManager: PlayerInstanceManager,
+					 private val playerInstanceSelectionPrompter: PlayerInstanceSelectionPrompter) {
 		@Command(aliases = ["new"], desc = "Create a new character!")
 		@Require(Permission.Command.Characters.New)
 		fun new(@Sender sender: Player) {
@@ -187,39 +193,52 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 
 		@Command(aliases = ["become"], desc = "Become a character")
 		@Require(Permission.Command.Characters.Become)
-		fun become(@Sender sender: CommandSender,
-				   @Switch('f') force: Boolean,
-				   target: Character,
-				   @CommandTarget(Permission.Command.Characters.Become + ".others") who: Player) {
-			val owner = target.playerInstance.owner
+		fun become(@Sender sender: Player,
+				   @Optional @AllowCharacterName targetMaybe: PlayerInstance?,
+				   @Optional @CommandTarget(Permission.Command.Characters.Become + ".others") who: Player,
+				   @Switch('f') force: Boolean) {
+			plugin.launch {
+				val target: PlayerInstance = targetMaybe ?: run {
+					val playerInstances = playerInstanceRepository.forOwner(who).filter { it.isActive }
+					playerInstanceSelectionPrompter.promptSelect(who, playerInstances)
+				}
 
-			if (force && !sender.hasPermission(Permission.Command.Characters.Become + ".force")) {
-				sender.sendError("Permission denied")
-				return
-			}
+				val targetCharacter = characterRepository.forPlayerInstance(target)
 
-			if (owner == FABLES_ADMIN && !sender.hasPermission(Permission.Staff)) {
-				sender.sendError("You do not have permission to become a staff character.")
-				return
-			} else if (owner != sender && !sender.hasPermission(Permission.Any)) {
-				sender.sendError("You do not have permission to become a character that you don't own.")
-				return
-			}
+				val owner = target.owner
 
-			if (target.isShelved) {
-				sender.sendError("This character is currently shelved")
-				return
-			}
+				if (force && !sender.hasPermission(Permission.Command.Characters.Become + ".force")) {
+					sender.sendError("Permission denied")
+					return@launch
+				}
 
-			if (target.isDead) {
-				sender.sendError("This character is dead.")
-				return
-			}
+				if (owner == FABLES_ADMIN && !sender.hasPermission(Permission.Staff)) {
+					sender.sendError("You do not have permission to become a staff character.")
+					return@launch
+				} else if (owner != sender && !sender.hasPermission(Permission.Any)) {
+					sender.sendError("You do not have permission to become a character that you don't own.")
+					return@launch
+				}
 
-			try {
-				playerInstanceManager.setCurrentForPlayer(who, target.playerInstance, force)
-			} catch (ex: PlayerInstanceOccupiedException) {
-				sender.sendError("This character is currently occupied by ${ex.by.name}")
+				if (targetCharacter?.isShelved == true) {
+					sender.sendError("This character is currently shelved")
+					return@launch
+				}
+
+				if (targetCharacter?.isDead == true) {
+					sender.sendError("This character is dead.")
+					return@launch
+				}
+
+				if (who == sender) {
+					who.countdown(10U, emptyList(), listOf(CancelReason.MOVEMENT, CancelReason.HURT))
+				}
+
+				try {
+					playerInstanceManager.setCurrentForPlayer(who, target, force)
+				} catch (ex: PlayerInstanceOccupiedException) {
+					sender.sendError("This character is currently occupied by ${ex.by.name}")
+				}
 			}
 		}
 

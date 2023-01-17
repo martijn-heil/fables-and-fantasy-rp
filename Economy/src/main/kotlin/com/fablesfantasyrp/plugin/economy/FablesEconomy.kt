@@ -91,7 +91,7 @@ class FablesEconomy : SuspendingJavaPlugin() {
 		val rootDispatcherNode = CommandGraph().builder(builder).commands()
 		rootDispatcherNode.group("feco").registerMethods(Commands.Eco(characterRepository))
 		rootDispatcherNode.group("bank").registerMethods(Commands.Bank(this, playerInstanceEconomyRepository))
-		rootDispatcherNode.registerMethods(Commands(characterRepository))
+		rootDispatcherNode.registerMethods(Commands(characterRepository, playerInstanceManager))
 		val dispatcher = rootDispatcherNode.dispatcher
 
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }

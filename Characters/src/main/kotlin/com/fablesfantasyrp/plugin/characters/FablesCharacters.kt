@@ -8,9 +8,11 @@ import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterReposito
 import com.fablesfantasyrp.plugin.characters.data.persistent.H2CharacterRepository
 import com.fablesfantasyrp.plugin.database.FablesDatabase
 import com.fablesfantasyrp.plugin.database.applyMigrations
+import com.fablesfantasyrp.plugin.playerinstance.PlayerInstanceSelectionPrompter
 import com.fablesfantasyrp.plugin.playerinstance.command.provider.PlayerInstanceProvider
 import com.fablesfantasyrp.plugin.playerinstance.playerInstanceManager
 import com.fablesfantasyrp.plugin.playerinstance.playerInstances
+import com.fablesfantasyrp.plugin.utils.Services
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
@@ -70,9 +72,11 @@ class FablesCharacters : SuspendingJavaPlugin() {
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()
 
+		val prompter = Services.get<PlayerInstanceSelectionPrompter>()
+
 		val rootDispatcherNode = CommandGraph().builder(builder).commands()
 		val charactersCommand = rootDispatcherNode.group("characters", "chars", "fchars", "fcharacters")
-		charactersCommand.registerMethods(Commands.Characters(this, playerInstances, playerInstanceManager))
+		charactersCommand.registerMethods(Commands.Characters(this, playerInstances, playerInstanceManager, prompter))
 		charactersCommand.group("stats").registerMethods(Commands.Characters.Stats(this))
 		rootDispatcherNode.registerMethods(Commands(this))
 		val dispatcher = rootDispatcherNode.dispatcher
@@ -80,7 +84,7 @@ class FablesCharacters : SuspendingJavaPlugin() {
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
 
 		server.pluginManager.registerEvents(CharactersListener(characterRepository, playerInstanceManager), this)
-		server.pluginManager.registerEvents(CharactersLiveMigrationListener(characterRepository), this)
+		server.pluginManager.registerEvents(CharactersLiveMigrationListener(this, characterRepository), this)
 
 		if (server.pluginManager.isPluginEnabled("TAB") && server.pluginManager.isPluginEnabled("Denizen") ) {
 			com.fablesfantasyrp.plugin.characters.nametags.NameTagManager().start()

@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":Text"))
     implementation(project(":PlayerInstance"))
     implementation(project(":UtilsOffline"))
+    implementation(project(":Timers"))
     api(project(":PlayerInstance"))
     implementation(project(":Location"))
     implementation(project(":Inventory"))

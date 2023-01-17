@@ -13,6 +13,7 @@ depend:
   - FablesPlayerInstance
   - FablesInventory
   - FablesLocation
+  - FablesTimers
   - SuperVanish
   - NinCommands
 softdepend:

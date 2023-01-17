@@ -12,8 +12,10 @@ import com.github.shynixn.mccoroutine.bukkit.launch
 import de.myzelyam.api.vanish.VanishAPI
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import net.kyori.adventure.title.Title
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.event.EventHandler
@@ -22,9 +24,13 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.inventory.ItemStack
+import org.bukkit.plugin.Plugin
+import java.time.Duration
 import java.util.*
 
-class CharactersLiveMigrationListener(private val characters: EntityCharacterRepository) : Listener {
+class CharactersLiveMigrationListener(private val plugin: Plugin,
+									  private val characters: EntityCharacterRepository) : Listener {
+	private val server = plugin.server
 	private val blockMovement = HashSet<UUID>()
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -41,6 +47,12 @@ class CharactersLiveMigrationListener(private val characters: EntityCharacterRep
 		if (legacyRaceCharacters.isEmpty()) return
 
 		PLUGIN.launch {
+			val titleJob = server.scheduler.scheduleSyncRepeatingTask(plugin, {
+				e.player.showTitle(Title.title(Component.text("Welcome back!").color(NamedTextColor.LIGHT_PURPLE),
+						Component.text("Please follow the instructions in chat").color(NamedTextColor.YELLOW),
+						Title.Times.times(Duration.ZERO, Duration.ofSeconds(5), Duration.ofSeconds(2))))
+			}, 0, 20)
+
 			blockMovement.add(player.uniqueId)
 			val wasVanished = player.isVanished
 			if (!wasVanished) VanishAPI.hidePlayer(player)
@@ -87,6 +99,7 @@ class CharactersLiveMigrationListener(private val characters: EntityCharacterRep
 								"please open a <green>General Question ticket</green> in our Support Discord <support_discord></light_purple>",
 						Placeholder.component("support_discord", parseLinks(supportDiscord))))
 			} finally {
+				server.scheduler.cancelTask(titleJob)
 				try {
 					if (!wasVanished) VanishAPI.showPlayer(player)
 				} finally {
