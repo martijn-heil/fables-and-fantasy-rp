@@ -84,7 +84,7 @@ class WorldBoundPlayerInstancesListener(private val plugin: Plugin,
 
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	fun onPlayerJoin(e: PlayerJoinEvent) {
-		val playerInstances = playerInstanceRepository.forOwner(e.player)
+		val playerInstances = playerInstanceRepository.forOwner(e.player).filter { it.isActive }
 		val rules = worldRestrictionRuleRepository.forPlayerInstances(playerInstances)
 
 		if (FLATROOM != null && rules.values.find { it.find { it.id.second == FLATROOM!!.uid && it.action == WorldRestrictionRuleAction.BOUND } != null } == null) {

@@ -37,6 +37,11 @@ class Commands(private val characters: EntityCharacterRepository,
 		val currentPlayer = playerInstanceManager.getCurrentForPlayerInstance(sender)!!
 		val ownPlayerInstances = playerInstances.forOwner(currentPlayer)
 
+		if (!target.isActive) {
+			currentPlayer.sendError("You cannot pay an inactive player instance!")
+			return
+		}
+
 		if (sender.money < amount) {
 			currentPlayer.sendError("You cannot afford that!")
 			return

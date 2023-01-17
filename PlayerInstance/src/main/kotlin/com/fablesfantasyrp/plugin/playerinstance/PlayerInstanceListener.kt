@@ -3,6 +3,7 @@ package com.fablesfantasyrp.plugin.playerinstance
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.EntityPlayerInstanceRepository
 import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
 import com.fablesfantasyrp.plugin.playerinstance.event.PostPlayerSwitchPlayerInstanceEvent
+import com.fablesfantasyrp.plugin.playerinstance.event.PrePlayerSwitchPlayerInstanceEvent
 import com.fablesfantasyrp.plugin.text.sendError
 import com.fablesfantasyrp.plugin.utils.SPAWN
 import com.fablesfantasyrp.plugin.utils.isVanished
@@ -11,9 +12,11 @@ import de.myzelyam.api.vanish.VanishAPI
 import kotlinx.coroutines.CancellationException
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority.LOW
 import org.bukkit.event.EventPriority.MONITOR
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.plugin.java.JavaPlugin
 
@@ -21,6 +24,7 @@ class PlayerInstanceListener(private val plugin: JavaPlugin,
 							 private val instances: EntityPlayerInstanceRepository,
 							 private val playerInstanceManager: PlayerInstanceManager) : Listener {
 	private val server get() = plugin.server
+	private val playersCurrentlySwitchingPlayerInstance: MutableSet<Player> = HashSet()
 
 	private suspend fun forcePlayerInstanceSelection(player: Player, ownedInstances: Collection<PlayerInstance>) {
 		playerInstanceManager.stopTracking(player) // Just to be safe
@@ -65,10 +69,25 @@ class PlayerInstanceListener(private val plugin: JavaPlugin,
 			val ownedInstances = instances.forOwner(e.player).filter { it.isActive }
 			plugin.launch { forcePlayerInstanceSelection(e.player, ownedInstances) }
 		}
+		playersCurrentlySwitchingPlayerInstance.remove(e.player)
+	}
+
+	@EventHandler(priority = LOW, ignoreCancelled = true)
+	fun onPrePlayerInstanceSwitch(e: PrePlayerSwitchPlayerInstanceEvent) {
+		playersCurrentlySwitchingPlayerInstance.add(e.player)
 	}
 
 	@EventHandler(priority = MONITOR, ignoreCancelled = true)
 	fun onPlayerQuit(e: PlayerQuitEvent) {
 		playerInstanceManager.stopTracking(e.player)
+		playersCurrentlySwitchingPlayerInstance.remove(e.player)
+	}
+
+	@EventHandler(priority = MONITOR, ignoreCancelled = true)
+	fun onPlayerMove(e: PlayerMoveEvent) {
+		if (!playersCurrentlySwitchingPlayerInstance.contains(e.player) &&
+				playerInstanceManager.getCurrentForPlayer(e.player) == null) {
+			e.isCancelled = true
+		}
 	}
 }

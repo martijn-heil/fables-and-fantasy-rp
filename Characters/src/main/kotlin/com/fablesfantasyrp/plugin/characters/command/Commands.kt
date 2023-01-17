@@ -114,6 +114,11 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 		@Command(aliases = ["kill"], desc = "Kill a character")
 		@Require(Permission.Command.Characters.Kill)
 		fun kill(@Sender sender: CommandSender, @CommandTarget target: Character) {
+			if (target.isDead) {
+				sender.sendError("This character is already dead")
+				return
+			}
+
 			val owner = target.playerInstance.owner
 
 			if (sender != owner &&
@@ -136,6 +141,11 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 		@Command(aliases = ["shelf"], desc = "Shelf a character")
 		@Require(Permission.Command.Characters.Shelf)
 		fun shelf(@Sender sender: Player, @CommandTarget target: Character, @Switch('f') force: Boolean) {
+			if (target.isShelved) {
+				sender.sendError("This character is already shelved")
+				return
+			}
+
 			val owner = target.playerInstance.owner
 
 			if (sender != owner &&

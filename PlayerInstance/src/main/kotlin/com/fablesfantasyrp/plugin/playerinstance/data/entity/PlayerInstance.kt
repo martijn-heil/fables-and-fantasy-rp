@@ -23,12 +23,10 @@ class PlayerInstance : DataEntity<Int, PlayerInstance>, PlayerInstanceData {
 	override var isActive: Boolean
 		set(value) {
 			if (field == value) return
-
+			field = value
 			val playerInstanceManager = Services.get<PlayerInstanceManager>()
 			val currentPlayer = playerInstanceManager.getCurrentForPlayerInstance(this)
 			if (currentPlayer != null && !value) playerInstanceManager.stopTracking(currentPlayer)
-
-			field = value
 			dirtyMarker?.markDirty(this)
 		}
 
