@@ -34,6 +34,7 @@ fun characterCard(character: Character): Component {
 					"Race: <white><race></white><newline>" +
 					"Last seen: <white>${character.lastSeen?.let { PrettyTime().format(it) } ?: "unknown" }</white><newline>" +
 					"Description: <white><description></white><newline>" +
+					"Owned by: <white><owner></white><newline>" +
 					"Maximum health: <white><maximum_health></white><newline>" +
 					"Stats:<newline>" +
 					"<stats><newline>" +
@@ -45,6 +46,7 @@ fun characterCard(character: Character): Component {
 						Component.text("This is a staff character").color(NamedTextColor.YELLOW)
 					else Component.text()),
 			Placeholder.unparsed("id", character.id.toString()),
+			Placeholder.unparsed("owner", character.playerInstance.owner.name ?: character.playerInstance.owner.uniqueId.toString()),
 			Placeholder.unparsed("name", character.name),
 			Placeholder.unparsed("age", character.age.toString()),
 			Placeholder.unparsed("gender", character.gender.toString().replaceFirstChar { it.uppercaseChar() }),
