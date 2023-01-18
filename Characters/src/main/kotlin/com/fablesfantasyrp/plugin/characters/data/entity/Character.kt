@@ -1,9 +1,6 @@
 package com.fablesfantasyrp.plugin.characters.data.entity
 
-import com.fablesfantasyrp.plugin.characters.data.CharacterData
-import com.fablesfantasyrp.plugin.characters.data.CharacterStats
-import com.fablesfantasyrp.plugin.characters.data.Gender
-import com.fablesfantasyrp.plugin.characters.data.Race
+import com.fablesfantasyrp.plugin.characters.data.*
 import com.fablesfantasyrp.plugin.database.entity.DataEntity
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.inventory.inventory
@@ -79,9 +76,10 @@ class Character : DataEntity<Int, Character>, CharacterData {
 	override var gender: Gender 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 	override var race: Race 			set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 	override var stats: CharacterStats 	set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
+	val totalStats: CharacterStats get() = stats + race.boosters + CHARACTER_STATS_FLOOR
 
 	override var money: ULong
-		get() = throw NotImplementedError()
+		get() = throw NotImplementedError() // See FablesEconomy based on Profile instead
 		set(value) { throw NotImplementedError() }
 
 	override var location: Location

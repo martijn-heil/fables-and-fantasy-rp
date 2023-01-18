@@ -62,10 +62,10 @@ class CharacterStatsGui(plugin: JavaPlugin, minimums: CharacterStats, title: Str
 			} else {
 				StaticGuiElement('p', ItemStack(Material.WRITABLE_BOOK), freePoints.toInt(), {
 					result.complete(CharacterStats(
-							strength = strengthSlider.value + minimums.strength,
-							defense = defenseSlider.value + minimums.defense,
-							agility = agilitySlider.value + minimums.agility,
-							intelligence = intelligenceSlider.value + minimums.intelligence
+							strength = strengthSlider.value,
+							defense = defenseSlider.value,
+							agility = agilitySlider.value,
+							intelligence = intelligenceSlider.value
 					))
 					this.close(true)
 					true

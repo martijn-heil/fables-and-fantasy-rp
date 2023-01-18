@@ -2,6 +2,9 @@ package com.fablesfantasyrp.plugin.characters
 
 import com.denizenscript.denizen.objects.ItemTag
 import com.denizenscript.denizencore.objects.core.MapTag
+import com.fablesfantasyrp.plugin.characters.data.CHARACTER_STATS_FLOOR
+import com.fablesfantasyrp.plugin.characters.data.CharacterStats
+import com.fablesfantasyrp.plugin.characters.data.Race
 import com.fablesfantasyrp.plugin.characters.data.entity.Character
 import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
 import com.fablesfantasyrp.plugin.denizeninterop.dFlags
@@ -116,13 +119,28 @@ internal fun migrateDenizenToSql(plugin: Plugin,
 			profile.inventory.inventory.contents = inventory!!.contents
 			profile.inventory.enderChest.contents = enderChest!!.contents
 
+			val originalStats = it.stats
+			val oldBoosters = when (it.race) {
+				Race.HUMAN -> CharacterStats(strength = 1U, defense = 1U, agility = 1U)
+				Race.HIGH_ELF -> CharacterStats(agility = 1U, intelligence = 2U)
+				Race.DARK_ELF -> CharacterStats(strength = 2U, intelligence = 1U)
+				Race.WOOD_ELF -> CharacterStats(agility = 3U)
+				Race.DWARF -> CharacterStats(strength = 1U, defense = 2U)
+				Race.TIEFLING -> CharacterStats(intelligence = 3U)
+				Race.ORC -> CharacterStats(strength = 3U)
+				Race.GOBLIN -> CharacterStats(defense = 1U, intelligence = 2U)
+				Race.HALFLING -> CharacterStats(defense = 1U, agility = 1U, intelligence = 1U)
+				else -> throw IllegalStateException() // These races didn't exist before
+			}
+			val stats = originalStats - oldBoosters - CHARACTER_STATS_FLOOR
+
 			val character = characters.create(Character(
 					id = profile.id,
 					profile = profile,
 					name = it.name,
 					race = it.race,
 					gender = it.gender,
-					stats = it.stats,
+					stats = stats,
 					age = it.age,
 					description = it.description,
 					lastSeen = it.player.lastLogin.let { if (it != 0L) Instant.ofEpochMilli(it) else null },
@@ -130,7 +148,7 @@ internal fun migrateDenizenToSql(plugin: Plugin,
 			))
 		} catch(e: SQLIntegrityConstraintViolationException) {
 			integrityViolations.add(it)
-			e.printStackTrace()
+			plugin.logger.warning("Error migrating character #${it.id}: ${e.message}")
 		} catch(e: java.lang.IllegalArgumentException) {
 			if (e.message?.startsWith("No enum constant com.fablesfantasyrp.plugin.characters.Race.") == true) {
 				FablesCharacters.instance.logger.severe(

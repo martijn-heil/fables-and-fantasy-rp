@@ -1,5 +1,9 @@
 package com.fablesfantasyrp.plugin.characters.data
 
+import kotlin.math.max
+
+val CHARACTER_STATS_FLOOR = CharacterStats(2U, 2U, 2U, 2U)
+
 data class CharacterStats(	val strength: UInt = 0U,
 						  	val defense: UInt = 0U,
 							val agility: UInt = 0U,
@@ -26,9 +30,9 @@ data class CharacterStats(	val strength: UInt = 0U,
 	)
 
 	operator fun minus(other: CharacterStats) = CharacterStats(
-			strength = this.strength - other.strength,
-			defense = this.defense - other.defense,
-			agility = this.agility - other.agility,
-			intelligence = this.intelligence - other.intelligence
+			strength = max(0, this.strength.toInt() - other.strength.toInt()).toUInt(),
+			defense = max(0, this.defense.toInt() - other.defense.toInt()).toUInt(),
+			agility = max(0, this.agility.toInt() - other.agility.toInt()).toUInt(),
+			intelligence = max(0, this.intelligence.toInt() - other.intelligence.toInt()).toUInt(),
 	)
 }

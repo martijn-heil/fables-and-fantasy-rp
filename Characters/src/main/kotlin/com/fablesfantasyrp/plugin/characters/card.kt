@@ -14,7 +14,7 @@ import org.ocpsoft.prettytime.PrettyTime
 
 fun characterCard(character: Character): Component {
 	val statsMessage = Component.text().append(CharacterStatKind.values().asSequence().map { statKind ->
-		val statValue = character.stats[statKind]
+		val statValue = character.totalStats[statKind]
 		miniMessage.deserialize("  <gold>»</gold> <green><stat_name>:</green> <white><stat_value></white>",
 				Placeholder.unparsed("stat_name", statKind.toString().replaceFirstChar { it.uppercaseChar() }),
 				Placeholder.unparsed("stat_value", statValue.toString())

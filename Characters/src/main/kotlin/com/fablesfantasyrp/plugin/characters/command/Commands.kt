@@ -2,6 +2,7 @@ package com.fablesfantasyrp.plugin.characters.command
 
 import com.fablesfantasyrp.plugin.characters.*
 import com.fablesfantasyrp.plugin.characters.command.provider.AllowCharacterName
+import com.fablesfantasyrp.plugin.characters.data.CHARACTER_STATS_FLOOR
 import com.fablesfantasyrp.plugin.characters.data.CharacterStatKind
 import com.fablesfantasyrp.plugin.characters.data.CharacterStats
 import com.fablesfantasyrp.plugin.characters.data.Race
@@ -317,8 +318,8 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 			@Require(Permission.Command.Characters.Stats.Edit)
 			fun edit(@Sender sender: Player,
 					@CommandTarget(Permission.Command.Characters.Stats.Edit + ".others") target: Character) {
-				val minimums = target.race.boosters + CharacterStats(2U, 2U, 2U, 2U)
-				var initialSliderValues = target.stats - minimums
+				val minimums = target.race.boosters + CHARACTER_STATS_FLOOR
+				var initialSliderValues = target.stats
 				if (initialSliderValues.strength > 8U ||
 						initialSliderValues.defense > 8U ||
 						initialSliderValues.agility > 8U ||

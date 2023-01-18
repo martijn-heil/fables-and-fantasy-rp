@@ -16,8 +16,8 @@ CREATE TABLE characters (
 	stat_agility			TINYINT NOT NULL,
 	stat_intelligence		TINYINT NOT NULL,
 	UNIQUE (name),
-	CHECK (stat_strength > 0),
-	CHECK (stat_defense > 0),
-	CHECK (stat_agility > 0),
-	CHECK (stat_intelligence > 0)
+	CHECK (stat_strength >= 0),
+	CHECK (stat_defense >= 0),
+	CHECK (stat_agility >= 0),
+	CHECK (stat_intelligence >= 0)
 );
