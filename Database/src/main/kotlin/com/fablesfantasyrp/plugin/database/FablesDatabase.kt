@@ -26,6 +26,8 @@ class FablesDatabase : JavaPlugin() {
 		dataSource.maxConnections = 50
 		dataSource.loginTimeout = 5
 
+		printDatabaseSettings(dataSource)
+
 		fablesDatabase = dataSource
 
 		try {
@@ -45,6 +47,19 @@ class FablesDatabase : JavaPlugin() {
 
 	override fun onDisable() {
 
+	}
+
+	private fun printDatabaseSettings(dataSource: DataSource) {
+		val lines = dataSource.connection.use { connection ->
+			val stmnt = connection.prepareStatement("SELECT * FROM INFORMATION_SCHEMA.SETTINGS")
+			val result = stmnt.executeQuery()
+			val lines = ArrayList<String>()
+			while (result.next()) {
+				lines.add("${result.getString("SETTING_NAME")}: ${result.getString("SETTING_VALUE")}")
+			}
+			lines
+		}
+		logger.info("H2 Database settings:\n" + lines.joinToString("\n"))
 	}
 
 	companion object {

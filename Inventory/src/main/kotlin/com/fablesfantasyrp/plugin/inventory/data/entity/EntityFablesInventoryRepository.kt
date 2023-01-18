@@ -4,19 +4,19 @@ import com.fablesfantasyrp.plugin.database.entity.MassivelyCachingEntityReposito
 import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.KeyedRepository
 import com.fablesfantasyrp.plugin.database.repository.MutableRepository
-import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
+import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import java.lang.ref.SoftReference
 import kotlin.concurrent.withLock
 
 class EntityFablesInventoryRepository<C>(child: C)
-	: MassivelyCachingEntityRepository<Int, PlayerInstanceInventory, C>(child), FablesInventoryRepository
-		where C: KeyedRepository<Int, PlayerInstanceInventory>,
-			  C: MutableRepository<PlayerInstanceInventory>,
-			  C: HasDirtyMarker<PlayerInstanceInventory>,
+	: MassivelyCachingEntityRepository<Int, ProfileInventory, C>(child), FablesInventoryRepository
+		where C: KeyedRepository<Int, ProfileInventory>,
+			  C: MutableRepository<ProfileInventory>,
+			  C: HasDirtyMarker<ProfileInventory>,
 			  C: FablesInventoryRepository {
-	override fun forOwner(playerInstance: PlayerInstance): PlayerInstanceInventory {
-		return this.forId(playerInstance.id) ?: run {
-			val result = child.forOwner(playerInstance)
+	override fun forOwner(profile: Profile): ProfileInventory {
+		return this.forId(profile.id) ?: run {
+			val result = child.forOwner(profile)
 			lock.writeLock().withLock {
 				cache[result.id] = SoftReference(result)
 			}

@@ -10,7 +10,7 @@ depend:
   - FablesGui
   - FablesDenizenInterop
   - FablesDatabase
-  - FablesPlayerInstance
+  - FablesProfile
   - FablesInventory
   - FablesLocation
   - FablesTimers

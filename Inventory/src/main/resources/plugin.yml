@@ -4,6 +4,6 @@ authors: [@authors@]
 depend:
   - FablesKotlinRuntime
   - FablesUtils
-  - FablesPlayerInstance
+  - FablesProfile
 main: com.fablesfantasyrp.plugin.inventory.FablesInventoryPlugin
 api-version: @bukkit_api_version@

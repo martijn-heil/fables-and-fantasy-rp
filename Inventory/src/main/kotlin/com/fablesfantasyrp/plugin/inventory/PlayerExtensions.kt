@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.inventory
 
-import com.fablesfantasyrp.plugin.inventory.data.entity.PlayerInstanceInventory
-import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
+import com.fablesfantasyrp.plugin.inventory.data.entity.ProfileInventory
+import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 
-val PlayerInstance.inventory: PlayerInstanceInventory get() = PLUGIN.inventories.forOwner(this)
+val Profile.inventory: ProfileInventory get() = PLUGIN.inventories.forOwner(this)

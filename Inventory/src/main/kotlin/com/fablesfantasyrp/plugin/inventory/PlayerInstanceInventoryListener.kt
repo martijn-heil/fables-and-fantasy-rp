@@ -1,14 +1,14 @@
 package com.fablesfantasyrp.plugin.inventory
 
 import com.fablesfantasyrp.plugin.inventory.data.entity.FablesInventoryRepository
-import com.fablesfantasyrp.plugin.playerinstance.event.PrePlayerSwitchPlayerInstanceEvent
+import com.fablesfantasyrp.plugin.profile.event.PrePlayerSwitchProfileEvent
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 
-class PlayerInstanceInventoryListener(private val inventories: FablesInventoryRepository) : Listener {
+class ProfileInventoryListener(private val inventories: FablesInventoryRepository) : Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	fun onPlayerSwitchPlayerInstance(e: PrePlayerSwitchPlayerInstanceEvent) {
+	fun onPlayerSwitchProfile(e: PrePlayerSwitchProfileEvent) {
 		val old = e.old
 		val new = e.new
 

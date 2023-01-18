@@ -8,10 +8,10 @@ import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterReposito
 import com.fablesfantasyrp.plugin.characters.data.persistent.H2CharacterRepository
 import com.fablesfantasyrp.plugin.database.FablesDatabase
 import com.fablesfantasyrp.plugin.database.applyMigrations
-import com.fablesfantasyrp.plugin.playerinstance.PlayerInstanceSelectionPrompter
-import com.fablesfantasyrp.plugin.playerinstance.command.provider.PlayerInstanceProvider
-import com.fablesfantasyrp.plugin.playerinstance.playerInstanceManager
-import com.fablesfantasyrp.plugin.playerinstance.playerInstances
+import com.fablesfantasyrp.plugin.profile.ProfilePrompter
+import com.fablesfantasyrp.plugin.profile.command.provider.ProfileProvider
+import com.fablesfantasyrp.plugin.profile.profileManager
+import com.fablesfantasyrp.plugin.profile.profiles
 import com.fablesfantasyrp.plugin.utils.Services
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
@@ -54,36 +54,36 @@ class FablesCharacters : SuspendingJavaPlugin() {
 		}
 
 		//playerCharacterRepository = DenizenCharacterRepository(server)
-		val h2CharacterRepository = H2CharacterRepository(server, FablesDatabase.fablesDatabase, playerInstances)
-		val characterRepositoryImpl = EntityCharacterRepositoryImpl(h2CharacterRepository, playerInstances)
+		val h2CharacterRepository = H2CharacterRepository(server, FablesDatabase.fablesDatabase, profiles)
+		val characterRepositoryImpl = EntityCharacterRepositoryImpl(h2CharacterRepository, profiles)
 		characterRepositoryImpl.init()
 		characterRepository = characterRepositoryImpl
 		server.servicesManager.register(EntityCharacterRepository::class.java, characterRepository, this, ServicePriority.Normal)
 
-		migrateDenizenToSql(this, characterRepository, playerInstances)
+		migrateDenizenToSql(this, characterRepository, profiles)
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())
 		injector.install(BukkitModule(server))
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
-		injector.install(CharacterModule(server, characterRepository, PlayerInstanceProvider(playerInstances, playerInstanceManager)))
+		injector.install(CharacterModule(server, characterRepository, ProfileProvider(profiles, profileManager)))
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()
 
-		val prompter = Services.get<PlayerInstanceSelectionPrompter>()
+		val prompter = Services.get<ProfilePrompter>()
 
 		val rootDispatcherNode = CommandGraph().builder(builder).commands()
 		val charactersCommand = rootDispatcherNode.group("characters", "chars", "fchars", "fcharacters")
-		charactersCommand.registerMethods(Commands.Characters(this, playerInstances, playerInstanceManager, prompter))
+		charactersCommand.registerMethods(Commands.Characters(this, profiles, profileManager, prompter))
 		charactersCommand.group("stats").registerMethods(Commands.Characters.Stats(this))
 		rootDispatcherNode.registerMethods(Commands(this))
 		val dispatcher = rootDispatcherNode.dispatcher
 
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
 
-		server.pluginManager.registerEvents(CharactersListener(characterRepository, playerInstanceManager), this)
+		server.pluginManager.registerEvents(CharactersListener(characterRepository, profileManager), this)
 		server.pluginManager.registerEvents(CharactersLiveMigrationListener(this, characterRepository), this)
 
 		if (server.pluginManager.isPluginEnabled("TAB") && server.pluginManager.isPluginEnabled("Denizen") ) {
@@ -103,12 +103,12 @@ class FablesCharacters : SuspendingJavaPlugin() {
 
 var Player.currentPlayerCharacter: Character?
 	get() {
-		return playerInstanceManager.getCurrentForPlayer(this)
+		return profileManager.getCurrentForPlayer(this)
 				?.let { characterRepository.forId(it.id) }
 	}
 	set(value) {
 		require(value != null)
-		playerInstanceManager.setCurrentForPlayer(this, playerInstances.forId(value.id.toInt())!!)
+		profileManager.setCurrentForPlayer(this, profiles.forId(value.id.toInt())!!)
 	}
 
 val OfflinePlayer.playerCharacters: Collection<Character>

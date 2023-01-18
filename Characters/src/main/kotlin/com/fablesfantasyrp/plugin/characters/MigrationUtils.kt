@@ -9,8 +9,8 @@ import com.fablesfantasyrp.plugin.inventory.PassthroughInventory
 import com.fablesfantasyrp.plugin.inventory.PassthroughPlayerInventory
 import com.fablesfantasyrp.plugin.inventory.inventory
 import com.fablesfantasyrp.plugin.location.location
-import com.fablesfantasyrp.plugin.playerinstance.data.entity.EntityPlayerInstanceRepository
-import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
+import com.fablesfantasyrp.plugin.profile.data.entity.EntityProfileRepository
+import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.utils.FLATROOM
 import com.fablesfantasyrp.plugin.utils.PLOTS
 import com.fablesfantasyrp.plugin.utils.SPAWN
@@ -68,7 +68,7 @@ private fun denizenInventoryMapToArray(map: MapTag, size: UInt): Array<ItemStack
 
 internal fun migrateDenizenToSql(plugin: Plugin,
 								 characters: EntityCharacterRepository,
-								 playerInstances: EntityPlayerInstanceRepository) {
+								 profiles: EntityProfileRepository) {
 	val server = plugin.server
 	val integrityViolations = ArrayList<MutableDenizenCharacter>()
 
@@ -111,14 +111,14 @@ internal fun migrateDenizenToSql(plugin: Plugin,
 			}
 
 			plugin.logger.info("Migrating #${it.id}")
-			val playerInstance = playerInstances.create(PlayerInstance(id = it.id, owner = player, description = it.name, isActive = true))
-			playerInstance.location = location!!
-			playerInstance.inventory.inventory.contents = inventory!!.contents
-			playerInstance.inventory.enderChest.contents = enderChest!!.contents
+			val profile = profiles.create(Profile(id = it.id, owner = player, description = it.name, isActive = true))
+			profile.location = location!!
+			profile.inventory.inventory.contents = inventory!!.contents
+			profile.inventory.enderChest.contents = enderChest!!.contents
 
 			val character = characters.create(Character(
-					id = playerInstance.id,
-					playerInstance = playerInstance,
+					id = profile.id,
+					profile = profile,
 					name = it.name,
 					race = it.race,
 					gender = it.gender,

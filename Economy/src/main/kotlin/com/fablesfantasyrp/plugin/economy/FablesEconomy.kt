@@ -4,13 +4,13 @@ import com.fablesfantasyrp.plugin.characters.characterRepository
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
 import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
 import com.fablesfantasyrp.plugin.database.applyMigrations
-import com.fablesfantasyrp.plugin.economy.data.entity.EntityPlayerInstanceEconomyRepository
-import com.fablesfantasyrp.plugin.economy.data.entity.EntityPlayerInstanceEconomyRepositoryImpl
-import com.fablesfantasyrp.plugin.economy.data.persistent.H2PlayerInstanceEconomyRepository
-import com.fablesfantasyrp.plugin.playerinstance.command.provider.PlayerInstanceModule
-import com.fablesfantasyrp.plugin.playerinstance.command.provider.PlayerInstanceProvider
-import com.fablesfantasyrp.plugin.playerinstance.playerInstanceManager
-import com.fablesfantasyrp.plugin.playerinstance.playerInstances
+import com.fablesfantasyrp.plugin.economy.data.entity.EntityProfileEconomyRepository
+import com.fablesfantasyrp.plugin.economy.data.entity.EntityProfileEconomyRepositoryImpl
+import com.fablesfantasyrp.plugin.economy.data.persistent.H2ProfileEconomyRepository
+import com.fablesfantasyrp.plugin.profile.command.provider.ProfileModule
+import com.fablesfantasyrp.plugin.profile.command.provider.ProfileProvider
+import com.fablesfantasyrp.plugin.profile.profileManager
+import com.fablesfantasyrp.plugin.profile.profiles
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.fablesfantasyrp.plugin.utils.essentialsSpawn
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
@@ -43,7 +43,7 @@ internal val SYSPREFIX = "$GOLD$BOLD[$LIGHT_PURPLE$BOLD ECONOMY $GOLD$BOLD]$GRAY
 class FablesEconomy : SuspendingJavaPlugin() {
 	private lateinit var commands: Collection<Command>
 
-	lateinit var playerInstanceEconomyRepository: EntityPlayerInstanceEconomyRepositoryImpl<*>
+	lateinit var profileEconomyRepository: EntityProfileEconomyRepositoryImpl<*>
 		private set
 
 	override fun onEnable() {
@@ -59,20 +59,19 @@ class FablesEconomy : SuspendingJavaPlugin() {
 
 		val defaultLocation: Location = essentialsSpawn.getSpawn("default").toCenterLocation()
 
-		playerInstanceEconomyRepository = EntityPlayerInstanceEconomyRepositoryImpl(
-				H2PlayerInstanceEconomyRepository(fablesDatabase))
-		playerInstanceEconomyRepository.init()
+		profileEconomyRepository = EntityProfileEconomyRepositoryImpl(H2ProfileEconomyRepository(fablesDatabase))
+		profileEconomyRepository.init()
 
 		server.servicesManager.register(
 				Economy::class.java,
-				VaultPlayerInstanceEconomy(server, playerInstanceManager),
+				VaultProfileEconomy(server, profileManager),
 				this,
 				ServicePriority.Highest
 		)
 
 		server.servicesManager.register(
-				EntityPlayerInstanceEconomyRepository::class.java,
-				playerInstanceEconomyRepository,
+				EntityProfileEconomyRepository::class.java,
+				profileEconomyRepository,
 				this,
 				ServicePriority.Normal
 		)
@@ -82,25 +81,25 @@ class FablesEconomy : SuspendingJavaPlugin() {
 		injector.install(BukkitModule(server))
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
-		injector.install(PlayerInstanceModule(playerInstances, playerInstanceManager, BukkitSenderProvider(Player::class.java)))
-		injector.install(CharacterModule(server, characterRepository, PlayerInstanceProvider(playerInstances, playerInstanceManager)))
+		injector.install(ProfileModule(profiles, profileManager, BukkitSenderProvider(Player::class.java)))
+		injector.install(CharacterModule(server, characterRepository, ProfileProvider(profiles, profileManager)))
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()
 
 		val rootDispatcherNode = CommandGraph().builder(builder).commands()
 		rootDispatcherNode.group("feco").registerMethods(Commands.Eco(characterRepository))
-		rootDispatcherNode.group("bank").registerMethods(Commands.Bank(this, playerInstanceEconomyRepository))
-		rootDispatcherNode.registerMethods(Commands(characterRepository, playerInstanceManager))
+		rootDispatcherNode.group("bank").registerMethods(Commands.Bank(this, profileEconomyRepository))
+		rootDispatcherNode.registerMethods(Commands(characterRepository, profileManager))
 		val dispatcher = rootDispatcherNode.dispatcher
 
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
 
-		migrate(this, BankAPI.getInstance(), playerInstanceEconomyRepository, characterRepository)
+		migrate(this, BankAPI.getInstance(), profileEconomyRepository, characterRepository)
 	}
 
 	override fun onDisable() {
-		playerInstanceEconomyRepository.saveAll()
+		profileEconomyRepository.saveAll()
 		commands.forEach { unregisterCommand(it) }
 	}
 

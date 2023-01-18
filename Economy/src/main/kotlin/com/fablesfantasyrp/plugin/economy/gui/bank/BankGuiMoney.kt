@@ -2,7 +2,7 @@ package com.fablesfantasyrp.plugin.economy.gui.bank
 
 import com.fablesfantasyrp.plugin.economy.CURRENCY_SYMBOL
 import com.fablesfantasyrp.plugin.economy.SYSPREFIX
-import com.fablesfantasyrp.plugin.economy.data.PlayerInstanceEconomyData
+import com.fablesfantasyrp.plugin.economy.data.ProfileEconomyData
 import com.fablesfantasyrp.plugin.utils.itemStack
 import com.fablesfantasyrp.plugin.utils.meta
 import com.fablesfantasyrp.plugin.utils.name
@@ -20,7 +20,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 import kotlin.math.min
 
-class BankGuiMoney(plugin: JavaPlugin, private val data: PlayerInstanceEconomyData)
+class BankGuiMoney(plugin: JavaPlugin, private val data: ProfileEconomyData)
 	: InventoryGui(plugin, "Bank Money", arrayOf("102345600"))
 {
 	init {

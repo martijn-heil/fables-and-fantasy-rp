@@ -2,14 +2,14 @@ package com.fablesfantasyrp.plugin.characters.data.entity
 
 import com.fablesfantasyrp.plugin.database.entity.SimpleEntityRepository
 import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
-import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
-import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstanceRepository
+import com.fablesfantasyrp.plugin.profile.data.entity.Profile
+import com.fablesfantasyrp.plugin.profile.data.entity.ProfileRepository
 import com.google.common.collect.BiMap
 import com.google.common.collect.HashBiMap
 import org.bukkit.OfflinePlayer
 import kotlin.concurrent.withLock
 
-class EntityCharacterRepositoryImpl<C>(child: C, private val playerInstances: PlayerInstanceRepository)
+class EntityCharacterRepositoryImpl<C>(child: C, private val profiles: ProfileRepository)
 	: SimpleEntityRepository<Int, Character, C>(child), EntityCharacterRepository
 		where C: HasDirtyMarker<Character>,
               C: CharacterRepository {
@@ -34,11 +34,11 @@ class EntityCharacterRepositoryImpl<C>(child: C, private val playerInstances: Pl
 	}
 
 	override fun forOwner(offlinePlayer: OfflinePlayer): Collection<Character> {
-		return playerInstances.forOwner(offlinePlayer).mapNotNull { this.forId(it.id) }
+		return profiles.forOwner(offlinePlayer).mapNotNull { this.forId(it.id) }
 	}
 
-	override fun forPlayerInstance(playerInstance: PlayerInstance): Character? {
-		return this.forId(playerInstance.id)
+	override fun forProfile(profile: Profile): Character? {
+		return this.forId(profile.id)
 	}
 
 	override fun forName(name: String): Character? {

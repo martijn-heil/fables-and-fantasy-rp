@@ -9,11 +9,11 @@ import com.fablesfantasyrp.plugin.characters.data.entity.Character
 import com.fablesfantasyrp.plugin.characters.gui.CharacterStatsGui
 import com.fablesfantasyrp.plugin.form.YesNoChatPrompt
 import com.fablesfantasyrp.plugin.form.promptChat
-import com.fablesfantasyrp.plugin.playerinstance.PlayerInstanceManager
-import com.fablesfantasyrp.plugin.playerinstance.PlayerInstanceOccupiedException
-import com.fablesfantasyrp.plugin.playerinstance.PlayerInstanceSelectionPrompter
-import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
-import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstanceRepository
+import com.fablesfantasyrp.plugin.profile.ProfileManager
+import com.fablesfantasyrp.plugin.profile.ProfileOccupiedException
+import com.fablesfantasyrp.plugin.profile.ProfilePrompter
+import com.fablesfantasyrp.plugin.profile.data.entity.Profile
+import com.fablesfantasyrp.plugin.profile.data.entity.ProfileRepository
 import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.sendError
@@ -40,9 +40,9 @@ import java.time.Instant
 
 class Commands(private val plugin: SuspendingJavaPlugin) {
 	class Characters(private val plugin: SuspendingJavaPlugin,
-					 private val playerInstanceRepository: PlayerInstanceRepository,
-					 private val playerInstanceManager: PlayerInstanceManager,
-					 private val playerInstanceSelectionPrompter: PlayerInstanceSelectionPrompter) {
+					 private val profileRepository: ProfileRepository,
+					 private val profileManager: ProfileManager,
+					 private val profilePrompter: ProfilePrompter) {
 		@Command(aliases = ["new"], desc = "Create a new character!")
 		@Require(Permission.Command.Characters.New)
 		fun new(@Sender sender: Player) {
@@ -80,24 +80,24 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 					break
 				}
 
-				val playerInstance = playerInstanceRepository.create(PlayerInstance(
+				val profile = profileRepository.create(Profile(
 						owner = if (!isStaffCharacter) sender else FABLES_ADMIN,
 						description = info.name,
 						isActive = true
 				))
 
 				val character = characterRepository.create(Character(
-						id = playerInstance.id,
+						id = profile.id,
 						name = info.name,
 						age = info.age,
 						description = info.description,
 						gender = info.gender,
 						race = info.race,
 						stats = info.stats,
-						playerInstance = playerInstance,
+						profile = profile,
 						createdAt = Instant.now()))
 
-				playerInstanceManager.setCurrentForPlayer(sender, playerInstance)
+				profileManager.setCurrentForPlayer(sender, profile)
 			}
 		}
 
@@ -127,7 +127,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 				return
 			}
 
-			val owner = target.playerInstance.owner
+			val owner = target.profile.owner
 
 			if (sender != owner &&
 					!(sender.hasPermission(Permission.Command.Characters.Kill + ".any") ||
@@ -154,7 +154,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 				return
 			}
 
-			val owner = target.playerInstance.owner
+			val owner = target.profile.owner
 
 			if (sender != owner &&
 					!(sender.hasPermission(Permission.Command.Characters.Shelf + ".any") ||
@@ -223,16 +223,16 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 		@Command(aliases = ["become"], desc = "Become a character")
 		@Require(Permission.Command.Characters.Become)
 		fun become(@Sender sender: Player,
-				   @Optional @AllowCharacterName targetMaybe: PlayerInstance?,
+				   @Optional @AllowCharacterName targetMaybe: Profile?,
 				   @Optional @CommandTarget(Permission.Command.Characters.Become + ".others") who: Player,
 				   @Switch('f') force: Boolean) {
 			plugin.launch {
-				val target: PlayerInstance = targetMaybe ?: run {
-					val playerInstances = playerInstanceRepository.forOwner(who).filter { it.isActive }
-					playerInstanceSelectionPrompter.promptSelect(who, playerInstances)
+				val target: Profile = targetMaybe ?: run {
+					val profiles = profileRepository.forOwner(who).filter { it.isActive }
+					profilePrompter.promptSelect(who, profiles)
 				}
 
-				val targetCharacter = characterRepository.forPlayerInstance(target)
+				val targetCharacter = characterRepository.forProfile(target)
 
 				val owner = target.owner
 
@@ -264,8 +264,8 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 				}
 
 				try {
-					playerInstanceManager.setCurrentForPlayer(who, target, force)
-				} catch (ex: PlayerInstanceOccupiedException) {
+					profileManager.setCurrentForPlayer(who, target, force)
+				} catch (ex: ProfileOccupiedException) {
 					sender.sendError("This character is currently occupied by ${ex.by.name}")
 				}
 			}
@@ -303,7 +303,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 					stat: CharacterStatKind,
 					@Range(min = 0.0) value: Int,
 					@CommandTarget target: Character) {
-				if (!(target.playerInstance.owner == FABLES_ADMIN && sender.hasPermission(Permission.Staff))
+				if (!(target.profile.owner == FABLES_ADMIN && sender.hasPermission(Permission.Staff))
 						&& !sender.hasPermission(Permission.Command.Characters.Stats.Set + ".others")) {
 					sender.sendError("You don't have permission to set the stats of this character")
 					return
@@ -327,7 +327,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 					initialSliderValues = CharacterStats(0U, 0U, 0U, 0U)
 				}
 
-				val gui = CharacterStatsGui(FablesCharacters.instance, minimums, "#${target.id} ${target.name}'s stats",
+				val gui = CharacterStatsGui(plugin, minimums, "#${target.id} ${target.name}'s stats",
 						initialSliderValues)
 
 				plugin.launch { target.stats = gui.execute(sender) }

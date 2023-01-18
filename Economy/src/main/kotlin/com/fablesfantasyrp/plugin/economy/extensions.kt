@@ -1,11 +1,11 @@
 package com.fablesfantasyrp.plugin.economy
 
-import com.fablesfantasyrp.plugin.economy.data.entity.PlayerInstanceEconomy
-import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
+import com.fablesfantasyrp.plugin.economy.data.entity.ProfileEconomy
+import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 
-var PlayerInstance.money: Int
-	get() = PLUGIN.playerInstanceEconomyRepository.forPlayerInstance(this).money
-	set(value) { PLUGIN.playerInstanceEconomyRepository.forPlayerInstance(this).money = value }
+var Profile.money: Int
+	get() = PLUGIN.profileEconomyRepository.forProfile(this).money
+	set(value) { PLUGIN.profileEconomyRepository.forProfile(this).money = value }
 
-val PlayerInstance.economy: PlayerInstanceEconomy
-	get() = PLUGIN.playerInstanceEconomyRepository.forPlayerInstance(this)
+val Profile.economy: ProfileEconomy
+	get() = PLUGIN.profileEconomyRepository.forProfile(this)

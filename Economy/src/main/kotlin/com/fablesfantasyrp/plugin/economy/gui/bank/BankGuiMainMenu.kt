@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.economy.gui.bank
 
 import com.fablesfantasyrp.plugin.economy.CURRENCY_SYMBOL
-import com.fablesfantasyrp.plugin.economy.data.PlayerInstanceEconomyData
+import com.fablesfantasyrp.plugin.economy.data.ProfileEconomyData
 import de.themoep.inventorygui.DynamicGuiElement
 import de.themoep.inventorygui.InventoryGui
 import de.themoep.inventorygui.StaticGuiElement
@@ -10,7 +10,7 @@ import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 
-class BankGuiMainMenu(plugin: JavaPlugin, data: PlayerInstanceEconomyData) : InventoryGui(plugin, "Bank Main Menu",
+class BankGuiMainMenu(plugin: JavaPlugin, data: ProfileEconomyData) : InventoryGui(plugin, "Bank Main Menu",
 		arrayOf("000100000"),
 		StaticGuiElement('0', ItemStack(Material.BLACK_STAINED_GLASS_PANE), { c ->
 			BankGuiMoney(plugin, data).show(c.whoClicked)

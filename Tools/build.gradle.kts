@@ -8,6 +8,6 @@ dependencies {
     implementation(project(":Text"))
     implementation(project(":Characters"))
     implementation(project(":Inventory"))
-    implementation(project(":PlayerInstance"))
+    implementation(project(":Profile"))
     implementation(project(":Location"))
 }

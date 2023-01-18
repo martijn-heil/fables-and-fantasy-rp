@@ -3,10 +3,10 @@ package com.fablesfantasyrp.plugin.tools
 import com.fablesfantasyrp.plugin.characters.characterRepository
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
 import com.fablesfantasyrp.plugin.inventory.FablesInventoryPlugin
-import com.fablesfantasyrp.plugin.playerinstance.command.provider.PlayerInstanceModule
-import com.fablesfantasyrp.plugin.playerinstance.command.provider.PlayerInstanceProvider
-import com.fablesfantasyrp.plugin.playerinstance.playerInstanceManager
-import com.fablesfantasyrp.plugin.playerinstance.playerInstances
+import com.fablesfantasyrp.plugin.profile.command.provider.ProfileModule
+import com.fablesfantasyrp.plugin.profile.command.provider.ProfileProvider
+import com.fablesfantasyrp.plugin.profile.profileManager
+import com.fablesfantasyrp.plugin.profile.profiles
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
@@ -39,8 +39,8 @@ class FablesTools : SuspendingJavaPlugin() {
 		injector.install(BukkitModule(server))
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
-		injector.install(PlayerInstanceModule(playerInstances, playerInstanceManager, BukkitSenderProvider(Player::class.java)))
-		injector.install(CharacterModule(server, characterRepository, PlayerInstanceProvider(playerInstances, playerInstanceManager)))
+		injector.install(ProfileModule(profiles, profileManager, BukkitSenderProvider(Player::class.java)))
+		injector.install(CharacterModule(server, characterRepository, ProfileProvider(profiles, profileManager)))
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()

@@ -1,5 +1,5 @@
 CREATE TABLE characters (
-	id						INT NOT NULL,
+	id						INT PRIMARY KEY HASH NOT NULL,
 	is_dead					BOOLEAN NOT NULL DEFAULT FALSE,
 	is_shelved				BOOLEAN NOT NULL DEFAULT FALSE,
 	name					VARCHAR(32) NOT NULL,
@@ -15,7 +15,6 @@ CREATE TABLE characters (
 	stat_defense			TINYINT NOT NULL,
 	stat_agility			TINYINT NOT NULL,
 	stat_intelligence		TINYINT NOT NULL,
-	PRIMARY KEY (id),
 	UNIQUE (name),
 	CHECK (stat_strength > 0),
 	CHECK (stat_defense > 0),

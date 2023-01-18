@@ -8,19 +8,19 @@ import com.fablesfantasyrp.plugin.database.entity.DataEntity
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.inventory.inventory
 import com.fablesfantasyrp.plugin.location.location
-import com.fablesfantasyrp.plugin.playerinstance.PlayerInstanceManager
-import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
+import com.fablesfantasyrp.plugin.profile.ProfileManager
+import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.utils.Services
 import org.bukkit.Location
 import org.bukkit.OfflinePlayer
 import java.time.Instant
 
 class Character : DataEntity<Int, Character>, CharacterData {
-	val playerInstance: PlayerInstance
+	val profile: Profile
 
 	val createdAt: Instant?
 	var lastSeen: Instant?
-		get() = if (Services.get<PlayerInstanceManager>().getCurrentForPlayerInstance(playerInstance) != null) Instant.now() else field
+		get() = if (Services.get<ProfileManager>().getCurrentForProfile(profile) != null) Instant.now() else field
 
 	var diedAt: Instant?
 	var shelvedAt: Instant?
@@ -31,13 +31,13 @@ class Character : DataEntity<Int, Character>, CharacterData {
 
 			if (value) {
 				diedAt = Instant.now()
-				val playerInstance = this.playerInstance
-				val player = Services.get<PlayerInstanceManager>().getCurrentForPlayerInstance(playerInstance)
+				val profile = this.profile
+				val player = Services.get<ProfileManager>().getCurrentForProfile(profile)
 				if (player != null) {
 					player.health = 0.0
 					player.spigot().respawn()
 				}
-				val inventory = playerInstance.inventory
+				val inventory = profile.inventory
 				inventory.inventory.clear()
 				inventory.enderChest.clear()
 			} else {
@@ -45,7 +45,7 @@ class Character : DataEntity<Int, Character>, CharacterData {
 			}
 
 			field = value
-			playerInstance.isActive = !(isShelved || isDead)
+			profile.isActive = !(isShelved || isDead)
 			dirtyMarker?.markDirty(this)
 		}
 
@@ -60,7 +60,7 @@ class Character : DataEntity<Int, Character>, CharacterData {
 			}
 
 			field = value
-			playerInstance.isActive = !(isShelved || isDead)
+			profile.isActive = !(isShelved || isDead)
 			dirtyMarker?.markDirty(this)
 		}
 
@@ -69,7 +69,7 @@ class Character : DataEntity<Int, Character>, CharacterData {
 			if (field == value) return
 			field = value
 			dirtyMarker?.markDirty(this)
-			playerInstance.description = value
+			profile.description = value
 		}
 
 	override val player: OfflinePlayer get() = throw NotImplementedError()
@@ -85,14 +85,14 @@ class Character : DataEntity<Int, Character>, CharacterData {
 		set(value) { throw NotImplementedError() }
 
 	override var location: Location
-		get() = playerInstance.location
-		set(value) { playerInstance.location = value }
+		get() = profile.location
+		set(value) { profile.location = value }
 
 	override val id: Int
 	override var dirtyMarker: DirtyMarker<Character>? = null
 
 	constructor(id: Int,
-				playerInstance: PlayerInstance,
+				profile: Profile,
 				name: String,
 				race: Race,
 				gender: Gender,
@@ -107,7 +107,7 @@ class Character : DataEntity<Int, Character>, CharacterData {
 				shelvedAt: Instant? = null,
 				dirtyMarker: DirtyMarker<Character>? = null) {
 		this.id = id
-		this.playerInstance = playerInstance
+		this.profile = profile
 		this.name = name
 		this.race = race
 		this.gender = gender

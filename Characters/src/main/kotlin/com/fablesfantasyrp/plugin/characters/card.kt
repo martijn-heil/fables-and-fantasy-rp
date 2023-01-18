@@ -2,7 +2,7 @@ package com.fablesfantasyrp.plugin.characters
 
 import com.fablesfantasyrp.plugin.characters.data.CharacterStatKind
 import com.fablesfantasyrp.plugin.characters.data.entity.Character
-import com.fablesfantasyrp.plugin.playerinstance.playerInstanceManager
+import com.fablesfantasyrp.plugin.profile.profileManager
 import com.fablesfantasyrp.plugin.text.join
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.parseLinks
@@ -40,13 +40,13 @@ fun characterCard(character: Character): Component {
 					"<stats><newline>" +
 					"</green>",
 			Placeholder.unparsed("player_name",
-					playerInstanceManager.getCurrentForPlayerInstance(character.playerInstance)?.name ?: "(unknown player)"),
+					profileManager.getCurrentForProfile(character.profile)?.name ?: "(unknown player)"),
 			Placeholder.component("staff_character",
-					if (character.playerInstance.owner == FABLES_ADMIN)
+					if (character.profile.owner == FABLES_ADMIN)
 						Component.text("This is a staff character").color(NamedTextColor.YELLOW)
 					else Component.text()),
 			Placeholder.unparsed("id", character.id.toString()),
-			Placeholder.unparsed("owner", character.playerInstance.owner.name ?: character.playerInstance.owner.uniqueId.toString()),
+			Placeholder.unparsed("owner", character.profile.owner.name ?: character.profile.owner.uniqueId.toString()),
 			Placeholder.unparsed("name", character.name),
 			Placeholder.unparsed("age", character.age.toString()),
 			Placeholder.unparsed("gender", character.gender.toString().replaceFirstChar { it.uppercaseChar() }),

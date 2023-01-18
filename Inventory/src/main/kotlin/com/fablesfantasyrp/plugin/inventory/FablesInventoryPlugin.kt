@@ -3,8 +3,8 @@ package com.fablesfantasyrp.plugin.inventory
 import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.inventory.data.entity.EntityFablesInventoryRepository
-import com.fablesfantasyrp.plugin.inventory.data.persistent.H2PlayerInstanceInventoryRepository
-import com.fablesfantasyrp.plugin.playerinstance.playerInstanceManager
+import com.fablesfantasyrp.plugin.inventory.data.persistent.H2ProfileInventoryRepository
+import com.fablesfantasyrp.plugin.profile.profileManager
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 
@@ -27,10 +27,10 @@ class FablesInventoryPlugin : SuspendingJavaPlugin() {
 			return
 		}
 
-		inventories = EntityFablesInventoryRepository(H2PlayerInstanceInventoryRepository(fablesDatabase))
+		inventories = EntityFablesInventoryRepository(H2ProfileInventoryRepository(fablesDatabase))
 		inventories.init()
 
-		server.pluginManager.registerEvents(PlayerInstanceInventoryListener(inventories), this)
+		server.pluginManager.registerEvents(ProfileInventoryListener(inventories), this)
 
 		mirroredInventoryManager = MirroredInventoryManager(this)
 		mirroredInventoryManager.start()
@@ -38,9 +38,9 @@ class FablesInventoryPlugin : SuspendingJavaPlugin() {
 
 	override fun onDisable() {
 		server.onlinePlayers.forEach {
-			val instance = playerInstanceManager.getCurrentForPlayer(it) ?: return@forEach
-			instance.inventory.inventory.bukkitInventory = null
-			instance.inventory.enderChest.bukkitInventory = null
+			val profile = profileManager.getCurrentForPlayer(it) ?: return@forEach
+			profile.inventory.inventory.bukkitInventory = null
+			profile.inventory.enderChest.bukkitInventory = null
 		}
 		inventories.saveAll()
 		mirroredInventoryManager.stop()

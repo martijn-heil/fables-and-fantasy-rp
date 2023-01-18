@@ -1,0 +1,13 @@
+name: FablesProfile
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+  - FablesTimers
+  - FablesText
+  - FablesForm
+  - FablesGui
+  - NinCommands
+main: com.fablesfantasyrp.plugin.profile.FablesProfile
+api-version: @bukkit_api_version@

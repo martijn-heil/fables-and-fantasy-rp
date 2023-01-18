@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.location
 
-import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
+import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 
-var PlayerInstance.location
-	get() = PLUGIN.playerInstanceLocationRepository.forOwner(this).location
-	set(value) { PLUGIN.playerInstanceLocationRepository.forOwner(this).location = value }
+var Profile.location
+	get() = PLUGIN.profileLocationRepository.forOwner(this).location
+	set(value) { PLUGIN.profileLocationRepository.forOwner(this).location = value }

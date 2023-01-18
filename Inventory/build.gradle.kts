@@ -6,5 +6,5 @@ dependencies {
     // internal module dependencies
     implementation(project(":Utils"))
     implementation(project(":Database"))
-    implementation(project(":PlayerInstance"))
+    implementation(project(":Profile"))
 }

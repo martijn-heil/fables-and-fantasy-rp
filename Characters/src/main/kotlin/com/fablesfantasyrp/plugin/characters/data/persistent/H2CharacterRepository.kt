@@ -7,8 +7,8 @@ import com.fablesfantasyrp.plugin.characters.data.entity.Character
 import com.fablesfantasyrp.plugin.characters.data.entity.CharacterRepository
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
-import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstance
-import com.fablesfantasyrp.plugin.playerinstance.data.entity.PlayerInstanceRepository
+import com.fablesfantasyrp.plugin.profile.data.entity.Profile
+import com.fablesfantasyrp.plugin.profile.data.entity.ProfileRepository
 import org.bukkit.OfflinePlayer
 import org.bukkit.Server
 import java.sql.ResultSet
@@ -18,7 +18,7 @@ import javax.sql.DataSource
 
 class H2CharacterRepository(private val server: Server,
 							private val dataSource: DataSource,
-							private val playerInstances: PlayerInstanceRepository) : CharacterRepository, HasDirtyMarker<Character> {
+							private val profiles: ProfileRepository) : CharacterRepository, HasDirtyMarker<Character> {
 	val TABLE_NAME = "FABLES_CHARACTERS.CHARACTERS"
 
 	override var dirtyMarker: DirtyMarker<Character>? = null
@@ -54,7 +54,7 @@ class H2CharacterRepository(private val server: Server,
 					"last_seen, " +
 					"stat_strength, stat_defense, stat_agility, stat_intelligence) " +
 					"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
-			stmnt.setInt(1, v.playerInstance.id)
+			stmnt.setInt(1, v.profile.id)
 			stmnt.setString(2, v.name)
 			stmnt.setString(3, v.description)
 			stmnt.setInt(4, v.age.toInt())
@@ -69,7 +69,7 @@ class H2CharacterRepository(private val server: Server,
 			stmnt.executeUpdate()
 			v.dirtyMarker = dirtyMarker
 			return Character(
-					id = v.playerInstance.id,
+					id = v.profile.id,
 					name = v.name,
 					description = v.description,
 					age = v.age,
@@ -78,18 +78,18 @@ class H2CharacterRepository(private val server: Server,
 					createdAt = v.createdAt,
 					lastSeen = v.lastSeen,
 					stats = v.stats,
-					playerInstance = v.playerInstance,
+					profile = v.profile,
 					dirtyMarker = dirtyMarker
 			)
 		}
 	}
 
 	override fun forOwner(offlinePlayer: OfflinePlayer): Collection<Character> {
-		return playerInstances.forOwner(offlinePlayer).mapNotNull { this.forId(it.id) }
+		return profiles.forOwner(offlinePlayer).mapNotNull { this.forId(it.id) }
 	}
 
-	override fun forPlayerInstance(playerInstance: PlayerInstance): Character? {
-		return this.forId(playerInstance.id)
+	override fun forProfile(profile: Profile): Character? {
+		return this.forId(profile.id)
 	}
 
 	override fun forName(name: String): Character? {
@@ -211,7 +211,7 @@ class H2CharacterRepository(private val server: Server,
 				isShelved = isShelved,
 				shelvedAt = shelvedAt,
 				diedAt = diedAt,
-				playerInstance = playerInstances.forId(id.toInt())!!,
+				profile = profiles.forId(id.toInt())!!,
 				dirtyMarker = dirtyMarker
 		)
 	}
