@@ -101,7 +101,10 @@ class WorldBoundProfilesListener(private val plugin: Plugin,
 
 	private fun chooseNewAndTeleport(player: Player, to: Location, allowed: Collection<Profile>, selector: ProfilePrompter) {
 		plugin.launch {
-			val newProfile = selector.promptSelect(player, allowed)
+			val newProfile = when (allowed.size) {
+				1 -> allowed.first()
+				else -> selector.promptSelect(player, allowed)
+			}
 			profileManager.setCurrentForPlayer(player, newProfile)
 			ignoreList.add(player.uniqueId)
 			try {
