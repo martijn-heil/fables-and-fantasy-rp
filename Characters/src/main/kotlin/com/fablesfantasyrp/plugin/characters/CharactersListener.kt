@@ -57,8 +57,11 @@ class CharactersListener(private val plugin: Plugin,
 		val target = e.rightClicked as? Player ?: return
 		if (!target.isRealPlayer) return
 
-		val currentProfile = profileManager.getCurrentForPlayer(target) ?: return
-		val character = characters.forProfile(currentProfile) ?: return
+		val currentProfile = profileManager.getCurrentForPlayer(target)
+		val character = currentProfile?.let { characters.forProfile(it) } ?: run {
+			e.player.sendMessage("$SYSPREFIX ${e.rightClicked.name} is currently not in-character")
+			return
+		}
 		e.player.sendMessage(characterCard(character))
 	}
 }
