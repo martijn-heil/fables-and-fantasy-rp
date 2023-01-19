@@ -75,7 +75,7 @@ class FablesCharacters : SuspendingJavaPlugin() {
 		val prompter = Services.get<ProfilePrompter>()
 
 		val rootDispatcherNode = CommandGraph().builder(builder).commands()
-		val charactersCommand = rootDispatcherNode.group("characters", "chars", "fchars", "fcharacters")
+		val charactersCommand = rootDispatcherNode.group("character", "char", "fchar", "fcharacter")
 		charactersCommand.registerMethods(Commands.Characters(this, profiles, profileManager, prompter))
 		charactersCommand.group("stats").registerMethods(Commands.Characters.Stats(this))
 		rootDispatcherNode.registerMethods(Commands(this))

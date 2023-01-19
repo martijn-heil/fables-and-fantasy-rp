@@ -96,6 +96,11 @@ class FablesEconomy : SuspendingJavaPlugin() {
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
 
 		migrate(this, BankAPI.getInstance(), profileEconomyRepository, characterRepository)
+
+		if (server.pluginManager.isPluginEnabled("Citizens")) {
+			logger.info("Enabling Citizens integration")
+			com.fablesfantasyrp.plugin.economy.interop.citizens.CitizensHook().start()
+		}
 	}
 
 	override fun onDisable() {
