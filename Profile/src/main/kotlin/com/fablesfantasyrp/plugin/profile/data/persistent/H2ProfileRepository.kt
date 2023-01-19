@@ -17,7 +17,7 @@ class H2ProfileRepository(private val server: Server,
 	override var dirtyMarker: DirtyMarker<Profile>? = null
 	private val TABLE_NAME = "FABLES_PROFILE.PROFILE"
 
-	override fun forOwner(offlinePlayer: OfflinePlayer): Collection<Profile> {
+	override fun allForOwner(offlinePlayer: OfflinePlayer): Collection<Profile> {
 		return dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE owner = ?")
 			stmnt.setObject(1, offlinePlayer.uniqueId)

@@ -9,5 +9,6 @@ interface ProfileRepository :
 		Repository<Profile>,
 		MutableRepository<Profile>,
 		KeyedRepository<Int, Profile> {
-			fun forOwner(offlinePlayer: OfflinePlayer): Collection<Profile>
+			fun allForOwner(offlinePlayer: OfflinePlayer): Collection<Profile>
+			fun activeForOwner(offlinePlayer: OfflinePlayer): Collection<Profile> = this.allForOwner(offlinePlayer).filter { it.isActive }
 }

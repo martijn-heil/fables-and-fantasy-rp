@@ -83,8 +83,9 @@ class FablesCharacters : SuspendingJavaPlugin() {
 
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
 
-		server.pluginManager.registerEvents(CharactersListener(characterRepository, profileManager), this)
+		server.pluginManager.registerEvents(CharactersListener(this, characterRepository, profiles, profileManager, Services.get()), this)
 		server.pluginManager.registerEvents(CharactersLiveMigrationListener(this, characterRepository), this)
+		server.pluginManager.registerEvents(CharacterCreationListener(), this)
 
 		if (server.pluginManager.isPluginEnabled("TAB") && server.pluginManager.isPluginEnabled("Denizen") ) {
 			com.fablesfantasyrp.plugin.characters.nametags.NameTagManager().start()

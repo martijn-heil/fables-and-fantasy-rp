@@ -127,7 +127,7 @@ class H2WorldRestrictionRuleRepository(private val server: Server,
 	}
 
 	override fun getExplicitlyAllowedProfiles(world: World, player: Player): Collection<Profile> {
-		val ownedProfiles = profileRepository.forOwner(player).filter { it.isActive }.map { it.id }.toHashSet()
+		val ownedProfiles = profileRepository.activeForOwner(player).map { it.id }.toHashSet()
 
 		return dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT DISTINCT profile FROM $TABLE_NAME WHERE world = ? AND action IN ('BOUND', 'ALLOWED')")

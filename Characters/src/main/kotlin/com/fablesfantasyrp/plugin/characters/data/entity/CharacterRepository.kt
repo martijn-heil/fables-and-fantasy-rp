@@ -7,6 +7,7 @@ import org.bukkit.OfflinePlayer
 
 interface CharacterRepository : MutableRepository<Character>, KeyedRepository<Int, Character>  {
 	fun forOwner(offlinePlayer: OfflinePlayer): Collection<Character>
+	fun activeForOwner(offlinePlayer: OfflinePlayer): Collection<Character> = this.forOwner(offlinePlayer).filter { it.profile.isActive }
 	fun forProfile(profile: Profile): Character?
 	fun forName(name: String): Character?
 	fun nameExists(name: String): Boolean

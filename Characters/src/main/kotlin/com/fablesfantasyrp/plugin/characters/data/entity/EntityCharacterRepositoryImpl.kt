@@ -34,7 +34,7 @@ class EntityCharacterRepositoryImpl<C>(child: C, private val profiles: ProfileRe
 	}
 
 	override fun forOwner(offlinePlayer: OfflinePlayer): Collection<Character> {
-		return profiles.forOwner(offlinePlayer).mapNotNull { this.forId(it.id) }
+		return profiles.allForOwner(offlinePlayer).mapNotNull { this.forId(it.id) }
 	}
 
 	override fun forProfile(profile: Profile): Character? {

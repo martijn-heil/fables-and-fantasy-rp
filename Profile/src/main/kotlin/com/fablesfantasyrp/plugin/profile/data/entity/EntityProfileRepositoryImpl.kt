@@ -12,8 +12,8 @@ class EntityProfileRepositoryImpl<C>(child: C) :
 			  C: MutableRepository<Profile>,
 			  C: HasDirtyMarker<Profile>,
 			  C: ProfileRepository {
-	override fun forOwner(offlinePlayer: OfflinePlayer): Collection<Profile> {
+	override fun allForOwner(offlinePlayer: OfflinePlayer): Collection<Profile> {
 		this.saveAllDirty()
-		return child.forOwner(offlinePlayer).mapNotNull { this.forId(it.id) }
+		return child.allForOwner(offlinePlayer).mapNotNull { this.forId(it.id) }
 	}
 }

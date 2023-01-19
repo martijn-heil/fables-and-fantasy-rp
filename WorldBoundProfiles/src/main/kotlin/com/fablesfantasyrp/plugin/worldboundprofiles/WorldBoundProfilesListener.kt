@@ -44,9 +44,9 @@ class WorldBoundProfilesListener(private val plugin: Plugin,
 		if (fromRule?.action == WorldRestrictionRuleAction.BOUND && toRule?.action != WorldRestrictionRuleAction.BOUND) {
 			// current profile is bound to the world that the player is trying to leave
 			// player must choose a new profile
-			val ownProfiles = profiles.forOwner(e.player)
+			val ownProfiles = profiles.activeForOwner(e.player)
 			val rules: Map<Profile, Collection<WorldRestrictionRule>> = worldRestrictionRuleRepository.forProfiles(ownProfiles)
-			val possible = ownProfiles.filter { it.isActive }.filter {
+			val possible = ownProfiles.filter {
 				var isBoundAnywhere = false
 				var isBoundToDestination = false
 				var isAllowedToDestination = false
@@ -84,7 +84,7 @@ class WorldBoundProfilesListener(private val plugin: Plugin,
 
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	fun onPlayerJoin(e: PlayerJoinEvent) {
-		val ownProfiles = profiles.forOwner(e.player).filter { it.isActive }
+		val ownProfiles = profiles.activeForOwner(e.player)
 		val rules = worldRestrictionRuleRepository.forProfiles(ownProfiles)
 
 		if (FLATROOM != null && rules.values.find { it.find { it.id.second == FLATROOM!!.uid && it.action == WorldRestrictionRuleAction.BOUND } != null } == null) {

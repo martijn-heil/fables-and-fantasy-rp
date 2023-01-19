@@ -19,7 +19,7 @@ class StaffProfilesListener(private val plugin: Plugin,
 	fun onPlayerJoin(e: PlayerJoinEvent) {
 		if (!e.player.hasPermission("fables.staffprofiles.staff")) return
 
-		val ownProfiles = profiles.forOwner(e.player).filter { it.isActive }
+		val ownProfiles = profiles.activeForOwner(e.player)
 		if (staffProfiles.containsAny(ownProfiles)) return
 
 		val newProfile = profiles.create(Profile(

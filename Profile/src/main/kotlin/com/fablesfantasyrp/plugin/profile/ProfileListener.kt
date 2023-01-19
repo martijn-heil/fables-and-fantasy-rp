@@ -2,6 +2,7 @@ package com.fablesfantasyrp.plugin.profile
 
 import com.fablesfantasyrp.plugin.profile.data.entity.EntityProfileRepository
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
+import com.fablesfantasyrp.plugin.profile.event.PlayerForceProfileSelectionEvent
 import com.fablesfantasyrp.plugin.profile.event.PostPlayerSwitchProfileEvent
 import com.fablesfantasyrp.plugin.profile.event.PrePlayerSwitchProfileEvent
 import com.fablesfantasyrp.plugin.text.sendError
@@ -54,8 +55,10 @@ class ProfileListener(private val plugin: JavaPlugin,
 	fun onPlayerJoin(e: PlayerJoinEvent) {
 		if (!e.player.isWhitelisted) return // TODO leaky abstraction from whitelist plugin
 
-		val ownedProfiles = profiles.forOwner(e.player).filter { it.isActive }
+		val ownedProfiles = profiles.activeForOwner(e.player)
 		if (ownedProfiles.isEmpty()) return
+
+		if (!PlayerForceProfileSelectionEvent(e.player).callEvent()) return
 
 		server.scheduler.scheduleSyncDelayedTask(plugin, {
 			val player = server.getPlayer(e.player.uniqueId) ?: return@scheduleSyncDelayedTask
@@ -65,8 +68,8 @@ class ProfileListener(private val plugin: JavaPlugin,
 
 	@EventHandler(priority = MONITOR, ignoreCancelled = true)
 	fun onProfileSwitch(e: PostPlayerSwitchProfileEvent) {
-		if (e.new == null && e.old != null) {
-			val ownedProfiles = profiles.forOwner(e.player).filter { it.isActive }
+		if (e.new == null && e.old != null && PlayerForceProfileSelectionEvent(e.player).callEvent()) {
+			val ownedProfiles = profiles.activeForOwner(e.player)
 			plugin.launch { forceProfileSelection(e.player, ownedProfiles) }
 		}
 		playersCurrentlySwitchingProfile.remove(e.player)

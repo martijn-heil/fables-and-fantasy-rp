@@ -229,7 +229,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 				   @Switch('f') force: Boolean) {
 			plugin.launch {
 				val target: Profile = targetMaybe ?: run {
-					val profiles = profileRepository.forOwner(who).filter { it.isActive }
+					val profiles = profileRepository.activeForOwner(who)
 					profilePrompter.promptSelect(who, profiles)
 				}
 

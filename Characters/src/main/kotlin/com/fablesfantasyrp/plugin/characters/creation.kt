@@ -4,13 +4,20 @@ import com.fablesfantasyrp.plugin.characters.data.CharacterStatKind
 import com.fablesfantasyrp.plugin.characters.data.CharacterStats
 import com.fablesfantasyrp.plugin.characters.data.Gender
 import com.fablesfantasyrp.plugin.characters.data.Race
+import com.fablesfantasyrp.plugin.characters.data.entity.Character
+import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
 import com.fablesfantasyrp.plugin.characters.gui.CharacterStatsGui
 import com.fablesfantasyrp.plugin.form.promptChat
 import com.fablesfantasyrp.plugin.form.promptGui
 import com.fablesfantasyrp.plugin.gui.GuiSingleChoice
+import com.fablesfantasyrp.plugin.profile.ProfileManager
+import com.fablesfantasyrp.plugin.profile.data.entity.EntityProfileRepository
+import com.fablesfantasyrp.plugin.profile.data.entity.Profile
+import com.fablesfantasyrp.plugin.staffprofiles.data.StaffProfileRepository
 import com.fablesfantasyrp.plugin.text.join
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.sendError
+import com.fablesfantasyrp.plugin.utils.Services
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.single
@@ -20,7 +27,13 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority.NORMAL
+import org.bukkit.event.Listener
+import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.inventory.ItemStack
+import java.time.Instant
+import kotlin.coroutines.cancellation.CancellationException
 
 data class NewCharacterData(val name: String, val age: UInt, val gender: Gender, val race: Race,
 							val description: String, val stats: CharacterStats)
@@ -60,8 +73,7 @@ suspend fun promptNewCharacterInfo(player: Player, allowedRaces: Collection<Race
 		if (it is IllegalArgumentException) {
 			player.sendError(it.message ?: "unknown"); true
 		} else false
-	}
-			.single()
+	}.single()
 
 	val gender = player.promptGui(GuiSingleChoice<Gender>(FablesCharacters.instance,
 			"Please choose a gender",
@@ -133,4 +145,54 @@ suspend fun promptNewCharacterInfo(player: Player, allowedRaces: Collection<Race
 			Placeholder.unparsed("intelligence", stats.intelligence.toString())))
 
 	return NewCharacterData(name, age, gender, race, description, stats)
+}
+
+private val blockMovement = HashSet<Player>()
+suspend fun forcePromptNewCharacterInfo(player: Player, allowedRaces: Collection<Race>): NewCharacterData {
+	blockMovement.add(player)
+	try {
+		while (true) {
+			if (!player.isOnline) throw CancellationException()
+			try {
+				return promptNewCharacterInfo(player, Race.values().filter { it != Race.HUMAN })
+			} catch (_: CancellationException) {}
+		}
+	} finally {
+		blockMovement.remove(player)
+	}
+}
+
+suspend fun forceCharacterCreation(player: Player,
+								   profiles: EntityProfileRepository = Services.get(),
+								   characters: EntityCharacterRepository = Services.get(),
+								   profileManager: ProfileManager = Services.get()) {
+	val newCharacterData = forcePromptNewCharacterInfo(player, Race.values().filter { it != Race.HUMAN })
+
+	val profile = profiles.create(Profile(
+			owner = player,
+			description = newCharacterData.name,
+			isActive = true
+	))
+
+	val character = characters.create(Character(
+			id = profile.id,
+			profile = profile,
+			name = newCharacterData.name,
+			race = newCharacterData.race,
+			gender = newCharacterData.gender,
+			stats = newCharacterData.stats,
+			age = newCharacterData.age,
+			description = newCharacterData.description,
+			lastSeen = Instant.now(),
+			createdAt = Instant.now()
+	))
+
+	profileManager.setCurrentForPlayer(player, profile)
+}
+
+class CharacterCreationListener : Listener {
+	@EventHandler(priority = NORMAL, ignoreCancelled = true)
+	fun onPlayerMove(e: PlayerMoveEvent) {
+		if (blockMovement.contains(e.player)) e.isCancelled = true
+	}
 }

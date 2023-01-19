@@ -35,7 +35,7 @@ class Commands(private val characters: EntityCharacterRepository,
 		val character = characters.forProfile(target)
 		val displayName = character?.name ?: "#${target.id}"
 		val currentPlayer = profileManager.getCurrentForProfile(sender)!!
-		val ownProfiles = profiles.forOwner(currentPlayer)
+		val ownProfiles = profiles.allForOwner(currentPlayer)
 
 		if (!target.isActive) {
 			currentPlayer.sendError("You cannot pay an inactive profile!")

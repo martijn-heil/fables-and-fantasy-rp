@@ -22,7 +22,7 @@ class Commands {
 		fun list(@Sender sender: Player,
 				 @CommandTarget(Permission.Command.CommandProfile.List + ".others") owner: OfflinePlayer) {
 			sender.sendMessage("$SYSPREFIX ${owner.name} has the following profiles:")
-			for (profile in profiles.forOwner(owner)) {
+			for (profile in profiles.allForOwner(owner)) {
 				sender.sendMessage("${ChatColor.GRAY}#${profile.id}")
 			}
 		}
