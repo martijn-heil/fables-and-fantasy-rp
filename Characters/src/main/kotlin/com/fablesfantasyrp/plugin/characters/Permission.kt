@@ -23,7 +23,7 @@ object Permission {
 			const val ChangeName = "${Command.prefix}.changename"
 
 			object Stats {
-				private const val prefix = Permission.Command.Characters.prefix + ".characters"
+				private const val prefix = Permission.Command.Characters.prefix + ".stats"
 				const val Set = "${Command.prefix}.set"
 				const val Edit = "${Command.prefix}.edit"
 			}
