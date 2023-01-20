@@ -102,7 +102,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 									.filter { if (!isStaffCharacter) it != Race.OTHER else true }
 									.toList())
 
-					if (characterRepository.allNames().contains(info.name)) {
+					if (characterRepository.nameExists(info.name)) {
 						sender.sendError("The name '${info.name}' is already in use, please enter a different name.")
 						continue
 					}
