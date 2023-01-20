@@ -3,9 +3,12 @@ package com.fablesfantasyrp.plugin.magic
 import com.fablesfantasyrp.plugin.characters.currentPlayerCharacter
 import com.fablesfantasyrp.plugin.magic.data.entity.EntityTearRepository
 import com.fablesfantasyrp.plugin.magic.data.entity.Tear
+import com.fablesfantasyrp.plugin.profile.ProfileManager
 import org.bukkit.plugin.Plugin
 
-class TearClosureManager(private val plugin: Plugin, private val tearRepository: EntityTearRepository<*>) {
+class TearClosureManager(private val plugin: Plugin,
+						 private val tearRepository: EntityTearRepository<*>,
+						 private val profileManager: ProfileManager) {
 	private val server = plugin.server
 	private val tearsScheduledForRemoval = HashMap<Tear, Long>()
 
@@ -28,8 +31,7 @@ class TearClosureManager(private val plugin: Plugin, private val tearRepository:
 	}
 
 	private fun shouldTearClose(tear: Tear): Boolean {
-		val offlinePlayer = tear.owner.character.player
-		val player = offlinePlayer.player ?: return false
+		val player = profileManager.getCurrentForProfile(tear.owner.character.profile) ?: return true
 		return (!player.isOnline ||
 				player.currentPlayerCharacter != tear.owner.character ||
 				player.location.world != tear.location.world ||
