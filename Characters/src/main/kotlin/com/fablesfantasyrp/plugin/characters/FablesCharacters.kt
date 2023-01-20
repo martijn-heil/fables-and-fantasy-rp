@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.characters
 
 import com.fablesfantasyrp.plugin.characters.command.Commands
+import com.fablesfantasyrp.plugin.characters.command.LegacyCommands
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
 import com.fablesfantasyrp.plugin.characters.data.entity.Character
 import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
@@ -76,7 +77,9 @@ class FablesCharacters : SuspendingJavaPlugin() {
 
 		val rootDispatcherNode = CommandGraph().builder(builder).commands()
 		val charactersCommand = rootDispatcherNode.group("character", "char", "fchar", "fcharacter")
-		charactersCommand.registerMethods(Commands.Characters(this, profiles, profileManager, prompter))
+		val characterCommands = Commands.Characters(this, profiles, profileManager, prompter)
+		charactersCommand.registerMethods(characterCommands)
+		rootDispatcherNode.registerMethods(LegacyCommands(characterCommands))
 		charactersCommand.group("stats").registerMethods(Commands.Characters.Stats(this))
 		rootDispatcherNode.registerMethods(Commands(this))
 		val dispatcher = rootDispatcherNode.dispatcher

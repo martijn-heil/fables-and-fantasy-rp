@@ -39,6 +39,35 @@ import org.bukkit.entity.Player
 import java.time.Duration
 import java.time.Instant
 
+class LegacyCommands(private val characterCommands: Commands.Characters) {
+	@Command(aliases = ["newcharacter", "newchar", "nc"], desc = "Create a new character!")
+	@Require(Permission.Command.Characters.New)
+	fun newCharacter(@Sender sender: Player) {
+		characterCommands.new(sender)
+	}
+
+	@Command(aliases = ["become", "switchcharacter", "switchchar", "characters"], desc = "Become a character")
+	@Require(Permission.Command.Characters.Become)
+	fun become(@Sender sender: Player,
+			   @Optional @AllowCharacterName targetMaybe: Profile?,
+			   @Optional @CommandTarget(Permission.Command.Characters.Become + ".others") who: Player,
+			   @Switch('f') force: Boolean) {
+		characterCommands.become(sender, targetMaybe, who, force)
+	}
+
+	@Command(aliases = ["card", "charactercard"], desc = "Display a character's card in chat.")
+	@Require(Permission.Command.Characters.Card)
+	fun card(@Sender sender: CommandSender, @CommandTarget target: Character) {
+		characterCommands.card(sender, target)
+	}
+
+	@Command(aliases = ["removecharacter", "removechar", "rc", "permakill", "pk"], desc = "Kill a character")
+	@Require(Permission.Command.Characters.Kill)
+	fun removeCharacter(@Sender sender: CommandSender, @CommandTarget target: Character) {
+		characterCommands.kill(sender, target)
+	}
+}
+
 class Commands(private val plugin: SuspendingJavaPlugin) {
 	class Characters(private val plugin: SuspendingJavaPlugin,
 					 private val profileRepository: ProfileRepository,
