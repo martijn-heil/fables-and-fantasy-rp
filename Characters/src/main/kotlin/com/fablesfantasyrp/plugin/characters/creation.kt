@@ -13,7 +13,6 @@ import com.fablesfantasyrp.plugin.gui.GuiSingleChoice
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.data.entity.EntityProfileRepository
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
-import com.fablesfantasyrp.plugin.staffprofiles.data.StaffProfileRepository
 import com.fablesfantasyrp.plugin.text.join
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.sendError
@@ -154,7 +153,14 @@ suspend fun forcePromptNewCharacterInfo(player: Player, allowedRaces: Collection
 		while (true) {
 			if (!player.isOnline) throw CancellationException()
 			try {
-				return promptNewCharacterInfo(player, Race.values().filter { it != Race.HUMAN })
+				val info = promptNewCharacterInfo(player, allowedRaces)
+
+				if (characterRepository.nameExists(info.name)) {
+					player.sendError("The name '${info.name}' is already in use, please enter a different name.")
+					continue
+				}
+
+				return info
 			} catch (_: CancellationException) {}
 		}
 	} finally {
@@ -166,7 +172,7 @@ suspend fun forceCharacterCreation(player: Player,
 								   profiles: EntityProfileRepository = Services.get(),
 								   characters: EntityCharacterRepository = Services.get(),
 								   profileManager: ProfileManager = Services.get()) {
-	val newCharacterData = forcePromptNewCharacterInfo(player, Race.values().filter { it != Race.HUMAN })
+	val newCharacterData = forcePromptNewCharacterInfo(player, Race.values().filter { it != Race.HUMAN && it != Race.OTHER})
 
 	val profile = profiles.create(Profile(
 			owner = player,
