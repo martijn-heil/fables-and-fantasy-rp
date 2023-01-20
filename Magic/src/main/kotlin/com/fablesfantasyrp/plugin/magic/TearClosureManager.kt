@@ -28,10 +28,10 @@ class TearClosureManager(private val plugin: Plugin, private val tearRepository:
 	}
 
 	private fun shouldTearClose(tear: Tear): Boolean {
-		val offlinePlayer = tear.owner.playerCharacter.player
+		val offlinePlayer = tear.owner.character.player
 		val player = offlinePlayer.player ?: return false
 		return (!player.isOnline ||
-				player.currentPlayerCharacter != tear.owner.playerCharacter ||
+				player.currentPlayerCharacter != tear.owner.character ||
 				player.location.world != tear.location.world ||
 				player.location.distance(tear.location) > 15.0)
 	}

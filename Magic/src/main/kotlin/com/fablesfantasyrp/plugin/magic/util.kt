@@ -1,10 +1,12 @@
 package com.fablesfantasyrp.plugin.magic
 
-import com.fablesfantasyrp.plugin.characters.data.CharacterData
+import com.fablesfantasyrp.plugin.characters.data.entity.Character
 import com.fablesfantasyrp.plugin.chat.chat
 import com.fablesfantasyrp.plugin.chat.getPlayersWithinRange
 import com.fablesfantasyrp.plugin.magic.data.SpellData
+import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.text.miniMessage
+import com.fablesfantasyrp.plugin.utils.Services
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.NamedTextColor
@@ -39,10 +41,11 @@ fun spellDisplay(spell: SpellData): Component = Component.text(spell.displayName
 		.color(NamedTextColor.DARK_PURPLE)
 		.hoverEvent(HoverEvent.showText(spellCard(spell)))
 
-fun getSpellCastingMessage(playerCharacter: CharacterData, spell: SpellData,
+fun getSpellCastingMessage(playerCharacter: Character, spell: SpellData,
 						   success: Boolean, castingRoll: Int, effectiveness: SpellEffectiveness? = null): Component {
 	require(!success || effectiveness != null)
-	val player = playerCharacter.player.player!!
+	val profileManager = Services.get<ProfileManager>()
+	val player = profileManager.getCurrentForProfile(playerCharacter.profile)!!
 
 	val resultMessage = if (!success) {
 		Component.text("failure").color(NamedTextColor.RED)

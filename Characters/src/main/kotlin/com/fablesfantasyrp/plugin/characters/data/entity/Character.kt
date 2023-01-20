@@ -69,6 +69,7 @@ class Character : DataEntity<Int, Character>, CharacterData {
 			profile.description = value
 		}
 
+	@Deprecated("Not implemented")
 	override val player: OfflinePlayer get() = throw NotImplementedError()
 
 	override var age: UInt 				set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }

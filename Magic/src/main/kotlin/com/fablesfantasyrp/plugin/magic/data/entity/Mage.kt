@@ -2,8 +2,8 @@ package com.fablesfantasyrp.plugin.magic.data.entity
 
 import com.fablesfantasyrp.plugin.characters.characterRepository
 import com.fablesfantasyrp.plugin.characters.currentPlayerCharacter
-import com.fablesfantasyrp.plugin.characters.data.CharacterData
 import com.fablesfantasyrp.plugin.characters.data.CharacterStatKind
+import com.fablesfantasyrp.plugin.characters.data.entity.Character
 import com.fablesfantasyrp.plugin.chat.awaitEmote
 import com.fablesfantasyrp.plugin.chat.chat
 import com.fablesfantasyrp.plugin.chat.getPlayersWithinRange
@@ -20,11 +20,13 @@ import com.fablesfantasyrp.plugin.magic.exception.CasterBusyException
 import com.fablesfantasyrp.plugin.magic.exception.NoSpaceForTearException
 import com.fablesfantasyrp.plugin.magic.exception.OpenTearException
 import com.fablesfantasyrp.plugin.magic.exception.TooManyTearsException
+import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.rolls.roll
 import com.fablesfantasyrp.plugin.targeting.targeting
 import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.sendError
+import com.fablesfantasyrp.plugin.utils.Services
 import com.fablesfantasyrp.plugin.utils.isVanished
 import com.github.shynixn.mccoroutine.bukkit.launch
 import kotlinx.coroutines.CancellationException
@@ -39,7 +41,7 @@ import org.bukkit.GameMode
 
 
 class Mage : MageData, HasDirtyMarker<Mage> {
-	val playerCharacter: CharacterData
+	val character: Character
 		get() = characterRepository.forId(id.toInt())!!
 
 	var isDeleted: Boolean = false
@@ -73,8 +75,10 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 	}
 
 	suspend fun tryCloseTear(tear: Tear): Boolean {
-		val myPlayer = playerCharacter.player.player!!
-		val myStats = playerCharacter.stats
+		val profileManager = Services.get<ProfileManager>()
+		val myPlayer = profileManager.getCurrentForProfile(character.profile)!!
+
+		val myStats = character.stats
 
 		if (myPlayer.location.world != tear.location.world || myPlayer.location.distance(tear.location) > 15) {
 			myPlayer.sendError("Targeted tear is out of range, you need to be within 15 blocks of the tear")
@@ -84,12 +88,12 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 		val prompt = legacyText("$SYSPREFIX Please emote to close the tear:")
 
 		val them = tear.owner
-		val theirPlayer = them.playerCharacter.player.player ?: run {
+		val theirPlayer = profileManager.getCurrentForProfile(them.character.profile) ?: run {
 			myPlayer.awaitEmote(prompt)
 			tearRepository.destroy(tear)
 			return true
 		}
-		val theirStats = them.playerCharacter.stats
+		val theirStats = them.character.stats
 
 		myPlayer.awaitEmote(prompt)
 		if (theirPlayer == myPlayer) {
@@ -111,8 +115,8 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 
 			val message = miniMessage.deserialize(
 					"<my_name> attempts to close a tear owned by <green><their_name></green> and <result>",
-					Placeholder.unparsed("my_name", playerCharacter.name),
-					Placeholder.unparsed("their_name", them.playerCharacter.name),
+					Placeholder.unparsed("my_name", character.name),
+					Placeholder.unparsed("their_name", them.character.name),
 					Placeholder.component("result", resultMessage)).style(myPlayer.chat.chatStyle ?: Style.style(NamedTextColor.YELLOW))
 
 			getPlayersWithinRange(myPlayer.location, 15U).forEach { it.sendMessage(message) }
@@ -127,7 +131,8 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 	}
 
 	suspend fun tryUnbindCast(spell: SpellData, enemy: Mage, castingRoll: Int): Boolean {
-		val player = this.playerCharacter.player.player ?: throw IllegalStateException()
+		val profileManager = Services.get<ProfileManager>()
+		val player = profileManager.getCurrentForProfile(this.character.profile) ?: throw IllegalStateException()
 		check(player.isOnline)
 
 		if (this.isCasting) {
@@ -143,18 +148,18 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 		}
 
 		player.awaitEmote(legacyText("$SYSPREFIX Please emote to try and unbind " +
-				"${enemy.playerCharacter.name}'s ${spell.displayName} spell"))
+				"${enemy.character.name}'s ${spell.displayName} spell"))
 
-		val roll = roll(20U, CharacterStatKind.INTELLIGENCE, this.playerCharacter.stats).second
-
+		val roll = roll(20U, CharacterStatKind.INTELLIGENCE, this.character.stats).second
+		val enemyPlayer = profileManager.getCurrentForProfile(enemy.character.profile)!!
 		val messageTargets = getPlayersWithinRange(player.location, 15U)
-				.plus(getPlayersWithinRange(enemy.playerCharacter.player.player!!.location, 15U)).distinct()
+				.plus(getPlayersWithinRange(enemyPlayer.location, 15U)).distinct()
 
 		if (roll > castingRoll) {
 			val message = miniMessage.deserialize("<yellow><my_name></yellow> <green>successfully</green> unbound " +
 					"<yellow><enemy_name>'s</yellow> <spell> cast.",
-			Placeholder.unparsed("my_name", this.playerCharacter.name),
-			Placeholder.unparsed("enemy_name", enemy.playerCharacter.name),
+			Placeholder.unparsed("my_name", this.character.name),
+			Placeholder.unparsed("enemy_name", enemy.character.name),
 			Placeholder.component("spell", spellDisplay(spell)))
 					.style(player.chat.chatStyle ?: Style.style(NamedTextColor.YELLOW))
 			messageTargets.forEach { it.sendMessage(message) }
@@ -162,8 +167,8 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 		} else {
 			val message = miniMessage.deserialize("<yellow><my_name></yellow> <red>failed</red> to unbind " +
 					"<yellow><enemy_name>'s</yellow> <spell> cast.",
-					Placeholder.unparsed("my_name", this.playerCharacter.name),
-					Placeholder.unparsed("enemy_name", enemy.playerCharacter.name),
+					Placeholder.unparsed("my_name", this.character.name),
+					Placeholder.unparsed("enemy_name", enemy.character.name),
 					Placeholder.component("spell", spellDisplay(spell)))
 					.style(player.chat.chatStyle ?: Style.style(NamedTextColor.YELLOW))
 			messageTargets.forEach { it.sendMessage(message) }
@@ -172,18 +177,19 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 	}
 
 	suspend fun awaitUnbindAttempts(spell: SpellData, castingRoll: Int): Boolean {
-		val player = this.playerCharacter.player.player ?: throw IllegalStateException()
+		val profileManager = Services.get<ProfileManager>()
+		val player = profileManager.getCurrentForProfile(this.character.profile) ?: throw IllegalStateException()
 		check(player.isOnline)
 		val otherMages = getPlayersWithinRange(player.location, 15U)
 				.mapNotNull { it.currentPlayerCharacter }
 				.mapNotNull { mageRepository.forPlayerCharacter(it) }
 				.filter { it != this }
-				.filter { !it.playerCharacter.player.player!!.isVanished }
-				.filter { it.playerCharacter.player.player!!.gameMode != GameMode.SPECTATOR }
+				.filter { !it.character.player.player!!.isVanished }
+				.filter { it.character.player.player!!.gameMode != GameMode.SPECTATOR }
 
-		val prompt = legacyText("$SYSPREFIX Do you want to unbind ${this.playerCharacter.name}'s casting attempt?: ")
+		val prompt = legacyText("$SYSPREFIX Do you want to unbind ${this.character.name}'s casting attempt?: ")
 		val prompts = otherMages
-				.map { Pair(it, YesNoChatPrompt(it.playerCharacter.player.player!!, prompt)) }
+				.map { Pair(it, YesNoChatPrompt(it.character.player.player!!, prompt)) }
 				.toMap().toMutableMap()
 		prompts.values.forEach { it.send() }
 
@@ -203,7 +209,7 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 					if (answer) {
 						if (mage.tryUnbindCast(spell, this@Mage, castingRoll)) return@withTimeout true
 					} else {
-						val answerPlayer = mage.playerCharacter.player.player ?: continue
+						val answerPlayer = profileManager.getCurrentForProfile(mage.character.profile) ?: continue
 						answerPlayer.sendMessage("$SYSPREFIX You will not try to unbind.")
 					}
 				}
@@ -214,7 +220,8 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 	}
 
 	suspend fun tryCastSpell(spell: SpellData): Boolean {
-		val player = playerCharacter.player.player ?: throw IllegalStateException()
+		val profileManager = Services.get<ProfileManager>()
+		val player = profileManager.getCurrentForProfile(character.profile) ?: throw IllegalStateException()
 		check(player.isOnline)
 		if (this.isCasting) {
 			player.sendError("You are already busy casting a spell.")
@@ -223,7 +230,7 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 		this.isCasting = true
 
 		try {
-			val stats = playerCharacter.stats
+			val stats = character.stats
 
 			val tear = this.findTear()
 			if (tear == null) {
@@ -244,7 +251,7 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 				val effectivenessRoll = roll(20U, CharacterStatKind.INTELLIGENCE, stats).second
 				val effectiveness = if (!success) null else SpellEffectiveness.fromRoll(effectivenessRoll)
 
-				val message = getSpellCastingMessage(playerCharacter, spell, success, castingRoll, effectiveness)
+				val message = getSpellCastingMessage(character, spell, success, castingRoll, effectiveness)
 				val messageTargets = getPlayersWithinRange(player.location, 15U).toList()
 
 				val spellTargets = player.targeting.targets
@@ -253,7 +260,7 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 					val startMessage = miniMessage.deserialize(
 							"<yellow><character_name></yellow> starts an attempt to cast <spell_name> " +
 									"targeting the following players: <gray><targets></gray>",
-							Placeholder.unparsed("character_name", playerCharacter.name),
+							Placeholder.unparsed("character_name", character.name),
 							Placeholder.component("spell_name", spellDisplay(spell)),
 							Placeholder.unparsed("targets", spellTargets.joinToString(", ") { "\"${it.name}\"" }))
 							.style(player.chat.chatStyle ?: Style.style(NamedTextColor.YELLOW))
@@ -290,7 +297,8 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 	@Throws(OpenTearException::class)
 	suspend fun openTear(): Tear {
 		if (this.isCasting) throw CasterBusyException()
-		val player = playerCharacter.player.player ?: throw IllegalStateException()
+		val profileManager = Services.get<ProfileManager>()
+		val player = profileManager.getCurrentForProfile(character.profile) ?: throw IllegalStateException()
 		check(player.isOnline)
 		if (tearRepository.forOwner(this).size >= MAX_TEARS_PER_MAGE) throw TooManyTearsException()
 
@@ -301,7 +309,8 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 	}
 
 	fun findTear(): Tear? {
-		val player = playerCharacter.player.player ?: throw IllegalStateException()
+		val profileManager = Services.get<ProfileManager>()
+		val player = profileManager.getCurrentForProfile(character.profile) ?: throw IllegalStateException()
 		check(player.isOnline)
 		return tearRepository.all().asSequence()
 				.filter { it.magicType == this.magicPath.magicType }

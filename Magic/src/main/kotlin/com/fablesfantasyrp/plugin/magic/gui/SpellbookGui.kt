@@ -18,7 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import java.util.function.Function
 
 class SpellbookGui(plugin: JavaPlugin, private val mage: Mage, private val readOnly: Boolean = false)
-	: InventoryGui(plugin, "${mage.playerCharacter.name}'s grimoire",
+	: InventoryGui(plugin, "${mage.character.name}'s grimoire",
 		arrayOf("agggggggg",
 				"bhhhhhhhh",
 				"cjjjjjjjj",
