@@ -21,10 +21,7 @@ import com.fablesfantasyrp.plugin.utils.SerializableItemStack
 import com.fablesfantasyrp.plugin.utilsoffline.location
 import com.fablesfantasyrp.plugin.utilsoffline.offlineEnderChest
 import com.fablesfantasyrp.plugin.utilsoffline.offlineInventory
-import org.bukkit.Bukkit
-import org.bukkit.Location
-import org.bukkit.OfflinePlayer
-import org.bukkit.Server
+import org.bukkit.*
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.Plugin
 import java.sql.SQLIntegrityConstraintViolationException
@@ -88,11 +85,20 @@ internal fun migrateDenizenToSql(plugin: Plugin,
 
 			var useOfflinePlayerData = currentDenizenCharacter == it
 
-			if (useOfflinePlayerData) {
+			val playerLocation: Location? = try {
+				player.location
+			} catch (ex: Exception) {
+				useOfflinePlayerData = false
+				null
+			}
+			// Plotworld used multiverse-inventories before and this gives problems
+			if (playerLocation != null && playerLocation.world == PLOTS) useOfflinePlayerData = false
+
+			if (useOfflinePlayerData && playerLocation != null) {
 				try {
 					inventory = PassthroughPlayerInventory.copyOfBukkitInventory(player.offlineInventory)
 					enderChest = PassthroughInventory.copyOfBukkitInventory(player.offlineEnderChest)
-					location = player.location
+					location = playerLocation
 				} catch (ex: Exception) {
 					useOfflinePlayerData = false
 				}
