@@ -15,6 +15,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
+import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.plugin.Plugin
 import java.time.Instant
 
@@ -54,6 +55,7 @@ class CharactersListener(private val plugin: Plugin,
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	fun onPlayerInteractAtPlayer(e: PlayerInteractAtEntityEvent) {
+		if (e.hand != EquipmentSlot.HAND) return
 		val target = e.rightClicked as? Player ?: return
 		if (!target.isRealPlayer) return
 
