@@ -15,6 +15,7 @@ import com.fablesfantasyrp.plugin.magic.data.persistent.YamlSimpleSpellDataRepos
 import com.fablesfantasyrp.plugin.profile.command.provider.ProfileProvider
 import com.fablesfantasyrp.plugin.profile.profileManager
 import com.fablesfantasyrp.plugin.profile.profiles
+import com.fablesfantasyrp.plugin.utils.Services
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
@@ -78,7 +79,7 @@ class FablesMagic : SuspendingJavaPlugin() {
 
 		val rootDispatcherNode = CommandGraph().builder(builder).commands()
 		rootDispatcherNode.group("ability").registerMethods(Commands.Ability())
-		rootDispatcherNode.registerMethods(Commands())
+		rootDispatcherNode.registerMethods(Commands(Services.get()))
 		val dispatcher = rootDispatcherNode.dispatcher
 
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
