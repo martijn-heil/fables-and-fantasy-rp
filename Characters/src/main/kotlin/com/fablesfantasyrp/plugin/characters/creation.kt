@@ -136,7 +136,7 @@ suspend fun promptNewCharacterInfo(player: Player, allowedRaces: Collection<Race
 					"<yellow><strength> Strength</yellow>, " +
 					"<yellow><defense> Defense</yellow>, " +
 					"<yellow><agility> Agility</yellow>, " +
-					"<yellow><strength> Strength</yellow>, " +
+					"<yellow><intelligence> Intelligence</yellow>, " +
 					"</gray>",
 			Placeholder.unparsed("strength", stats.strength.toString()),
 			Placeholder.unparsed("defense", stats.defense.toString()),
