@@ -64,7 +64,7 @@ class FablesMagic : SuspendingJavaPlugin() {
 		tearRepository = EntityTearRepository(MapTearRepository())
 		tearRepository.all().forEach { it.spawn() }
 
-		TearClosureManager(this, tearRepository)
+		TearClosureManager(this, tearRepository, Services.get())
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())
