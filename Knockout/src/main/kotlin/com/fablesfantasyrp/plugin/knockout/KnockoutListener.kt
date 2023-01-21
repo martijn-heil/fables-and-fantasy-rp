@@ -118,7 +118,7 @@ class KnockoutListener(private val server: Server) : Listener {
 
 	@EventHandler(priority = LOW, ignoreCancelled = true)
 	fun onPlayerDamageByPlayer(e: EntityDamageByEntityEvent) {
-		val damager = e.entity as? Player ?: return
+		val damager = e.damager as? Player ?: return
 		if (!damager.isRealPlayer) return
 
 		if (damager.knockout.isKnockedOut) e.isCancelled = true
