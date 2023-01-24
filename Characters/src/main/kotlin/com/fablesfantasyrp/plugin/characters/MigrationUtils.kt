@@ -26,6 +26,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.Plugin
 import java.sql.SQLIntegrityConstraintViolationException
 import java.time.Instant
+import kotlin.math.min
 
 @Deprecated("Legacy Denizen")
 val OfflinePlayer.denizenPlayerCharacters: List<MutableDenizenCharacter>
@@ -129,6 +130,7 @@ internal fun migrateDenizenToSql(plugin: Plugin,
 			profile.inventory.enderChest.contents = enderChest!!.contents
 
 			val originalStats = it.stats
+			if (it.id == 122) Bukkit.getLogger().info("originalStats: $originalStats")
 			val oldBoosters = when (it.race) {
 				Race.HUMAN -> CharacterStats(strength = 1U, defense = 1U, agility = 1U)
 				Race.HIGH_ELF -> CharacterStats(agility = 1U, intelligence = 2U)
@@ -141,7 +143,19 @@ internal fun migrateDenizenToSql(plugin: Plugin,
 				Race.HALFLING -> CharacterStats(defense = 1U, agility = 1U, intelligence = 1U)
 				else -> throw IllegalStateException() // These races didn't exist before
 			}
-			val stats = originalStats - oldBoosters - CHARACTER_STATS_FLOOR
+			val originalDistributedStats = originalStats - oldBoosters - CHARACTER_STATS_FLOOR
+			if (it.id == 122) Bukkit.getLogger().info("originalDistributedStats: $originalDistributedStats")
+			val newAbsoluteStats = originalDistributedStats + it.race.boosters + CHARACTER_STATS_FLOOR
+			if (it.id == 122) Bukkit.getLogger().info("newAbsoluteStats: $newAbsoluteStats")
+			val newCappedAbsoluteStats = newAbsoluteStats.copy(
+					strength = min(12U, newAbsoluteStats.strength),
+					defense = min(12U, newAbsoluteStats.defense),
+					agility = min(12U, newAbsoluteStats.agility),
+					intelligence = min(12U, newAbsoluteStats.intelligence)
+			)
+			if (it.id == 122) Bukkit.getLogger().info("newCappedAbsoluteStats: $newCappedAbsoluteStats")
+			val newDistributedStats = newCappedAbsoluteStats - it.race.boosters - CHARACTER_STATS_FLOOR
+			if (it.id == 122) Bukkit.getLogger().info("newDistributedStats: $newDistributedStats")
 
 			val character = characters.create(Character(
 					id = profile.id,
@@ -149,7 +163,7 @@ internal fun migrateDenizenToSql(plugin: Plugin,
 					name = it.name,
 					race = it.race,
 					gender = it.gender,
-					stats = stats,
+					stats = newDistributedStats,
 					age = it.age,
 					description = it.description,
 					lastSeen = it.player.lastLogin.let { if (it != 0L) Instant.ofEpochMilli(it) else null },

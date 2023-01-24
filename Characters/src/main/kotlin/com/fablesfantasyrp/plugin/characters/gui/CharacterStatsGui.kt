@@ -9,6 +9,7 @@ import org.bukkit.ChatColor.*
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
+import kotlin.math.min
 
 class CharacterStatsGui(plugin: JavaPlugin, minimums: CharacterStats, title: String = "Character stats",
 						initial: CharacterStats = CharacterStats(0U, 0U, 0U, 0U)) :
@@ -22,10 +23,11 @@ class CharacterStatsGui(plugin: JavaPlugin, minimums: CharacterStats, title: Str
 				"    p    "
 		)
 ) {
-	private val strengthSlider 		= GuiSlider('z', 8U, initial.strength, { it + minimums.strength }, { canIncrease(it) })
-	private val defenseSlider 		= GuiSlider('y', 8U, initial.defense, { it + minimums.defense }, { canIncrease(it) })
-	private val agilitySlider 		= GuiSlider('x', 8U, initial.agility, { it + minimums.agility }, { canIncrease(it) })
-	private val intelligenceSlider 	= GuiSlider('w', 8U, initial.intelligence, { it + minimums.intelligence }, { canIncrease(it) })
+	private val absoluteMax = 12U
+	private val strengthSlider 		= GuiSlider('z', min(8U, absoluteMax - minimums.strength), initial.strength, { it + minimums.strength }, { canIncrease(it) })
+	private val defenseSlider 		= GuiSlider('y', min(8U, absoluteMax - minimums.defense), initial.defense, { it + minimums.defense }, { canIncrease(it) })
+	private val agilitySlider 		= GuiSlider('x', min(8U, absoluteMax - minimums.agility), initial.agility, { it + minimums.agility }, { canIncrease(it) })
+	private val intelligenceSlider 	= GuiSlider('w', min(8U, absoluteMax - minimums.intelligence), initial.intelligence, { it + minimums.intelligence }, { canIncrease(it) })
 
 	private val statSliders = arrayOf(strengthSlider, defenseSlider, agilitySlider, intelligenceSlider)
 
