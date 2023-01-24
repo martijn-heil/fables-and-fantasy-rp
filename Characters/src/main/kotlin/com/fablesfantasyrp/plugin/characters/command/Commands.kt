@@ -176,7 +176,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 
 		@Command(aliases = ["shelf"], desc = "Shelf a character")
 		@Require(Permission.Command.Characters.Shelf)
-		fun shelf(@Sender sender: Player, @CommandTarget target: Character, @Switch('f') force: Boolean) {
+		fun shelf(@Sender sender: Player, @CommandTarget target: Character, @Switch('f') force: Boolean, @Switch('y') yes: Boolean) {
 			if (target.isShelved) {
 				sender.sendError("This character is already shelved")
 				return
@@ -203,14 +203,16 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 			}
 
 			plugin.launch {
-				val prompt = YesNoChatPrompt(sender, miniMessage.deserialize(
-								"<prefix> Are you sure you want to shelf <green><character_name></green>?<newline>" +
-								"You will not be able to unshelf this character for 3 weeks.",
-						Placeholder.component("prefix", legacyText(SYSPREFIX)),
-						Placeholder.unparsed("character_name", target.name)).color(NamedTextColor.GRAY))
-				prompt.send()
-				val confirmation: Boolean = prompt.await()
-				if (!confirmation) return@launch
+				if (!yes) {
+					val prompt = YesNoChatPrompt(sender, miniMessage.deserialize(
+							"<prefix> Are you sure you want to shelf <green><character_name></green>?<newline>" +
+									"You will not be able to unshelf this character for 3 weeks.",
+							Placeholder.component("prefix", legacyText(SYSPREFIX)),
+							Placeholder.unparsed("character_name", target.name)).color(NamedTextColor.GRAY))
+					prompt.send()
+					val confirmation: Boolean = prompt.await()
+					if (!confirmation) return@launch
+				}
 
 				target.isShelved = true
 				sender.sendMessage("$SYSPREFIX Shelved ${target.name}")
