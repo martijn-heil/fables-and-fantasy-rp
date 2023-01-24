@@ -119,8 +119,11 @@ internal fun migrateDenizenToSql(plugin: Plugin,
 				location = if(arrayOf(PLOTS, FLATROOM).contains(it.location.world)) SPAWN else it.location
 			}
 
+			val name = it.name.replace(NAME_DISALLOWED_CHARACTERS, "")
+			if (name.isBlank()) throw IllegalArgumentException("Got blank name for #${it.id}")
+
 			plugin.logger.info("Migrating #${it.id}")
-			val profile = profiles.create(Profile(id = it.id, owner = player, description = it.name, isActive = true))
+			val profile = profiles.create(Profile(id = it.id, owner = player, description = name, isActive = true))
 			profile.location = location!!
 			profile.inventory.inventory.contents = inventory!!.contents
 			profile.inventory.enderChest.contents = enderChest!!.contents
@@ -161,9 +164,8 @@ internal fun migrateDenizenToSql(plugin: Plugin,
 						"Ignoring legacy character: id = ${it.id}, " +
 								"player = ${it.player.uniqueId} (${it.player.name}), " +
 								"name = ${it.name}, gender = ${it.gender}")
-			} else {
-				throw e
 			}
+			e.printStackTrace()
 		}
 	}
 

@@ -83,6 +83,11 @@ suspend fun promptNewCharacterInfo(player: Player, allowedRaces: Collection<Race
 			continue
 		}
 
+		if (name.isBlank()) {
+			player.sendError("Your character name is blank")
+			continue
+		}
+
 		break
 	}
 

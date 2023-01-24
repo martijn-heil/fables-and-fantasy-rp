@@ -443,6 +443,11 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 						return@launch
 					}
 
+					if (newName.isBlank()) {
+						sender.sendError("Your character name is blank")
+						return@launch
+					}
+
 					if (characterRepository.nameExists(newName)) {
 						sender.sendError("This name is already in use")
 						return@launch
