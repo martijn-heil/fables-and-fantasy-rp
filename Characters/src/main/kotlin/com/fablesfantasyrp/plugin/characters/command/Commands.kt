@@ -2,14 +2,13 @@ package com.fablesfantasyrp.plugin.characters.command
 
 import com.fablesfantasyrp.plugin.characters.*
 import com.fablesfantasyrp.plugin.characters.command.provider.AllowCharacterName
-import com.fablesfantasyrp.plugin.characters.data.CHARACTER_STATS_FLOOR
-import com.fablesfantasyrp.plugin.characters.data.CharacterStatKind
-import com.fablesfantasyrp.plugin.characters.data.CharacterStats
-import com.fablesfantasyrp.plugin.characters.data.Race
+import com.fablesfantasyrp.plugin.characters.data.*
 import com.fablesfantasyrp.plugin.characters.data.entity.Character
 import com.fablesfantasyrp.plugin.characters.gui.CharacterStatsGui
 import com.fablesfantasyrp.plugin.form.YesNoChatPrompt
 import com.fablesfantasyrp.plugin.form.promptChat
+import com.fablesfantasyrp.plugin.form.promptGui
+import com.fablesfantasyrp.plugin.gui.GuiSingleChoice
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.ProfileOccupiedException
 import com.fablesfantasyrp.plugin.profile.ProfilePrompter
@@ -33,9 +32,12 @@ import com.sk89q.intake.parametric.annotation.Switch
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.ChatColor
+import org.bukkit.Material
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
+import org.bukkit.plugin.java.JavaPlugin
 import java.time.Duration
 import java.time.Instant
 
@@ -96,11 +98,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 
 				var info: NewCharacterData
 				while (true) {
-					info = promptNewCharacterInfo(sender,
-							Race.values().asSequence()
-									.filter { it != Race.HUMAN }
-									.filter { if (!isStaffCharacter) it != Race.OTHER else true }
-									.toList())
+					info = promptNewCharacterInfo(sender, getAllowedRaces(isStaffCharacter))
 
 					if (characterRepository.nameExists(info.name)) {
 						sender.sendError("The name '${info.name}' is already in use, please enter a different name.")
@@ -146,7 +144,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 		@Command(aliases = ["card"], desc = "Display a character's card in chat.")
 		@Require(Permission.Command.Characters.Card)
 		fun card(@Sender sender: CommandSender, @CommandTarget target: Character) {
-			sender.sendMessage(characterCard(target))
+			sender.sendMessage(characterCard(target, sender))
 		}
 
 		@Command(aliases = ["kill"], desc = "Kill a character")
@@ -227,30 +225,32 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 			sender.sendMessage("$SYSPREFIX Set ${target.name}'s race to $race")
 		}
 
-		@Command(aliases = ["changename"], desc = "Change a character's name")
-		@Require(Permission.Command.Characters.ChangeName)
-		fun changename(@Sender sender: Player,
-					   @CommandTarget(Permission.Command.Characters.ChangeName + ".others") target: Character) {
-			plugin.launch {
-				val oldName = target.name
-				val newName = sender.promptChat("$SYSPREFIX Please enter ${oldName}'s new name:")
-
-				if (newName.length > 32) {
-					sender.sendError("Your character name cannot be longer than 32 characters")
-					return@launch
-				}
-
-				if (characterRepository.nameExists(newName)) {
-					sender.sendError("This name is already in use")
-					return@launch
-				}
-
-				target.name = newName
-				sender.sendMessage("$SYSPREFIX Changed $oldName's name to $newName")
+		@Command(aliases = ["setage"], desc = "Set a character's age")
+		@Require(Permission.Command.Characters.SetAge)
+		fun setage(@Sender sender: CommandSender, @Range(min = 13.0, max = 999.0) age: Int, target: Character) {
+			if (target.isShelved) {
+				sender.sendError("This character is shelved")
+				return
 			}
+
+			if (target.isDead) {
+				sender.sendError("This character is dead")
+				return
+			}
+
+			val owner = target.profile.owner
+
+			if (sender != owner &&
+					!(sender.hasPermission(Permission.Command.Characters.Shelf + ".any") ||
+							(sender.hasPermission(Permission.Staff) && owner == FABLES_ADMIN))) {
+				sender.sendError("Permission denied")
+				return
+			}
+
+			target.age = age.toUInt()
 		}
 
-		@Command(aliases = ["become"], desc = "Become a character")
+		@Command(aliases = ["become", "switch"], desc = "Become a character")
 		@Require(Permission.Command.Characters.Become)
 		fun become(@Sender sender: Player,
 				   @Optional @AllowCharacterName targetMaybe: Profile?,
@@ -361,6 +361,140 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 						initialSliderValues)
 
 				plugin.launch { target.stats = gui.execute(sender) }
+			}
+		}
+
+		class Change(private val plugin: JavaPlugin) {
+			private fun checkAuthorization(sender: Player, target: Character, permission: String): Boolean {
+				if (target.isShelved) {
+					sender.sendError("This character is shelved")
+					return false
+				}
+
+				if (target.isDead) {
+					sender.sendError("This character is dead")
+					return false
+				}
+
+				val owner = target.profile.owner
+
+				if (sender != owner &&
+						!(sender.hasPermission("$permission.any") ||
+								(sender.hasPermission(Permission.Staff) && target.isStaffCharacter))) {
+					sender.sendError("Permission denied")
+					return false
+				}
+
+				return true
+			}
+
+			@Command(aliases = ["age"], desc = "Set a character's age")
+			@Require(Permission.Command.Characters.Change.Age)
+			fun age(@Sender sender: Player, @CommandTarget target: Character) {
+				if(!checkAuthorization(sender, target, Permission.Command.Characters.Change.Age)) return
+
+				plugin.launch {
+					val age = sender.promptChat("$SYSPREFIX Please enter ${target.name}'s new age")
+							.let {
+								it.toUIntOrNull() ?: run {
+									sender.sendError("Invalid number '$it'")
+									return@launch
+								}
+							}
+
+					if (age < 13U || age > 1000U) {
+						sender.sendError("Your age must be at least 13 and at most 1000")
+						return@launch
+					}
+
+					target.age = age
+					sender.sendMessage("$SYSPREFIX Changed ${target.name}'s age to $age")
+				}
+			}
+
+			@Command(aliases = ["description"], desc = "Change a character's description")
+			@Require(Permission.Command.Characters.Change.Description)
+			fun description(@Sender sender: Player, @CommandTarget target: Character) {
+				if(!checkAuthorization(sender, target, Permission.Command.Characters.Change.Description)) return
+
+				plugin.launch {
+					val newDescription = sender.promptChat("$SYSPREFIX Please enter ${target.name}'s new description:")
+					target.description = newDescription
+					sender.sendMessage("$SYSPREFIX Description changed!")
+				}
+			}
+
+			@Command(aliases = ["name"], desc = "Change a character's name")
+			@Require(Permission.Command.Characters.Change.Name)
+			fun name(@Sender sender: Player, @CommandTarget target: Character) {
+				if(!checkAuthorization(sender, target, Permission.Command.Characters.Change.Name)) return
+
+				plugin.launch {
+					val oldName = target.name
+					val newName = sender.promptChat("$SYSPREFIX Please enter ${oldName}'s new name:")
+
+					if (newName.length > 32) {
+						sender.sendError("Your character name cannot be longer than 32 characters")
+						return@launch
+					}
+
+					if (NAME_DISALLOWED_CHARACTERS.containsMatchIn(newName)) {
+						sender.sendError("Your character name contains illegal characters, please only use alphanumeric characters and single quotes.")
+						return@launch
+					}
+
+					if (characterRepository.nameExists(newName)) {
+						sender.sendError("This name is already in use")
+						return@launch
+					}
+
+					target.name = newName
+					sender.sendMessage("$SYSPREFIX Changed $oldName's name to $newName")
+				}
+			}
+
+			@Command(aliases = ["stats"], desc = "Change a character's stats")
+			@Require(Permission.Command.Characters.Change.Stats)
+			fun stats(@Sender sender: Player, @CommandTarget target: Character) {
+				sender.performCommand("char stats edit #${target.id}")
+			}
+
+			@Command(aliases = ["race"], desc = "Change a character's race")
+			@Require(Permission.Command.Characters.Change.Race)
+			fun race(@Sender sender: Player, @CommandTarget target: Character) {
+				if(!checkAuthorization(sender, target, Permission.Command.Characters.Change.Race)) return
+				plugin.launch {
+					val race: Race = sender.promptGui(GuiSingleChoice(plugin,
+							"Please choose a new race",
+							getAllowedRaces(target.isStaffCharacter).asSequence(),
+							{ it.itemStackRepresentation },
+							{ "${ChatColor.GOLD}$it" }
+					))
+					target.race = race
+					sender.sendMessage("$SYSPREFIX Changed ${target.name}'s race to $race")
+				}
+			}
+
+			@Command(aliases = ["gender"], desc = "Change a character's gender")
+			@Require(Permission.Command.Characters.Change.Gender)
+			fun gender(@Sender sender: Player, @CommandTarget target: Character) {
+				if(!checkAuthorization(sender, target, Permission.Command.Characters.Change.Gender)) return
+				plugin.launch {
+					val gender: Gender = sender.promptGui(GuiSingleChoice(FablesCharacters.instance,
+							"Please choose a new gender",
+							Gender.values().asSequence(),
+							{
+								ItemStack(when (it) {
+									Gender.MALE -> Material.CYAN_WOOL
+									Gender.FEMALE -> Material.PINK_WOOL
+									Gender.OTHER -> Material.WHITE_WOOL
+								})
+							},
+							{ "${ChatColor.GOLD}" + it.toString().replaceFirstChar { firstChar -> firstChar.uppercase() } }
+					))
+					target.gender = gender
+					sender.sendMessage("$SYSPREFIX Changed ${target.name}'s gender to $gender")
+				}
 			}
 		}
 	}

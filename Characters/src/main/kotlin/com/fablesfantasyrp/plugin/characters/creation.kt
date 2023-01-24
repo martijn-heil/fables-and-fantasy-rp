@@ -37,6 +37,29 @@ import kotlin.coroutines.cancellation.CancellationException
 data class NewCharacterData(val name: String, val age: UInt, val gender: Gender, val race: Race,
 							val description: String, val stats: CharacterStats)
 
+fun getAllowedRaces(isStaffCharacter: Boolean): Collection<Race> = Race.values().asSequence()
+				.filter { it != Race.HUMAN }
+				.filter { if (!isStaffCharacter) it != Race.OTHER else true }
+				.toList()
+
+val NAME_DISALLOWED_CHARACTERS = Regex("[^A-Za-z0-9 ']")
+
+val Race.itemStackRepresentation: ItemStack get() = ItemStack(when (this) {
+			Race.HUMAN -> Material.HAY_BLOCK
+			Race.ATTIAN_HUMAN -> Material.HAY_BLOCK
+			Race.KHADAN_HUMAN -> Material.HAY_BLOCK
+			Race.HINTERLANDER_HUMAN -> Material.HAY_BLOCK
+			Race.HIGH_ELF -> Material.PURPLE_TERRACOTTA
+			Race.DARK_ELF -> Material.COPPER_BLOCK
+			Race.WOOD_ELF -> Material.OAK_LOG
+			Race.DWARF -> Material.DEEPSLATE_BRICKS
+			Race.TIEFLING -> Material.MAGMA_BLOCK
+			Race.ORC -> Material.MOSS_BLOCK
+			Race.GOBLIN -> Material.LIGHT_GRAY_TERRACOTTA
+			Race.HALFLING -> Material.CRAFTING_TABLE
+			Race.OTHER -> Material.CARVED_PUMPKIN
+		})
+
 suspend fun promptNewCharacterInfo(player: Player, allowedRaces: Collection<Race>): NewCharacterData {
 	player.sendMessage(miniMessage.deserialize("<gray>Welcome, <yellow><player_name></yellow>!</gray>",
 			Placeholder.unparsed("player_name", player.name)))
@@ -52,6 +75,11 @@ suspend fun promptNewCharacterInfo(player: Player, allowedRaces: Collection<Race
 
 		if (name.length > 32) {
 			player.sendError("Your character name must not be longer than 32 characters.")
+			continue
+		}
+
+		if (NAME_DISALLOWED_CHARACTERS.containsMatchIn(name)) {
+			player.sendError("Your character name contains illegal characters, please only use alphanumeric characters and single quotes.")
 			continue
 		}
 
@@ -92,23 +120,7 @@ suspend fun promptNewCharacterInfo(player: Player, allowedRaces: Collection<Race
 	val race = player.promptGui(GuiSingleChoice<Race>(FablesCharacters.instance,
 			"Please choose a race",
 			allowedRaces.asSequence(),
-			{
-				ItemStack(when (it) {
-					Race.ATTIAN_HUMAN -> Material.HAY_BLOCK
-					Race.KHADAN_HUMAN -> Material.HAY_BLOCK
-					Race.HINTERLANDER_HUMAN -> Material.HAY_BLOCK
-					Race.HIGH_ELF -> Material.PURPLE_TERRACOTTA
-					Race.DARK_ELF -> Material.COPPER_BLOCK
-					Race.WOOD_ELF -> Material.OAK_LOG
-					Race.DWARF -> Material.DEEPSLATE_BRICKS
-					Race.TIEFLING -> Material.MAGMA_BLOCK
-					Race.ORC -> Material.MOSS_BLOCK
-					Race.GOBLIN -> Material.LIGHT_GRAY_TERRACOTTA
-					Race.HALFLING -> Material.CRAFTING_TABLE
-					Race.OTHER -> Material.CARVED_PUMPKIN
-					else -> throw IllegalStateException()
-				})
-			},
+			{ it.itemStackRepresentation },
 			{ "${ChatColor.GOLD}$it" }
 	))
 

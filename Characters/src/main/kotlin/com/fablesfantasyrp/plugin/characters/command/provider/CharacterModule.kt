@@ -16,11 +16,11 @@ import org.bukkit.Server
 import org.bukkit.entity.Player
 
 class CharacterModule(private val server: Server,
-						private val characterRepository: EntityCharacterRepository,
-						private val profileProvider: Provider<Profile>) : AbstractModule() {
+					  private val characters: EntityCharacterRepository,
+					  private val profileProvider: Provider<Profile>) : AbstractModule() {
 	override fun configure() {
-		bind(Character::class.java).toProvider(CharacterProvider(server))
-		bind(CharacterData::class.java).toProvider(CharacterProvider(server) as Provider<CharacterData>)
+		bind(Character::class.java).toProvider(CharacterProvider(server, characters))
+		bind(CharacterData::class.java).toProvider(CharacterProvider(server, characters) as Provider<CharacterData>)
 		bind(CharacterStatKind::class.java).toProvider(EnumProvider(CharacterStatKind::class.java))
 		bind(Race::class.java).toProvider(EnumProvider(Race::class.java))
 		bind(Player::class.java).annotatedWith(AllowCharacterName::class.java)
@@ -28,7 +28,7 @@ class CharacterModule(private val server: Server,
 						PlayerProvider(server, OfflinePlayerProvider(server))))
 		bind(Profile::class.java).annotatedWith(AllowCharacterName::class.java)
 				.toProvider(AllowCharacterNameProfileProvider(server,
-						characterRepository,
+						characters,
 						profileProvider,
 						profileManager))
 	}

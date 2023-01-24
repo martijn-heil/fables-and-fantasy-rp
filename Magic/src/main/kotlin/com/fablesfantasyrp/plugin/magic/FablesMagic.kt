@@ -72,7 +72,7 @@ class FablesMagic : SuspendingJavaPlugin() {
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
 		injector.install(CharacterModule(server, characterRepository, ProfileProvider(profiles, profileManager)))
-		injector.install(MagicModule(server))
+		injector.install(MagicModule(server, Services.get()))
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()

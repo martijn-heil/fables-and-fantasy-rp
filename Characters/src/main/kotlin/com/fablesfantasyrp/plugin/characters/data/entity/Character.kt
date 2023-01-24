@@ -42,6 +42,7 @@ class Character : DataEntity<Int, Character>, CharacterData {
 			}
 
 			field = value
+			if (field) this.isShelved = false
 			profile.isActive = !(isShelved || isDead)
 			dirtyMarker?.markDirty(this)
 		}

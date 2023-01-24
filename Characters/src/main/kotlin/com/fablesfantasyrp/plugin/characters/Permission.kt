@@ -6,26 +6,36 @@ object Permission {
 	const val Any = "${prefix}.any"
 
 	object Command {
-		private const val prefix = Permission.prefix + ".command"
+		const val prefix = Permission.prefix + ".command"
 		const val Updatestats = "${prefix}.updatestats"
 
 		object Characters {
-			private const val prefix = Permission.Command.prefix + ".characters"
-			const val New = "${Command.prefix}.new"
-			const val List = "${Command.prefix}.list"
-			const val Card = "${Command.prefix}.card"
-			const val Kill = "${Command.prefix}.kill"
-			const val Resurrect = "${Command.prefix}.resurrect"
-			const val Shelf = "${Command.prefix}.shelf"
-			const val Unshelf = "${Command.prefix}.unshelf"
-			const val SetRace = "${Command.prefix}.setrace"
-			const val Become = "${Command.prefix}.become"
-			const val ChangeName = "${Command.prefix}.changename"
+			const val prefix = Permission.Command.prefix + ".characters"
+			const val New = "${prefix}.new"
+			const val List = "${prefix}.list"
+			const val Card = "${prefix}.card"
+			const val Kill = "${prefix}.kill"
+			const val Resurrect = "${prefix}.resurrect"
+			const val Shelf = "${prefix}.shelf"
+			const val Unshelf = "${prefix}.unshelf"
+			const val SetRace = "${prefix}.setrace"
+			const val SetAge = "${prefix}.setage"
+			const val Become = "${prefix}.become"
 
 			object Stats {
 				private const val prefix = Permission.Command.Characters.prefix + ".stats"
-				const val Set = "${Command.prefix}.set"
-				const val Edit = "${Command.prefix}.edit"
+				const val Set = "${prefix}.set"
+				const val Edit = "${prefix}.edit"
+			}
+
+			object Change {
+				private const val prefix = Permission.Command.Characters.prefix + ".change"
+				const val Description = "${prefix}.description"
+				const val Age = "${prefix}.age"
+				const val Name = "${prefix}.name"
+				const val Stats = "${prefix}.stats"
+				const val Race = "${prefix}.race"
+				const val Gender = "${prefix}.gender"
 			}
 		}
 	}

@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.magic.command.provider
 
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterProvider
+import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
 import com.fablesfantasyrp.plugin.magic.MagicPath
 import com.fablesfantasyrp.plugin.magic.MagicType
 import com.fablesfantasyrp.plugin.magic.ability.MageAbility
@@ -12,9 +13,9 @@ import com.sk89q.intake.parametric.AbstractModule
 import com.sk89q.intake.parametric.provider.EnumProvider
 import org.bukkit.Server
 
-class MagicModule(private val server: Server) : AbstractModule() {
+class MagicModule(private val server: Server, private val characters: EntityCharacterRepository) : AbstractModule() {
 	override fun configure() {
-		bind(Mage::class.java).toProvider(MageProvider(CharacterProvider(server)))
+		bind(Mage::class.java).toProvider(MageProvider(CharacterProvider(server, characters)))
 		bind(Mage::class.java).annotatedWith(Sender::class.java).toProvider(MageSenderProvider())
 		bind(SimpleSpellData::class.java).annotatedWith(OwnSpell::class.java)
 				.toProvider(OwnSpellDataProvider(SpellDataProvider(spellRepository)))

@@ -64,6 +64,6 @@ class CharactersListener(private val plugin: Plugin,
 			e.player.sendMessage("$SYSPREFIX ${e.rightClicked.name} is currently not in-character")
 			return
 		}
-		e.player.sendMessage(characterCard(character))
+		e.player.sendMessage(characterCard(character, e.player))
 	}
 }
