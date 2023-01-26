@@ -42,7 +42,7 @@ fun getAllowedRaces(isStaffCharacter: Boolean): Collection<Race> = Race.values()
 				.filter { if (!isStaffCharacter) it != Race.OTHER else true }
 				.toList()
 
-val NAME_DISALLOWED_CHARACTERS = Regex("[^A-Za-z0-9 ']")
+val NAME_DISALLOWED_CHARACTERS = Regex("[^A-Za-z0-9\\- ']")
 
 val Race.itemStackRepresentation: ItemStack get() = ItemStack(when (this) {
 			Race.HUMAN -> Material.HAY_BLOCK
