@@ -12,7 +12,6 @@ import com.fablesfantasyrp.plugin.profile.data.entity.ProfileRepository
 import org.bukkit.OfflinePlayer
 import org.bukkit.Server
 import java.sql.ResultSet
-import java.sql.Timestamp
 import java.time.Instant
 import javax.sql.DataSource
 
@@ -51,6 +50,7 @@ class H2CharacterRepository(private val server: Server,
 					"race, " +
 					"gender, " +
 					"created_at, " +
+					"changed_stats_at, " +
 					"last_seen, " +
 					"stat_strength, stat_defense, stat_agility, stat_intelligence) " +
 					"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
@@ -60,12 +60,13 @@ class H2CharacterRepository(private val server: Server,
 			stmnt.setInt(4, v.age.toInt())
 			stmnt.setString(5, v.race.name)
 			stmnt.setString(6, v.gender.name)
-			stmnt.setTimestamp(7, if (v.createdAt != null) Timestamp.from(v.createdAt) else null)
-			stmnt.setTimestamp(8, if (v.lastSeen != null) Timestamp.from(v.lastSeen) else null)
-			stmnt.setInt(9, v.stats.strength.toInt())
-			stmnt.setInt(10, v.stats.defense.toInt())
-			stmnt.setInt(11, v.stats.agility.toInt())
-			stmnt.setInt(12, v.stats.intelligence.toInt())
+			stmnt.setObject(7, v.createdAt)
+			stmnt.setObject(8, v.changedStatsAt)
+			stmnt.setObject(9, v.lastSeen)
+			stmnt.setInt(10, v.stats.strength.toInt())
+			stmnt.setInt(11, v.stats.defense.toInt())
+			stmnt.setInt(12, v.stats.agility.toInt())
+			stmnt.setInt(13, v.stats.intelligence.toInt())
 			stmnt.executeUpdate()
 			v.dirtyMarker = dirtyMarker
 			return Character(
@@ -154,6 +155,7 @@ class H2CharacterRepository(private val server: Server,
 					"is_shelved = ?, " +
 					"died_at = ?, " +
 					"shelved_at = ?, " +
+					"changed_stats_at = ?, " +
 					"stat_strength = ?, " +
 					"stat_defense = ?, " +
 					"stat_agility = ?, " +
@@ -170,11 +172,12 @@ class H2CharacterRepository(private val server: Server,
 			stmnt.setBoolean(9, v.isShelved)
 			stmnt.setObject(10, v.diedAt)
 			stmnt.setObject(11, v.shelvedAt)
-			stmnt.setInt(12, v.stats.strength.toInt())
-			stmnt.setInt(13, v.stats.defense.toInt())
-			stmnt.setInt(14, v.stats.agility.toInt())
-			stmnt.setInt(15, v.stats.intelligence.toInt())
-			stmnt.setInt(16, v.id)
+			stmnt.setObject(12, v.changedStatsAt)
+			stmnt.setInt(13, v.stats.strength.toInt())
+			stmnt.setInt(14, v.stats.defense.toInt())
+			stmnt.setInt(15, v.stats.agility.toInt())
+			stmnt.setInt(16, v.stats.intelligence.toInt())
+			stmnt.setInt(17, v.id)
 			stmnt.executeUpdate()
 		}
 	}
@@ -194,6 +197,7 @@ class H2CharacterRepository(private val server: Server,
 		val lastSeen = result.getObject("last_seen", Instant::class.java)
 		val shelvedAt = result.getObject("shelved_at", Instant::class.java)
 		val diedAt = result.getObject("died_at", Instant::class.java)
+		val changedStatsAt = result.getObject("changed_stats_at", Instant::class.java)
 		val isDead = result.getBoolean("is_dead")
 		val isShelved = result.getBoolean("is_shelved")
 
@@ -211,7 +215,8 @@ class H2CharacterRepository(private val server: Server,
 				isShelved = isShelved,
 				shelvedAt = shelvedAt,
 				diedAt = diedAt,
-				profile = profiles.forId(id.toInt())!!,
+				changedStatsAt = changedStatsAt,
+				profile = profiles.forId(id)!!,
 				dirtyMarker = dirtyMarker
 		)
 	}

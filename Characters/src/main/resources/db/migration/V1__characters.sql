@@ -11,6 +11,7 @@ CREATE TABLE characters (
 	last_seen				TIMESTAMP WITH TIME ZONE,
 	died_at					TIMESTAMP WITH TIME ZONE,
 	shelved_at				TIMESTAMP WITH TIME ZONE,
+	changed_stats_at		TIMESTAMP WITH TIME ZONE,
 	stat_strength			TINYINT NOT NULL,
 	stat_defense			TINYINT NOT NULL,
 	stat_agility			TINYINT NOT NULL,

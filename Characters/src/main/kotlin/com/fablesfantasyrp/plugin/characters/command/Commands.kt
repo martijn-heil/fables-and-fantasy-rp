@@ -4,6 +4,7 @@ import com.fablesfantasyrp.plugin.characters.*
 import com.fablesfantasyrp.plugin.characters.command.provider.AllowCharacterName
 import com.fablesfantasyrp.plugin.characters.data.*
 import com.fablesfantasyrp.plugin.characters.data.entity.Character
+import com.fablesfantasyrp.plugin.characters.event.CharacterChangeStatsEvent
 import com.fablesfantasyrp.plugin.characters.gui.CharacterStatsGui
 import com.fablesfantasyrp.plugin.form.YesNoChatPrompt
 import com.fablesfantasyrp.plugin.form.promptChat
@@ -20,6 +21,7 @@ import com.fablesfantasyrp.plugin.text.sendError
 import com.fablesfantasyrp.plugin.timers.CancelReason
 import com.fablesfantasyrp.plugin.timers.countdown
 import com.fablesfantasyrp.plugin.utils.FABLES_ADMIN
+import com.fablesfantasyrp.plugin.utils.broadcast
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.gitlab.martijn_heil.nincommands.common.CommandTarget
@@ -40,6 +42,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 import java.time.Duration
 import java.time.Instant
+import kotlin.math.max
 
 class LegacyCommands(private val characterCommands: Commands.Characters) {
 	@Command(aliases = ["newcharacter", "newchar", "nc"], desc = "Create a new character!")
@@ -347,8 +350,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 
 			@Command(aliases = ["edit"], desc = "Edit character stats")
 			@Require(Permission.Command.Characters.Stats.Edit)
-			fun edit(@Sender sender: Player,
-					@CommandTarget(Permission.Command.Characters.Stats.Edit + ".others") target: Character) {
+			fun edit(@Sender sender: Player, target: Character) {
 				val minimums = target.race.boosters + CHARACTER_STATS_FLOOR
 				var initialSliderValues = target.stats
 				if (initialSliderValues.strength > 8U ||
@@ -366,7 +368,10 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 			}
 		}
 
-		class Change(private val plugin: JavaPlugin) {
+		class Change(private val plugin: JavaPlugin,
+					 private val profileManager: ProfileManager) {
+			private val server = plugin.server
+
 			private fun checkAuthorization(sender: Player, target: Character, permission: String): Boolean {
 				if (target.isShelved) {
 					sender.sendError("This character is shelved")
@@ -463,13 +468,43 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 			@Command(aliases = ["stats"], desc = "Change a character's stats")
 			@Require(Permission.Command.Characters.Change.Stats)
 			fun stats(@Sender sender: Player, @CommandTarget target: Character) {
-				sender.performCommand("char stats edit #${target.id}")
+				if (!checkAuthorization(sender, target, Permission.Command.Characters.Change.Stats)) return
+
+				if (!target.isStaffCharacter) {
+					val daysLeft = max(0, Duration.between(target.changedStatsAt, Instant.now()).toDays() - 30)
+					if (daysLeft > 0) {
+						sender.sendError("You must wait $daysLeft more days before you can change your stats again!")
+						return
+					}
+				}
+
+				val minimums = target.race.boosters + CHARACTER_STATS_FLOOR
+				var initialSliderValues = target.stats
+				if (initialSliderValues.strength > 8U ||
+						initialSliderValues.defense > 8U ||
+						initialSliderValues.agility > 8U ||
+						initialSliderValues.intelligence > 8u) {
+					sender.sendMessage("$SYSPREFIX Detected that you will be editing legacy player stats, starting with a clean slate.")
+					initialSliderValues = CharacterStats(0U, 0U, 0U, 0U)
+				}
+
+				val gui = CharacterStatsGui(plugin, minimums, "#${target.id} ${target.name}'s stats", initialSliderValues)
+				plugin.launch {
+					val oldStats = target.stats
+					val newStats = gui.execute(sender)
+					target.stats = newStats
+
+					server.pluginManager.callEvent(CharacterChangeStatsEvent(target, oldStats, newStats))
+
+					val player = profileManager.getCurrentForProfile(target.profile) ?: return@launch
+					server.broadcast(player.location, 30, "$SYSPREFIX ${target.name} changed their stats!")
+				}
 			}
 
 			@Command(aliases = ["race"], desc = "Change a character's race")
 			@Require(Permission.Command.Characters.Change.Race)
 			fun race(@Sender sender: Player, @CommandTarget target: Character) {
-				if(!checkAuthorization(sender, target, Permission.Command.Characters.Change.Race)) return
+				if (!checkAuthorization(sender, target, Permission.Command.Characters.Change.Race)) return
 				plugin.launch {
 					val race: Race = sender.promptGui(GuiSingleChoice(plugin,
 							"Please choose a new race",
@@ -485,7 +520,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 			@Command(aliases = ["gender"], desc = "Change a character's gender")
 			@Require(Permission.Command.Characters.Change.Gender)
 			fun gender(@Sender sender: Player, @CommandTarget target: Character) {
-				if(!checkAuthorization(sender, target, Permission.Command.Characters.Change.Gender)) return
+				if (!checkAuthorization(sender, target, Permission.Command.Characters.Change.Gender)) return
 				plugin.launch {
 					val gender: Gender = sender.promptGui(GuiSingleChoice(FablesCharacters.instance,
 							"Please choose a new gender",

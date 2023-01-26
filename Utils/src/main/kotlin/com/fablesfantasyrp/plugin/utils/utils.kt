@@ -3,14 +3,12 @@ package com.fablesfantasyrp.plugin.utils
 import com.earth2me.essentials.User
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
-import org.bukkit.Bukkit
-import org.bukkit.Location
-import org.bukkit.OfflinePlayer
-import org.bukkit.World
+import org.bukkit.*
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 import java.util.*
 import java.util.concurrent.locks.Lock
+import kotlin.math.roundToLong
 
 // This code is supported by SuperVanish, PremiumVanish, VanishNoPacket and a few more vanish plugins.
 val Player.isVanished: Boolean
@@ -33,6 +31,21 @@ fun enforceDependencies(plugin: Plugin) {
 		}
 	}
 }
+
+fun Server.broadcast(location: Location, range: Int, message: Component) {
+	getPlayersWithinRange(location, range.toUInt()).forEach { it.sendMessage(message) }
+}
+
+fun Server.broadcast(location: Location, range: Int, message: String) {
+	getPlayersWithinRange(location, range.toUInt()).forEach { it.sendMessage(message) }
+}
+
+fun getPlayersWithinRange(from: Location, range: UInt) =
+		Bukkit.getOnlinePlayers()
+				.asSequence().filter {
+					val to = it.location;
+					to.world == from.world && from.distance(to).roundToLong().toUInt() <= range
+				}
 
 fun Boolean.asEnabledDisabledComponent(): Component
 	= if (this) {

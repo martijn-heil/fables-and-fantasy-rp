@@ -21,6 +21,7 @@ class Character : DataEntity<Int, Character>, CharacterData {
 
 	var diedAt: Instant?
 	var shelvedAt: Instant?
+	var changedStatsAt: Instant?
 
 	var isDead: Boolean
 		set(value) {
@@ -105,6 +106,7 @@ class Character : DataEntity<Int, Character>, CharacterData {
 				diedAt: Instant? = null,
 				isShelved: Boolean = false,
 				shelvedAt: Instant? = null,
+				changedStatsAt: Instant? = null,
 				dirtyMarker: DirtyMarker<Character>? = null) {
 		this.id = id
 		this.profile = profile
@@ -120,6 +122,7 @@ class Character : DataEntity<Int, Character>, CharacterData {
 		this.isShelved = isShelved
 		this.diedAt = diedAt
 		this.shelvedAt = shelvedAt
+		this.changedStatsAt = changedStatsAt
 
 		this.dirtyMarker = dirtyMarker
 	}
