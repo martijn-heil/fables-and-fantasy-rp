@@ -1,8 +1,10 @@
 package com.fablesfantasyrp.plugin.characters
 
+import com.denizenscript.denizen.objects.PlayerTag
 import com.denizenscript.denizencore.objects.core.ElementTag
 import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
 import com.fablesfantasyrp.plugin.denizeninterop.dFlags
+import com.fablesfantasyrp.plugin.denizeninterop.denizenRun
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.data.entity.EntityProfileRepository
 import com.fablesfantasyrp.plugin.profile.event.PlayerForceProfileSelectionEvent
@@ -37,6 +39,11 @@ class CharactersListener(private val plugin: Plugin,
 	fun onPlayerSwitchProfile2(e: PostPlayerSwitchProfileEvent) {
 		val newCharacter = e.new?.let { characters.forProfile(it) }
 		e.player.dFlags.setFlag("characters_name", newCharacter?.let { ElementTag(it.name) }, null)
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	fun onPlayerSwitchProfile3(e: PostPlayerSwitchProfileEvent) {
+		denizenRun("warpcrystal_ensure_presence", mapOf("player" to PlayerTag(e.player)))
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)

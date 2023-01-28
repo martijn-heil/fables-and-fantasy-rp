@@ -470,8 +470,8 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 			fun stats(@Sender sender: Player, @CommandTarget target: Character) {
 				if (!checkAuthorization(sender, target, Permission.Command.Characters.Change.Stats)) return
 
-				if (!target.isStaffCharacter) {
-					val daysLeft = max(0, Duration.between(target.changedStatsAt, Instant.now()).toDays() - 30)
+				if (!target.isStaffCharacter && target.changedStatsAt != null) {
+					val daysLeft = max(0, 30 - Duration.between(target.changedStatsAt, Instant.now()).toDays())
 					if (daysLeft > 0) {
 						sender.sendError("You must wait $daysLeft more days before you can change your stats again!")
 						return
@@ -495,6 +495,8 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 					target.stats = newStats
 
 					server.pluginManager.callEvent(CharacterChangeStatsEvent(target, oldStats, newStats))
+
+					target.changedStatsAt = Instant.now()
 
 					val player = profileManager.getCurrentForProfile(target.profile) ?: return@launch
 					server.broadcast(player.location, 30, "$SYSPREFIX ${target.name} changed their stats!")

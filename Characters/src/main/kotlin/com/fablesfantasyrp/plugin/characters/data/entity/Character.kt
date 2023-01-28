@@ -19,9 +19,9 @@ class Character : DataEntity<Int, Character>, CharacterData {
 	var lastSeen: Instant?
 		get() = if (Services.get<ProfileManager>().getCurrentForProfile(profile) != null) Instant.now() else field
 
-	var diedAt: Instant?
-	var shelvedAt: Instant?
-	var changedStatsAt: Instant?
+	var diedAt: Instant? 			set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
+	var shelvedAt: Instant? 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
+	var changedStatsAt: Instant? 	set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 
 	var isDead: Boolean
 		set(value) {

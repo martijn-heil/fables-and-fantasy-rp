@@ -84,7 +84,7 @@ class FablesCharacters : SuspendingJavaPlugin() {
 		rootDispatcherNode.registerMethods(LegacyCommands(characterCommands))
 
 		charactersCommand.group("stats").registerMethods(Commands.Characters.Stats(this))
-		charactersCommand.group("change").registerMethods(Commands.Characters.Change(this))
+		charactersCommand.group("change").registerMethods(Commands.Characters.Change(this, Services.get()))
 
 		val dispatcher = rootDispatcherNode.dispatcher
 

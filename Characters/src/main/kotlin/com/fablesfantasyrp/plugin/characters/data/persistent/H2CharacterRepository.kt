@@ -53,7 +53,7 @@ class H2CharacterRepository(private val server: Server,
 					"changed_stats_at, " +
 					"last_seen, " +
 					"stat_strength, stat_defense, stat_agility, stat_intelligence) " +
-					"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+					"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
 			stmnt.setInt(1, v.profile.id)
 			stmnt.setString(2, v.name)
 			stmnt.setString(3, v.description)
