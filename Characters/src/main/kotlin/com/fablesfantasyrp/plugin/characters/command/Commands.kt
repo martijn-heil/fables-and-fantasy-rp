@@ -162,7 +162,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 
 			if (sender != owner &&
 					!(sender.hasPermission(Permission.Command.Characters.Kill + ".any") ||
-							(sender.hasPermission(Permission.Staff) && owner == FABLES_ADMIN))) {
+							(sender.hasPermission(Permission.Staff) && target.isStaffCharacter))) {
 				sender.sendError("Permission denied")
 			}
 
@@ -189,7 +189,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 
 			if (sender != owner &&
 					!(sender.hasPermission(Permission.Command.Characters.Shelf + ".any") ||
-							(sender.hasPermission(Permission.Staff) && owner == FABLES_ADMIN))) {
+							(sender.hasPermission(Permission.Staff) && target.isStaffCharacter))) {
 				sender.sendError("Permission denied")
 				return
 			}
@@ -247,7 +247,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 
 			if (sender != owner &&
 					!(sender.hasPermission(Permission.Command.Characters.Shelf + ".any") ||
-							(sender.hasPermission(Permission.Staff) && owner == FABLES_ADMIN))) {
+							(sender.hasPermission(Permission.Staff) && target.isStaffCharacter))) {
 				sender.sendError("Permission denied")
 				return
 			}
@@ -338,7 +338,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 					stat: CharacterStatKind,
 					@Range(min = 0.0) value: Int,
 					@CommandTarget target: Character) {
-				if (!(target.profile.owner == FABLES_ADMIN && sender.hasPermission(Permission.Staff))
+				if (!(target.isStaffCharacter && sender.hasPermission(Permission.Staff))
 						&& !sender.hasPermission(Permission.Command.Characters.Stats.Set + ".others")) {
 					sender.sendError("You don't have permission to set the stats of this character")
 					return
