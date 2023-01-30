@@ -14,9 +14,8 @@ open class EntityPlayerRepository<C, T: Identifiable<UUID>>(child: C, private va
 
 	override fun forPlayer(player: OfflinePlayer) = this.forId(player.uniqueId)!!
 
-	override fun init(): SimpleEntityRepository<UUID, T, C> {
+	override fun init() {
 		super.init()
 		OnlinePlayerCacheMarker(plugin, this) { p -> forId(p.uniqueId)!! }.start()
-		return this
 	}
 }

@@ -1,0 +1,10 @@
+name: FablesDailyRewards
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+  - FablesDenizenInterop
+  - FablesProfile
+main: com.fablesfantasyrp.plugin.dailyrewards.FablesDailyRewards
+api-version: @bukkit_api_version@

@@ -16,7 +16,7 @@ open class GuiSingleChoice<E>(plugin: JavaPlugin,
 						 getItemStack: (value: E) -> ItemStack,
 						 getText: ((value: E) -> String)? = null
 )
-	: ResultProducingGui<E>(plugin, title,
+	: ResultProducingInventoryGui<E>(plugin, title,
 		arrayOf("ggggggggg",
 				"ggggggggg",
 				"ggggggggg",

@@ -1,0 +1,12 @@
+name: FablesStaffProfiles
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+  - FablesDatabase
+  - FablesProfile
+softdepend:
+  - FablesWorldBoundProfiles
+main: com.fablesfantasyrp.plugin.staffprofiles.FablesStaffProfiles
+api-version: @bukkit_api_version@

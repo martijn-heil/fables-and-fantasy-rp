@@ -4,6 +4,7 @@ import net.quazar.offlinemanager.api.data.entity.IPlayerData
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.OfflinePlayer
+import org.bukkit.inventory.Inventory
 
 private val OfflinePlayer.offlinePlayerData: IPlayerData
 	get() = offlineManagerAPI.getPlayerData(uniqueId)
@@ -95,5 +96,11 @@ var OfflinePlayer.isInvulnerable: Boolean
 			offlinePlayerData.isInvulnerable = value
 		}
 	}
+
+val OfflinePlayer.offlineEnderChest: Inventory
+	get() = offlinePlayerData.enderChest.enderChest
+
+val OfflinePlayer.offlineInventory: Inventory
+	get() = offlinePlayerData.inventory
 
 // TODO add more

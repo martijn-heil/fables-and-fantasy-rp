@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.magic.data.persistent
 
-import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterData
+import com.fablesfantasyrp.plugin.characters.data.CharacterData
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
 import com.fablesfantasyrp.plugin.magic.MagicPath
@@ -49,11 +49,11 @@ class H2MageRepository(private val server: Server, private val dataSource: DataS
 		return v
 	}
 
-	override fun forPlayerCharacter(c: PlayerCharacterData): Mage {
+	override fun forPlayerCharacter(c: CharacterData): Mage {
 		return forId(c.id.toLong())!!
 	}
 
-	override fun forPlayerCharacterOrCreate(c: PlayerCharacterData): Mage {
+	override fun forPlayerCharacterOrCreate(c: CharacterData): Mage {
 		return forIdMaybe(c.id.toLong()) ?: run {
 			this.create(Mage(0, MagicPath.AEROMANCY, 1, emptyList()))
 		}

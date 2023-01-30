@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.magic.command
 
 import com.fablesfantasyrp.plugin.characters.currentPlayerCharacter
-import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterData
+import com.fablesfantasyrp.plugin.characters.data.CharacterData
 import com.fablesfantasyrp.plugin.magic.*
 import com.fablesfantasyrp.plugin.magic.ability.MageAbility
 import com.fablesfantasyrp.plugin.magic.animations.NecromancyBlightAnimation
@@ -12,6 +12,8 @@ import com.fablesfantasyrp.plugin.magic.data.entity.Mage
 import com.fablesfantasyrp.plugin.magic.exception.OpenTearException
 import com.fablesfantasyrp.plugin.magic.gui.SpellbookGui
 import com.fablesfantasyrp.plugin.math.*
+import com.fablesfantasyrp.plugin.profile.ProfileManager
+import com.fablesfantasyrp.plugin.profile.profileManager
 import com.fablesfantasyrp.plugin.text.join
 import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
@@ -31,7 +33,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.util.Vector
 
-class Commands {
+class Commands(private val profileManager: ProfileManager) {
 
 	@Command(aliases = ["magicdebug", "mdbg"], desc = "Test various things in Magic.")
 	@Require("fables.magic.command.magicdebug")
@@ -77,7 +79,8 @@ class Commands {
 			try {
 				sender.openTear()
 			} catch (ex: OpenTearException) {
-				sender.playerCharacter.player.player?.sendError(ex.message ?: "Unknown error (${ex.javaClass.simpleName})")
+				val player = profileManager.getCurrentForProfile(sender.character.profile)
+				player?.sendError(ex.message ?: "Unknown error (${ex.javaClass.simpleName})")
 			} catch (ex: Exception) {
 				ex.printStackTrace()
 			}
@@ -87,7 +90,7 @@ class Commands {
 	@Command(aliases = ["closetear"], desc = "Attempt to close a tear.")
 	@Require(Permission.Command.Closetear)
 	fun closetear(@Sender sender: Mage) {
-		val player = sender.playerCharacter.player.player!!
+		val player = profileManager.getCurrentForProfile(sender.character.profile)!!
 		PLUGIN.launch {
 			val block = player.getTargetBlock(30) ?: run {
 				player.sendError("Block too far away")
@@ -106,14 +109,14 @@ class Commands {
 	@Command(aliases = ["grimoire", "spellbook"], desc = "Show your grimoire.")
 	@Require(Permission.Command.Spellbook)
 	fun spellbook(@Sender sender: Player, @CommandTarget(Permission.Command.Spellbook + ".others") mage: Mage) {
-		SpellbookGui(PLUGIN, mage, readOnly = sender.currentPlayerCharacter != mage.playerCharacter).show(sender)
+		SpellbookGui(PLUGIN, mage, readOnly = sender.currentPlayerCharacter != mage.character).show(sender)
 	}
 
 	@Command(aliases = ["resetspellbook", "resetgrimoire"], desc = "Reset a mage's grimoire.")
 	@Require(Permission.Command.Resetspellbook)
 	fun resetspellbook(@Sender sender: CommandSender, target: Mage) {
 		target.spells = emptyList()
-		sender.sendMessage("$SYSPREFIX Reset ${target.playerCharacter.name}'s grimoire.")
+		sender.sendMessage("$SYSPREFIX Reset ${target.character.name}'s grimoire.")
 	}
 
 	@Command(aliases = ["tears"], desc = "List all tears.")
@@ -123,7 +126,7 @@ class Commands {
 			tearRepository.all().asSequence().map {
 				Component.text()
 						.append(Component.text("[${it.location.humanReadable()}]"))
-						.append(Component.text(" ${it.magicType} tear by ${it.owner.playerCharacter.name}"))
+						.append(Component.text(" ${it.magicType} tear by ${it.owner.character.name}"))
 						.color(NamedTextColor.GRAY)
 		}.join(Component.newline()).toList())
 
@@ -132,7 +135,7 @@ class Commands {
 
 	@Command(aliases = ["setmagicpath"], desc = "Set a character's magic path.")
 	@Require(Permission.Command.Setmagicpath)
-	fun setmagicpath(@Sender sender: CommandSender, magicPath: MagicPath, target: PlayerCharacterData) {
+	fun setmagicpath(@Sender sender: CommandSender, magicPath: MagicPath, target: CharacterData) {
 		val mage = mageRepository.forPlayerCharacterOrCreate(target)
 		mage.magicPath = magicPath
 		sender.sendMessage("$SYSPREFIX set ${target.name}'s magic path to $magicPath")
@@ -143,10 +146,10 @@ class Commands {
 	fun setmagiclevel(@Sender sender: CommandSender, target: Mage, @Range(min = 0.00) magicLevel: Int) {
 		if (magicLevel != 0) {
 			target.magicLevel = magicLevel
-			sender.sendMessage("$SYSPREFIX set ${target.playerCharacter.name}'s magic level to $magicLevel")
+			sender.sendMessage("$SYSPREFIX set ${target.character.name}'s magic level to $magicLevel")
 		} else {
 			mageRepository.destroy(target)
-			sender.sendMessage("$SYSPREFIX removed magic from ${target.playerCharacter.name}")
+			sender.sendMessage("$SYSPREFIX removed magic from ${target.character.name}")
 		}
 	}
 
@@ -182,7 +185,7 @@ class Commands {
 
 			sender.sendMessage(miniMessage.deserialize("<gray><prefix> <mage_name>'s abilities:\n<abilities></gray>",
 				Placeholder.component("prefix", legacyText(SYSPREFIX)),
-				Placeholder.unparsed("mage_name", target.playerCharacter.name),
+				Placeholder.unparsed("mage_name", target.character.name),
 				Placeholder.component("abilities", abilitiesComponent)))
 		}
 
@@ -191,7 +194,7 @@ class Commands {
 		fun activate(@Sender sender: Mage,
 					 @OwnAbility ability: MageAbility) {
 			sender.activeAbilities = sender.activeAbilities.plus(ability)
-			sender.playerCharacter.player.player!!.sendMessage("$SYSPREFIX Activated ${ability.displayName}")
+			profileManager.getCurrentForProfile(sender.character.profile)!!.sendMessage("$SYSPREFIX Activated ${ability.displayName}")
 		}
 
 		@Command(aliases = ["deactivate"], desc = "Deactivate an ability.")
@@ -199,7 +202,7 @@ class Commands {
 		fun deactivate(@Sender sender: Mage,
 					 @OwnAbility ability: MageAbility) {
 			sender.activeAbilities = sender.activeAbilities.minus(ability)
-			sender.playerCharacter.player.player!!.sendMessage("$SYSPREFIX Deactivated ${ability.displayName}")
+			profileManager.getCurrentForProfile(sender.character.profile)!!.sendMessage("$SYSPREFIX Deactivated ${ability.displayName}")
 		}
 	}
 }

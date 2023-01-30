@@ -4,11 +4,21 @@ authors: [@authors@]
 depend:
   - FablesKotlinRuntime
   - FablesUtils
+  - FablesUtilsOffline
   - FablesText
   - FablesForm
   - FablesGui
   - FablesDenizenInterop
   - FablesDatabase
+  - FablesProfile
+  - FablesInventory
+  - FablesLocation
+  - FablesTimers
+  - FablesStaffProfiles
+  - SuperVanish
   - NinCommands
+softdepend:
+  - TAB
+  - Denizen
 main: com.fablesfantasyrp.plugin.characters.FablesCharacters
 api-version: @bukkit_api_version@

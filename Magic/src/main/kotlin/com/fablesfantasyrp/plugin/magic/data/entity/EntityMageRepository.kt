@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.magic.data.entity
 
-import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterData
+import com.fablesfantasyrp.plugin.characters.data.CharacterData
 import com.fablesfantasyrp.plugin.database.entity.MassivelyCachingEntityRepository
 import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.KeyedRepository
@@ -30,11 +30,11 @@ class EntityMageRepository<C>(private val plugin: Plugin, child: C) : MassivelyC
 		}
 	}
 
-	override fun forPlayerCharacter(c: PlayerCharacterData): Mage? {
+	override fun forPlayerCharacter(c: CharacterData): Mage? {
 		return this.forId(c.id.toLong())
 	}
 
-	override fun forPlayerCharacterOrCreate(c: PlayerCharacterData): Mage {
+	override fun forPlayerCharacterOrCreate(c: CharacterData): Mage {
 		return this.forIdOrCreate(c.id.toLong())
 	}
 

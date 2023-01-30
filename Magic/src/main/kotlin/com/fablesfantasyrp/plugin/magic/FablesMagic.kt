@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.magic
 
-import com.fablesfantasyrp.plugin.characters.command.provider.PlayerCharacterModule
+import com.fablesfantasyrp.plugin.characters.characterRepository
+import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
 import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.magic.command.Commands
@@ -11,6 +12,10 @@ import com.fablesfantasyrp.plugin.magic.data.entity.EntityMageRepository
 import com.fablesfantasyrp.plugin.magic.data.entity.EntityTearRepository
 import com.fablesfantasyrp.plugin.magic.data.persistent.H2MageRepository
 import com.fablesfantasyrp.plugin.magic.data.persistent.YamlSimpleSpellDataRepository
+import com.fablesfantasyrp.plugin.profile.command.provider.ProfileProvider
+import com.fablesfantasyrp.plugin.profile.profileManager
+import com.fablesfantasyrp.plugin.profile.profiles
+import com.fablesfantasyrp.plugin.utils.Services
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
@@ -59,22 +64,22 @@ class FablesMagic : SuspendingJavaPlugin() {
 		tearRepository = EntityTearRepository(MapTearRepository())
 		tearRepository.all().forEach { it.spawn() }
 
-		TearClosureManager(this, tearRepository)
+		TearClosureManager(this, tearRepository, Services.get())
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())
 		injector.install(BukkitModule(server))
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
-		injector.install(PlayerCharacterModule(server))
-		injector.install(MagicModule(server))
+		injector.install(CharacterModule(server, characterRepository, ProfileProvider(profiles, profileManager)))
+		injector.install(MagicModule(server, Services.get()))
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()
 
 		val rootDispatcherNode = CommandGraph().builder(builder).commands()
 		rootDispatcherNode.group("ability").registerMethods(Commands.Ability())
-		rootDispatcherNode.registerMethods(Commands())
+		rootDispatcherNode.registerMethods(Commands(Services.get()))
 		val dispatcher = rootDispatcherNode.dispatcher
 
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }

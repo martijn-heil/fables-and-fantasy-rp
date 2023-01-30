@@ -1,6 +1,10 @@
 package com.fablesfantasyrp.plugin.rolls
 
-import com.fablesfantasyrp.plugin.characters.command.provider.PlayerCharacterModule
+import com.fablesfantasyrp.plugin.characters.characterRepository
+import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
+import com.fablesfantasyrp.plugin.profile.command.provider.ProfileProvider
+import com.fablesfantasyrp.plugin.profile.profileManager
+import com.fablesfantasyrp.plugin.profile.profiles
 import com.fablesfantasyrp.plugin.rolls.command.Commands
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
@@ -33,7 +37,7 @@ class FablesRolls : JavaPlugin() {
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
 		injector.install(FixedSuggestionsModule(injector))
-		injector.install(PlayerCharacterModule(server))
+		injector.install(CharacterModule(server, characterRepository, ProfileProvider(profiles, profileManager)))
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()

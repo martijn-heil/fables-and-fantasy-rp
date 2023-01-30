@@ -24,7 +24,7 @@ var Player.currentCountdown: CountdownJob?
 	get() = countdowns[this]
 	private set(value) {
 		if (value != null) {
-			countdowns[this] = CountdownJob(emptyList(), emptyList(), value)
+			countdowns[this] = value
 		} else {
 			countdowns.remove(this)
 		}

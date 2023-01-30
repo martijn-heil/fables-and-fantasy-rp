@@ -1,0 +1,11 @@
+name: FablesWorldBoundProfiles
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+  - FablesDatabase
+  - FablesProfile
+  - FablesLocation
+main: com.fablesfantasyrp.plugin.worldboundprofiles.FablesWorldBoundProfiles
+api-version: @bukkit_api_version@

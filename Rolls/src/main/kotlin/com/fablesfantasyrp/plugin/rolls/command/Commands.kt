@@ -27,7 +27,7 @@ class Commands {
 	fun roll(@Sender sender: Player,
 			 @FixedSuggestions @Suggestions(["3", "6", "20", "100"]) @Range(min = 2.0, max = 200.0) @Optional("20") dice: Int,
 			 @Optional kind: CharacterStatKind?) {
-		val stats = sender.currentPlayerCharacter!!.stats
+		val stats = sender.currentPlayerCharacter!!.totalStats
 
 		val roll = com.fablesfantasyrp.plugin.rolls.roll(dice.toUInt(), kind, stats)
 		val random = roll.first

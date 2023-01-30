@@ -1,11 +1,19 @@
 package com.fablesfantasyrp.plugin.characters
 
 import com.fablesfantasyrp.plugin.characters.command.Commands
-import com.fablesfantasyrp.plugin.characters.command.provider.PlayerCharacterModule
-import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterData
-import com.fablesfantasyrp.plugin.characters.data.PlayerCharacterDataRepository
-import com.fablesfantasyrp.plugin.characters.data.persistent.denizen.DenizenPlayerCharacterRepository
-import com.fablesfantasyrp.plugin.denizeninterop.dFlags
+import com.fablesfantasyrp.plugin.characters.command.LegacyCommands
+import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
+import com.fablesfantasyrp.plugin.characters.data.entity.Character
+import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
+import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepositoryImpl
+import com.fablesfantasyrp.plugin.characters.data.persistent.H2CharacterRepository
+import com.fablesfantasyrp.plugin.database.FablesDatabase
+import com.fablesfantasyrp.plugin.database.applyMigrations
+import com.fablesfantasyrp.plugin.profile.ProfilePrompter
+import com.fablesfantasyrp.plugin.profile.command.provider.ProfileProvider
+import com.fablesfantasyrp.plugin.profile.profileManager
+import com.fablesfantasyrp.plugin.profile.profiles
+import com.fablesfantasyrp.plugin.utils.Services
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
@@ -22,10 +30,12 @@ import org.bukkit.ChatColor.*
 import org.bukkit.OfflinePlayer
 import org.bukkit.Server
 import org.bukkit.command.Command
+import org.bukkit.entity.Player
+import org.bukkit.plugin.ServicePriority
 
 internal val SYSPREFIX = "$GOLD[ $GREEN${BOLD}CHARACTERS $GOLD] $GRAY"
 
-lateinit var playerCharacterRepository: PlayerCharacterDataRepository
+lateinit var characterRepository: EntityCharacterRepository
 	private set
 
 internal val PLUGIN get() = FablesCharacters.instance
@@ -37,30 +47,61 @@ class FablesCharacters : SuspendingJavaPlugin() {
 		enforceDependencies(this)
 		instance = this
 
-		playerCharacterRepository = DenizenPlayerCharacterRepository(server)
+		try {
+			applyMigrations(this, "FABLES_CHARACTERS", this.classLoader)
+		} catch (e: Exception) {
+			this.isEnabled = false
+			return
+		}
+
+		//playerCharacterRepository = DenizenCharacterRepository(server)
+		val h2CharacterRepository = H2CharacterRepository(server, FablesDatabase.fablesDatabase, profiles)
+		val characterRepositoryImpl = EntityCharacterRepositoryImpl(h2CharacterRepository, profiles)
+		characterRepositoryImpl.init()
+		characterRepository = characterRepositoryImpl
+		server.servicesManager.register(EntityCharacterRepository::class.java, characterRepository, this, ServicePriority.Normal)
+
+		migrateDenizenToSql(this, characterRepository, profiles)
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())
 		injector.install(BukkitModule(server))
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
-		injector.install(PlayerCharacterModule(server))
+		injector.install(CharacterModule(server, characterRepository, ProfileProvider(profiles, profileManager)))
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()
 
-		val dispatcher = CommandGraph()
-				.builder(builder)
-				.commands()
-				.registerMethods(Commands(this))
-				.graph()
-				.dispatcher
+		val prompter = Services.get<ProfilePrompter>()
+
+		val rootDispatcherNode = CommandGraph().builder(builder).commands()
+		rootDispatcherNode.registerMethods(Commands(this))
+
+		val charactersCommand = rootDispatcherNode.group("character", "char", "fchar", "fcharacter")
+		val characterCommands = Commands.Characters(this, profiles, profileManager, prompter)
+		charactersCommand.registerMethods(characterCommands)
+		rootDispatcherNode.registerMethods(LegacyCommands(characterCommands))
+
+		charactersCommand.group("stats").registerMethods(Commands.Characters.Stats(this))
+		charactersCommand.group("change").registerMethods(Commands.Characters.Change(this, Services.get()))
+
+		val dispatcher = rootDispatcherNode.dispatcher
 
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
+
+		server.pluginManager.registerEvents(CharactersListener(this, characterRepository, profiles, profileManager, Services.get()), this)
+		server.pluginManager.registerEvents(CharactersLiveMigrationListener(this, characterRepository), this)
+		server.pluginManager.registerEvents(CharacterCreationListener(), this)
+
+		if (server.pluginManager.isPluginEnabled("TAB") && server.pluginManager.isPluginEnabled("Denizen") ) {
+			com.fablesfantasyrp.plugin.characters.nametags.NameTagManager().start()
+		}
 	}
 
 	override fun onDisable() {
 		commands.forEach { unregisterCommand(it) }
+		characterRepository.saveAllDirty()
 	}
 
 	companion object {
@@ -68,15 +109,18 @@ class FablesCharacters : SuspendingJavaPlugin() {
 	}
 }
 
-val OfflinePlayer.currentPlayerCharacter: PlayerCharacterData?
+var Player.currentPlayerCharacter: Character?
 	get() {
-		val currentCharacter = dFlags.getFlagValue("characters_current") ?: return null
-		val id = currentCharacter.asElement().asLong().toULong()
-		return playerCharacterRepository.forId(id)!!
+		return profileManager.getCurrentForPlayer(this)
+				?.let { characterRepository.forId(it.id) }
+	}
+	set(value) {
+		require(value != null)
+		profileManager.setCurrentForPlayer(this, profiles.forId(value.id.toInt())!!)
 	}
 
-val OfflinePlayer.playerCharacters: Collection<PlayerCharacterData>
-	get() = playerCharacterRepository.forOfflinePlayer(this)
+val OfflinePlayer.playerCharacters: Collection<Character>
+	get() = characterRepository.forOwner(this)
 
-val Server.playerCharacters: Collection<PlayerCharacterData>
-	get() = playerCharacterRepository.all()
+val Server.playerCharacters: Collection<Character>
+	get() = characterRepository.all()

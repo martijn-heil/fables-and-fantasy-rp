@@ -4,7 +4,7 @@ import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.Identifiable
 import com.fablesfantasyrp.plugin.database.repository.KeyedRepository
 import com.fablesfantasyrp.plugin.database.repository.MutableRepository
-import java.lang.ref.WeakReference
+import java.lang.ref.SoftReference
 import java.util.concurrent.locks.ReadWriteLock
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.withLock
@@ -13,14 +13,13 @@ open class SimpleEntityRepository<K, T: Identifiable<K>, C>(protected var child:
 		where C : KeyedRepository<K, T>,
 			  C : MutableRepository<T>,
 			  C: HasDirtyMarker<T> {
-	protected val cache = HashMap<K, WeakReference<T>>()
+	protected val cache = HashMap<K, SoftReference<T>>()
 	protected val strongCache = HashSet<T>()
 	protected val dirty = LinkedHashSet<T>()
 	protected val lock: ReadWriteLock = ReentrantReadWriteLock()
 
-	open fun init(): SimpleEntityRepository<K, T, C> {
+	open fun init() {
 		child.dirtyMarker = this
-		return this
 	}
 
 	override fun markStrong(v: T) { lock.writeLock().withLock { strongCache.add(v) } }
@@ -33,10 +32,17 @@ open class SimpleEntityRepository<K, T: Identifiable<K>, C>(protected var child:
 		}
 	}
 
+	fun saveAll() {
+		lock.writeLock().withLock {
+			cache.mapNotNull { it.value.get() }.forEach { this.update(it) }
+			dirty.clear()
+		}
+	}
+
 	override fun create(v: T): T {
 		val result = child.create(v)
 		lock.writeLock().withLock {
-			cache[result.id] = WeakReference(result)
+			cache[result.id] = SoftReference(result)
 		}
 		return result
 	}
@@ -75,7 +81,7 @@ open class SimpleEntityRepository<K, T: Identifiable<K>, C>(protected var child:
 		lock.writeLock().withLock {
 			fromCache(id) ?: run {
 				val obj = child.forId(id)
-				cache[id] = WeakReference(obj)
+				cache[id] = SoftReference(obj)
 				obj
 			}
 		}
