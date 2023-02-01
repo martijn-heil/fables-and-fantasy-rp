@@ -61,7 +61,7 @@ class FablesCharacters : SuspendingJavaPlugin() {
 		characterRepository = characterRepositoryImpl
 		server.servicesManager.register(EntityCharacterRepository::class.java, characterRepository, this, ServicePriority.Normal)
 
-		migrateDenizenToSql(this, characterRepository, profiles)
+		//migrateDenizenToSql(this, characterRepository, profiles)
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())

@@ -12,3 +12,10 @@ softdepend:
   - Citizens
 main: com.fablesfantasyrp.plugin.economy.FablesEconomy
 api-version: @bukkit_api_version@
+commands:
+  pay:
+    description: pay
+  bal:
+    description: bal
+  eco:
+    description: eco

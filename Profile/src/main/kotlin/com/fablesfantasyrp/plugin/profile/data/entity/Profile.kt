@@ -24,10 +24,12 @@ class Profile : DataEntity<Int, Profile>, ProfileData {
 		set(value) {
 			if (field == value) return
 			field = value
-			val profileManager = Services.get<ProfileManager>()
-			val currentPlayer = profileManager.getCurrentForProfile(this)
-			if (currentPlayer != null && !value) profileManager.stopTracking(currentPlayer)
 			dirtyMarker?.markDirty(this)
+			if (!value) {
+				val profileManager = Services.getMaybe<ProfileManager>() ?: return
+				val currentPlayer = profileManager.getCurrentForProfile(this)
+				if (currentPlayer != null) profileManager.stopTracking(currentPlayer)
+			}
 		}
 
 	constructor(id: Int = -1,

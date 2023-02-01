@@ -38,7 +38,7 @@ class ProfileListener(private val plugin: JavaPlugin,
 			val selector = server.servicesManager.getRegistration(ProfilePrompter::class.java)!!.provider
 			try {
 				if (!player.isOnline || server.isStopping) return
-				val wasVanished = player.isVanished
+				val wasVanished = player.isVanished && player.hasPermission("sv.use")
 				if (!wasVanished) VanishAPI.hidePlayer(player)
 				val newProfile = selector.promptSelect(player, ownedProfiles)
 				profileManager.setCurrentForPlayer(player, newProfile)

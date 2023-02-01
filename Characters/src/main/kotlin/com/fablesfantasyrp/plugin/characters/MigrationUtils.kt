@@ -76,7 +76,11 @@ internal fun migrateDenizenToSql(plugin: Plugin,
 	val chars = server.denizenPlayerCharacters.toMutableList()
 	chars.sortBy { it.id }
 
+	val skip = setOf(384, 569, 18, 421, 326, 624, 184, 421, 555, 753)
+
 	chars.forEach {
+		if (skip.contains(it.id)) return@forEach
+
 		try {
 			var inventory: PassthroughPlayerInventory? = null
 			var enderChest: PassthroughInventory? = null
@@ -120,8 +124,14 @@ internal fun migrateDenizenToSql(plugin: Plugin,
 				location = if(arrayOf(PLOTS, FLATROOM).contains(it.location.world)) SPAWN else it.location
 			}
 
-			val name = it.name.replace(NAME_DISALLOWED_CHARACTERS, "")
+			val name = when (it.id) {
+				413 -> "Tyir Aurgelmir the Old"
+				1158 -> "Eli the New"
+				1282 -> "Ruby the New"
+				else -> it.name.replace(NAME_DISALLOWED_CHARACTERS, "")
+			}
 			if (name.isBlank()) throw IllegalArgumentException("Got blank name for #${it.id}")
+			if (characters.nameExists(name)) return@forEach
 
 			plugin.logger.info("Migrating #${it.id}")
 			val profile = profiles.create(Profile(id = it.id, owner = player, description = name, isActive = true))
@@ -160,7 +170,7 @@ internal fun migrateDenizenToSql(plugin: Plugin,
 			val character = characters.create(Character(
 					id = profile.id,
 					profile = profile,
-					name = it.name,
+					name = name,
 					race = it.race,
 					gender = it.gender,
 					stats = newDistributedStats,

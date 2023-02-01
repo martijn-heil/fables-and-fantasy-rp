@@ -44,6 +44,30 @@ import java.time.Duration
 import java.time.Instant
 import kotlin.math.max
 
+
+private fun checkAuthorization(sender: CommandSender, target: Character, permission: String, allowShelved: Boolean = false): Boolean {
+	if (!allowShelved && target.isShelved) {
+		sender.sendError("This character is shelved")
+		return false
+	}
+
+	if (target.isDead) {
+		sender.sendError("This character is dead")
+		return false
+	}
+
+	val owner = target.profile.owner
+
+	if (sender != owner &&
+			!(sender.hasPermission("$permission.any") ||
+					(sender.hasPermission(Permission.Staff) && target.isStaffCharacter))) {
+		sender.sendError("Permission denied")
+		return false
+	}
+
+	return true
+}
+
 class LegacyCommands(private val characterCommands: Commands.Characters) {
 	@Command(aliases = ["newcharacter", "newchar", "nc"], desc = "Create a new character!")
 	@Require(Permission.Command.Characters.New)
@@ -56,8 +80,9 @@ class LegacyCommands(private val characterCommands: Commands.Characters) {
 	fun become(@Sender sender: Player,
 			   @Optional @AllowCharacterName targetMaybe: Profile?,
 			   @Optional @CommandTarget(Permission.Command.Characters.Become + ".others") who: Player,
-			   @Switch('f') force: Boolean) {
-		characterCommands.become(sender, targetMaybe, who, force)
+			   @Switch('f') force: Boolean,
+			   @Switch('i') instant: Boolean) {
+		characterCommands.become(sender, targetMaybe, who, force, instant)
 	}
 
 	@Command(aliases = ["card", "charactercard"], desc = "Display a character's card in chat.")
@@ -158,13 +183,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 				return
 			}
 
-			val owner = target.profile.owner
-
-			if (sender != owner &&
-					!(sender.hasPermission(Permission.Command.Characters.Kill + ".any") ||
-							(sender.hasPermission(Permission.Staff) && target.isStaffCharacter))) {
-				sender.sendError("Permission denied")
-			}
+			if (!checkAuthorization(sender, target, Permission.Command.Characters.Kill)) return
 
 			target.isDead = true
 			sender.sendMessage("$SYSPREFIX Killed ${target.name}")
@@ -187,22 +206,19 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 
 			val owner = target.profile.owner
 
-			if (sender != owner &&
-					!(sender.hasPermission(Permission.Command.Characters.Shelf + ".any") ||
-							(sender.hasPermission(Permission.Staff) && target.isStaffCharacter))) {
-				sender.sendError("Permission denied")
-				return
-			}
+			if (!checkAuthorization(sender, target, Permission.Command.Characters.Shelf)) return
 
 			if (force && !sender.hasPermission(Permission.Command.Characters.Shelf + ".force")) {
 				sender.sendError("Permission denied")
 				return
 			}
 
-			val shelved = characterRepository.forOwner(owner).filter { it.isShelved && !it.isDead }.size
-			if (shelved >= 3) {
-				sender.sendError("You cannot shelve more than 3 characters!")
-				return
+			if (!target.isStaffCharacter) {
+				val shelved = characterRepository.forOwner(owner).filter { it.isShelved && !it.isDead }.size
+				if (shelved >= 3) {
+					sender.sendError("You cannot shelve more than 3 characters!")
+					return
+				}
 			}
 
 			plugin.launch {
@@ -230,7 +246,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 			sender.sendMessage("$SYSPREFIX Set ${target.name}'s race to $race")
 		}
 
-		@Command(aliases = ["setage"], desc = "Set a character's age")
+		/*@Command(aliases = ["setage"], desc = "Set a character's age")
 		@Require(Permission.Command.Characters.SetAge)
 		fun setage(@Sender sender: CommandSender, @Range(min = 13.0, max = 999.0) age: Int, target: Character) {
 			if (target.isShelved) {
@@ -253,14 +269,15 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 			}
 
 			target.age = age.toUInt()
-		}
+		}*/
 
 		@Command(aliases = ["become", "switch"], desc = "Become a character")
 		@Require(Permission.Command.Characters.Become)
 		fun become(@Sender sender: Player,
 				   @Optional @AllowCharacterName targetMaybe: Profile?,
 				   @Optional @CommandTarget(Permission.Command.Characters.Become + ".others") who: Player,
-				   @Switch('f') force: Boolean) {
+				   @Switch('f') force: Boolean,
+				   @Switch('i') instant: Boolean) {
 			plugin.launch {
 				val target: Profile = targetMaybe ?: run {
 					val profiles = profileRepository.activeForOwner(who)
@@ -272,6 +289,11 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 				val owner = target.owner
 
 				if (force && !sender.hasPermission(Permission.Command.Characters.Become + ".force")) {
+					sender.sendError("Permission denied")
+					return@launch
+				}
+
+				if (instant && !sender.hasPermission(Permission.Command.Characters.Become + ".instant")) {
 					sender.sendError("Permission denied")
 					return@launch
 				}
@@ -294,7 +316,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 					return@launch
 				}
 
-				if (who == sender) {
+				if (!instant && who == sender) {
 					who.countdown(10U, emptyList(), listOf(CancelReason.MOVEMENT, CancelReason.HURT))
 				}
 
@@ -309,12 +331,14 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 		@Command(aliases = ["unshelf"], desc = "Unshelf a character")
 		@Require(Permission.Command.Characters.Unshelf)
 		fun unshelf(@Sender sender: CommandSender,
-				  @CommandTarget(Permission.Command.Characters.Unshelf + ".others") target: Character,
+				  @CommandTarget target: Character,
 					@Switch('f') force: Boolean) {
 			if (force && !sender.hasPermission(Permission.Command.Characters.Unshelf + ".force")) {
 				sender.sendError("Permission denied")
 				return
 			}
+
+			if (!checkAuthorization(sender, target, Permission.Command.Characters.Unshelf, allowShelved = true)) return
 
 			if (!target.isShelved) {
 				sender.sendError("${target.name} is not shelved.")
@@ -338,11 +362,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 					stat: CharacterStatKind,
 					@Range(min = 0.0) value: Int,
 					@CommandTarget target: Character) {
-				if (!(target.isStaffCharacter && sender.hasPermission(Permission.Staff))
-						&& !sender.hasPermission(Permission.Command.Characters.Stats.Set + ".others")) {
-					sender.sendError("You don't have permission to set the stats of this character")
-					return
-				}
+				if (!checkAuthorization(sender, target, Permission.Command.Characters.Stats.Set)) return
 
 				target.stats = target.stats.with(stat, value.toUInt())
 				sender.sendMessage("$SYSPREFIX Set ${target.name}'s ${stat.toString().lowercase()} to $value")
@@ -371,29 +391,6 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 		class Change(private val plugin: JavaPlugin,
 					 private val profileManager: ProfileManager) {
 			private val server = plugin.server
-
-			private fun checkAuthorization(sender: Player, target: Character, permission: String): Boolean {
-				if (target.isShelved) {
-					sender.sendError("This character is shelved")
-					return false
-				}
-
-				if (target.isDead) {
-					sender.sendError("This character is dead")
-					return false
-				}
-
-				val owner = target.profile.owner
-
-				if (sender != owner &&
-						!(sender.hasPermission("$permission.any") ||
-								(sender.hasPermission(Permission.Staff) && target.isStaffCharacter))) {
-					sender.sendError("Permission denied")
-					return false
-				}
-
-				return true
-			}
 
 			@Command(aliases = ["age"], desc = "Set a character's age")
 			@Require(Permission.Command.Characters.Change.Age)
