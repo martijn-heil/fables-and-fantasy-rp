@@ -88,7 +88,7 @@ class ProfileListener(private val plugin: JavaPlugin,
 
 	@EventHandler(priority = MONITOR, ignoreCancelled = true)
 	fun onPlayerMove(e: PlayerMoveEvent) {
-		if (!playersCurrentlySwitchingProfile.contains(e.player) &&
+		if (e.player.isWhitelisted && !playersCurrentlySwitchingProfile.contains(e.player) &&
 				profileManager.getCurrentForPlayer(e.player) == null) {
 			e.isCancelled = true
 		}
