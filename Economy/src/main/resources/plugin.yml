@@ -10,6 +10,9 @@ depend:
   - Bank
 softdepend:
   - Citizens
+loadbefore:
+  - Votifier
+  - VoteStreak
 main: com.fablesfantasyrp.plugin.economy.FablesEconomy
 api-version: @bukkit_api_version@
 commands:
