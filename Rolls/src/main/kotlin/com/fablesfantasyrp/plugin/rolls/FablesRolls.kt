@@ -37,7 +37,7 @@ class FablesRolls : JavaPlugin() {
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
 		injector.install(FixedSuggestionsModule(injector))
-		injector.install(CharacterModule(server, characterRepository, ProfileProvider(profiles, profileManager)))
+		injector.install(CharacterModule(server, characterRepository, ProfileProvider(profiles, profileManager), profileManager))
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()

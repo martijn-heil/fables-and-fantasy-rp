@@ -8,9 +8,9 @@ import com.fablesfantasyrp.plugin.economy.data.entity.EntityProfileEconomyReposi
 import com.fablesfantasyrp.plugin.economy.data.entity.EntityProfileEconomyRepositoryImpl
 import com.fablesfantasyrp.plugin.economy.data.persistent.H2ProfileEconomyRepository
 import com.fablesfantasyrp.plugin.profile.command.provider.ProfileModule
-import com.fablesfantasyrp.plugin.profile.command.provider.ProfileProvider
 import com.fablesfantasyrp.plugin.profile.profileManager
 import com.fablesfantasyrp.plugin.profile.profiles
+import com.fablesfantasyrp.plugin.utils.Services
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.fablesfantasyrp.plugin.utils.essentialsSpawn
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
@@ -25,7 +25,6 @@ import com.sk89q.intake.Intake
 import com.sk89q.intake.fluent.CommandGraph
 import com.sk89q.intake.parametric.ParametricBuilder
 import com.sk89q.intake.parametric.provider.PrimitivesModule
-import me.dablakbandit.bank.api.BankAPI
 import net.milkbowl.vault.economy.Economy
 import org.bukkit.ChatColor.*
 import org.bukkit.Location
@@ -82,7 +81,7 @@ class FablesEconomy : SuspendingJavaPlugin() {
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
 		injector.install(ProfileModule(profiles, profileManager, BukkitSenderProvider(Player::class.java)))
-		injector.install(CharacterModule(server, characterRepository, ProfileProvider(profiles, profileManager)))
+		injector.install(Services.get<CharacterModule>())
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()

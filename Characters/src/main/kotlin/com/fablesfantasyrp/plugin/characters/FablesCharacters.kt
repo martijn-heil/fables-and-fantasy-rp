@@ -61,14 +61,15 @@ class FablesCharacters : SuspendingJavaPlugin() {
 		characterRepository = characterRepositoryImpl
 		server.servicesManager.register(EntityCharacterRepository::class.java, characterRepository, this, ServicePriority.Normal)
 
-		//migrateDenizenToSql(this, characterRepository, profiles)
+		val characterModule = CharacterModule(server, characterRepository, ProfileProvider(profiles, profileManager), profileManager)
+		Services.register(CharacterModule::class, characterModule, this)
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())
 		injector.install(BukkitModule(server))
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
-		injector.install(CharacterModule(server, characterRepository, ProfileProvider(profiles, profileManager)))
+		injector.install(characterModule)
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()

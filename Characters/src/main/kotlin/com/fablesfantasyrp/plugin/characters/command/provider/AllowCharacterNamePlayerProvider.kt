@@ -1,7 +1,8 @@
 package com.fablesfantasyrp.plugin.characters.command.provider
 
 import com.fablesfantasyrp.plugin.characters.currentPlayerCharacter
-import com.fablesfantasyrp.plugin.characters.playerCharacters
+import com.fablesfantasyrp.plugin.characters.data.entity.CharacterRepository
+import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.utils.quoteCommandArgument
 import com.sk89q.intake.argument.ArgumentParseException
 import com.sk89q.intake.argument.CommandArgs
@@ -11,7 +12,9 @@ import org.bukkit.Server
 import org.bukkit.entity.Player
 
 class AllowCharacterNamePlayerProvider(private val server: Server,
-									   private val playerProvider: Provider<Player>) : Provider<Player> {
+									   private val playerProvider: Provider<Player>,
+									   private val profileManager: ProfileManager,
+									   private val characters: CharacterRepository) : Provider<Player> {
 
 	override fun isProvided(): Boolean = false
 
@@ -35,8 +38,8 @@ class AllowCharacterNamePlayerProvider(private val server: Server,
 	}
 
 	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
-		return server.playerCharacters.asSequence()
-				.filter { it.player.isOnline && it.player.player?.currentPlayerCharacter == it }
+		return server.onlinePlayers.asSequence()
+				.mapNotNull { profileManager.getCurrentForPlayer(it)?.let { characters.forProfile(it) } }
 				.map { it.name }
 				.plus(playerProvider.getSuggestions(prefix, locals, modifiers))
 				.filter { it.startsWith(prefix.removePrefix("\""), true) }

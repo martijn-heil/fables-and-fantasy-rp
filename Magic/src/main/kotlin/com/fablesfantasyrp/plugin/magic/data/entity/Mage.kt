@@ -184,12 +184,12 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 				.mapNotNull { it.currentPlayerCharacter }
 				.mapNotNull { mageRepository.forPlayerCharacter(it) }
 				.filter { it != this }
-				.filter { !it.character.player.player!!.isVanished }
-				.filter { it.character.player.player!!.gameMode != GameMode.SPECTATOR }
+				.filter { !profileManager.getCurrentForProfile(it.character.profile)!!.isVanished }
+				.filter { profileManager.getCurrentForProfile(it.character.profile)!!.gameMode != GameMode.SPECTATOR }
 
 		val prompt = legacyText("$SYSPREFIX Do you want to unbind ${this.character.name}'s casting attempt?: ")
 		val prompts = otherMages
-				.map { Pair(it, YesNoChatPrompt(it.character.player.player!!, prompt)) }
+				.map { Pair(it, YesNoChatPrompt(profileManager.getCurrentForProfile(it.character.profile)!!, prompt)) }
 				.toMap().toMutableMap()
 		prompts.values.forEach { it.send() }
 
