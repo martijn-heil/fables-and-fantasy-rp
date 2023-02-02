@@ -78,7 +78,7 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 		val profileManager = Services.get<ProfileManager>()
 		val myPlayer = profileManager.getCurrentForProfile(character.profile)!!
 
-		val myStats = character.stats
+		val myStats = character.totalStats
 
 		if (myPlayer.location.world != tear.location.world || myPlayer.location.distance(tear.location) > 15) {
 			myPlayer.sendError("Targeted tear is out of range, you need to be within 15 blocks of the tear")
@@ -93,7 +93,7 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 			tearRepository.destroy(tear)
 			return true
 		}
-		val theirStats = them.character.stats
+		val theirStats = them.character.totalStats
 
 		myPlayer.awaitEmote(prompt)
 		if (theirPlayer == myPlayer) {
@@ -150,7 +150,7 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 		player.awaitEmote(legacyText("$SYSPREFIX Please emote to try and unbind " +
 				"${enemy.character.name}'s ${spell.displayName} spell"))
 
-		val roll = roll(20U, CharacterStatKind.INTELLIGENCE, this.character.stats).second
+		val roll = roll(20U, CharacterStatKind.INTELLIGENCE, this.character.totalStats).second
 		val enemyPlayer = profileManager.getCurrentForProfile(enemy.character.profile)!!
 		val messageTargets = getPlayersWithinRange(player.location, 15U)
 				.plus(getPlayersWithinRange(enemyPlayer.location, 15U)).distinct()
@@ -230,7 +230,7 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 		this.isCasting = true
 
 		try {
-			val stats = character.stats
+			val stats = character.totalStats
 
 			val tear = this.findTear()
 			if (tear == null) {
