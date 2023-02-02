@@ -64,6 +64,7 @@ class CharactersListener(private val plugin: Plugin,
 	fun onPlayerInteractAtPlayer(e: PlayerInteractAtEntityEvent) {
 		if (e.hand != EquipmentSlot.HAND) return
 		val target = e.rightClicked as? Player ?: return
+		if (!e.player.isSneaking) return
 		if (!target.isRealPlayer) return
 
 		val currentProfile = profileManager.getCurrentForPlayer(target)
