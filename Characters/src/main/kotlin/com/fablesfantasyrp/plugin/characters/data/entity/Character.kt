@@ -1,8 +1,10 @@
 package com.fablesfantasyrp.plugin.characters.data.entity
 
+import com.denizenscript.denizencore.objects.core.ElementTag
 import com.fablesfantasyrp.plugin.characters.data.*
 import com.fablesfantasyrp.plugin.database.entity.DataEntity
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
+import com.fablesfantasyrp.plugin.denizeninterop.dFlags
 import com.fablesfantasyrp.plugin.inventory.inventory
 import com.fablesfantasyrp.plugin.location.location
 import com.fablesfantasyrp.plugin.profile.ProfileManager
@@ -68,6 +70,8 @@ class Character : DataEntity<Int, Character>, CharacterData {
 			field = value
 			dirtyMarker?.markDirty(this)
 			profile.description = value
+			val player = Services.get<ProfileManager>().getCurrentForProfile(profile)
+			player?.dFlags?.setFlag("characters_name", ElementTag(name), null)
 		}
 
 	override var age: UInt 				set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
