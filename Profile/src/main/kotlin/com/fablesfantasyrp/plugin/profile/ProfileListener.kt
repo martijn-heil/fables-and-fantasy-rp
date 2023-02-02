@@ -86,7 +86,6 @@ class ProfileListener(private val plugin: JavaPlugin,
 		playersCurrentlySwitchingProfile.remove(e.player)
 	}
 
-
 	@EventHandler(priority = LOW, ignoreCancelled = true)
 	fun onPlayerQuit2(e: PlayerQuitEvent) {
 		VanishAPI.showPlayer(e.player)
