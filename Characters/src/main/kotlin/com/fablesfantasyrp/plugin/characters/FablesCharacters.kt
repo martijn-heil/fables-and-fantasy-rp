@@ -10,7 +10,6 @@ import com.fablesfantasyrp.plugin.characters.data.persistent.H2CharacterReposito
 import com.fablesfantasyrp.plugin.database.FablesDatabase
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.profile.ProfilePrompter
-import com.fablesfantasyrp.plugin.profile.command.provider.ProfileProvider
 import com.fablesfantasyrp.plugin.profile.profileManager
 import com.fablesfantasyrp.plugin.profile.profiles
 import com.fablesfantasyrp.plugin.utils.Services
@@ -61,8 +60,7 @@ class FablesCharacters : SuspendingJavaPlugin() {
 		characterRepository = characterRepositoryImpl
 		server.servicesManager.register(EntityCharacterRepository::class.java, characterRepository, this, ServicePriority.Normal)
 
-		val characterModule = CharacterModule(server, characterRepository, ProfileProvider(profiles, profileManager), profileManager)
-		Services.register(CharacterModule::class, characterModule, this)
+		val characterModule = CharacterModule()
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())

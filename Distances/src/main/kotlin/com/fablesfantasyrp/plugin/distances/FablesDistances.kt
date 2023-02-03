@@ -1,11 +1,7 @@
 package com.fablesfantasyrp.plugin.distances
 
-import com.fablesfantasyrp.plugin.characters.characterRepository
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
 import com.fablesfantasyrp.plugin.distances.command.Commands
-import com.fablesfantasyrp.plugin.profile.command.provider.ProfileProvider
-import com.fablesfantasyrp.plugin.profile.profileManager
-import com.fablesfantasyrp.plugin.profile.profiles
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.FixedSuggestionsModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
@@ -35,7 +31,7 @@ class FablesDistances : JavaPlugin() {
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
 		injector.install(FixedSuggestionsModule(injector))
-		injector.install(CharacterModule(server, characterRepository, ProfileProvider(profiles, profileManager), profileManager))
+		injector.install(CharacterModule())
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()

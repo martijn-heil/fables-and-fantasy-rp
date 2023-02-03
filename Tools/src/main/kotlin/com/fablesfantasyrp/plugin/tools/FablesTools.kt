@@ -5,7 +5,6 @@ import com.fablesfantasyrp.plugin.inventory.FablesInventoryPlugin
 import com.fablesfantasyrp.plugin.profile.command.provider.ProfileModule
 import com.fablesfantasyrp.plugin.profile.profileManager
 import com.fablesfantasyrp.plugin.profile.profiles
-import com.fablesfantasyrp.plugin.utils.Services
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
@@ -39,7 +38,7 @@ class FablesTools : SuspendingJavaPlugin() {
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
 		injector.install(ProfileModule(profiles, profileManager, BukkitSenderProvider(Player::class.java)))
-		injector.install(Services.get<CharacterModule>())
+		injector.install(CharacterModule())
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()

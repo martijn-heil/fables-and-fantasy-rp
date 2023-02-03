@@ -34,7 +34,7 @@ class FablesHalt : JavaPlugin() {
 		injector.install(BukkitModule(server))
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
-		injector.install(Services.get<CharacterModule>())
+		injector.install(CharacterModule())
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()
