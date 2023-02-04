@@ -7,9 +7,7 @@ import com.fablesfantasyrp.plugin.profile.event.PostPlayerSwitchProfileEvent
 import com.fablesfantasyrp.plugin.profile.event.PrePlayerSwitchProfileEvent
 import com.fablesfantasyrp.plugin.text.sendError
 import com.fablesfantasyrp.plugin.utils.SPAWN
-import com.fablesfantasyrp.plugin.utils.isVanished
 import com.github.shynixn.mccoroutine.bukkit.launch
-import de.myzelyam.api.vanish.VanishAPI
 import kotlinx.coroutines.CancellationException
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -38,12 +36,9 @@ class ProfileListener(private val plugin: JavaPlugin,
 			val selector = server.servicesManager.getRegistration(ProfilePrompter::class.java)!!.provider
 			try {
 				if (!player.isOnline || server.isStopping) return
-				val wasVanished = player.isVanished && player.hasPermission("sv.use")
-				if (!wasVanished) VanishAPI.hidePlayer(player)
 				val newProfile = selector.promptSelect(player, ownedProfiles)
 				profileManager.setCurrentForPlayer(player, newProfile)
 				player.sendMessage("$SYSPREFIX You are now profile #${newProfile.id}")
-				if (!wasVanished) VanishAPI.showPlayer(player)
 			} catch (ex: ProfileOccupiedException) {
 				player.sendError("This profile is currently occupied.")
 			} catch (_: CancellationException) {}
@@ -84,11 +79,6 @@ class ProfileListener(private val plugin: JavaPlugin,
 	fun onPlayerQuit(e: PlayerQuitEvent) {
 		profileManager.stopTracking(e.player)
 		playersCurrentlySwitchingProfile.remove(e.player)
-	}
-
-	@EventHandler(priority = LOW, ignoreCancelled = true)
-	fun onPlayerQuit2(e: PlayerQuitEvent) {
-		VanishAPI.showPlayer(e.player)
 	}
 
 	@EventHandler(priority = MONITOR, ignoreCancelled = true)

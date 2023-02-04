@@ -7,9 +7,7 @@ import com.fablesfantasyrp.plugin.form.promptGui
 import com.fablesfantasyrp.plugin.gui.GuiSingleChoice
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.parseLinks
-import com.fablesfantasyrp.plugin.utils.isVanished
 import com.github.shynixn.mccoroutine.bukkit.launch
-import de.myzelyam.api.vanish.VanishAPI
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import net.kyori.adventure.text.Component
@@ -54,8 +52,6 @@ class CharactersLiveMigrationListener(private val plugin: Plugin,
 			}, 0, 20)
 
 			blockMovement.add(player.uniqueId)
-			val wasVanished = player.isVanished
-			if (!wasVanished) VanishAPI.hidePlayer(player)
 			try {
 				delay(100)
 				val supportDiscord = "https://discord.gg/Qw6Nzmtpqc"
@@ -99,12 +95,8 @@ class CharactersLiveMigrationListener(private val plugin: Plugin,
 								"please open a <green>General Question ticket</green> in our Support Discord <support_discord></light_purple>",
 						Placeholder.component("support_discord", parseLinks(supportDiscord))))
 			} finally {
+				blockMovement.remove(player.uniqueId)
 				server.scheduler.cancelTask(titleJob)
-				try {
-					if (!wasVanished) VanishAPI.showPlayer(player)
-				} finally {
-					blockMovement.remove(player.uniqueId)
-				}
 			}
 		}
 	}
