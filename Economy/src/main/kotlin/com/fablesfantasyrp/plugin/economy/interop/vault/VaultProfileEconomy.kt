@@ -1,15 +1,20 @@
-package com.fablesfantasyrp.plugin.economy
+package com.fablesfantasyrp.plugin.economy.interop.vault
 
+import com.fablesfantasyrp.plugin.economy.money
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import net.milkbowl.vault.economy.Economy
 import net.milkbowl.vault.economy.EconomyResponse
 import org.bukkit.OfflinePlayer
 import org.bukkit.Server
+import java.util.logging.Logger
 import kotlin.math.roundToInt
 
-class VaultProfileEconomy(private val server: Server, private val profileManager: ProfileManager) : Economy {
+class VaultProfileEconomy(private val server: Server,
+						  private val profileManager: ProfileManager,
+						  private val logger: Logger) : Economy {
 	private fun requirePlayedBefore(player: OfflinePlayer?, amount: Double): EconomyResponse? {
 		return if (player?.hasPlayedBefore() != true) {
+			logger.warning("Tried to interact with player that has never played before: ${player?.name}")
 			EconomyResponse(amount, 0.00, EconomyResponse.ResponseType.FAILURE,
 					"The target player has never played on this server before!")
 		} else null
@@ -34,6 +39,7 @@ class VaultProfileEconomy(private val server: Server, private val profileManager
 	override fun has(player: OfflinePlayer?, worldName: String?, amount: Double) = this.has(player, amount)
 
 	override fun withdrawPlayer(player: OfflinePlayer?, amount: Double): EconomyResponse {
+		logger.info("withdrawPlayer(player = $player, amount = $amount)")
 		require(amount >= 0.00)
 		requirePlayedBefore(player, amount)?.let { return it }
 		check(player != null)
@@ -55,6 +61,7 @@ class VaultProfileEconomy(private val server: Server, private val profileManager
 			= this.withdrawPlayer(player, amount)
 
 	override fun depositPlayer(player: OfflinePlayer?, amount: Double): EconomyResponse {
+		logger.info("depositPlayer(player = $player, amount = $amount)")
 		require(amount >= 0.00)
 		requirePlayedBefore(player, amount)?.let { return it }
 		check(player != null)
@@ -130,8 +137,11 @@ class VaultProfileEconomy(private val server: Server, private val profileManager
 
 	@Deprecated("Deprecated in Java")
 	override fun withdrawPlayer(playerName: String?, amount: Double): EconomyResponse
-			= playerName?.let { name -> server.getOfflinePlayer(name) }?.let { this.withdrawPlayer(it, amount) }
-			?: EconomyResponse(amount, 0.00, EconomyResponse.ResponseType.FAILURE, "Player not found")
+			= run {
+		logger.info("withdrawPlayer(playerName = $playerName, amount = $amount)")
+		playerName?.let { name -> server.getOfflinePlayer(name) }?.let { this.withdrawPlayer(it, amount) }
+				?: EconomyResponse(amount, 0.00, EconomyResponse.ResponseType.FAILURE, "Player not found")
+	}
 
 	@Deprecated("Deprecated in Java")
 	override fun withdrawPlayer(playerName: String?, worldName: String?, amount: Double) = this.withdrawPlayer(playerName, amount)
@@ -141,8 +151,11 @@ class VaultProfileEconomy(private val server: Server, private val profileManager
 
 	@Deprecated("Deprecated in Java")
 	override fun depositPlayer(playerName: String?, amount: Double): EconomyResponse
-			= playerName?.let { name -> server.getOfflinePlayer(name) }?.let { this.depositPlayer(it, amount) }
-			?: EconomyResponse(amount, 0.00, EconomyResponse.ResponseType.FAILURE, "Player not found")
+			= run {
+		logger.info("depositPlayer(playerName = $playerName, amount = $amount)")
+		playerName?.let { name -> server.getOfflinePlayer(name) }?.let { this.depositPlayer(it, amount) }
+				?: EconomyResponse(amount, 0.00, EconomyResponse.ResponseType.FAILURE, "Player not found")
+	}
 
 	@Deprecated("Deprecated in Java")
 	override fun depositPlayer(playerName: String?, worldName: String?, amount: Double) = this.depositPlayer(playerName, amount)
