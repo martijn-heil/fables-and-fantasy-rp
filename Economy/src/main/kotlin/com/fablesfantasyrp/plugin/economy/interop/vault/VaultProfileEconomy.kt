@@ -39,7 +39,6 @@ class VaultProfileEconomy(private val server: Server,
 	override fun has(player: OfflinePlayer?, worldName: String?, amount: Double) = this.has(player, amount)
 
 	override fun withdrawPlayer(player: OfflinePlayer?, amount: Double): EconomyResponse {
-		logger.info("withdrawPlayer(player = $player, amount = $amount)")
 		require(amount >= 0.00)
 		requirePlayedBefore(player, amount)?.let { return it }
 		check(player != null)
@@ -61,7 +60,6 @@ class VaultProfileEconomy(private val server: Server,
 			= this.withdrawPlayer(player, amount)
 
 	override fun depositPlayer(player: OfflinePlayer?, amount: Double): EconomyResponse {
-		logger.info("depositPlayer(player = $player, amount = $amount)")
 		require(amount >= 0.00)
 		requirePlayedBefore(player, amount)?.let { return it }
 		check(player != null)
@@ -137,11 +135,8 @@ class VaultProfileEconomy(private val server: Server,
 
 	@Deprecated("Deprecated in Java")
 	override fun withdrawPlayer(playerName: String?, amount: Double): EconomyResponse
-			= run {
-		logger.info("withdrawPlayer(playerName = $playerName, amount = $amount)")
-		playerName?.let { name -> server.getOfflinePlayer(name) }?.let { this.withdrawPlayer(it, amount) }
+		= playerName?.let { name -> server.getOfflinePlayer(name) }?.let { this.withdrawPlayer(it, amount) }
 				?: EconomyResponse(amount, 0.00, EconomyResponse.ResponseType.FAILURE, "Player not found")
-	}
 
 	@Deprecated("Deprecated in Java")
 	override fun withdrawPlayer(playerName: String?, worldName: String?, amount: Double) = this.withdrawPlayer(playerName, amount)
@@ -151,11 +146,8 @@ class VaultProfileEconomy(private val server: Server,
 
 	@Deprecated("Deprecated in Java")
 	override fun depositPlayer(playerName: String?, amount: Double): EconomyResponse
-			= run {
-		logger.info("depositPlayer(playerName = $playerName, amount = $amount)")
-		playerName?.let { name -> server.getOfflinePlayer(name) }?.let { this.depositPlayer(it, amount) }
+		= playerName?.let { name -> server.getOfflinePlayer(name) }?.let { this.depositPlayer(it, amount) }
 				?: EconomyResponse(amount, 0.00, EconomyResponse.ResponseType.FAILURE, "Player not found")
-	}
 
 	@Deprecated("Deprecated in Java")
 	override fun depositPlayer(playerName: String?, worldName: String?, amount: Double) = this.depositPlayer(playerName, amount)
