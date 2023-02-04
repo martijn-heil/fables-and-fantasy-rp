@@ -84,6 +84,7 @@ fun ChatChannel.Companion.fromStringAliased(s: String): ChatChannel? {
 }
 
 class ChatIllegalArgumentException(message: String) : IllegalArgumentException(message)
+class ChatIllegalStateException(message: String) : IllegalStateException(message)
 
 
 

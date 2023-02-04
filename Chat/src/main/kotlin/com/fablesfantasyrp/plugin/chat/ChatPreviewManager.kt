@@ -9,6 +9,7 @@ import com.comphenix.protocol.events.PacketEvent
 import com.comphenix.protocol.wrappers.WrappedChatComponent
 import com.fablesfantasyrp.plugin.chat.channel.ChatChannel
 import com.fablesfantasyrp.plugin.chat.channel.ChatIllegalArgumentException
+import com.fablesfantasyrp.plugin.chat.channel.ChatIllegalStateException
 import com.fablesfantasyrp.plugin.chat.channel.PreviewableChatChannel
 import com.fablesfantasyrp.plugin.text.formatError
 import net.kyori.adventure.text.Component
@@ -86,7 +87,8 @@ class ChatPreviewManager(private val plugin: Plugin) {
 							sendChatPreview(player, requestId, messageComponent)
 						} catch (e: ChatIllegalArgumentException) {
 							sendChatPreview(player, requestId, formatError(e.message ?: "Illegal argument."))
-							return
+						} catch (e: ChatIllegalStateException) {
+							sendChatPreview(player, requestId, formatError(e.message ?: "Illegal state."))
 						}
 					}
 				}

@@ -108,7 +108,7 @@ abstract class AbstractChatInCharacter : ChatChannel, PreviewableChatChannel {
 		val actionStyle = from.chat.chatStyle ?: Style.style(NamedTextColor.YELLOW)
 		val speechStyle = Style.style(NamedTextColor.WHITE)
 		val characterName = from.currentPlayerCharacter?.name ?:
-		throw IllegalStateException("Player without current character cannot chat in in-character chat.")
+		throw ChatIllegalStateException("Player without current character cannot chat in in-character chat.")
 
 		val startsWithAction = startsWithAction(message)
 		val finalMessage = message

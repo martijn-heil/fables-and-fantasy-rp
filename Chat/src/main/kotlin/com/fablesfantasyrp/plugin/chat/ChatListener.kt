@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.chat
 
 import com.fablesfantasyrp.plugin.chat.channel.ChatIllegalArgumentException
+import com.fablesfantasyrp.plugin.chat.channel.ChatIllegalStateException
 import com.fablesfantasyrp.plugin.text.sendError
 import org.bukkit.Server
 import org.bukkit.event.EventHandler
@@ -18,6 +19,8 @@ class ChatListener(private val server: Server) : Listener {
 			player.chat.doChat(e.message)
 		} catch (ex: ChatIllegalArgumentException) {
 			player.sendError(ex.message ?: "Illegal argument.")
+		} catch (ex: ChatIllegalStateException) {
+			player.sendError(ex.message ?: "Illegal state.")
 		}
 	}
 }
