@@ -9,7 +9,6 @@ import com.fablesfantasyrp.plugin.basicsystem.data.persistent.H2SlidingDoorRepos
 import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
-import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.BukkitModule
@@ -22,11 +21,12 @@ import com.sk89q.intake.parametric.ParametricBuilder
 import com.sk89q.intake.parametric.provider.PrimitivesModule
 import org.bukkit.ChatColor.*
 import org.bukkit.command.Command
+import org.bukkit.plugin.java.JavaPlugin
 
 internal val SYSPREFIX = "${GOLD}${BOLD}[${LIGHT_PURPLE}${BOLD} BASIC SYSTEM ${GOLD}${BOLD}]${GRAY}"
 internal val PLUGIN get() = FablesBasicSystem.instance
 
-class FablesBasicSystem : SuspendingJavaPlugin() {
+class FablesBasicSystem : JavaPlugin() {
 	private lateinit var commands: Collection<Command>
 	lateinit var doors: EntitySlidingDoorRepository private set
 	lateinit var players: EntityBasicSystemPlayerRepository private set

@@ -2,7 +2,7 @@ package com.fablesfantasyrp.plugin.characters
 
 import com.fablesfantasyrp.plugin.characters.data.CharacterStatKind
 import com.fablesfantasyrp.plugin.characters.data.entity.Character
-import com.fablesfantasyrp.plugin.profile.profileManager
+import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.text.join
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.parseLinks
@@ -12,9 +12,12 @@ import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.command.CommandSender
+import org.koin.core.context.GlobalContext
 import org.ocpsoft.prettytime.PrettyTime
 
 fun characterCard(character: Character, observer: CommandSender? = null): Component {
+	val profileManager = GlobalContext.get().get<ProfileManager>()
+
 	val statsMessage = Component.text().append(CharacterStatKind.values().asSequence().map { statKind ->
 		val statValue = character.totalStats[statKind]
 		miniMessage.deserialize("     <gold>»</gold> <green><stat_name>:</green> <white><stat_value></white>",

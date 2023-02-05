@@ -1,9 +1,8 @@
 package com.fablesfantasyrp.plugin.magic.data.entity
 
-import com.fablesfantasyrp.plugin.characters.characterRepository
-import com.fablesfantasyrp.plugin.characters.currentPlayerCharacter
 import com.fablesfantasyrp.plugin.characters.data.CharacterStatKind
 import com.fablesfantasyrp.plugin.characters.data.entity.Character
+import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
 import com.fablesfantasyrp.plugin.chat.awaitEmote
 import com.fablesfantasyrp.plugin.chat.chat
 import com.fablesfantasyrp.plugin.chat.getPlayersWithinRange
@@ -38,11 +37,12 @@ import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.Style
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.GameMode
+import org.koin.core.context.GlobalContext
 
 
 class Mage : MageData, HasDirtyMarker<Mage> {
 	val character: Character
-		get() = characterRepository.forId(id.toInt())!!
+		get() = GlobalContext.get().get<EntityCharacterRepository>().forId(id.toInt())!!
 
 	var isDeleted: Boolean = false
 
@@ -177,11 +177,13 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 	}
 
 	suspend fun awaitUnbindAttempts(spell: SpellData, castingRoll: Int): Boolean {
-		val profileManager = Services.get<ProfileManager>()
+		val profileManager = GlobalContext.get().get<ProfileManager>()
+		val characters = GlobalContext.get().get<EntityCharacterRepository>()
 		val player = profileManager.getCurrentForProfile(this.character.profile) ?: throw IllegalStateException()
 		check(player.isOnline)
 		val otherMages = getPlayersWithinRange(player.location, 15U)
-				.mapNotNull { it.currentPlayerCharacter }
+				.mapNotNull { profileManager.getCurrentForPlayer(it) }
+				.mapNotNull { characters.forProfile(it) }
 				.mapNotNull { mageRepository.forPlayerCharacter(it) }
 				.filter { it != this }
 				.filter { !profileManager.getCurrentForProfile(it.character.profile)!!.isVanished }

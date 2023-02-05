@@ -1,11 +1,13 @@
 package com.fablesfantasyrp.plugin.characters.nametags
 
-import com.fablesfantasyrp.plugin.characters.currentPlayerCharacter
+import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
 import com.fablesfantasyrp.plugin.denizeninterop.dFlags
+import com.fablesfantasyrp.plugin.profile.ProfileManager
 import me.neznamy.tab.api.TabAPI
 import org.bukkit.entity.Player
 
-class NameTagManager {
+class NameTagManager(private val profileManager: ProfileManager,
+					 private val characters: EntityCharacterRepository) {
 	private lateinit var tapi: TabAPI
 
 	fun start() {
@@ -15,7 +17,8 @@ class NameTagManager {
 			try {
 				val observer = tabObserver.player as Player
 				val target = tabTarget.player as Player
-				val targetCharacter = target.currentPlayerCharacter
+				val targetProfile = profileManager.getCurrentForPlayer(target)
+				val targetCharacter = targetProfile?.let { characters.forProfile(it) }
 				val showCharacterNames = observer.dFlags.getFlagValue("characters_togglenames")
 				  ?.let { it.asElement().asBoolean() } ?: true
 

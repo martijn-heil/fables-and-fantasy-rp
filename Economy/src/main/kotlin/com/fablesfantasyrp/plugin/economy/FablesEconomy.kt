@@ -1,6 +1,5 @@
 package com.fablesfantasyrp.plugin.economy
 
-import com.fablesfantasyrp.plugin.characters.characterRepository
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
 import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
 import com.fablesfantasyrp.plugin.database.applyMigrations
@@ -8,16 +7,11 @@ import com.fablesfantasyrp.plugin.economy.data.entity.EntityProfileEconomyReposi
 import com.fablesfantasyrp.plugin.economy.data.entity.EntityProfileEconomyRepositoryImpl
 import com.fablesfantasyrp.plugin.economy.data.persistent.H2ProfileEconomyRepository
 import com.fablesfantasyrp.plugin.profile.command.provider.ProfileModule
-import com.fablesfantasyrp.plugin.profile.profileManager
-import com.fablesfantasyrp.plugin.profile.profiles
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
-import com.fablesfantasyrp.plugin.utils.essentialsSpawn
-import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.BukkitModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.sender.BukkitSenderModule
-import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.sender.BukkitSenderProvider
 import com.gitlab.martijn_heil.nincommands.common.bukkit.registerCommand
 import com.gitlab.martijn_heil.nincommands.common.bukkit.unregisterCommand
 import com.sk89q.intake.Intake
@@ -25,10 +19,19 @@ import com.sk89q.intake.fluent.CommandGraph
 import com.sk89q.intake.parametric.ParametricBuilder
 import com.sk89q.intake.parametric.provider.PrimitivesModule
 import org.bukkit.ChatColor.*
-import org.bukkit.Location
 import org.bukkit.command.Command
-import org.bukkit.entity.Player
+import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.ServicePriority
+import org.bukkit.plugin.java.JavaPlugin
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
+import org.koin.core.context.loadKoinModules
+import org.koin.core.context.unloadKoinModules
+import org.koin.core.module.Module
+import org.koin.core.module.dsl.factoryOf
+import org.koin.dsl.bind
+import org.koin.dsl.binds
+import org.koin.dsl.module
 
 internal val PLUGIN get() = FablesEconomy.instance
 
@@ -37,11 +40,11 @@ const val CURRENCY_SYMBOL = "Ⓐ"
 internal val SYSPREFIX = "$GOLD$BOLD[$LIGHT_PURPLE$BOLD ECONOMY $GOLD$BOLD]$GRAY"
 
 
-class FablesEconomy : SuspendingJavaPlugin() {
+class FablesEconomy : JavaPlugin(), KoinComponent {
 	private lateinit var commands: Collection<Command>
+	private lateinit var profileEconomyRepository: EntityProfileEconomyRepositoryImpl<*>
 
-	lateinit var profileEconomyRepository: EntityProfileEconomyRepositoryImpl<*>
-		private set
+	private lateinit var koinModule: Module
 
 	override fun onEnable() {
 		enforceDependencies(this)
@@ -54,34 +57,38 @@ class FablesEconomy : SuspendingJavaPlugin() {
 			return
 		}
 
-		val defaultLocation: Location = essentialsSpawn.getSpawn("default").toCenterLocation()
+		koinModule = module(createdAtStart = true) {
+			single<Plugin> { this@FablesEconomy } binds(arrayOf(JavaPlugin::class))
 
-		profileEconomyRepository = EntityProfileEconomyRepositoryImpl(H2ProfileEconomyRepository(fablesDatabase))
-		profileEconomyRepository.init()
+			single {
+				val profileEconomyRepository = EntityProfileEconomyRepositoryImpl(H2ProfileEconomyRepository(fablesDatabase))
+				profileEconomyRepository.init()
+				profileEconomyRepository
+			} bind EntityProfileEconomyRepository::class
 
+			factoryOf(::Commands)
+			factory { get<Commands>().Eco() }
+			factory { get<Commands>().Bank() }
+		}
+		loadKoinModules(koinModule)
 
-		server.servicesManager.register(
-				EntityProfileEconomyRepository::class.java,
-				profileEconomyRepository,
-				this,
-				ServicePriority.Normal
-		)
+		server.servicesManager.register(EntityProfileEconomyRepository::class.java, get(), this, ServicePriority.Normal)
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())
 		injector.install(BukkitModule(server))
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
-		injector.install(ProfileModule(profiles, profileManager, BukkitSenderProvider(Player::class.java)))
-		injector.install(CharacterModule())
+		injector.install(get<ProfileModule>())
+		injector.install(get<CharacterModule>())
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()
 
 		val rootDispatcherNode = CommandGraph().builder(builder).commands()
-		rootDispatcherNode.group("feco").registerMethods(Commands.Eco(characterRepository))
-		rootDispatcherNode.group("bank").registerMethods(Commands.Bank(this, profileEconomyRepository))
-		rootDispatcherNode.registerMethods(Commands(characterRepository, profileManager))
+		rootDispatcherNode.group("feco").registerMethods(get<Commands.Eco>())
+		rootDispatcherNode.group("bank").registerMethods(get<Commands.Bank>())
+		rootDispatcherNode.registerMethods(get<Commands>())
 		val dispatcher = rootDispatcherNode.dispatcher
 
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
@@ -91,7 +98,7 @@ class FablesEconomy : SuspendingJavaPlugin() {
 		val vault = server.pluginManager.getPlugin("Vault")
 		if (vault != null) {
 			logger.info("Enabling Vault integration")
-			com.fablesfantasyrp.plugin.economy.interop.vault.VaultHook(server, profileManager, this)
+			com.fablesfantasyrp.plugin.economy.interop.vault.VaultHook(server, get(), this)
 		}
 
 		if (server.pluginManager.isPluginEnabled("Citizens")) {
@@ -103,6 +110,7 @@ class FablesEconomy : SuspendingJavaPlugin() {
 	override fun onDisable() {
 		profileEconomyRepository.saveAll()
 		commands.forEach { unregisterCommand(it) }
+		unloadKoinModules(koinModule)
 	}
 
 	companion object {

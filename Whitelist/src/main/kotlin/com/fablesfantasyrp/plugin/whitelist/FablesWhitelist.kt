@@ -1,12 +1,12 @@
 package com.fablesfantasyrp.plugin.whitelist
 
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
-import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
+import org.bukkit.plugin.java.JavaPlugin
 
 internal val PLUGIN: FablesWhitelist
 	get() = FablesWhitelist.instance
 
-class FablesWhitelist : SuspendingJavaPlugin() {
+class FablesWhitelist : JavaPlugin() {
 
 	override fun onEnable() {
 		enforceDependencies(this)

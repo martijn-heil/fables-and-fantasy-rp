@@ -6,10 +6,16 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.flywaydb.core.Flyway
 import org.flywaydb.core.api.FlywayException
 import org.h2.jdbcx.JdbcConnectionPool
+import org.koin.core.component.KoinComponent
+import org.koin.core.context.loadKoinModules
+import org.koin.core.context.unloadKoinModules
+import org.koin.core.module.Module
+import org.koin.dsl.module
 import javax.sql.DataSource
 
-class FablesDatabase : JavaPlugin() {
+class FablesDatabase : JavaPlugin(), KoinComponent {
 	private val DB_DRIVER = "org.h2.Driver"
+	private lateinit var koinModule: Module
 
 	override fun onEnable() {
 		logger.fine("Saving default config..")
@@ -43,10 +49,15 @@ class FablesDatabase : JavaPlugin() {
 		norm.setDriverClassName("org.h2.Driver")
 		norm.setUser(dbUsername)
 		norm.setPassword(dbPassword)
+
+		koinModule = module {
+			single<DataSource> { dataSource }
+		}
+		loadKoinModules(koinModule)
 	}
 
 	override fun onDisable() {
-
+		unloadKoinModules(koinModule)
 	}
 
 	private fun printDatabaseSettings(dataSource: DataSource) {

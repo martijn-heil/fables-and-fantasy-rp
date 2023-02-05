@@ -16,11 +16,13 @@ import com.sk89q.intake.parametric.ParametricBuilder
 import com.sk89q.intake.parametric.provider.PrimitivesModule
 import org.bukkit.command.Command
 import org.bukkit.plugin.java.JavaPlugin
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
 
 internal val ROLL_RANGE = 15U
 
-class FablesRolls : JavaPlugin() {
+class FablesRolls : JavaPlugin(), KoinComponent {
 	private lateinit var commands: Collection<Command>
 
 	override fun onEnable() {
@@ -33,7 +35,7 @@ class FablesRolls : JavaPlugin() {
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
 		injector.install(FixedSuggestionsModule(injector))
-		injector.install(CharacterModule())
+		injector.install(get<CharacterModule>())
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()
@@ -41,7 +43,7 @@ class FablesRolls : JavaPlugin() {
 		val dispatcher = CommandGraph()
 				.builder(builder)
 				.commands()
-				.registerMethods(Commands())
+				.registerMethods(Commands(get(), get()))
 				.graph()
 				.dispatcher
 

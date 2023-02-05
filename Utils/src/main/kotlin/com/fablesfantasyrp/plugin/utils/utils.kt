@@ -32,6 +32,11 @@ fun enforceDependencies(plugin: Plugin) {
 	}
 }
 
+fun Location.distanceSafe(to: Location): Double {
+	if (this.world != to.world) return Double.MAX_VALUE
+	return this.distance(to)
+}
+
 fun Server.broadcast(location: Location, range: Int, message: Component) {
 	getPlayersWithinRange(location, range.toUInt()).forEach { it.sendMessage(message) }
 }

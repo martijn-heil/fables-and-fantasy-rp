@@ -4,6 +4,7 @@ import com.fablesfantasyrp.plugin.characters.*
 import com.fablesfantasyrp.plugin.characters.command.provider.AllowCharacterName
 import com.fablesfantasyrp.plugin.characters.data.*
 import com.fablesfantasyrp.plugin.characters.data.entity.Character
+import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
 import com.fablesfantasyrp.plugin.characters.event.CharacterChangeStatsEvent
 import com.fablesfantasyrp.plugin.characters.gui.CharacterStatsGui
 import com.fablesfantasyrp.plugin.form.YesNoChatPrompt
@@ -22,7 +23,6 @@ import com.fablesfantasyrp.plugin.timers.CancelReason
 import com.fablesfantasyrp.plugin.timers.countdown
 import com.fablesfantasyrp.plugin.utils.FABLES_ADMIN
 import com.fablesfantasyrp.plugin.utils.broadcast
-import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.gitlab.martijn_heil.nincommands.common.CommandTarget
 import com.gitlab.martijn_heil.nincommands.common.Sender
@@ -98,11 +98,14 @@ class LegacyCommands(private val characterCommands: Commands.Characters) {
 	}
 }
 
-class Commands(private val plugin: SuspendingJavaPlugin) {
-	class Characters(private val plugin: SuspendingJavaPlugin,
-					 private val profileRepository: ProfileRepository,
-					 private val profileManager: ProfileManager,
-					 private val profilePrompter: ProfilePrompter) {
+class Commands(private val plugin: JavaPlugin,
+			   private val characterRepository: EntityCharacterRepository,
+			   private val profileRepository: ProfileRepository,
+			   private val profileManager: ProfileManager,
+			   private val profilePrompter: ProfilePrompter) {
+	private val server = plugin.server
+
+	inner class Characters {
 		@Command(aliases = ["new"], desc = "Create a new character!")
 		@Require(Permission.Command.Characters.New)
 		fun new(@Sender sender: Player) {
@@ -355,7 +358,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 			sender.sendMessage("$SYSPREFIX Unshelved ${target.name}")
 		}
 
-		class Stats(private val plugin: SuspendingJavaPlugin) {
+		inner class Stats {
 			@Command(aliases = ["set"], desc = "Set character stats")
 			@Require(Permission.Command.Characters.Stats.Set)
 			fun set(@Sender sender: CommandSender,
@@ -388,10 +391,7 @@ class Commands(private val plugin: SuspendingJavaPlugin) {
 			}
 		}
 
-		class Change(private val plugin: JavaPlugin,
-					 private val profileManager: ProfileManager) {
-			private val server = plugin.server
-
+		inner class Change {
 			@Command(aliases = ["age"], desc = "Set a character's age")
 			@Require(Permission.Command.Characters.Change.Age)
 			fun age(@Sender sender: Player, @CommandTarget target: Character) {

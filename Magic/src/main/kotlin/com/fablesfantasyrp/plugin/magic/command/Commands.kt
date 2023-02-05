@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.magic.command
 
-import com.fablesfantasyrp.plugin.characters.currentPlayerCharacter
 import com.fablesfantasyrp.plugin.characters.data.CharacterData
+import com.fablesfantasyrp.plugin.characters.data.entity.CharacterRepository
 import com.fablesfantasyrp.plugin.magic.*
 import com.fablesfantasyrp.plugin.magic.ability.MageAbility
 import com.fablesfantasyrp.plugin.magic.animations.NecromancyBlightAnimation
@@ -13,7 +13,6 @@ import com.fablesfantasyrp.plugin.magic.exception.OpenTearException
 import com.fablesfantasyrp.plugin.magic.gui.SpellbookGui
 import com.fablesfantasyrp.plugin.math.*
 import com.fablesfantasyrp.plugin.profile.ProfileManager
-import com.fablesfantasyrp.plugin.profile.profileManager
 import com.fablesfantasyrp.plugin.text.join
 import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
@@ -33,7 +32,8 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.util.Vector
 
-class Commands(private val profileManager: ProfileManager) {
+class Commands(private val profileManager: ProfileManager,
+			   private val characters: CharacterRepository) {
 
 	@Command(aliases = ["magicdebug", "mdbg"], desc = "Test various things in Magic.")
 	@Require("fables.magic.command.magicdebug")
@@ -109,7 +109,8 @@ class Commands(private val profileManager: ProfileManager) {
 	@Command(aliases = ["grimoire", "spellbook"], desc = "Show your grimoire.")
 	@Require(Permission.Command.Spellbook)
 	fun spellbook(@Sender sender: Player, @CommandTarget(Permission.Command.Spellbook + ".others") mage: Mage) {
-		SpellbookGui(PLUGIN, mage, readOnly = sender.currentPlayerCharacter != mage.character).show(sender)
+		val senderCharacter = profileManager.getCurrentForPlayer(sender)?.let { characters.forProfile(it) }
+		SpellbookGui(PLUGIN, mage, readOnly = senderCharacter != mage.character).show(sender)
 	}
 
 	@Command(aliases = ["resetspellbook", "resetgrimoire"], desc = "Reset a mage's grimoire.")
@@ -153,7 +154,7 @@ class Commands(private val profileManager: ProfileManager) {
 		}
 	}
 
-	class Ability {
+	inner class Ability {
 		@Command(aliases = ["list"], desc = "List your abilities")
 		@Require(Permission.Command.Ability.List)
 		fun list(@Sender sender: CommandSender, @CommandTarget(Permission.Command.Ability.List + ".others") target: Mage) {

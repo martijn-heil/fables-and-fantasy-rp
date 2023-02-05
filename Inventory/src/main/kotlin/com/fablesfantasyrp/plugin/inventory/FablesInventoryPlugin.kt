@@ -1,19 +1,30 @@
 package com.fablesfantasyrp.plugin.inventory
 
-import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.inventory.data.entity.EntityFablesInventoryRepository
+import com.fablesfantasyrp.plugin.inventory.data.entity.FablesInventoryRepository
 import com.fablesfantasyrp.plugin.inventory.data.persistent.H2ProfileInventoryRepository
-import com.fablesfantasyrp.plugin.profile.profileManager
+import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
-import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
+import org.bukkit.plugin.Plugin
+import org.bukkit.plugin.java.JavaPlugin
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
+import org.koin.core.context.loadKoinModules
+import org.koin.core.context.unloadKoinModules
+import org.koin.core.module.Module
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
+import org.koin.dsl.binds
+import org.koin.dsl.module
 
 internal val PLUGIN get() = FablesInventoryPlugin.instance
 
-class FablesInventoryPlugin : SuspendingJavaPlugin() {
-	lateinit var mirroredInventoryManager: MirroredInventoryManager
-	lateinit var inventories: EntityFablesInventoryRepository<*>
-		private set
+class FablesInventoryPlugin : JavaPlugin(), KoinComponent {
+	private lateinit var mirroredInventoryManager: MirroredInventoryManager
+	private lateinit var inventories: EntityFablesInventoryRepository<*>
+	private lateinit var profileManager: ProfileManager
+	private lateinit var koinModule: Module
 
 	override fun onEnable() {
 		enforceDependencies(this)
@@ -27,13 +38,28 @@ class FablesInventoryPlugin : SuspendingJavaPlugin() {
 			return
 		}
 
-		inventories = EntityFablesInventoryRepository(H2ProfileInventoryRepository(fablesDatabase))
-		inventories.init()
+		koinModule = module(createdAtStart = true) {
+			single<Plugin> { this@FablesInventoryPlugin } binds(arrayOf(JavaPlugin::class))
 
-		server.pluginManager.registerEvents(ProfileInventoryListener(inventories), this)
+			single {
+				val inventories = EntityFablesInventoryRepository(H2ProfileInventoryRepository(get()))
+				inventories.init()
+				inventories
+			} bind FablesInventoryRepository::class
 
-		mirroredInventoryManager = MirroredInventoryManager(this)
-		mirroredInventoryManager.start()
+			single {
+				val tmp = MirroredInventoryManager(get())
+				tmp.start()
+				tmp
+			}
+
+			singleOf(::ProfileInventoryListener)
+		}
+		loadKoinModules(koinModule)
+
+		inventories = get()
+		mirroredInventoryManager = get()
+		server.pluginManager.registerEvents(get<ProfileInventoryListener>(), this)
 	}
 
 	override fun onDisable() {
@@ -44,6 +70,7 @@ class FablesInventoryPlugin : SuspendingJavaPlugin() {
 		}
 		inventories.saveAll()
 		mirroredInventoryManager.stop()
+		unloadKoinModules(koinModule)
 	}
 
 	companion object {

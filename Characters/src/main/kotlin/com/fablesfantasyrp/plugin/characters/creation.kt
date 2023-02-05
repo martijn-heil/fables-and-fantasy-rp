@@ -31,6 +31,7 @@ import org.bukkit.event.EventPriority.NORMAL
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.inventory.ItemStack
+import org.koin.core.context.GlobalContext
 import java.time.Instant
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -165,13 +166,14 @@ suspend fun promptNewCharacterInfo(player: Player, allowedRaces: Collection<Race
 
 private val blockMovement = HashSet<Player>()
 suspend fun forcePromptNewCharacterInfo(player: Player, allowedRaces: Collection<Race>): NewCharacterData {
+	val characterRepository = GlobalContext.get().get<EntityCharacterRepository>()
+
 	blockMovement.add(player)
 	try {
 		while (true) {
 			if (!player.isOnline) throw CancellationException()
 			try {
 				val info = promptNewCharacterInfo(player, allowedRaces)
-
 				if (characterRepository.nameExists(info.name)) {
 					player.sendError("The name '${info.name}' is already in use, please enter a different name.")
 					continue

@@ -10,7 +10,6 @@ import com.fablesfantasyrp.plugin.knockout.data.entity.KnockoutPlayerEntity
 import com.fablesfantasyrp.plugin.knockout.data.persistent.database.DatabasePersistentKnockoutPlayerDataRepository
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
-import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.BukkitModule
@@ -22,6 +21,7 @@ import com.sk89q.intake.fluent.CommandGraph
 import com.sk89q.intake.parametric.ParametricBuilder
 import com.sk89q.intake.parametric.provider.PrimitivesModule
 import org.bukkit.command.Command
+import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
 
 internal val SYSPREFIX =
@@ -33,7 +33,7 @@ internal val PLUGIN: FablesKnockout
 	get() = FablesKnockout.instance
 
 
-class FablesKnockout : SuspendingJavaPlugin() {
+class FablesKnockout : JavaPlugin() {
 	private lateinit var commands: Collection<Command>
 
 	override fun onEnable() {

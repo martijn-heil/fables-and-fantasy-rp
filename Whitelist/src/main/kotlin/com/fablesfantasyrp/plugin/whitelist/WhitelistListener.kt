@@ -7,7 +7,6 @@ import com.fablesfantasyrp.plugin.utilsoffline.gameMode
 import com.fablesfantasyrp.plugin.utilsoffline.location
 import com.fablesfantasyrp.plugin.whitelist.event.WhitelistAddedPlayerEvent
 import com.fablesfantasyrp.plugin.whitelist.event.WhitelistRemovedPlayerEvent
-import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import de.myzelyam.api.vanish.VanishAPI
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -19,9 +18,10 @@ import org.bukkit.event.EventPriority.*
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.player.*
+import org.bukkit.plugin.java.JavaPlugin
 import java.util.logging.Level
 
-class WhitelistListener(private val plugin: SuspendingJavaPlugin) : Listener {
+class WhitelistListener(private val plugin: JavaPlugin) : Listener {
 	private val server: Server
 		get() = plugin.server
 

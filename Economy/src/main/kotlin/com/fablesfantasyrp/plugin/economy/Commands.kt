@@ -5,8 +5,8 @@ import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterReposito
 import com.fablesfantasyrp.plugin.economy.data.entity.EntityProfileEconomyRepository
 import com.fablesfantasyrp.plugin.economy.gui.bank.BankGuiMainMenu
 import com.fablesfantasyrp.plugin.profile.ProfileManager
+import com.fablesfantasyrp.plugin.profile.data.entity.EntityProfileRepository
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
-import com.fablesfantasyrp.plugin.profile.profiles
 import com.fablesfantasyrp.plugin.text.sendError
 import com.gitlab.martijn_heil.nincommands.common.CommandTarget
 import com.gitlab.martijn_heil.nincommands.common.Sender
@@ -17,8 +17,11 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 
-class Commands(private val characters: EntityCharacterRepository,
-			   private val profileManager: ProfileManager) {
+class Commands(private val plugin: JavaPlugin,
+			   private val characters: EntityCharacterRepository,
+			   private val profileManager: ProfileManager,
+			   private val profiles: EntityProfileRepository,
+			   private val economyRepository: EntityProfileEconomyRepository) {
 	@Command(aliases = ["balance", "bal", "fbalance", "fbal"], desc = "Show your balance")
 	@Require(Permission.Command.Balance)
 	fun balance(@Sender sender: CommandSender,
@@ -57,7 +60,7 @@ class Commands(private val characters: EntityCharacterRepository,
 		currentPlayer.sendMessage("$SYSPREFIX Sent $CURRENCY_SYMBOL${amount} to $displayName")
 	}
 
-	class Eco(private val characters: EntityCharacterRepository) {
+	inner class Eco {
 		@Command(aliases = ["give"], desc = "Give money")
 		@Require(Permission.Command.Eco.Give)
 		fun give(@Sender sender: CommandSender,
@@ -92,7 +95,7 @@ class Commands(private val characters: EntityCharacterRepository,
 		}
 	}
 
-	class Bank(private val plugin: JavaPlugin, private val economyRepository: EntityProfileEconomyRepository) {
+	inner class Bank {
 		@Command(aliases = ["open"], desc = "Open bank")
 		@Require(Permission.Command.Bank.Open)
 		fun open(@Sender sender: Player, @AllowCharacterName target: Profile) {

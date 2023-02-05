@@ -1,17 +1,12 @@
 package com.fablesfantasyrp.plugin.tools
 
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
-import com.fablesfantasyrp.plugin.inventory.FablesInventoryPlugin
 import com.fablesfantasyrp.plugin.profile.command.provider.ProfileModule
-import com.fablesfantasyrp.plugin.profile.profileManager
-import com.fablesfantasyrp.plugin.profile.profiles
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
-import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.BukkitModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.sender.BukkitSenderModule
-import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.sender.BukkitSenderProvider
 import com.gitlab.martijn_heil.nincommands.common.bukkit.registerCommand
 import com.gitlab.martijn_heil.nincommands.common.bukkit.unregisterCommand
 import com.sk89q.intake.Intake
@@ -20,12 +15,14 @@ import com.sk89q.intake.parametric.ParametricBuilder
 import com.sk89q.intake.parametric.provider.PrimitivesModule
 import org.bukkit.ChatColor.*
 import org.bukkit.command.Command
-import org.bukkit.entity.Player
+import org.bukkit.plugin.java.JavaPlugin
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
 internal val SYSPREFIX = "${GOLD}${BOLD}[${LIGHT_PURPLE}${BOLD} TOOLS ${GOLD}${BOLD}]${GRAY}"
 internal val PLUGIN get() = FablesTools.instance
 
-class FablesTools : SuspendingJavaPlugin() {
+class FablesTools : JavaPlugin(), KoinComponent {
 	private lateinit var commands: Collection<Command>
 
 	override fun onEnable() {
@@ -37,15 +34,15 @@ class FablesTools : SuspendingJavaPlugin() {
 		injector.install(BukkitModule(server))
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
-		injector.install(ProfileModule(profiles, profileManager, BukkitSenderProvider(Player::class.java)))
-		injector.install(CharacterModule())
+		injector.install(get<ProfileModule>())
+		injector.install(get<CharacterModule>())
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()
 
 		val rootDispatcherNode = CommandGraph().builder(builder).commands()
 		rootDispatcherNode.registerMethods(Commands())
-		rootDispatcherNode.registerMethods(InventoryCommands(FablesInventoryPlugin.instance.mirroredInventoryManager))
+		rootDispatcherNode.registerMethods(InventoryCommands(get()))
 		val dispatcher = rootDispatcherNode.dispatcher
 
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }

@@ -1,9 +1,8 @@
 package com.fablesfantasyrp.plugin.characters.command.provider
 
-import com.fablesfantasyrp.plugin.characters.currentPlayerCharacter
 import com.fablesfantasyrp.plugin.characters.data.entity.Character
 import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
-import com.fablesfantasyrp.plugin.characters.playerCharacters
+import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.utils.quoteCommandArgument
 import com.gitlab.martijn_heil.nincommands.common.CommandTarget
 import com.sk89q.intake.argument.ArgumentParseException
@@ -15,7 +14,9 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.permissions.Permissible
 
-class CharacterProvider(private val server: Server, private val characters: EntityCharacterRepository) : Provider<Character> {
+class CharacterProvider(private val server: Server,
+						private val characters: EntityCharacterRepository,
+						private val profileManager: ProfileManager) : Provider<Character> {
 	override fun isProvided(): Boolean = false
 
 	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): Character? {
@@ -36,8 +37,14 @@ class CharacterProvider(private val server: Server, private val characters: Enti
 			} else {
 				characters.forName(name)?: throw ArgumentParseException("A character called '$name' could not be found")
 			}
-		} else if (targetAnnotation != null && sender is Player && sender.currentPlayerCharacter != null) {
-			return sender.currentPlayerCharacter!!
+		} else if (targetAnnotation != null) {
+			val player = sender as? Player
+			val currentProfile = player?.let { profileManager.getCurrentForPlayer(it) }
+			val currentCharacter = currentProfile?.let { characters.forProfile(it) }
+			if (currentCharacter == null) {
+				arguments.next() // Generate MissingArgumentException
+				return null
+			}
 		} else {
 			// Generate MissingArgumentException
 			arguments.next()
@@ -46,8 +53,7 @@ class CharacterProvider(private val server: Server, private val characters: Enti
 	}
 
 	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
-		return server.playerCharacters.asSequence()
-				.map { it.name }
+			return characters.allNames().asSequence()
 				.filter { it.startsWith(prefix.removePrefix("\""), true) }
 				.map { quoteCommandArgument(it) }
 				.toList()

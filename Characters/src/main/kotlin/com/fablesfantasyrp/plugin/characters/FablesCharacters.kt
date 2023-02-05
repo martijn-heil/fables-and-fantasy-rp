@@ -3,15 +3,13 @@ package com.fablesfantasyrp.plugin.characters
 import com.fablesfantasyrp.plugin.characters.command.Commands
 import com.fablesfantasyrp.plugin.characters.command.LegacyCommands
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
-import com.fablesfantasyrp.plugin.characters.data.entity.Character
+import com.fablesfantasyrp.plugin.characters.data.entity.CharacterRepository
 import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
 import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepositoryImpl
 import com.fablesfantasyrp.plugin.characters.data.persistent.H2CharacterRepository
-import com.fablesfantasyrp.plugin.database.FablesDatabase
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.profile.ProfilePrompter
-import com.fablesfantasyrp.plugin.profile.profileManager
-import com.fablesfantasyrp.plugin.profile.profiles
+import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.utils.Services
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
@@ -24,23 +22,31 @@ import com.gitlab.martijn_heil.nincommands.common.bukkit.unregisterCommand
 import com.sk89q.intake.Intake
 import com.sk89q.intake.fluent.CommandGraph
 import com.sk89q.intake.parametric.ParametricBuilder
+import com.sk89q.intake.parametric.Provider
 import com.sk89q.intake.parametric.provider.PrimitivesModule
 import org.bukkit.ChatColor.*
-import org.bukkit.OfflinePlayer
-import org.bukkit.Server
 import org.bukkit.command.Command
-import org.bukkit.entity.Player
+import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.ServicePriority
+import org.bukkit.plugin.java.JavaPlugin
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
+import org.koin.core.context.loadKoinModules
+import org.koin.core.context.unloadKoinModules
+import org.koin.core.module.Module
+import org.koin.core.module.dsl.singleOf
+import org.koin.core.qualifier.named
+import org.koin.dsl.bind
+import org.koin.dsl.binds
+import org.koin.dsl.module
 
 internal val SYSPREFIX = "$GOLD[ $GREEN${BOLD}CHARACTERS $GOLD] $GRAY"
 
-lateinit var characterRepository: EntityCharacterRepository
-	private set
-
 internal val PLUGIN get() = FablesCharacters.instance
 
-class FablesCharacters : SuspendingJavaPlugin() {
+class FablesCharacters : JavaPlugin(), KoinComponent {
 	private lateinit var commands: Collection<Command>
+	private lateinit var koinModule: Module
 
 	override fun onEnable() {
 		enforceDependencies(this)
@@ -53,73 +59,71 @@ class FablesCharacters : SuspendingJavaPlugin() {
 			return
 		}
 
-		//playerCharacterRepository = DenizenCharacterRepository(server)
-		val h2CharacterRepository = H2CharacterRepository(server, FablesDatabase.fablesDatabase, profiles)
-		val characterRepositoryImpl = EntityCharacterRepositoryImpl(h2CharacterRepository, profiles)
-		characterRepositoryImpl.init()
-		characterRepository = characterRepositoryImpl
-		server.servicesManager.register(EntityCharacterRepository::class.java, characterRepository, this, ServicePriority.Normal)
+		koinModule = module(createdAtStart = true) {
+			single <Plugin> { this@FablesCharacters } binds(arrayOf(JavaPlugin::class, SuspendingJavaPlugin::class))
 
-		val characterModule = CharacterModule()
+			single<EntityCharacterRepository> {
+				val h2CharacterRepository = H2CharacterRepository(get(), get(), get())
+				val characterRepositoryImpl = EntityCharacterRepositoryImpl(h2CharacterRepository, get())
+				characterRepositoryImpl.init()
+				characterRepositoryImpl
+			} bind CharacterRepository::class
+
+			factory { CharacterModule(get(), get(), get(), get<Provider<Profile>>(named("Profile"))) }
+			singleOf(::CharactersListener)
+			singleOf(::CharactersLiveMigrationListener)
+			singleOf(::CharacterCreationListener)
+			singleOf(::Commands)
+			single { get<Commands>().Characters() }
+			single { get<Commands.Characters>().Change() }
+			single { get<Commands.Characters>().Stats() }
+			singleOf(::LegacyCommands)
+		}
+		loadKoinModules(koinModule)
+
+		server.servicesManager.register(EntityCharacterRepository::class.java, get(), this, ServicePriority.Normal)
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())
 		injector.install(BukkitModule(server))
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
-		injector.install(characterModule)
+		injector.install(get<CharacterModule>())
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()
 
-		val prompter = Services.get<ProfilePrompter>()
-
+		val commandsInstance = get<Commands>()
 		val rootDispatcherNode = CommandGraph().builder(builder).commands()
-		rootDispatcherNode.registerMethods(Commands(this))
+		rootDispatcherNode.registerMethods(commandsInstance)
 
 		val charactersCommand = rootDispatcherNode.group("character", "char", "fchar", "fcharacter")
-		val characterCommands = Commands.Characters(this, profiles, profileManager, prompter)
-		charactersCommand.registerMethods(characterCommands)
-		rootDispatcherNode.registerMethods(LegacyCommands(characterCommands))
+		charactersCommand.registerMethods(commandsInstance.Characters())
+		rootDispatcherNode.registerMethods(LegacyCommands(commandsInstance.Characters()))
 
-		charactersCommand.group("stats").registerMethods(Commands.Characters.Stats(this))
-		charactersCommand.group("change").registerMethods(Commands.Characters.Change(this, Services.get()))
+		charactersCommand.group("stats").registerMethods(get<Commands.Characters.Stats>())
+		charactersCommand.group("change").registerMethods(get<Commands.Characters.Change>())
 
 		val dispatcher = rootDispatcherNode.dispatcher
 
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
 
-		server.pluginManager.registerEvents(CharactersListener(this, characterRepository, profiles, profileManager, Services.get()), this)
-		server.pluginManager.registerEvents(CharactersLiveMigrationListener(this, characterRepository), this)
-		server.pluginManager.registerEvents(CharacterCreationListener(), this)
+		server.pluginManager.registerEvents(get<CharactersListener>(), this)
+		server.pluginManager.registerEvents(get<CharactersLiveMigrationListener>(), this)
+		server.pluginManager.registerEvents(get<CharacterCreationListener>(), this)
 
 		if (server.pluginManager.isPluginEnabled("TAB") && server.pluginManager.isPluginEnabled("Denizen") ) {
-			com.fablesfantasyrp.plugin.characters.nametags.NameTagManager().start()
+			com.fablesfantasyrp.plugin.characters.nametags.NameTagManager(get(), get()).start()
 		}
 	}
 
 	override fun onDisable() {
 		commands.forEach { unregisterCommand(it) }
-		characterRepository.saveAllDirty()
+		get<EntityCharacterRepository>().saveAllDirty()
+		unloadKoinModules(koinModule)
 	}
 
 	companion object {
 		lateinit var instance: FablesCharacters
 	}
 }
-
-var Player.currentPlayerCharacter: Character?
-	get() {
-		return profileManager.getCurrentForPlayer(this)
-				?.let { characterRepository.forId(it.id) }
-	}
-	set(value) {
-		require(value != null)
-		profileManager.setCurrentForPlayer(this, profiles.forId(value.id.toInt())!!)
-	}
-
-val OfflinePlayer.playerCharacters: Collection<Character>
-	get() = characterRepository.forOwner(this)
-
-val Server.playerCharacters: Collection<Character>
-	get() = characterRepository.all()

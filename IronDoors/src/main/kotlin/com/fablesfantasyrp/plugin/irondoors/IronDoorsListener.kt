@@ -3,19 +3,18 @@ package com.fablesfantasyrp.plugin.irondoors
 import com.fablesfantasyrp.plugin.locks.FablesLocks.Companion.lockRepository
 import com.fablesfantasyrp.plugin.locks.data.LockAccess
 import com.fablesfantasyrp.plugin.locks.data.LockData
-import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.block.BlockState
 import org.bukkit.block.data.Openable
 import org.bukkit.event.EventHandler
-import org.bukkit.event.EventPriority.*
+import org.bukkit.event.EventPriority.MONITOR
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
-import org.bukkit.event.player.*
+import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 
-class IronDoorsListener(private val plugin: SuspendingJavaPlugin) : Listener {
+class IronDoorsListener : Listener {
 	@EventHandler(priority = MONITOR, ignoreCancelled = true)
 	fun onPlayerIronDoorInteract(e: PlayerInteractEvent) {
 		val p = e.player

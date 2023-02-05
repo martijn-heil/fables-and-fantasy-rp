@@ -1,9 +1,10 @@
 package com.fablesfantasyrp.plugin.magic
 
-import com.fablesfantasyrp.plugin.characters.currentPlayerCharacter
+import com.fablesfantasyrp.plugin.location.location
 import com.fablesfantasyrp.plugin.magic.data.entity.EntityTearRepository
 import com.fablesfantasyrp.plugin.magic.data.entity.Tear
 import com.fablesfantasyrp.plugin.profile.ProfileManager
+import com.fablesfantasyrp.plugin.utils.distanceSafe
 import org.bukkit.plugin.Plugin
 
 class TearClosureManager(private val plugin: Plugin,
@@ -31,10 +32,8 @@ class TearClosureManager(private val plugin: Plugin,
 	}
 
 	private fun shouldTearClose(tear: Tear): Boolean {
-		val player = profileManager.getCurrentForProfile(tear.owner.character.profile) ?: return true
-		return (!player.isOnline ||
-				player.currentPlayerCharacter != tear.owner.character ||
-				player.location.world != tear.location.world ||
-				player.location.distance(tear.location) > 15.0)
+		val owner = tear.owner
+		val player = profileManager.getCurrentForProfile(owner.character.profile)
+		return player == null || owner.character.profile.location.distanceSafe(tear.location) > 15.0
 	}
 }

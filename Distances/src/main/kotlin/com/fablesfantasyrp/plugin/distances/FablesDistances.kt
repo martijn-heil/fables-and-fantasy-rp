@@ -16,10 +16,12 @@ import com.sk89q.intake.parametric.provider.PrimitivesModule
 import org.bukkit.ChatColor
 import org.bukkit.command.Command
 import org.bukkit.plugin.java.JavaPlugin
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
 internal val SYSPREFIX = "${ChatColor.GOLD}[${ChatColor.DARK_AQUA}${ChatColor.BOLD} DISTANCES ${ChatColor.GOLD}] ${ChatColor.GRAY}"
 
-class FablesDistances : JavaPlugin() {
+class FablesDistances : JavaPlugin(), KoinComponent {
 	private lateinit var commands: Collection<Command>
 
 	override fun onEnable() {
@@ -31,7 +33,7 @@ class FablesDistances : JavaPlugin() {
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
 		injector.install(FixedSuggestionsModule(injector))
-		injector.install(CharacterModule())
+		injector.install(get<CharacterModule>())
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()

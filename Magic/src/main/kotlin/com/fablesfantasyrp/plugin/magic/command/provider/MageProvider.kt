@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.magic.command.provider
 
-import com.fablesfantasyrp.plugin.characters.command.provider.CharacterProvider
-import com.fablesfantasyrp.plugin.characters.playerCharacters
+import com.fablesfantasyrp.plugin.characters.data.entity.Character
+import com.fablesfantasyrp.plugin.characters.data.entity.CharacterRepository
 import com.fablesfantasyrp.plugin.magic.data.entity.Mage
 import com.fablesfantasyrp.plugin.magic.mageRepository
 import com.fablesfantasyrp.plugin.utils.quoteCommandArgument
@@ -9,9 +9,8 @@ import com.sk89q.intake.argument.ArgumentParseException
 import com.sk89q.intake.argument.CommandArgs
 import com.sk89q.intake.argument.Namespace
 import com.sk89q.intake.parametric.Provider
-import org.bukkit.Bukkit
 
-class MageProvider(private val characterProvider: CharacterProvider) : Provider<Mage> {
+class MageProvider(private val characterProvider: Provider<Character>, private val characters: CharacterRepository) : Provider<Mage> {
 	override fun isProvided(): Boolean = false
 
 	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): Mage {
@@ -21,7 +20,7 @@ class MageProvider(private val characterProvider: CharacterProvider) : Provider<
 	}
 
 	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
-		return Bukkit.getServer().playerCharacters.asSequence()
+		return characters.all().asSequence()
 				.filter { mageRepository.forPlayerCharacter(it) != null }
 				.map { it.name }
 				.filter { it.startsWith(prefix.removePrefix("\""), true) }

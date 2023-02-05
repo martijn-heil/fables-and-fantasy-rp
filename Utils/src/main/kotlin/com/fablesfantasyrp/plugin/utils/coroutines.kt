@@ -2,10 +2,10 @@
 
 package com.fablesfantasyrp.plugin.utils
 
-import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.github.shynixn.mccoroutine.bukkit.launch
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
+import org.bukkit.plugin.Plugin
 import java.lang.Long.max
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
@@ -15,7 +15,7 @@ interface EveryScope {
 	fun stop()
 }
 
-fun every(plugin: SuspendingJavaPlugin, interval: Duration, what: suspend CoroutineScope.() -> Unit) {
+fun every(plugin: Plugin, interval: Duration, what: suspend CoroutineScope.() -> Unit) {
 	plugin.launch {
 		val scope = this
 		while (true) {

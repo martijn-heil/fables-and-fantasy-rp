@@ -1,10 +1,10 @@
 package com.fablesfantasyrp.plugin.form
 
-import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
+import org.bukkit.plugin.java.JavaPlugin
 
 internal val PLUGIN get() = FablesForm.instance
 
-class FablesForm : SuspendingJavaPlugin() {
+class FablesForm : JavaPlugin() {
 	override fun onEnable() {
 		instance = this
 

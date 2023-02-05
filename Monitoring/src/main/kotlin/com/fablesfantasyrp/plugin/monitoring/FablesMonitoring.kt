@@ -1,13 +1,13 @@
 package com.fablesfantasyrp.plugin.monitoring
 
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
-import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import org.apache.logging.log4j.LogManager
+import org.bukkit.plugin.java.JavaPlugin
 
 private val rootLogger: org.apache.logging.log4j.core.Logger?
 	get() = (LogManager.getRootLogger() as org.apache.logging.log4j.core.Logger)
 
-class FablesMonitoring : SuspendingJavaPlugin() {
+class FablesMonitoring : JavaPlugin() {
 	private var appender: TimeBasedGroupingAppender? = null
 
 	override fun onEnable() {

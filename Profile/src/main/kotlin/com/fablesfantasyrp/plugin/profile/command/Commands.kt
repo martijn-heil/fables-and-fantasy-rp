@@ -14,9 +14,9 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class Commands {
-	class CommandProfile(private val profiles: ProfileRepository,
-						 private val profileManager: ProfileManager) {
+class Commands(private val profiles: ProfileRepository,
+			   private val profileManager: ProfileManager) {
+	inner class CommandProfile {
 		@Command(aliases = ["list"], desc = "List profiles")
 		@Require(Permission.Command.CommandProfile.List)
 		fun list(@Sender sender: Player,

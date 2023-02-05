@@ -11,9 +11,7 @@ import com.fablesfantasyrp.plugin.magic.data.entity.EntityMageRepository
 import com.fablesfantasyrp.plugin.magic.data.entity.EntityTearRepository
 import com.fablesfantasyrp.plugin.magic.data.persistent.H2MageRepository
 import com.fablesfantasyrp.plugin.magic.data.persistent.YamlSimpleSpellDataRepository
-import com.fablesfantasyrp.plugin.utils.Services
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
-import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.BukkitModule
@@ -26,6 +24,17 @@ import com.sk89q.intake.parametric.ParametricBuilder
 import com.sk89q.intake.parametric.provider.PrimitivesModule
 import org.bukkit.ChatColor.*
 import org.bukkit.command.Command
+import org.bukkit.plugin.Plugin
+import org.bukkit.plugin.java.JavaPlugin
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
+import org.koin.core.context.loadKoinModules
+import org.koin.core.context.unloadKoinModules
+import org.koin.core.module.Module
+import org.koin.core.module.dsl.factoryOf
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.binds
+import org.koin.dsl.module
 
 val SYSPREFIX = "${DARK_PURPLE}${BOLD}[ ${AQUA}${BOLD}MAGIC${DARK_PURPLE}${BOLD} ]${GRAY}"
 val MAX_TEARS_PER_MAGE = 3
@@ -37,8 +46,9 @@ lateinit var spellRepository: SimpleSpellDataRepository
 lateinit var mageRepository: EntityMageRepository<*>
 
 
-class FablesMagic : SuspendingJavaPlugin() {
+class FablesMagic : JavaPlugin(), KoinComponent {
 	private lateinit var commands: Collection<Command>
+	private lateinit var koinModule: Module
 
 	override fun onEnable() {
 		enforceDependencies(this)
@@ -60,22 +70,35 @@ class FablesMagic : SuspendingJavaPlugin() {
 		tearRepository = EntityTearRepository(MapTearRepository())
 		tearRepository.all().forEach { it.spawn() }
 
-		TearClosureManager(this, tearRepository, Services.get())
+		koinModule = module(createdAtStart = true) {
+			single<Plugin> { this@FablesMagic } binds(arrayOf(JavaPlugin::class))
+
+			single { spellRepository }
+			single { mageRepository }
+			single { tearRepository }
+
+			singleOf(::TearClosureManager)
+
+			factoryOf(::Commands)
+			factory { get<Commands>().Ability() }
+			factoryOf(::MagicModule)
+		}
+		loadKoinModules(koinModule)
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())
 		injector.install(BukkitModule(server))
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
-		injector.install(CharacterModule())
-		injector.install(MagicModule(server, Services.get()))
+		injector.install(get<CharacterModule>())
+		injector.install(get<MagicModule>())
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()
 
 		val rootDispatcherNode = CommandGraph().builder(builder).commands()
-		rootDispatcherNode.group("ability").registerMethods(Commands.Ability())
-		rootDispatcherNode.registerMethods(Commands(Services.get()))
+		rootDispatcherNode.group("ability").registerMethods(get<Commands.Ability>())
+		rootDispatcherNode.registerMethods(get<Commands>())
 		val dispatcher = rootDispatcherNode.dispatcher
 
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
@@ -86,6 +109,7 @@ class FablesMagic : SuspendingJavaPlugin() {
 		tearRepository.saveAllDirty()
 		tearRepository.all().forEach { it.despawn() }
 		commands.forEach { unregisterCommand(it) }
+		unloadKoinModules(koinModule)
 	}
 
 	companion object {

@@ -1,11 +1,13 @@
 package com.fablesfantasyrp.plugin.rolls.command
 
-import com.fablesfantasyrp.plugin.characters.currentPlayerCharacter
 import com.fablesfantasyrp.plugin.characters.data.CharacterStatKind
+import com.fablesfantasyrp.plugin.characters.data.entity.CharacterRepository
 import com.fablesfantasyrp.plugin.chat.chat
 import com.fablesfantasyrp.plugin.chat.getPlayersWithinRange
+import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.rolls.ROLL_RANGE
 import com.fablesfantasyrp.plugin.text.miniMessage
+import com.fablesfantasyrp.plugin.text.sendError
 import com.gitlab.martijn_heil.nincommands.common.FixedSuggestions
 import com.gitlab.martijn_heil.nincommands.common.Sender
 import com.gitlab.martijn_heil.nincommands.common.Suggestions
@@ -21,13 +23,20 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
-class Commands {
+class Commands(private val characters: CharacterRepository,
+			   private val profileManager: ProfileManager) {
 	@Command(aliases = ["roll", "dice"], desc = "Roll the dice!")
 	@Require("fables.rolls.command.roll")
 	fun roll(@Sender sender: Player,
 			 @FixedSuggestions @Suggestions(["3", "6", "20", "100"]) @Range(min = 2.0, max = 200.0) @Optional("20") dice: Int,
 			 @Optional kind: CharacterStatKind?) {
-		val stats = sender.currentPlayerCharacter!!.totalStats
+		val senderCharacter = profileManager.getCurrentForPlayer(sender)?.let { characters.forProfile(it) }
+		val stats = senderCharacter?.totalStats
+
+		if (senderCharacter == null && kind != null) {
+			sender.sendError("You cannot roll a specific stat kind while you are out of character")
+			return
+		}
 
 		val roll = com.fablesfantasyrp.plugin.rolls.roll(dice.toUInt(), kind, stats)
 		val random = roll.first
@@ -50,7 +59,7 @@ class Commands {
 		val resolver = TagResolver.builder().tag("chat_color", Tag.styling { it.merge(chatStyle) }).build()
 		val parsed = messages.map {
 			miniMessage.deserialize(it,
-					Placeholder.unparsed("name", sender.currentPlayerCharacter?.name ?: sender.name),
+					Placeholder.unparsed("name", senderCharacter?.name ?: sender.name),
 					Placeholder.unparsed("roll", random.toString()),
 					Placeholder.unparsed("dice", dice.toString()),
 					Placeholder.unparsed("result", result.toString()),

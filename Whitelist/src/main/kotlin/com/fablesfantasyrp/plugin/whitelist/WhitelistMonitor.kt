@@ -3,12 +3,12 @@ package com.fablesfantasyrp.plugin.whitelist
 import com.fablesfantasyrp.plugin.utils.every
 import com.fablesfantasyrp.plugin.whitelist.event.WhitelistAddedPlayerEvent
 import com.fablesfantasyrp.plugin.whitelist.event.WhitelistRemovedPlayerEvent
-import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
+import org.bukkit.plugin.java.JavaPlugin
 import kotlin.time.Duration.Companion.milliseconds
 
-class WhitelistMonitor(private val plugin: SuspendingJavaPlugin) {
+class WhitelistMonitor(private val plugin: JavaPlugin) {
 	private val server = plugin.server
 	private var isStopped = false
 	private var lastWhitelist = server.whitelistedPlayers.toHashSet()

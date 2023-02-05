@@ -4,12 +4,13 @@ import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDataba
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.profile.command.Commands
 import com.fablesfantasyrp.plugin.profile.command.provider.ProfileModule
+import com.fablesfantasyrp.plugin.profile.command.provider.ProfileProvider
 import com.fablesfantasyrp.plugin.profile.data.entity.EntityProfileRepository
 import com.fablesfantasyrp.plugin.profile.data.entity.EntityProfileRepositoryImpl
+import com.fablesfantasyrp.plugin.profile.data.entity.ProfileRepository
 import com.fablesfantasyrp.plugin.profile.data.persistent.H2ProfileRepository
 import com.fablesfantasyrp.plugin.utils.Services
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
-import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.BukkitModule
@@ -20,21 +21,34 @@ import com.gitlab.martijn_heil.nincommands.common.bukkit.unregisterCommand
 import com.sk89q.intake.Intake
 import com.sk89q.intake.fluent.CommandGraph
 import com.sk89q.intake.parametric.ParametricBuilder
+import com.sk89q.intake.parametric.Provider
 import com.sk89q.intake.parametric.provider.PrimitivesModule
 import org.bukkit.ChatColor.*
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
+import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.ServicePriority
+import org.bukkit.plugin.java.JavaPlugin
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
+import org.koin.core.context.loadKoinModules
+import org.koin.core.context.unloadKoinModules
+import org.koin.core.module.Module
+import org.koin.core.module.dsl.factoryOf
+import org.koin.core.module.dsl.named
+import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.withOptions
+import org.koin.dsl.bind
+import org.koin.dsl.binds
+import org.koin.dsl.module
 
 internal val SYSPREFIX = "${GOLD}${BOLD}[${LIGHT_PURPLE}${BOLD} PROFILE ${GOLD}${BOLD}]${GRAY}"
 internal val PLUGIN get() = FablesProfile.instance
 
-lateinit var profileManager: ProfileManager
-lateinit var profiles: EntityProfileRepository
-	private set
 
-class FablesProfile : SuspendingJavaPlugin() {
+class FablesProfile : JavaPlugin(), KoinComponent {
 	private lateinit var commands: Collection<Command>
+	private lateinit var koinModule: Module
 
 
 	override fun onEnable() {
@@ -49,39 +63,54 @@ class FablesProfile : SuspendingJavaPlugin() {
 			return
 		}
 
-		val profilesImpl = EntityProfileRepositoryImpl(H2ProfileRepository(server, fablesDatabase))
-		profilesImpl.init()
-		profiles = profilesImpl
-		server.servicesManager.register(EntityProfileRepository::class.java, profiles, this, ServicePriority.Normal)
+		koinModule = module(createdAtStart = true) {
+			single<Plugin> { this@FablesProfile } binds(arrayOf(JavaPlugin::class))
 
-		profileManager = ProfileManagerImpl(server)
-		Services.register(ProfileManager::class, profileManager, this, ServicePriority.Normal)
+			single<EntityProfileRepository> {
+				val profilesImpl = EntityProfileRepositoryImpl(H2ProfileRepository(server, fablesDatabase))
+				profilesImpl.init()
+				profilesImpl
+			} bind ProfileRepository::class
 
-		val prompter = SimpleProfilePrompter(this)
-		Services.register(ProfilePrompter::class, prompter, this, ServicePriority.Low)
+			singleOf(::ProfileManagerImpl) bind ProfileManager::class
+			singleOf(::SimpleProfilePrompter) bind ProfilePrompter::class
+			singleOf(::ProfileListener)
+
+			factoryOf(::ProfileProvider) bind Provider::class withOptions { named("Profile") }
+			factoryOf(::Commands)
+			factory { ProfileModule(get(), get(), BukkitSenderProvider(Player::class.java)) }
+			factory { get<Commands>().CommandProfile() }
+		}
+		loadKoinModules(koinModule)
+
+		server.servicesManager.register(EntityProfileRepository::class.java, get(), this, ServicePriority.Normal)
+		server.servicesManager.register(ProfileManager::class.java, get(), this, ServicePriority.Normal)
+
+		Services.register(ProfilePrompter::class, get(), this, ServicePriority.Low)
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())
 		injector.install(BukkitModule(server))
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
-		injector.install(ProfileModule(profiles, profileManager, BukkitSenderProvider(Player::class.java)))
+		injector.install(get<ProfileModule>())
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()
 
 		val rootDispatcherNode = CommandGraph().builder(builder).commands()
-		rootDispatcherNode.group("profile", "prof", "p").registerMethods(Commands.CommandProfile(profiles, profileManager))
-		rootDispatcherNode.registerMethods(Commands())
+		rootDispatcherNode.group("profile", "prof", "p").registerMethods(get<Commands.CommandProfile>())
+		rootDispatcherNode.registerMethods(get<Commands>())
 		val dispatcher = rootDispatcherNode.dispatcher
 
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
 
-		server.pluginManager.registerEvents(ProfileListener(this, profiles, profileManager), this)
+		server.pluginManager.registerEvents(get<ProfileListener>(), this)
 	}
 
 	override fun onDisable() {
 		commands.forEach { unregisterCommand(it) }
+		unloadKoinModules(koinModule)
 	}
 
 	companion object {

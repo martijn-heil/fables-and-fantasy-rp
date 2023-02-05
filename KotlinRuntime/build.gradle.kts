@@ -13,6 +13,7 @@ dependencies {
     shadow("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.0")
     shadow("org.ocpsoft.prettytime:prettytime:5.0.6.Final")
     shadow("com.google.guava:guava:31.1-jre")
+    shadow("io.insert-koin:koin-core:3.3.2")
     api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
     api("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.0")
 }

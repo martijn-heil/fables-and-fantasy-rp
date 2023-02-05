@@ -1,6 +1,5 @@
 package com.fablesfantasyrp.plugin.characters.command.provider
 
-import com.fablesfantasyrp.plugin.characters.currentPlayerCharacter
 import com.fablesfantasyrp.plugin.characters.data.entity.CharacterRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.utils.quoteCommandArgument
@@ -19,7 +18,8 @@ class AllowCharacterNamePlayerProvider(private val server: Server,
 	override fun isProvided(): Boolean = false
 
 	private fun getByPlayerCharacter(arguments: CommandArgs, modifiers: List<Annotation>): Player? {
-		return server.onlinePlayers.find { it.currentPlayerCharacter?.name == arguments.peek() }
+		val character = characters.forName(arguments.peek()) ?: return null
+		return profileManager.getCurrentForProfile(character.profile)
 	}
 
 	private fun getByPlayerProvider(arguments: CommandArgs, modifiers: List<Annotation>): Player? {

@@ -14,6 +14,8 @@ depend:
   - FablesDatabase
   - FablesTargeting
   - FablesDenizenInterop
+  - FablesProfile
+  - FablesLocation
   - NinCommands
 main: com.fablesfantasyrp.plugin.magic.FablesMagic
 api-version: @bukkit_api_version@

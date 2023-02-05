@@ -1,8 +1,9 @@
 package com.fablesfantasyrp.plugin.chat.channel
 
-import com.fablesfantasyrp.plugin.characters.currentPlayerCharacter
+import com.fablesfantasyrp.plugin.characters.data.entity.CharacterRepository
 import com.fablesfantasyrp.plugin.chat.chat
 import com.fablesfantasyrp.plugin.chat.getPlayersWithinRange
+import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.text.Permission
 import com.fablesfantasyrp.plugin.text.formatChat
 import com.fablesfantasyrp.plugin.text.join
@@ -15,6 +16,7 @@ import net.kyori.adventure.text.minimessage.tag.Tag
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.entity.Player
+import org.koin.core.context.GlobalContext
 import java.io.Serializable
 
 object ChatInCharacter : ChatChannel, PreviewableChatChannel, SubChanneledChatChannel, Serializable {
@@ -85,6 +87,8 @@ private fun stripLeadingStar(s: String) = Regex("^\\s*\\*\\s*(.*)").matchEntire(
 abstract class AbstractChatInCharacter : ChatChannel, PreviewableChatChannel {
 	abstract val range: UInt
 	abstract val actionWord: String
+	private val profileManager: ProfileManager = GlobalContext.get().get()
+	private val characters: CharacterRepository = GlobalContext.get().get()
 
 	override fun getRecipients(from: Player): Sequence<Player> =
 			getPlayersWithinRange(from.location, range)
@@ -107,7 +111,9 @@ abstract class AbstractChatInCharacter : ChatChannel, PreviewableChatChannel {
 	protected open fun formatMessage(from: Player, message: String): Component? {
 		val actionStyle = from.chat.chatStyle ?: Style.style(NamedTextColor.YELLOW)
 		val speechStyle = Style.style(NamedTextColor.WHITE)
-		val characterName = from.currentPlayerCharacter?.name ?:
+		val profile = profileManager.getCurrentForPlayer(from)
+		val character = profile?.let { characters.forProfile(it) }
+		val characterName = character?.name ?:
 		throw ChatIllegalStateException("Player without current character cannot chat in in-character chat.")
 
 		val startsWithAction = startsWithAction(message)
