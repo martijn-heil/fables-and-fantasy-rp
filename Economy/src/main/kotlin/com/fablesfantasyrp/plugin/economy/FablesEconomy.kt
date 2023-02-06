@@ -73,6 +73,7 @@ class FablesEconomy : JavaPlugin(), KoinComponent {
 		loadKoinModules(koinModule)
 
 		server.servicesManager.register(EntityProfileEconomyRepository::class.java, get(), this, ServicePriority.Normal)
+		profileEconomyRepository = get()
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())
