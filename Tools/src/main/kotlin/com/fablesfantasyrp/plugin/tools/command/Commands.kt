@@ -19,7 +19,9 @@ import com.sk89q.intake.Command
 import com.sk89q.intake.Require
 import com.sk89q.intake.parametric.annotation.Optional
 import com.sk89q.intake.parametric.annotation.Switch
+import com.sk89q.intake.util.auth.AuthorizationException
 import net.kyori.adventure.text.Component
+import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.WeatherType
 import org.bukkit.command.CommandSender
@@ -120,6 +122,40 @@ class Commands {
 		world.setStorm(weather != Weather.CLEAR)
 		world.isThundering = weather == Weather.THUNDER
 		sender.sendMessage("$SYSPREFIX Set ${world.name}'s weather to $weather")
+	}
+
+	@Command(aliases = ["gamemode", "gm"], desc = "")
+	@Require(Permission.Command.GameMode)
+	fun gamemode(@Sender sender: CommandSender, gameMode: GameMode, @CommandTarget(Permission.Command.GameMode + ".others") target: Player) {
+		if (!sender.hasPermission("${Permission.Command.GameMode}.${gameMode.name.lowercase()}")) {
+			throw AuthorizationException()
+		}
+
+		target.gameMode = gameMode
+	}
+
+	@Command(aliases = ["survival", "gms", "survivalmode"], desc = "")
+	@Require(Permission.Command.GameMode + ".survival")
+	fun survival(@Sender sender: CommandSender, @CommandTarget(Permission.Command.GameMode + ".others") target: Player) {
+		target.gameMode = GameMode.SURVIVAL
+	}
+
+	@Command(aliases = ["creative", "gmc", "creativemode"], desc = "")
+	@Require(Permission.Command.GameMode + ".creative")
+	fun creative(@Sender sender: CommandSender, @CommandTarget(Permission.Command.GameMode + ".others") target: Player) {
+		target.gameMode = GameMode.CREATIVE
+	}
+
+	@Command(aliases = ["spectator", "gmsp", "spectatormode"], desc = "")
+	@Require(Permission.Command.GameMode + ".spectator")
+	fun spectator(@Sender sender: CommandSender, @CommandTarget(Permission.Command.GameMode + ".others") target: Player) {
+		target.gameMode = GameMode.SPECTATOR
+	}
+
+	@Command(aliases = ["adventure", "gma", "adventuremode"], desc = "")
+	@Require(Permission.Command.GameMode + ".adventure")
+	fun adventure(@Sender sender: CommandSender, @CommandTarget(Permission.Command.GameMode + ".others") target: Player) {
+		target.gameMode = GameMode.ADVENTURE
 	}
 
 	@Command(aliases = ["rigcheer"], desc = "Rig the cheer")
