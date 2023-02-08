@@ -78,7 +78,7 @@ class Commands(private val powerToolManager: PowerToolManager) {
 		}
 	}
 
-	@Command(aliases = ["tppos"], desc = "Teleport to a position")
+	@Command(aliases = ["tppos", "ftppos"], desc = "Teleport to a position")
 	@Require(Permission.Command.Tppos)
 	fun tppos(@Sender sender: CommandSender,
 			  to: Location,
@@ -125,7 +125,7 @@ class Commands(private val powerToolManager: PowerToolManager) {
 		}
 	}
 
-	@Command(aliases = ["weather"], desc = "")
+	@Command(aliases = ["weather", "fweather"], desc = "")
 	@Require(Permission.Command.PWeather)
 	fun weather(@Sender sender: Player, weather: Weather, @Switch('s') storm: Boolean) {
 		val world = sender.world
@@ -134,7 +134,7 @@ class Commands(private val powerToolManager: PowerToolManager) {
 		sender.sendMessage("$SYSPREFIX Set ${world.name}'s weather to $weather")
 	}
 
-	@Command(aliases = ["gamemode", "gm"], desc = "")
+	@Command(aliases = ["gamemode", "gm", "fgamemode"], desc = "")
 	@Require(Permission.Command.GameMode)
 	fun gamemode(@Sender sender: CommandSender, gameMode: GameMode, @CommandTarget(Permission.Command.GameMode + ".others") target: Player) {
 		if (!sender.hasPermission("${Permission.Command.GameMode}.${gameMode.name.lowercase()}")) {
@@ -144,31 +144,31 @@ class Commands(private val powerToolManager: PowerToolManager) {
 		target.gameMode = gameMode
 	}
 
-	@Command(aliases = ["survival", "gms", "survivalmode"], desc = "")
+	@Command(aliases = ["survival", "gms", "survivalmode", "fsurvival"], desc = "")
 	@Require(Permission.Command.GameMode + ".survival")
 	fun survival(@Sender sender: CommandSender, @CommandTarget(Permission.Command.GameMode + ".others") target: Player) {
 		target.gameMode = GameMode.SURVIVAL
 	}
 
-	@Command(aliases = ["creative", "gmc", "creativemode"], desc = "")
+	@Command(aliases = ["creative", "gmc", "creativemode", "fcreative"], desc = "")
 	@Require(Permission.Command.GameMode + ".creative")
 	fun creative(@Sender sender: CommandSender, @CommandTarget(Permission.Command.GameMode + ".others") target: Player) {
 		target.gameMode = GameMode.CREATIVE
 	}
 
-	@Command(aliases = ["spectator", "gmsp", "spectatormode"], desc = "")
+	@Command(aliases = ["spectator", "gmsp", "spectatormode", "fspectator"], desc = "")
 	@Require(Permission.Command.GameMode + ".spectator")
 	fun spectator(@Sender sender: CommandSender, @CommandTarget(Permission.Command.GameMode + ".others") target: Player) {
 		target.gameMode = GameMode.SPECTATOR
 	}
 
-	@Command(aliases = ["adventure", "gma", "adventuremode"], desc = "")
+	@Command(aliases = ["adventure", "gma", "adventuremode", "fadventure"], desc = "")
 	@Require(Permission.Command.GameMode + ".adventure")
 	fun adventure(@Sender sender: CommandSender, @CommandTarget(Permission.Command.GameMode + ".others") target: Player) {
 		target.gameMode = GameMode.ADVENTURE
 	}
 
-	@Command(aliases = ["powertool", "pt"], desc = "")
+	@Command(aliases = ["powertool", "pt", "fpt", "fpowertool"], desc = "")
 	@Require(Permission.Command.PowerTool)
 	fun powertool(@Sender sender: Player, @Optional @Text command: String?) {
 		powerToolManager.setPowerTool(sender, command)
@@ -179,7 +179,7 @@ class Commands(private val powerToolManager: PowerToolManager) {
 		}
 	}
 
-	@Command(aliases = ["fly"], desc = "Take off, and soar!")
+	@Command(aliases = ["fly", "ffly"], desc = "Take off, and soar!")
 	@Require(Permission.Command.Fly)
 	fun fly(@Sender sender: CommandSender,
 			@Optional @Toggle value: Boolean?,
@@ -193,7 +193,7 @@ class Commands(private val powerToolManager: PowerToolManager) {
 		))
 	}
 
-	@Command(aliases = ["speed"], desc = "Speedy boi")
+	@Command(aliases = ["speed", "fspeed"], desc = "Speedy boi")
 	@Require(Permission.Command.Speed)
 	fun speed(@Sender sender: CommandSender,
 			  @Range(min = 0.0, max = 10.0) value: Float,
