@@ -14,6 +14,8 @@ import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.BukkitModule
+import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.OfflinePlayerProvider
+import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.PlayerProvider
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.sender.BukkitSenderModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.sender.BukkitSenderProvider
 import com.gitlab.martijn_heil.nincommands.common.bukkit.registerCommand
@@ -24,6 +26,7 @@ import com.sk89q.intake.parametric.ParametricBuilder
 import com.sk89q.intake.parametric.Provider
 import com.sk89q.intake.parametric.provider.PrimitivesModule
 import org.bukkit.ChatColor.*
+import org.bukkit.Server
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
@@ -78,7 +81,16 @@ class FablesProfile : JavaPlugin(), KoinComponent {
 
 			factoryOf(::ProfileProvider) bind Provider::class withOptions { named("Profile") }
 			factoryOf(::Commands)
-			factory { ProfileModule(get(), get(), BukkitSenderProvider(Player::class.java)) }
+
+			factory {
+				ProfileModule(
+						get<EntityProfileRepository>(),
+						get<ProfileManager>(),
+						BukkitSenderProvider(Player::class.java),
+						PlayerProvider(get<Server>(), OfflinePlayerProvider(get<Server>())),
+						get<Server>()
+				)
+			}
 			factory { get<Commands>().CommandProfile() }
 		}
 		loadKoinModules(koinModule)
