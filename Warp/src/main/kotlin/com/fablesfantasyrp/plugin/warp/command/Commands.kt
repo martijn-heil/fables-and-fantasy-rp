@@ -18,7 +18,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class Commands(private val warps: SimpleWarpRepository) {
-	@Command(aliases = ["warp"], desc = "Warp to a place")
+	@Command(aliases = ["warp", "fwarp"], desc = "Warp to a place")
 	@Require(Permission.Command.Warp)
 	fun warp(@Sender sender: CommandSender, warp: SimpleWarp, @CommandTarget(Permission.Command.Warp + ".others") target: Player) {
 		sender.sendMessage(miniMessage.deserialize("<gray><prefix> Warping <player> to <warp></gray>",
@@ -29,7 +29,7 @@ class Commands(private val warps: SimpleWarpRepository) {
 		target.teleport(warp.location)
 	}
 
-	@Command(aliases = ["setwarp"], desc = "Set a warp")
+	@Command(aliases = ["setwarp", "fsetwarp"], desc = "Set a warp")
 	@Require(Permission.Command.SetWarp)
 	fun setwarp(@Sender sender: Player, name: String) {
 		val finalName = name.lowercase().replace(' ', '_')
@@ -49,7 +49,7 @@ class Commands(private val warps: SimpleWarpRepository) {
 		sender.sendMessage("$SYSPREFIX Set warp ${warp.id} to your current location.")
 	}
 
-	@Command(aliases = ["delwarp"], desc = "Delete a warp")
+	@Command(aliases = ["delwarp", "fdelwarp"], desc = "Delete a warp")
 	@Require(Permission.Command.DelWarp)
 	fun delwarp(@Sender sender: CommandSender, warp: SimpleWarp) {
 		warps.destroy(warp)

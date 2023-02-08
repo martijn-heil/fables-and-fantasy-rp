@@ -11,12 +11,8 @@ import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.nameStyle
 import com.fablesfantasyrp.plugin.text.sendError
-import com.fablesfantasyrp.plugin.tools.MovementType
-import com.fablesfantasyrp.plugin.tools.Permission
-import com.fablesfantasyrp.plugin.tools.PowerToolManager
-import com.fablesfantasyrp.plugin.tools.SYSPREFIX
+import com.fablesfantasyrp.plugin.tools.*
 import com.fablesfantasyrp.plugin.tools.command.provider.MinecraftTime
-import com.fablesfantasyrp.plugin.tools.command.provider.Weather
 import com.fablesfantasyrp.plugin.utils.asEnabledDisabledComponent
 import com.fablesfantasyrp.plugin.utils.humanReadable
 import com.gitlab.martijn_heil.nincommands.common.CommandTarget
@@ -112,8 +108,12 @@ class Commands(private val powerToolManager: PowerToolManager) {
 	inner class PWeather {
 		@Command(aliases = ["set"], desc = "")
 		@Require(Permission.Command.PWeather)
-		fun set(@Sender sender: CommandSender, weather: WeatherType, @CommandTarget(Permission.Command.Ptime + ".others") target: Player) {
-			target.setPlayerWeather(weather)
+		fun set(@Sender sender: CommandSender, weather: PlayerWeather, @CommandTarget(Permission.Command.Ptime + ".others") target: Player) {
+			val bukkitWeather = when (weather) {
+				PlayerWeather.CLEAR -> WeatherType.CLEAR
+				PlayerWeather.RAIN -> WeatherType.DOWNFALL
+			}
+			target.setPlayerWeather(bukkitWeather)
 			sender.sendMessage("$SYSPREFIX Set ${target.name}'s playerweather to $weather")
 		}
 
@@ -183,7 +183,7 @@ class Commands(private val powerToolManager: PowerToolManager) {
 	@Require(Permission.Command.Fly)
 	fun fly(@Sender sender: CommandSender,
 			@Optional @Toggle value: Boolean?,
-			@CommandTarget(Permission.Command.Fly + ".others") target: Player) {
+			@Optional @CommandTarget(Permission.Command.Fly + ".others") target: Player) {
 		val finalValue = value ?: !target.allowFlight
 		target.allowFlight = finalValue
 		sender.sendMessage(miniMessage.deserialize("<gray><prefix> Set fly mode <value> for <player></gray>",
@@ -198,7 +198,7 @@ class Commands(private val powerToolManager: PowerToolManager) {
 	fun speed(@Sender sender: CommandSender,
 			  @Range(min = 0.0, max = 10.0) value: Float,
 			  @Optional type: MovementType?,
-			  @CommandTarget(Permission.Command.Speed+ ".others") target: Player) {
+			  @Optional @CommandTarget(Permission.Command.Speed+ ".others") target: Player) {
 		val finalType = type ?: if (target.isFlying) MovementType.FLY else MovementType.WALK
 
 		if (!sender.hasPermission(Permission.Command.Speed + "." + finalType.name.lowercase())) {
@@ -222,7 +222,7 @@ class Commands(private val powerToolManager: PowerToolManager) {
 	@Require(Permission.Command.God)
 	fun god(@Sender sender: CommandSender,
 			@Optional @Toggle value: Boolean?,
-			@CommandTarget(Permission.Command.God + ".others") target: Player) {
+			@Optional @CommandTarget(Permission.Command.God + ".others") target: Player) {
 		val finalValue = value ?: !target.isInvulnerable
 		target.isInvulnerable = finalValue
 		sender.sendMessage(miniMessage.deserialize("<gray><prefix> Set god mode to <value> for <player></gray>",

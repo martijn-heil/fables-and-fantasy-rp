@@ -5,6 +5,7 @@ import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDataba
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.economy.data.entity.EntityProfileEconomyRepository
 import com.fablesfantasyrp.plugin.economy.data.entity.EntityProfileEconomyRepositoryImpl
+import com.fablesfantasyrp.plugin.economy.data.entity.ProfileEconomyRepository
 import com.fablesfantasyrp.plugin.economy.data.persistent.H2ProfileEconomyRepository
 import com.fablesfantasyrp.plugin.profile.command.provider.ProfileModule
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
@@ -29,7 +30,6 @@ import org.koin.core.context.loadKoinModules
 import org.koin.core.context.unloadKoinModules
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
-import org.koin.dsl.bind
 import org.koin.dsl.binds
 import org.koin.dsl.module
 
@@ -64,7 +64,7 @@ class FablesEconomy : JavaPlugin(), KoinComponent {
 				val profileEconomyRepository = EntityProfileEconomyRepositoryImpl(H2ProfileEconomyRepository(fablesDatabase))
 				profileEconomyRepository.init()
 				profileEconomyRepository
-			} bind EntityProfileEconomyRepository::class
+			} binds (arrayOf(EntityProfileEconomyRepository::class, ProfileEconomyRepository::class))
 
 			factoryOf(::Commands)
 			factory { get<Commands>().Eco() }

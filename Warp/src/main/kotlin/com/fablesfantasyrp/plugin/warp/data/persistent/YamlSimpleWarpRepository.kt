@@ -7,6 +7,7 @@ import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.Plugin
 import org.yaml.snakeyaml.error.YAMLException
 import java.io.File
+import java.util.*
 
 class YamlSimpleWarpRepository(private val plugin: Plugin,
 							   private val directory: File) : SimpleWarpRepository {
@@ -26,7 +27,7 @@ class YamlSimpleWarpRepository(private val plugin: Plugin,
 	}
 
 	override fun allIds(): Collection<String> {
-		return directory.list { _, s -> s.endsWith(".yml") }.toList()
+		return directory.list { _, s -> s.endsWith(".yml") }.map { it.removeSuffix(".yml") }
 	}
 
 	override fun all(): Collection<SimpleWarp> {
@@ -91,7 +92,7 @@ class YamlSimpleWarpRepository(private val plugin: Plugin,
 		val pitch = yaml.getDouble("pitch", Double.NaN)
 		val worldUuid = yaml.getString("world") ?: missingField("world")
 
-		val world = server.getWorld(worldUuid) ?: throw IllegalStateException("World with UUID '$worldUuid' is not loaded.")
+		val world = server.getWorld(UUID.fromString(worldUuid)) ?: throw IllegalStateException("World with UUID '$worldUuid' is not loaded.")
 
 		if (x.isNaN()) missingField("x")
 		if (y.isNaN()) missingField("y")

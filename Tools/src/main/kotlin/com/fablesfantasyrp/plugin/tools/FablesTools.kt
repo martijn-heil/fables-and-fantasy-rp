@@ -44,6 +44,7 @@ class FablesTools : JavaPlugin(), KoinComponent {
 		koinModule = module(createdAtStart = true) {
 			single <Plugin> { this@FablesTools } binds(arrayOf(JavaPlugin::class))
 
+			singleOf(::PowerToolManager)
 			singleOf(::Commands)
 			single { get<Commands>().Ptime() }
 			single { get<Commands>().PWeather() }

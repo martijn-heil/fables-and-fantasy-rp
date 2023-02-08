@@ -79,7 +79,14 @@ class FablesProfile : JavaPlugin(), KoinComponent {
 			singleOf(::SimpleProfilePrompter) bind ProfilePrompter::class
 			singleOf(::ProfileListener)
 
-			factoryOf(::ProfileProvider) bind Provider::class withOptions { named("Profile") }
+			factory {
+				ProfileProvider(
+						get<EntityProfileRepository>(),
+						get<ProfileManager>(),
+						PlayerProvider(get<Server>(), OfflinePlayerProvider(get<Server>())),
+						get<Server>()
+					)
+			} bind Provider::class withOptions { named("Profile") }
 			factoryOf(::Commands)
 
 			factory {
