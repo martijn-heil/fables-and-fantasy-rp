@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.tools.command.provider
 
+import com.fablesfantasyrp.plugin.tools.MovementType
 import com.sk89q.intake.parametric.AbstractModule
 import com.sk89q.intake.parametric.provider.EnumProvider
 import org.bukkit.GameMode
@@ -9,5 +10,6 @@ class ToolsModule : AbstractModule() {
 		bind(MinecraftTime::class.java).toProvider(MinecraftTimeProvider())
 		bind(Weather::class.java).toProvider(EnumProvider(Weather::class.java))
 		bind(GameMode::class.java).toProvider(EnumProvider(GameMode::class.java))
+		bind(MovementType::class.java).toProvider(EnumProvider(MovementType::class.java))
 	}
 }

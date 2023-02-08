@@ -15,6 +15,7 @@ object Permission {
 		const val GameMode = "$prefix.gamemode"
 		const val PowerTool = "$prefix.powertool"
 		const val Fly = "$prefix.fly"
+		const val Speed = "$prefix.speed"
 		const val Rigcheer = "$prefix.tphere"
 	}
 }

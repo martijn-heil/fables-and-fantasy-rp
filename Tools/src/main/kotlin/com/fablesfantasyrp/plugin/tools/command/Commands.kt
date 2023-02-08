@@ -11,6 +11,7 @@ import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.nameStyle
 import com.fablesfantasyrp.plugin.text.sendError
+import com.fablesfantasyrp.plugin.tools.MovementType
 import com.fablesfantasyrp.plugin.tools.Permission
 import com.fablesfantasyrp.plugin.tools.PowerToolManager
 import com.fablesfantasyrp.plugin.tools.SYSPREFIX
@@ -24,6 +25,7 @@ import com.gitlab.martijn_heil.nincommands.common.Toggle
 import com.sk89q.intake.Command
 import com.sk89q.intake.Require
 import com.sk89q.intake.parametric.annotation.Optional
+import com.sk89q.intake.parametric.annotation.Range
 import com.sk89q.intake.parametric.annotation.Switch
 import com.sk89q.intake.parametric.annotation.Text
 import com.sk89q.intake.util.auth.AuthorizationException
@@ -187,6 +189,31 @@ class Commands(private val powerToolManager: PowerToolManager) {
 		sender.sendMessage(miniMessage.deserialize("<gray><prefix> Set fly mode <value> for <player></gray>",
 				Placeholder.component("prefix", legacyText(SYSPREFIX)),
 				Placeholder.component("value", finalValue.asEnabledDisabledComponent()),
+				Placeholder.component("player", Component.text(target.name).style(target.nameStyle))
+		))
+	}
+
+	@Command(aliases = ["speed"], desc = "Speedy boi")
+	@Require(Permission.Command.Speed)
+	fun speed(@Sender sender: CommandSender,
+			  @Range(min = 0.0, max = 10.0) value: Float,
+			  @Optional @Toggle type: MovementType?,
+			  @CommandTarget(Permission.Command.Speed+ ".others") target: Player) {
+		val finalType = type ?: if (target.isFlying) MovementType.FLY else MovementType.WALK
+
+		if (!sender.hasPermission(Permission.Command.Speed + "." + finalType.name.lowercase())) {
+			throw AuthorizationException()
+		}
+
+		when(finalType) {
+			MovementType.WALK -> target.walkSpeed = value
+			MovementType.FLY -> target.flySpeed = value
+		}
+
+		sender.sendMessage(miniMessage.deserialize("<gray><prefix> Set <type> speed to <value> for <player></gray>",
+				Placeholder.component("prefix", legacyText(SYSPREFIX)),
+				Placeholder.unparsed("type", finalType.name.lowercase()),
+				Placeholder.unparsed("value", value.toString()),
 				Placeholder.component("player", Component.text(target.name).style(target.nameStyle))
 		))
 	}
