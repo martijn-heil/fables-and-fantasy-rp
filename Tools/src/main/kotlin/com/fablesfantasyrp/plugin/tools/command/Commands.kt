@@ -7,15 +7,20 @@ import com.fablesfantasyrp.plugin.inventory.inventory
 import com.fablesfantasyrp.plugin.location.location
 import com.fablesfantasyrp.plugin.profile.command.annotation.AllowPlayerName
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
+import com.fablesfantasyrp.plugin.text.legacyText
+import com.fablesfantasyrp.plugin.text.miniMessage
+import com.fablesfantasyrp.plugin.text.nameStyle
 import com.fablesfantasyrp.plugin.text.sendError
 import com.fablesfantasyrp.plugin.tools.Permission
 import com.fablesfantasyrp.plugin.tools.PowerToolManager
 import com.fablesfantasyrp.plugin.tools.SYSPREFIX
 import com.fablesfantasyrp.plugin.tools.command.provider.MinecraftTime
 import com.fablesfantasyrp.plugin.tools.command.provider.Weather
+import com.fablesfantasyrp.plugin.utils.asEnabledDisabledComponent
 import com.fablesfantasyrp.plugin.utils.humanReadable
 import com.gitlab.martijn_heil.nincommands.common.CommandTarget
 import com.gitlab.martijn_heil.nincommands.common.Sender
+import com.gitlab.martijn_heil.nincommands.common.Toggle
 import com.sk89q.intake.Command
 import com.sk89q.intake.Require
 import com.sk89q.intake.parametric.annotation.Optional
@@ -23,6 +28,7 @@ import com.sk89q.intake.parametric.annotation.Switch
 import com.sk89q.intake.parametric.annotation.Text
 import com.sk89q.intake.util.auth.AuthorizationException
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.WeatherType
@@ -169,6 +175,20 @@ class Commands(private val powerToolManager: PowerToolManager) {
 		} else {
 			sender.sendMessage("$SYSPREFIX Cleared your powertool")
 		}
+	}
+
+	@Command(aliases = ["fly"], desc = "Take off, and soar!")
+	@Require(Permission.Command.Fly)
+	fun fly(@Sender sender: CommandSender,
+			@Optional @Toggle value: Boolean?,
+			@CommandTarget(Permission.Command.Fly + ".others") target: Player) {
+		val finalValue = value ?: !target.allowFlight
+		target.allowFlight = finalValue
+		sender.sendMessage(miniMessage.deserialize("<gray><prefix> Set fly mode <value> for <player></gray>",
+				Placeholder.component("prefix", legacyText(SYSPREFIX)),
+				Placeholder.component("value", finalValue.asEnabledDisabledComponent()),
+				Placeholder.component("player", Component.text(target.name).style(target.nameStyle))
+		))
 	}
 
 	@Command(aliases = ["rigcheer"], desc = "Rig the cheer")
