@@ -13,6 +13,7 @@ object Permission {
 		const val Ptime = "$prefix.ptime"
 		const val PWeather = "$prefix.pweather"
 		const val GameMode = "$prefix.gamemode"
+		const val PowerTool = "$prefix.powertool"
 		const val Rigcheer = "$prefix.tphere"
 	}
 }

@@ -9,6 +9,7 @@ import com.fablesfantasyrp.plugin.profile.command.annotation.AllowPlayerName
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.text.sendError
 import com.fablesfantasyrp.plugin.tools.Permission
+import com.fablesfantasyrp.plugin.tools.PowerToolManager
 import com.fablesfantasyrp.plugin.tools.SYSPREFIX
 import com.fablesfantasyrp.plugin.tools.command.provider.MinecraftTime
 import com.fablesfantasyrp.plugin.tools.command.provider.Weather
@@ -19,6 +20,7 @@ import com.sk89q.intake.Command
 import com.sk89q.intake.Require
 import com.sk89q.intake.parametric.annotation.Optional
 import com.sk89q.intake.parametric.annotation.Switch
+import com.sk89q.intake.parametric.annotation.Text
 import com.sk89q.intake.util.auth.AuthorizationException
 import net.kyori.adventure.text.Component
 import org.bukkit.GameMode
@@ -53,7 +55,7 @@ class InventoryCommands(private val mirroredInventoryManager: MirroredInventoryM
 	}
 }
 
-class Commands {
+class Commands(private val powerToolManager: PowerToolManager) {
 	@Command(aliases = ["teleport", "fteleport", "tp", "ftp", "tele", "ftele"], desc = "Teleport characters")
 	@Require(Permission.Command.Teleport)
 	fun teleport(@Sender sender: CommandSender,
@@ -156,6 +158,17 @@ class Commands {
 	@Require(Permission.Command.GameMode + ".adventure")
 	fun adventure(@Sender sender: CommandSender, @CommandTarget(Permission.Command.GameMode + ".others") target: Player) {
 		target.gameMode = GameMode.ADVENTURE
+	}
+
+	@Command(aliases = ["powertool", "pt"], desc = "")
+	@Require(Permission.Command.PowerTool)
+	fun powertool(@Sender sender: Player, @Optional @Text command: String?) {
+		powerToolManager.setPowerTool(sender, command)
+		if (command != null) {
+			sender.sendMessage("$SYSPREFIX Set your powertool to: '$command'")
+		} else {
+			sender.sendMessage("$SYSPREFIX Cleared your powertool")
+		}
 	}
 
 	@Command(aliases = ["rigcheer"], desc = "Rig the cheer")
