@@ -197,7 +197,7 @@ class Commands(private val powerToolManager: PowerToolManager) {
 	@Require(Permission.Command.Speed)
 	fun speed(@Sender sender: CommandSender,
 			  @Range(min = 0.0, max = 10.0) value: Float,
-			  @Optional @Toggle type: MovementType?,
+			  @Optional type: MovementType?,
 			  @CommandTarget(Permission.Command.Speed+ ".others") target: Player) {
 		val finalType = type ?: if (target.isFlying) MovementType.FLY else MovementType.WALK
 
@@ -214,6 +214,20 @@ class Commands(private val powerToolManager: PowerToolManager) {
 				Placeholder.component("prefix", legacyText(SYSPREFIX)),
 				Placeholder.unparsed("type", finalType.name.lowercase()),
 				Placeholder.unparsed("value", value.toString()),
+				Placeholder.component("player", Component.text(target.name).style(target.nameStyle))
+		))
+	}
+
+	@Command(aliases = ["god", "godmode", "fgod", "fgodmode"], desc = "Invulnerability!!")
+	@Require(Permission.Command.God)
+	fun god(@Sender sender: CommandSender,
+			@Optional @Toggle value: Boolean?,
+			@CommandTarget(Permission.Command.God + ".others") target: Player) {
+		val finalValue = value ?: !target.isInvulnerable
+		target.isInvulnerable = finalValue
+		sender.sendMessage(miniMessage.deserialize("<gray><prefix> Set god mode to <value> for <player></gray>",
+				Placeholder.component("prefix", legacyText(SYSPREFIX)),
+				Placeholder.component("value", finalValue.asEnabledDisabledComponent()),
 				Placeholder.component("player", Component.text(target.name).style(target.nameStyle))
 		))
 	}
