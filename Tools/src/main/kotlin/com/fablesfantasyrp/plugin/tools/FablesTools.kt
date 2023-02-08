@@ -46,6 +46,7 @@ class FablesTools : JavaPlugin(), KoinComponent {
 
 			singleOf(::Commands)
 			single { get<Commands>().Ptime() }
+			single { get<Commands>().PWeather() }
 
 			factoryOf(::ToolsModule)
 		}
@@ -66,6 +67,7 @@ class FablesTools : JavaPlugin(), KoinComponent {
 		val rootDispatcherNode = CommandGraph().builder(builder).commands()
 		rootDispatcherNode.registerMethods(get<Commands>())
 		rootDispatcherNode.group("ptime", "playertime").registerMethods(get<Commands.Ptime>())
+		rootDispatcherNode.group("pweather", "playerweather").registerMethods(get<Commands.PWeather>())
 		rootDispatcherNode.registerMethods(InventoryCommands(get()))
 		val dispatcher = rootDispatcherNode.dispatcher
 

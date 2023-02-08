@@ -11,14 +11,17 @@ import com.fablesfantasyrp.plugin.text.sendError
 import com.fablesfantasyrp.plugin.tools.Permission
 import com.fablesfantasyrp.plugin.tools.SYSPREFIX
 import com.fablesfantasyrp.plugin.tools.command.provider.MinecraftTime
+import com.fablesfantasyrp.plugin.tools.command.provider.Weather
 import com.fablesfantasyrp.plugin.utils.humanReadable
 import com.gitlab.martijn_heil.nincommands.common.CommandTarget
 import com.gitlab.martijn_heil.nincommands.common.Sender
 import com.sk89q.intake.Command
 import com.sk89q.intake.Require
 import com.sk89q.intake.parametric.annotation.Optional
+import com.sk89q.intake.parametric.annotation.Switch
 import net.kyori.adventure.text.Component
 import org.bukkit.Location
+import org.bukkit.WeatherType
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -92,6 +95,31 @@ class Commands {
 			target.resetPlayerTime()
 			sender.sendMessage("$SYSPREFIX Reset ${target.name}'s playertime")
 		}
+	}
+
+	inner class PWeather {
+		@Command(aliases = ["set"], desc = "")
+		@Require(Permission.Command.PWeather)
+		fun set(@Sender sender: CommandSender, weather: WeatherType, @CommandTarget(Permission.Command.Ptime + ".others") target: Player) {
+			target.setPlayerWeather(weather)
+			sender.sendMessage("$SYSPREFIX Set ${target.name}'s playerweather to $weather")
+		}
+
+		@Command(aliases = ["reset"], desc = "")
+		@Require(Permission.Command.PWeather)
+		fun reset(@Sender sender: CommandSender, @CommandTarget(Permission.Command.Ptime + ".others") target: Player) {
+			target.resetPlayerWeather()
+			sender.sendMessage("$SYSPREFIX Reset ${target.name}'s playerweather")
+		}
+	}
+
+	@Command(aliases = ["weather"], desc = "")
+	@Require(Permission.Command.PWeather)
+	fun weather(@Sender sender: Player, weather: Weather, @Switch('s') storm: Boolean) {
+		val world = sender.world
+		world.setStorm(weather != Weather.CLEAR)
+		world.isThundering = weather == Weather.THUNDER
+		sender.sendMessage("$SYSPREFIX Set ${world.name}'s weather to $weather")
 	}
 
 	@Command(aliases = ["rigcheer"], desc = "Rig the cheer")

@@ -11,6 +11,7 @@ object Permission {
 		const val Tppos = "$prefix.tppos"
 		const val Tphere = "$prefix.tphere"
 		const val Ptime = "$prefix.ptime"
+		const val PWeather = "$prefix.pweather"
 		const val Rigcheer = "$prefix.tphere"
 	}
 }
