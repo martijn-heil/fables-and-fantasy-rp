@@ -141,6 +141,7 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 			if (channel is ToggleableChatChannel && this.disabledChannels.contains(channel)) {
 				this.disabledChannels = this.disabledChannels.filter { it != channel }.toSet()
 			}
+			val recipients = channel.getRecipients(player).toHashSet()
 			channel.sendMessage(player, content)
 			player.completeWaitForChat()
 
@@ -148,6 +149,7 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 			Bukkit.getOnlinePlayers()
 					.filter {
 						if (it == player) return@filter false
+						if (recipients.contains(it)) return@filter false
 						if (!it.hasPermission(Permission.Command.ChatSpy)) return@filter false
 						val data = it.chat
 						data.hasPermissionForChannel(channel) && data.isChatSpyEnabled && !data.chatSpyExcludeChannels.contains(channel)
