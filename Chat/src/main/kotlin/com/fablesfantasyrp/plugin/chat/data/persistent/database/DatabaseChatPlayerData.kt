@@ -11,6 +11,6 @@ data class DatabaseChatPlayerData(override val id: UUID,
 								  override var channel: ChatChannel = ChatOutOfCharacter,
 								  override var chatStyle: Style? = null,
 								  override var disabledChannels: Set<ToggleableChatChannel> = emptySet(),
-								  override var isReceptionIndicatorEnabled: Boolean = false) : PersistentChatPlayerData {
-
-}
+								  override var isChatSpyEnabled: Boolean = false,
+								  override var chatSpyExcludeChannels: Set<ChatChannel> = emptySet(),
+								  override var isReceptionIndicatorEnabled: Boolean = false) : PersistentChatPlayerData

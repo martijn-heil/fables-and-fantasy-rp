@@ -17,7 +17,7 @@ class ChatPlayerDataEntityMapper(private val child: PersistentChatPlayerDataRepo
 
 	override fun convertToChild(v: ChatPlayerEntity): PersistentChatPlayerData = v
 	override fun convertFromChild(v: PersistentChatPlayerData): ChatPlayerEntity {
-		val obj = ChatPlayerDataEntity(v.id, v.channel, v.chatStyle, v.disabledChannels, v.isReceptionIndicatorEnabled)
+		val obj = ChatPlayerDataEntity(v.id, v.channel, v.chatStyle, v.disabledChannels, v.isReceptionIndicatorEnabled, v.isChatSpyEnabled, v.chatSpyExcludeChannels)
 		obj.dirtyMarker = dirtyMarker
 		return obj
 	}

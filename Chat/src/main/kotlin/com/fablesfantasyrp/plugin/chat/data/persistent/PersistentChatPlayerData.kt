@@ -10,5 +10,7 @@ interface PersistentChatPlayerData : Identifiable<UUID> {
 	var channel: ChatChannel
 	var chatStyle: Style?
 	var disabledChannels: Set<ToggleableChatChannel>
+	var isChatSpyEnabled: Boolean
+	var chatSpyExcludeChannels: Set<ChatChannel>
 	var isReceptionIndicatorEnabled: Boolean
 }

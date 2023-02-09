@@ -4,6 +4,7 @@ import com.fablesfantasyrp.plugin.chat.CHAT_CHAR
 import com.fablesfantasyrp.plugin.chat.Permission
 import com.fablesfantasyrp.plugin.chat.SYSPREFIX
 import com.fablesfantasyrp.plugin.chat.channel.*
+import com.fablesfantasyrp.plugin.chat.chat
 import com.fablesfantasyrp.plugin.chat.data.ChatPlayerData
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
@@ -46,18 +47,31 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 	override var disabledChannels: Set<ToggleableChatChannel> = emptySet()
 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 
+	override var isChatSpyEnabled: Boolean = false
+		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
+
+	override var chatSpyExcludeChannels: Set<ChatChannel> = emptySet()
+		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
+
 	override var isReceptionIndicatorEnabled: Boolean = false
 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 
 	override val id: UUID
 
-	constructor(id: UUID, channel: ChatChannel, chatStyle: Style?, disabledChannels: Set<ToggleableChatChannel>,
-				isReceptionIndicatorEnabled: Boolean) {
+	constructor(id: UUID,
+				channel: ChatChannel,
+				chatStyle: Style?,
+				disabledChannels: Set<ToggleableChatChannel>,
+				isReceptionIndicatorEnabled: Boolean,
+				chatSpyEnabled: Boolean,
+				chatSpyExcludeChannels: Set<ChatChannel>) {
 		this.id = id
 		this.channel = channel
 		this.chatStyle = chatStyle
 		this.disabledChannels = disabledChannels
 		this.isReceptionIndicatorEnabled = isReceptionIndicatorEnabled
+		this.isChatSpyEnabled = chatSpyEnabled
+		this.chatSpyExcludeChannels = chatSpyExcludeChannels
 	}
 
 	override var dirtyMarker: DirtyMarker<ChatPlayerEntity>? = null
@@ -82,24 +96,34 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 	override var lastTypingAnimation: String? = null
 	override var previewChannel: ChatChannel? = null
 
-	private fun mayChatIn(channel: ChatChannel): Boolean {
+	override fun mayChatIn(channel: ChatChannel): Boolean {
 		val player = this.offlinePlayer.player ?: throw UnsupportedOperationException("Player is not online")
 		val permission = "${Permission.Channel.prefix}.${channel.toString().replace('#', '.')}"
 
-		if (player.isWhitelisted && player.hasPermission(permission) &&
+		if (player.isWhitelisted && this.hasPermissionForChannel(channel) &&
 				player.knockout.isKnockedOut && channel != ChatInCharacterQuiet) return false
 
 		return (!player.isWhitelisted && channel == ChatSpectator) || player.hasPermission(permission)
 	}
 
+	override fun hasPermissionForChannel(channel: ChatChannel): Boolean {
+		val player = this.offlinePlayer.player ?: throw UnsupportedOperationException("Player is not online")
+		val permission = "${Permission.Channel.prefix}.${channel.toString().replace('#', '.')}"
+		return player.hasPermission(permission)
+	}
+
 	override fun doChat(message: String) {
+		this.doChat(channel, message)
+	}
+
+	override fun doChat(rootChannel: ChatChannel, message: String) {
 		val player = this.offlinePlayer.player ?: throw UnsupportedOperationException("Player is not online")
 
-		if (!this.mayChatIn(this.channel)) {
-			this.channel = ChatOutOfCharacter
+		if (!this.mayChatIn(rootChannel)) {
+			throw ChatIllegalArgumentException("You cannot chat in this chat channel")
 		}
 
-		val result: Pair<ChatChannel, String> = this.parseChatMessage(message)
+		val result: Pair<ChatChannel, String> = this.parseChatMessage(rootChannel, message)
 		val channel = result.first
 		val content = result.second
 
@@ -119,12 +143,26 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 			}
 			channel.sendMessage(player, content)
 			player.completeWaitForChat()
+
+			val chatSpyMessage = "${ChatColor.GRAY}[$channel] ${player.name}: $content"
+			Bukkit.getOnlinePlayers()
+					.filter {
+						if (it == player) return@filter false
+						if (!it.hasPermission(Permission.Command.ChatSpy)) return@filter false
+						val data = it.chat
+						data.hasPermissionForChannel(channel) && data.isChatSpyEnabled && !data.chatSpyExcludeChannels.contains(channel)
+					}.forEach { it.sendMessage(chatSpyMessage) }
 		} else {
 			this.channel = channel
 		}
 	}
 
+
 	override fun parseChatMessage(message: String): Pair<ChatChannel, String> {
+		return this.parseChatMessage(this.channel, message)
+	}
+
+	override fun parseChatMessage(rootChannel: ChatChannel, message: String): Pair<ChatChannel, String> {
 		val channelRegex = Regex("^\\s*\\$CHAT_CHAR([A-z.#]+)( (.*))?")
 		val matchResult = channelRegex.matchEntire(message)
 		return if (matchResult != null) {
@@ -134,7 +172,7 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 					?: throw ChatIllegalArgumentException("Unknown global channel '$channelName'.")
 			channel.resolveSubChannelRecursive(content)
 		} else {
-			this.channel.resolveSubChannelRecursive(message)
+			rootChannel.resolveSubChannelRecursive(message)
 		}
 	}
 
