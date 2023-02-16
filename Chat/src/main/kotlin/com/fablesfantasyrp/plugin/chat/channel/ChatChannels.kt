@@ -86,15 +86,14 @@ fun ChatChannel.Companion.fromStringAliased(s: String, from: CommandSender): Cha
 			val subChannelName = Regex("(staff|st|staffchat)[.#](.+)").matchEntire(name)!!.groupValues[2].uppercase()
 			ChatStaff.resolveSubChannelForName(subChannelName)
 		}
-		Regex("(dm|directmessage)").matches(name) -> {
-			Bukkit.getLogger().info("$statefulTreeChannels")
+		Regex("(dm|directmessage|msg|r)").matches(name) -> {
 			statefulTreeChannels
 					.computeIfAbsent(from) { HashMap() }
-					.computeIfAbsent(DirectMessageRoot::class) { DirectMessageRoot(from) }
+					.computeIfAbsent(ChatDirectMessageRoot::class) { ChatDirectMessageRoot(from) }
 		}
-		Regex("(dm|directmessage)[.#].+").matches(name) -> {
-			val subChannelName = Regex("(dm|directmessage)[.#](.+)").matchEntire(name)!!.groupValues[2].uppercase()
-			DirectMessageRoot(from).resolveSubChannelForName(subChannelName)
+		Regex("(dm|directmessage|msg|r)[.#].+").matches(name) -> {
+			val subChannelName = Regex("(dm|directmessage|msg|r)[.#](.+)").matchEntire(name)!!.groupValues[2].uppercase()
+			ChatDirectMessageRoot(from).resolveSubChannelForName(subChannelName)
 		}
 		else -> null
 	}

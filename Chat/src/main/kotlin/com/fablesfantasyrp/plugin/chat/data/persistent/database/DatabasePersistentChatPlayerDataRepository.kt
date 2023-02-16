@@ -41,7 +41,7 @@ class DatabasePersistentChatPlayerDataRepository(private val server: Server, pri
 			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME (id, channel, disabled_channels, reception_indicator_enabled) " +
 					"VALUES (?, ?, ?, ?)")
 			stmnt.setObject(1, v.id)
-			if (v.channel is Serializable) stmnt.setObject(2, v.channel)
+			stmnt.setObject(2, v.channel as? Serializable)
 			stmnt.setArray(3, connection.createArrayOf("JAVA_OBJECT", v.disabledChannels.filter { it is Serializable }.toTypedArray()))
 			stmnt.setBoolean(4, v.isReceptionIndicatorEnabled)
 			stmnt.executeUpdate()
@@ -98,7 +98,7 @@ class DatabasePersistentChatPlayerDataRepository(private val server: Server, pri
 					"chat_style = ?, " +
 					"reception_indicator_enabled = ? " +
 					"WHERE id = ?")
-			if (v.channel is Serializable) stmnt.setObject(1, v.channel)
+			stmnt.setObject(1, v.channel as? Serializable)
 			stmnt.setArray(2, connection.createArrayOf("JAVA_OBJECT", v.disabledChannels.filter { it is Serializable }.toTypedArray()))
 			stmnt.setArray(3, connection.createArrayOf("JAVA_OBJECT", v.chatSpyExcludeChannels.filter { it is Serializable }.toTypedArray()))
 			stmnt.setBoolean(4, v.isChatSpyEnabled)

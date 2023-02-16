@@ -7,10 +7,7 @@ import com.comphenix.protocol.events.PacketAdapter
 import com.comphenix.protocol.events.PacketContainer
 import com.comphenix.protocol.events.PacketEvent
 import com.comphenix.protocol.wrappers.WrappedChatComponent
-import com.fablesfantasyrp.plugin.chat.channel.ChatChannel
-import com.fablesfantasyrp.plugin.chat.channel.ChatIllegalArgumentException
-import com.fablesfantasyrp.plugin.chat.channel.ChatIllegalStateException
-import com.fablesfantasyrp.plugin.chat.channel.PreviewableChatChannel
+import com.fablesfantasyrp.plugin.chat.channel.*
 import com.fablesfantasyrp.plugin.text.formatError
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
@@ -91,6 +88,8 @@ class ChatPreviewManager(private val plugin: Plugin) {
 							sendChatPreview(player, requestId, formatError(e.message ?: "Illegal argument."))
 						} catch (e: ChatIllegalStateException) {
 							sendChatPreview(player, requestId, formatError(e.message ?: "Illegal state."))
+						} catch (e: ChatUnsupportedOperationException) {
+							sendChatPreview(player, requestId, formatError(e.message ?: "Unsupported operation."))
 						}
 					}
 				}

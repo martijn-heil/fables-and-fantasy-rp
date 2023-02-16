@@ -2,6 +2,7 @@ package com.fablesfantasyrp.plugin.chat
 
 import com.fablesfantasyrp.plugin.chat.channel.ChatIllegalArgumentException
 import com.fablesfantasyrp.plugin.chat.channel.ChatIllegalStateException
+import com.fablesfantasyrp.plugin.chat.channel.ChatUnsupportedOperationException
 import com.fablesfantasyrp.plugin.chat.event.FablesChatEvent
 import com.fablesfantasyrp.plugin.text.sendError
 import org.bukkit.Bukkit
@@ -25,6 +26,8 @@ class ChatListener(private val server: Server) : Listener {
 			player.sendError(ex.message ?: "Illegal argument.")
 		} catch (ex: ChatIllegalStateException) {
 			player.sendError(ex.message ?: "Illegal state.")
+		} catch (ex: ChatUnsupportedOperationException) {
+			player.sendError(ex.message ?: "Unsupported operation.")
 		}
 	}
 

@@ -173,4 +173,52 @@ class Commands {
 	class CommandChatStaff : AbstractChatChannelCommand(ChatStaff, Permission.Channel.Staff)
 	class CommandChatOutOfCharacter : AbstractChatChannelCommand(ChatOutOfCharacter, Permission.Channel.Ooc)
 	class CommandChatInCharacter : AbstractChatChannelCommand(ChatInCharacter, Permission.Channel.Ic)
+	class CommandChatDirectMessage : CommandExecutor {
+		override fun onCommand(sender: CommandSender, command: org.bukkit.command.Command, label: String, args: Array<out String>): Boolean {
+			val playerName = args.getOrNull(0)
+			if (playerName == null) {
+				sender.sendError("You must specify a player name")
+				return false
+			}
+			val channel = ChatChannel.fromStringAliased("dm", sender)
+			if (channel == null) {
+				sender.sendError("Player not found")
+				return true
+			}
+
+			val message = "#$playerName ${args.slice(1 until args.size).joinToString(" ")}"
+			if (sender is Player) {
+				channel.sendMessage(sender, message)
+			} else if (channel is CommandSenderCompatibleChatChannel){
+				channel.sendMessage(sender, message)
+			} else {
+				sender.sendError("You must be a Player to chat in this channel.")
+				return true
+			}
+
+			return true
+		}
+	}
+
+	class CommandReply : CommandExecutor {
+		override fun onCommand(sender: CommandSender, command: org.bukkit.command.Command, label: String, args: Array<out String>): Boolean {
+			val channel = ChatChannel.fromStringAliased("dm", sender)
+			if (channel == null) {
+				sender.sendError("Unknown channel")
+				return true
+			}
+
+			val message = args.joinToString(" ")
+			if (sender is Player) {
+				channel.sendMessage(sender, message)
+			} else if (channel is CommandSenderCompatibleChatChannel){
+				channel.sendMessage(sender, message)
+			} else {
+				sender.sendError("You must be a Player to chat in this channel.")
+				return true
+			}
+
+			return true
+		}
+	}
 }
