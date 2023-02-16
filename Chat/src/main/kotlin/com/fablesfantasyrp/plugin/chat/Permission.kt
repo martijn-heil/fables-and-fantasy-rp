@@ -21,4 +21,9 @@ object Permission {
 		const val Togglereceptionindicator = "${prefix}.togglereceptionindicator"
 		const val ChatSpy = "${prefix}.chatspy"
 	}
+
+	object Exempt {
+		private const val prefix = Permission.prefix + ".exempt"
+		const val ChatSpy = "${prefix}.chatspy"
+	}
 }

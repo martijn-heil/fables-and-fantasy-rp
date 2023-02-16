@@ -33,6 +33,8 @@ class ChatListener(private val server: Server) : Listener {
 
 	@EventHandler(priority = HIGHEST, ignoreCancelled = true)
 	fun onFablesChat(e: FablesChatEvent) {
+		if (e.recipients.size <= 2 && e.recipients.any { it.hasPermission(Permission.Exempt.ChatSpy) }) return
+
 		val player = e.sender as? Player ?: return
 		val channel = e.channel
 		val content = e.content
