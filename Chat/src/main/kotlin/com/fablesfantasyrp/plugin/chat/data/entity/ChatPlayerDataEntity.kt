@@ -4,8 +4,8 @@ import com.fablesfantasyrp.plugin.chat.CHAT_CHAR
 import com.fablesfantasyrp.plugin.chat.Permission
 import com.fablesfantasyrp.plugin.chat.SYSPREFIX
 import com.fablesfantasyrp.plugin.chat.channel.*
-import com.fablesfantasyrp.plugin.chat.chat
 import com.fablesfantasyrp.plugin.chat.data.ChatPlayerData
+import com.fablesfantasyrp.plugin.chat.event.FablesChatEvent
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
 import com.fablesfantasyrp.plugin.form.completeWaitForChat
@@ -123,7 +123,7 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 			throw ChatIllegalArgumentException("You cannot chat in this chat channel")
 		}
 
-		val result: Pair<ChatChannel, String> = this.parseChatMessage(rootChannel, message)
+		val result: Pair<ChatChannel, String> = this.parseChatMessage(rootChannel, message, true)
 		val channel = result.first
 		val content = result.second
 
@@ -142,18 +142,9 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 				this.disabledChannels = this.disabledChannels.filter { it != channel }.toSet()
 			}
 			val recipients = channel.getRecipients(player).toHashSet()
+			if (!FablesChatEvent(player, channel, content, recipients).callEvent()) return
 			channel.sendMessage(player, content)
 			player.completeWaitForChat()
-
-			val chatSpyMessage = "${ChatColor.GRAY}[$channel] ${player.name}: $content"
-			Bukkit.getOnlinePlayers()
-					.filter {
-						if (it == player) return@filter false
-						if (recipients.contains(it)) return@filter false
-						if (!it.hasPermission(Permission.Command.ChatSpy)) return@filter false
-						val data = it.chat
-						data.hasPermissionForChannel(channel) && data.isChatSpyEnabled && !data.chatSpyExcludeChannels.contains(channel)
-					}.forEach { it.sendMessage(chatSpyMessage) }
 		} else {
 			this.channel = channel
 		}
@@ -164,17 +155,21 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 		return this.parseChatMessage(this.channel, message)
 	}
 
-	override fun parseChatMessage(rootChannel: ChatChannel, message: String): Pair<ChatChannel, String> {
+	override fun parseChatMessage(rootChannel: ChatChannel, message: String): Pair<ChatChannel, String>
+		= parseChatMessage(rootChannel, message, false)
+
+	fun parseChatMessage(rootChannel: ChatChannel, message: String, updateState: Boolean): Pair<ChatChannel, String> {
 		val channelRegex = Regex("^\\s*\\$CHAT_CHAR([A-z.#]+)( (.*))?")
 		val matchResult = channelRegex.matchEntire(message)
 		return if (matchResult != null) {
+			val player = this.offlinePlayer.player ?: throw UnsupportedOperationException("Player is offline")
 			val content = matchResult.groupValues[3]
 			val channelName = matchResult.groupValues[1]
-			val channel = ChatChannel.fromStringAliased(channelName)
+			val channel = ChatChannel.fromStringAliased(channelName, player)
 					?: throw ChatIllegalArgumentException("Unknown global channel '$channelName'.")
-			channel.resolveSubChannelRecursive(content)
+			channel.resolveSubChannelRecursive(content, updateState)
 		} else {
-			rootChannel.resolveSubChannelRecursive(message)
+			rootChannel.resolveSubChannelRecursive(message, updateState)
 		}
 	}
 

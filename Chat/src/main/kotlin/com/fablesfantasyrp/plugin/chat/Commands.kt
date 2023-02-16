@@ -78,7 +78,7 @@ class Commands {
 		@Require(Permission.Command.ChatSpy)
 		fun on(@Sender sender: CommandSender, @CommandTarget(Permission.Command.ChatSpy + ".others") target: Player) {
 			target.chat.isChatSpyEnabled = true
-			sender.sendMessage(miniMessage.deserialize("<prefix> <value> for <player>",
+			sender.sendMessage(miniMessage.deserialize("<gray><prefix> <value> chatspy for <player></gray>",
 					Placeholder.component("prefix", legacyText(SYSPREFIX)),
 					Placeholder.component("value", true.asEnabledDisabledComponent()),
 					Placeholder.component("player", Component.text(target.name).style(target.nameStyle))
@@ -89,7 +89,7 @@ class Commands {
 		@Require(Permission.Command.ChatSpy)
 		fun off(@Sender sender: CommandSender, @CommandTarget(Permission.Command.ChatSpy + ".others") target: Player) {
 			target.chat.isChatSpyEnabled = false
-			sender.sendMessage(miniMessage.deserialize("<gray><prefix> <value> for <player></gray>",
+			sender.sendMessage(miniMessage.deserialize("<gray><prefix> <value> chatspy for <player></gray>",
 					Placeholder.component("prefix", legacyText(SYSPREFIX)),
 					Placeholder.component("value", false.asEnabledDisabledComponent()),
 					Placeholder.component("player", Component.text(target.name).style(target.nameStyle))
