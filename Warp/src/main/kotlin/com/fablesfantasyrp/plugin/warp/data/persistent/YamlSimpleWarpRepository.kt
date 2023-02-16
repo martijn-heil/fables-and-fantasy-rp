@@ -70,7 +70,7 @@ class YamlSimpleWarpRepository(private val plugin: Plugin,
 		return try {
 			fromFile(file)
 		} catch (ex: Exception) {
-			plugin.logger.warning("Encountered exception parsing warp data from file: ")
+			plugin.logger.warning("Encountered exception parsing warp data from file '${file.name}': ")
 			ex.printStackTrace()
 			plugin.logger.warning("Skipping this warp")
 			null
@@ -92,7 +92,11 @@ class YamlSimpleWarpRepository(private val plugin: Plugin,
 		val pitch = yaml.getDouble("pitch", Double.NaN)
 		val worldUuid = yaml.getString("world") ?: missingField("world")
 
-		val world = server.getWorld(UUID.fromString(worldUuid)) ?: throw IllegalStateException("World with UUID '$worldUuid' is not loaded.")
+		val world = try {
+			server.getWorld(UUID.fromString(worldUuid))
+		} catch (ex: IllegalArgumentException) {
+			server.getWorld(worldUuid)
+		} ?: throw IllegalStateException("World with UUID '$worldUuid' is not loaded.")
 
 		if (x.isNaN()) missingField("x")
 		if (y.isNaN()) missingField("y")

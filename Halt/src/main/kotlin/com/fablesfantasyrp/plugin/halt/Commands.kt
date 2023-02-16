@@ -4,7 +4,6 @@ import com.fablesfantasyrp.plugin.characters.command.provider.AllowCharacterName
 import com.fablesfantasyrp.plugin.characters.data.entity.Character
 import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
-import com.fablesfantasyrp.plugin.utils.ess
 import com.fablesfantasyrp.plugin.utils.isVanished
 import com.gitlab.martijn_heil.nincommands.common.Sender
 import com.sk89q.intake.Command
@@ -47,7 +46,7 @@ class Commands(private val characters: EntityCharacterRepository,
 				continue
 			}
 
-			if (it.ess.isGodModeEnabled) {
+			if (it.isInvulnerable) {
 				senderPlayer.sendMessage("$SYSPREFIX ${RED}Failed to halt ${GRAY}${character.name}${RED} " +
 						"because this player is in god mode!")
 				continue

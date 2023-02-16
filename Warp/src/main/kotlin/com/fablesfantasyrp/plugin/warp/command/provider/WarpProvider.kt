@@ -20,5 +20,5 @@ class WarpProvider(private val warps: SimpleWarpRepository) : Provider<SimpleWar
 	}
 
 	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String>
-			= warps.allIds().toList()
+			= warps.allIds().filter { it.startsWith(prefix) }
 }
