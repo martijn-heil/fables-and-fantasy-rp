@@ -1,0 +1,8 @@
+name: InvisItemFrames
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+main: com.fablesfantasyrp.plugin.invisitemframes.FablesInvisItemFrames
+api-version: @bukkit_api_version@

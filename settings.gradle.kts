@@ -40,4 +40,5 @@ include("examples:BlankSystem",
 		"WorldBoundProfiles",
 		"Tools",
 		"DailyRewards",
-		"StaffProfiles")
+		"StaffProfiles",
+		"InvisItemFrames")
