@@ -17,6 +17,7 @@ object Permission {
 		const val Fly = "$prefix.fly"
 		const val Speed = "$prefix.speed"
 		const val God = "$prefix.god"
+		const val Seen = "$prefix.seen"
 		const val Rigcheer = "$prefix.tphere"
 	}
 }

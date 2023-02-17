@@ -29,9 +29,12 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.GameMode
 import org.bukkit.Location
+import org.bukkit.OfflinePlayer
 import org.bukkit.WeatherType
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.ocpsoft.prettytime.PrettyTime
+import java.time.Instant
 
 class InventoryCommands(private val mirroredInventoryManager: MirroredInventoryManager) {
 	@Command(aliases = ["invsee", "finvsee"], desc = "Invsee a character")
@@ -229,6 +232,16 @@ class Commands(private val powerToolManager: PowerToolManager) {
 				Placeholder.component("prefix", legacyText(SYSPREFIX)),
 				Placeholder.component("value", finalValue.asEnabledDisabledComponent()),
 				Placeholder.component("player", Component.text(target.name).style(target.nameStyle))
+		))
+	}
+
+	@Command(aliases = ["seen", "fseen"], desc = "Look up when a player was last seen")
+	@Require(Permission.Command.Seen)
+	fun seen(@Sender sender: CommandSender, target: OfflinePlayer) {
+		sender.sendMessage(miniMessage.deserialize("<gray><prefix> <player> was last seen <when></gray>",
+				Placeholder.component("prefix", legacyText(SYSPREFIX)),
+				Placeholder.unparsed("player", target.name ?: target.uniqueId.toString()),
+				Placeholder.unparsed("when", PrettyTime().format(Instant.ofEpochMilli(target.lastSeen)))
 		))
 	}
 
