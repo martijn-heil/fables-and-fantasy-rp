@@ -13,6 +13,7 @@ import com.fablesfantasyrp.plugin.text.nameStyle
 import com.fablesfantasyrp.plugin.text.sendError
 import com.fablesfantasyrp.plugin.tools.*
 import com.fablesfantasyrp.plugin.tools.command.provider.MinecraftTime
+import com.fablesfantasyrp.plugin.utils.SPAWN
 import com.fablesfantasyrp.plugin.utils.asEnabledDisabledComponent
 import com.fablesfantasyrp.plugin.utils.humanReadable
 import com.gitlab.martijn_heil.nincommands.common.CommandTarget
@@ -62,7 +63,8 @@ class InventoryCommands(private val mirroredInventoryManager: MirroredInventoryM
 	}
 }
 
-class Commands(private val powerToolManager: PowerToolManager) {
+class Commands(private val powerToolManager: PowerToolManager,
+			   private val backManager: BackManager) {
 	@Command(aliases = ["teleport", "fteleport", "tp", "ftp", "tele", "ftele"], desc = "Teleport characters")
 	@Require(Permission.Command.Teleport)
 	fun teleport(@Sender sender: CommandSender,
@@ -242,6 +244,26 @@ class Commands(private val powerToolManager: PowerToolManager) {
 				Placeholder.component("prefix", legacyText(SYSPREFIX)),
 				Placeholder.unparsed("player", target.name ?: target.uniqueId.toString()),
 				Placeholder.unparsed("when", PrettyTime().format(Instant.ofEpochMilli(target.lastSeen)))
+		))
+	}
+
+	@Command(aliases = ["back", "fback"], desc = "Teleport back to your previous location")
+	@Require(Permission.Command.Back)
+	fun back(@Sender sender: CommandSender, @CommandTarget(Permission.Command.Back + ".others") target: Player) {
+		backManager.getPreviousLocation(target)?.let { target.teleport(it) }
+		sender.sendMessage(miniMessage.deserialize("<gray><prefix> Teleported <player> to their previous location.</gray>",
+				Placeholder.component("prefix", legacyText(SYSPREFIX)),
+				Placeholder.component("player", Component.text(target.name).style(target.nameStyle))
+		))
+	}
+
+	@Command(aliases = ["spawn", "fspawn"], desc = "Teleport to spawn")
+	@Require(Permission.Command.Spawn)
+	fun spawn(@Sender sender: CommandSender, @CommandTarget(Permission.Command.Spawn + ".others") target: Player) {
+		target.teleport(SPAWN)
+		sender.sendMessage(miniMessage.deserialize("<gray><prefix> Teleported <player> to spawn.</gray>",
+				Placeholder.component("prefix", legacyText(SYSPREFIX)),
+				Placeholder.component("player", Component.text(target.name).style(target.nameStyle))
 		))
 	}
 

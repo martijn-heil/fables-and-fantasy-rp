@@ -18,6 +18,8 @@ object Permission {
 		const val Speed = "$prefix.speed"
 		const val God = "$prefix.god"
 		const val Seen = "$prefix.seen"
+		const val Back = "$prefix.back"
+		const val Spawn = "$prefix.spawn"
 		const val Rigcheer = "$prefix.tphere"
 	}
 }
