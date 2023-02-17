@@ -27,6 +27,7 @@ import com.sk89q.intake.parametric.annotation.Switch
 import com.sk89q.intake.parametric.annotation.Text
 import com.sk89q.intake.util.auth.AuthorizationException
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.GameMode
 import org.bukkit.Location
@@ -245,6 +246,51 @@ class Commands(private val powerToolManager: PowerToolManager,
 				Placeholder.unparsed("player", target.name ?: target.uniqueId.toString()),
 				Placeholder.unparsed("when", PrettyTime().format(Instant.ofEpochMilli(target.lastSeen)))
 		))
+	}
+
+	@Command(aliases = ["whois", "fwhois"], desc = "Show information about a player")
+	@Require(Permission.Command.Whois)
+	fun whois(@Sender sender: CommandSender, target: OfflinePlayer) {
+		val player: Player? = target.player
+
+		val playerName: Component = if (player != null) {
+			Component.text(player.name).style(player.nameStyle)
+		} else if (target.name != null) {
+			Component.text(target.name!!)
+		} else {
+			Component.text("(player name not known)")
+		}
+
+		val message = miniMessage.deserialize(
+				"<newline>" +
+						"<gray>══════════ <white><player_name></white> <status>══════════</gray><newline>" +
+						"<gold>" +
+						"UUID: <white><id></white><newline>" +
+						"Last seen: <white><last_seen></white><newline>" +
+						"Gamemode: <white><gamemode></white><newline>" +
+						"Invulnerable: <white><invulnerable></white><newline>" +
+						"Fly mode: <white><fly_mode></white><newline>" +
+						"Flying speed: <white><fly_speed></white><newline>" +
+						"Walking speed: <white><walk_speed></white><newline>" +
+						"</gold>",
+				Placeholder.component("player_name", playerName),
+				Placeholder.unparsed("id", target.uniqueId.toString()),
+				Placeholder.unparsed("last_seen", if (target.lastSeen != 0L) PrettyTime().format(Instant.ofEpochMilli(target.lastSeen)) else "unknown"),
+				Placeholder.unparsed("gamemode", player?.gameMode?.toString() ?: "unknown" ),
+				Placeholder.unparsed("invulnerable", player?.isInvulnerable?.toString() ?: "unknown" ),
+				Placeholder.component("fly_mode", miniMessage.deserialize("<allow_flight> <flight_status>",
+						Placeholder.component("allow_flight", player?.allowFlight?.asEnabledDisabledComponent() ?: Component.text("unknown")),
+						Placeholder.unparsed("flight_status",
+								if (player != null && player.isFlying) "(flying)"
+								else if (player != null && !player.isFlying) "(not flying)"
+								else "")
+				)),
+				Placeholder.unparsed("fly_speed", player?.flySpeed?.toString() ?: "unknown" ),
+				Placeholder.unparsed("walk_speed", player?.walkSpeed?.toString() ?: "unknown" ),
+				Placeholder.component("status", if (target.isBanned) Component.text("(banned)").color(NamedTextColor.RED) else Component.empty())
+		)
+
+		sender.sendMessage(message)
 	}
 
 	@Command(aliases = ["back", "fback"], desc = "Teleport back to your previous location")
