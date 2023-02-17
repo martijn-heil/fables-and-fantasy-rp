@@ -1,0 +1,17 @@
+name: FablesPetPreview
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+  - NinCommands
+  - MCPets
+main: com.fablesfantasyrp.plugin.petpreview.FablesPetPreview
+api-version: @bukkit_api_version@
+permissions:
+  fables.petpreview.notify:
+    description: Preview a pet
+    default: op
+  fables.petpreview.command.pet_preview:
+    description: Summon a temporary pet for demo purposes.
+    default: true
