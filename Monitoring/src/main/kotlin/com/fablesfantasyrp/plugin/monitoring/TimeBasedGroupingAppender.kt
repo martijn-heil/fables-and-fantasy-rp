@@ -58,7 +58,8 @@ class TimeBasedGroupingAppender(private val ignorePatterns: Collection<Regex>, p
 		if (first != null && (time - first.timeMillis > 50)) this.flush()
 	}
 
-	override fun append(event: LogEvent) {
+	override fun append(event: LogEvent?) {
+		if(event == null) return
 		val formattedMessage = event.message.formattedMessage
 		if (ignorePatterns.find { it.containsMatchIn(formattedMessage) } != null) return
 
