@@ -211,15 +211,17 @@ class Commands(private val powerToolManager: PowerToolManager,
 			throw AuthorizationException()
 		}
 
+		val speed = getRealMoveSpeed(value, finalType)
+
 		when(finalType) {
-			MovementType.WALK -> target.walkSpeed = value
-			MovementType.FLY -> target.flySpeed = value
+			MovementType.WALK -> target.walkSpeed = speed
+			MovementType.FLY -> target.flySpeed = speed
 		}
 
 		sender.sendMessage(miniMessage.deserialize("<gray><prefix> Set <type> speed to <value> for <player></gray>",
 				Placeholder.component("prefix", legacyText(SYSPREFIX)),
 				Placeholder.unparsed("type", finalType.name.lowercase()),
-				Placeholder.unparsed("value", value.toString()),
+				Placeholder.unparsed("value", speed.toString()),
 				Placeholder.component("player", Component.text(target.name).style(target.nameStyle))
 		))
 	}
