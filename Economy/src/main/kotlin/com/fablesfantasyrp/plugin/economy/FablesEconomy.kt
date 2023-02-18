@@ -88,7 +88,7 @@ class FablesEconomy : JavaPlugin(), KoinComponent {
 
 		val rootDispatcherNode = CommandGraph().builder(builder).commands()
 		rootDispatcherNode.group("eco", "feco").registerMethods(get<Commands.Eco>())
-		rootDispatcherNode.group("playereco", "fplayereco").registerMethods(get<Commands.Eco>())
+		rootDispatcherNode.group("playereco", "fplayereco").registerMethods(get<Commands.PlayerEco>())
 		rootDispatcherNode.group("bank", "fbank").registerMethods(get<Commands.Bank>())
 		rootDispatcherNode.registerMethods(get<Commands>())
 		val dispatcher = rootDispatcherNode.dispatcher
