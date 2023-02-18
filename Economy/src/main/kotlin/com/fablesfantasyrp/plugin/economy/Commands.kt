@@ -95,6 +95,53 @@ class Commands(private val plugin: JavaPlugin,
 		}
 	}
 
+	inner class PlayerEco {
+		@Command(aliases = ["give"], desc = "Give money")
+		@Require(Permission.Command.Eco.Give)
+		fun give(@Sender sender: CommandSender,
+				 @CommandTarget player: Player,
+				 @Range(min = 1.0) amount: Int) {
+			val target = profileManager.getCurrentForPlayer(player) ?: run {
+				sender.sendError("This player is not currently on a profile")
+				return
+			}
+			val character = characters.forProfile(target)
+			val displayName = character?.name ?: "#${target.id}"
+			target.money += amount
+			sender.sendMessage("$SYSPREFIX Gave $CURRENCY_SYMBOL$amount to $displayName")
+		}
+
+		@Command(aliases = ["take"], desc = "Take money")
+		@Require(Permission.Command.Eco.Take)
+		fun take(@Sender sender: CommandSender,
+				 @CommandTarget player: Player,
+				 @Range(min = 1.0) amount: Int) {
+			val target = profileManager.getCurrentForPlayer(player) ?: run {
+				sender.sendError("This player is not currently on a profile")
+				return
+			}
+			val character = characters.forProfile(target)
+			val displayName = character?.name ?: "#${target.id}"
+			target.money -= amount
+			sender.sendMessage("$SYSPREFIX Took $CURRENCY_SYMBOL$amount from $displayName")
+		}
+
+		@Command(aliases = ["set"], desc = "Set money")
+		@Require(Permission.Command.Eco.Set)
+		fun set(@Sender sender: CommandSender,
+				@CommandTarget player: Player,
+				@Range(min = 0.0) amount: Int) {
+			val target = profileManager.getCurrentForPlayer(player) ?: run {
+				sender.sendError("This player is not currently on a profile")
+				return
+			}
+			val character = characters.forProfile(target)
+			val displayName = character?.name ?: "#${target.id}"
+			target.money = amount
+			sender.sendMessage("$SYSPREFIX Set $displayName's balance to $CURRENCY_SYMBOL$amount")
+		}
+	}
+
 	inner class Bank {
 		@Command(aliases = ["open"], desc = "Open bank")
 		@Require(Permission.Command.Bank.Open)

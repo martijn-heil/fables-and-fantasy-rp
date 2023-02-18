@@ -87,8 +87,9 @@ class FablesEconomy : JavaPlugin(), KoinComponent {
 		builder.authorizer = BukkitAuthorizer()
 
 		val rootDispatcherNode = CommandGraph().builder(builder).commands()
-		rootDispatcherNode.group("feco").registerMethods(get<Commands.Eco>())
-		rootDispatcherNode.group("bank").registerMethods(get<Commands.Bank>())
+		rootDispatcherNode.group("eco", "feco").registerMethods(get<Commands.Eco>())
+		rootDispatcherNode.group("playereco", "fplayereco").registerMethods(get<Commands.Eco>())
+		rootDispatcherNode.group("bank", "fbank").registerMethods(get<Commands.Bank>())
 		rootDispatcherNode.registerMethods(get<Commands>())
 		val dispatcher = rootDispatcherNode.dispatcher
 
