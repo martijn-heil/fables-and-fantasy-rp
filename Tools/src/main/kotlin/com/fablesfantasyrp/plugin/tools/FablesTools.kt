@@ -54,6 +54,8 @@ class FablesTools : JavaPlugin(), KoinComponent {
 		}
 		loadKoinModules(koinModule)
 
+		get<PowerToolManager>().start()
+
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())
 		injector.install(BukkitModule(server))
@@ -77,6 +79,7 @@ class FablesTools : JavaPlugin(), KoinComponent {
 	}
 
 	override fun onDisable() {
+		get<PowerToolManager>().stop()
 		commands.forEach { unregisterCommand(it) }
 		unloadKoinModules(koinModule)
 	}

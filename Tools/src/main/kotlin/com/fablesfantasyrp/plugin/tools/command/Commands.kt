@@ -177,7 +177,8 @@ class Commands(private val powerToolManager: PowerToolManager,
 	@Command(aliases = ["powertool", "pt", "fpt", "fpowertool"], desc = "")
 	@Require(Permission.Command.PowerTool)
 	fun powertool(@Sender sender: Player, @Optional @Text command: String?) {
-		powerToolManager.setPowerTool(sender, command)
+		val material = sender.inventory.itemInMainHand.type
+		powerToolManager.setPowerTool(sender, material, command)
 		if (command != null) {
 			sender.sendMessage("$SYSPREFIX Set your powertool to: '$command'")
 		} else {
