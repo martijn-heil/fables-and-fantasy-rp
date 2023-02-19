@@ -38,7 +38,7 @@ class PowerToolManager(private val plugin: Plugin) {
 	}
 
 	inner class PowerToolListener : Listener {
-		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = false)
 		fun onPlayerInteract(e: PlayerInteractEvent) {
 			if (e.hand != EquipmentSlot.HAND) return
 			val material = e.player.inventory.itemInMainHand.type
