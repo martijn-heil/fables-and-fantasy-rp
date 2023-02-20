@@ -4,6 +4,7 @@ import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterReposito
 import com.fablesfantasyrp.plugin.denizeninterop.dFlags
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.utils.EDEN
+import com.fablesfantasyrp.plugin.utils.isVanished
 import me.neznamy.tab.api.TabAPI
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
@@ -26,7 +27,7 @@ class NameTagManager(private val profileManager: ProfileManager,
 				val showCharacterNames = observer.dFlags.getFlagValue("characters_togglenames")
 				  ?.let { it.asElement().asBoolean() } ?: true
 				if (target.uniqueId == ROBIN && target.gameMode == GameMode.CREATIVE &&
-						target.isFlying && target.flySpeed >= 0.3 && target.location.world == EDEN) {
+						target.isFlying && target.flySpeed >= 0.3 && !target.isVanished && target.location.world == EDEN) {
 					"'Fighter Jet' Robin"
 				} else if (showCharacterNames && targetCharacter != null) {
 					targetCharacter.name
