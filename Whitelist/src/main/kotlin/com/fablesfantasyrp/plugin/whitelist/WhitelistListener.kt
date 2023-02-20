@@ -2,7 +2,7 @@ package com.fablesfantasyrp.plugin.whitelist
 
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.sendError
-import com.fablesfantasyrp.plugin.utils.essentialsSpawn
+import com.fablesfantasyrp.plugin.utils.SPAWN
 import com.fablesfantasyrp.plugin.utilsoffline.gameMode
 import com.fablesfantasyrp.plugin.utilsoffline.location
 import com.fablesfantasyrp.plugin.whitelist.event.WhitelistAddedPlayerEvent
@@ -101,7 +101,7 @@ class WhitelistListener(private val plugin: JavaPlugin) : Listener {
 		try {
 			if (offlinePlayer.hasPlayedBefore()) {
 				offlinePlayer.player?.let { VanishAPI.showPlayer(it) }
-				offlinePlayer.location = essentialsSpawn.getSpawn("default")
+				offlinePlayer.location = SPAWN
 				offlinePlayer.gameMode = GameMode.SURVIVAL
 			}
 		} catch(ex: Exception) {

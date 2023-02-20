@@ -1,7 +1,6 @@
 package com.fablesfantasyrp.plugin.staffmode
 
 import com.fablesfantasyrp.plugin.utils.ToggleableState
-import com.fablesfantasyrp.plugin.utils.ess
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.BukkitModule
@@ -98,9 +97,8 @@ var Player.isOnDuty: Boolean
 					this.sendMessage("$SYSPREFIX Your game mode was changed to survival because you are going off duty.")
 				}
 
-				val essPlayer = this.ess
-				if (essPlayer.isGodModeEnabled) {
-					essPlayer.isGodModeEnabled = false
+				if (this.isInvulnerable) {
+					this.isInvulnerable = false
 					this.sendMessage("$SYSPREFIX Your god mode was disabled because you are going off duty.")
 				}
 

@@ -37,6 +37,16 @@ commands:
     aliases: []
     permission: fables.chat.channel.ooc
     usage: "Usage: /<command> [message]?"
+  dm:
+    description: "Change to or type in direct message chat."
+    aliases: [directmessage, msg]
+    permission: fables.chat.channel.dm
+    usage: "Usage: /<command> [message]?"
+  reply:
+    description: "Change to or type in direct message chat."
+    aliases: [r]
+    permission: fables.chat.channel.dm
+    usage: "Usage: /<command> [message]?"
   staffchat:
     description: "Change to or type in staff chat."
     aliases: [staff, st]

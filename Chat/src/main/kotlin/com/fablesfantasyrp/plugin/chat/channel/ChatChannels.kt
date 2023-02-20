@@ -6,6 +6,7 @@ import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.logging.Logger
+import kotlin.reflect.KClass
 
 
 interface CommandSenderCompatibleChatChannel : ChatChannel {
@@ -27,11 +28,15 @@ interface SubChanneledChatChannel {
 	fun resolveSubChannel(message: String): Pair<ChatChannel, String>
 }
 
-fun ChatChannel.resolveSubChannelRecursive(message: String): Pair<ChatChannel, String> {
+fun ChatChannel.resolveSubChannelRecursive(message: String, updateState: Boolean = false): Pair<ChatChannel, String> {
 	return if (this is SubChanneledChatChannel) {
 		val resolved = this.resolveSubChannel(message)
 		val content = resolved.second
 		val subChannel = resolved.first
+		if (subChannel !== this && updateState && this is StatefulTreeChatChannel) {
+			this.lastSubChannel = subChannel
+		}
+
 		if (subChannel is SubChanneledChatChannel && subChannel !== this) {
 			subChannel.resolveSubChannelRecursive(content)
 		} else {
@@ -59,11 +64,13 @@ fun ChatChannel.Companion.allStatic(): Collection<ChatChannel> = listOf(
 		ChatInCharacterContextual,
 		ChatSpectator,
 		ChatStaff,
-).plus(ChatStaff.subChannels)
+).plus(ChatStaff.subChannels.values)
 
 fun ChatChannel.Companion.allNames(): Collection<String> = ChatChannel.allStatic().map { it.toString() }
 
-fun ChatChannel.Companion.fromStringAliased(s: String): ChatChannel? {
+private val statefulTreeChannels = HashMap<CommandSender, HashMap<KClass<*>, StatefulTreeChatChannel>>()
+
+fun ChatChannel.Companion.fromStringAliased(s: String, from: CommandSender): ChatChannel? {
 	val name = s.lowercase()
 	return when {
 		name == "ooc" -> ChatOutOfCharacter
@@ -79,12 +86,22 @@ fun ChatChannel.Companion.fromStringAliased(s: String): ChatChannel? {
 			val subChannelName = Regex("(staff|st|staffchat)[.#](.+)").matchEntire(name)!!.groupValues[2].uppercase()
 			ChatStaff.resolveSubChannelForName(subChannelName)
 		}
+		Regex("(dm|directmessage|msg|r)").matches(name) -> {
+			statefulTreeChannels
+					.computeIfAbsent(from) { HashMap() }
+					.computeIfAbsent(ChatDirectMessageRoot::class) { ChatDirectMessageRoot(from) }
+		}
+		Regex("(dm|directmessage|msg|r)[.#].+").matches(name) -> {
+			val subChannelName = Regex("(dm|directmessage|msg|r)[.#](.+)").matchEntire(name)!!.groupValues[2].uppercase()
+			ChatDirectMessageRoot(from).resolveSubChannelForName(subChannelName)
+		}
 		else -> null
 	}
 }
 
 class ChatIllegalArgumentException(message: String) : IllegalArgumentException(message)
 class ChatIllegalStateException(message: String) : IllegalStateException(message)
+class ChatUnsupportedOperationException(message: String) : UnsupportedOperationException(message)
 
 
 

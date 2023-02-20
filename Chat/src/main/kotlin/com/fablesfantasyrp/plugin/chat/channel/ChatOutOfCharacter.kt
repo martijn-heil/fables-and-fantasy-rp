@@ -3,7 +3,6 @@ package com.fablesfantasyrp.plugin.chat.channel
 
 import com.fablesfantasyrp.plugin.chat.chat
 import com.fablesfantasyrp.plugin.text.*
-import com.fablesfantasyrp.plugin.utils.ess
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.Tag
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
@@ -18,7 +17,6 @@ object ChatOutOfCharacter : ChatChannel, RawChatChannel, ToggleableChatChannel, 
 		PreviewableChatChannel, Serializable {
 	override fun getRecipients(from: Player) =
 			Bukkit.getOnlinePlayers().asSequence()
-					.filter { !it.ess.isIgnoredPlayer(from.ess) }
 					.filter { !it.chat.disabledChannels.contains(this) }
 
 	override fun getRecipients(from: CommandSender) =

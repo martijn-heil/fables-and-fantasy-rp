@@ -7,7 +7,6 @@ depend:
   - FablesUtils
   - NinCommands
   - PlaceholderAPI
-  - Essentials
 softdepend:
   - FablesMoreLogging
 main: com.fablesfantasyrp.plugin.staffmode.FablesStaffMode

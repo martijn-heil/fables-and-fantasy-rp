@@ -1,9 +1,11 @@
 package com.fablesfantasyrp.plugin.utils
 
-import com.earth2me.essentials.User
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
-import org.bukkit.*
+import org.bukkit.Bukkit
+import org.bukkit.Location
+import org.bukkit.Server
+import org.bukkit.World
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 import java.util.*
@@ -14,11 +16,8 @@ import kotlin.math.roundToLong
 val Player.isVanished: Boolean
 	get() = getMetadata("vanished").find { it.asBoolean() } != null
 
-val OfflinePlayer.ess: User
-	get() = essentials.getUser(uniqueId)
-
 val FABLES_ADMIN = Bukkit.getOfflinePlayer(UUID.fromString("bcdb5a59-269e-43df-914b-eed888597272"))
-val SPAWN: Location = essentialsSpawn.getSpawn("default")
+val SPAWN: Location = EDEN!!.spawnLocation
 val FLATROOM: World? get() = Bukkit.getWorld("flatroom")
 val PLOTS: World? get() = Bukkit.getWorld("plots")
 val EDEN: World? get() = Bukkit.getWorld("Eden")

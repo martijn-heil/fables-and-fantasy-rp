@@ -11,7 +11,11 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.io.Serializable
 
-object ChatStaff : AbstractSubChanneledChatChannel("staff", mapOf(
+object ChatStaff : AbstractSubChanneledChatChannel("staff"), Serializable {
+	override val default: ChatChannel = ChatStaffStandard
+
+	@Transient
+	override val subChannels: Map<String, ChatChannel> = mapOf(
 		Pair(ChatStaffEvent.channelName, ChatStaffEvent),
 		Pair(ChatStaffTechTeam.channelName, ChatStaffTechTeam),
 		Pair(ChatStaffEventTeam.channelName, ChatStaffEventTeam),
@@ -20,7 +24,9 @@ object ChatStaff : AbstractSubChanneledChatChannel("staff", mapOf(
 		Pair(ChatStaffBuildTeam.channelName, ChatStaffBuildTeam),
 		Pair(ChatStaffCommunityTeam.channelName, ChatStaffCommunityTeam),
 		Pair(ChatStaffFeatureDevelopmentTeam.channelName, ChatStaffFeatureDevelopmentTeam),
-), ChatStaffStandard), Serializable {
+	)
+
+
 	fun readResolve(): Any? = ChatStaff
 	override fun getRecipients(from: Player): Sequence<Player>
 		= Bukkit.getOnlinePlayers().asSequence().filter { it.hasPermission(Permission.Channel.Staff) }

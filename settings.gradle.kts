@@ -41,5 +41,6 @@ include("examples:BlankSystem",
 		"Tools",
 		"DailyRewards",
 		"StaffProfiles",
+		"Warp",
 		"InvisItemFrames",
 		"PetPreview")

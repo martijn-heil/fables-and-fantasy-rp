@@ -59,6 +59,7 @@ class FablesInventoryPlugin : JavaPlugin(), KoinComponent {
 
 		inventories = get()
 		mirroredInventoryManager = get()
+		profileManager = get()
 		server.pluginManager.registerEvents(get<ProfileInventoryListener>(), this)
 	}
 

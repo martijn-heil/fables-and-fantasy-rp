@@ -41,7 +41,7 @@ class DatabasePersistentChatPlayerDataRepository(private val server: Server, pri
 			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME (id, channel, disabled_channels, reception_indicator_enabled) " +
 					"VALUES (?, ?, ?, ?)")
 			stmnt.setObject(1, v.id)
-			if (v.channel is Serializable) stmnt.setObject(2, v.channel)
+			stmnt.setObject(2, v.channel as? Serializable)
 			stmnt.setArray(3, connection.createArrayOf("JAVA_OBJECT", v.disabledChannels.filter { it is Serializable }.toTypedArray()))
 			stmnt.setBoolean(4, v.isReceptionIndicatorEnabled)
 			stmnt.executeUpdate()
@@ -93,14 +93,18 @@ class DatabasePersistentChatPlayerDataRepository(private val server: Server, pri
 			val stmnt = connection.prepareStatement("UPDATE $TABLE_NAME SET " +
 					"channel = ?, " +
 					"disabled_channels = ?, " +
+					"chat_spy_exclude_channels = ?, " +
+					"chat_spy_enabled = ?, " +
 					"chat_style = ?, " +
 					"reception_indicator_enabled = ? " +
 					"WHERE id = ?")
-			if (v.channel is Serializable) stmnt.setObject(1, v.channel)
+			stmnt.setObject(1, v.channel as? Serializable)
 			stmnt.setArray(2, connection.createArrayOf("JAVA_OBJECT", v.disabledChannels.filter { it is Serializable }.toTypedArray()))
-			stmnt.setString(3, v.chatStyle?.let { GsonComponentSerializer.gson().serialize(Component.text().style(it).build()) })
-			stmnt.setBoolean(4, v.isReceptionIndicatorEnabled)
-			stmnt.setObject(5, v.id)
+			stmnt.setArray(3, connection.createArrayOf("JAVA_OBJECT", v.chatSpyExcludeChannels.filter { it is Serializable }.toTypedArray()))
+			stmnt.setBoolean(4, v.isChatSpyEnabled)
+			stmnt.setString(5, v.chatStyle?.let { GsonComponentSerializer.gson().serialize(Component.text().style(it).build()) })
+			stmnt.setBoolean(6, v.isReceptionIndicatorEnabled)
+			stmnt.setObject(7, v.id)
 			stmnt.executeUpdate()
 		}
 	}
@@ -122,8 +126,25 @@ class DatabasePersistentChatPlayerDataRepository(private val server: Server, pri
 		}
 		checkNotNull(disabledChannels)
 
+		val chatSpyExcludeChannels = try {
+			row.getArray("chat_spy_exclude_channels")?.array
+					?.let { it as Array<Any> }
+					?.let { it.mapNotNull { it as? ToggleableChatChannel } }?.toSet() ?: emptySet()
+		} catch (ex: JdbcSQLDataException) {
+			emptySet()
+		}
+		checkNotNull(chatSpyExcludeChannels)
+
 		val chatStyle = row.getString("chat_style")?.let { GsonComponentSerializer.gson().deserialize(it).style() }
-		val isChatReceptionIndicatorEnabled = row.getBoolean("reception_indicator_enabled")
-		return DatabaseChatPlayerData(id, channel, chatStyle, disabledChannels, isChatReceptionIndicatorEnabled)
+		val isReceptionIndicatorEnabled = row.getBoolean("reception_indicator_enabled")
+		val isChatSpyEnabled = row.getBoolean("chat_spy_enabled")
+		return DatabaseChatPlayerData(
+				id = id,
+				channel = channel,
+				chatStyle = chatStyle,
+				disabledChannels = disabledChannels,
+				isChatSpyEnabled = isChatSpyEnabled,
+				chatSpyExcludeChannels = chatSpyExcludeChannels,
+				isReceptionIndicatorEnabled = isReceptionIndicatorEnabled)
 	}
 }

@@ -24,7 +24,7 @@ import org.bukkit.command.Command
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
 
-internal val SYSPREFIX = "${GOLD}[${DARK_AQUA}${BOLD} CHAT ${GOLD}] $GRAY"
+internal val SYSPREFIX = "${GOLD}[${DARK_AQUA}${BOLD} CHAT ${GOLD}]$GRAY"
 
 internal lateinit var chatPreviewManager: ChatPreviewManager
 internal lateinit var chatPlayerDataManager: EntityRepository<UUID, ChatPlayerEntity>
@@ -66,12 +66,15 @@ class FablesChat : JavaPlugin() {
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()
 
-		val dispatcher = CommandGraph()
-				.builder(builder)
-				.commands()
-				.registerMethods(Commands())
-				.graph()
-				.dispatcher
+		val rootDispatcherNode = CommandGraph().builder(builder).commands()
+		val commandsClass = Commands()
+		rootDispatcherNode.registerMethods(commandsClass)
+		val chatSpy = rootDispatcherNode.group("chatspy")
+		val chatSpyClass = commandsClass.ChatSpy()
+		chatSpy.registerMethods(chatSpyClass)
+		chatSpy.group("excludes").registerMethods(chatSpyClass.Excludes())
+
+		val dispatcher = rootDispatcherNode.dispatcher
 
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
 
@@ -79,6 +82,8 @@ class FablesChat : JavaPlugin() {
 		this.getCommand("ic")!!.setExecutor(Commands.CommandChatInCharacter())
 		this.getCommand("looc")!!.setExecutor(Commands.CommandChatLocalOutOfCharacter())
 		this.getCommand("ooc")!!.setExecutor(Commands.CommandChatOutOfCharacter())
+		this.getCommand("dm")!!.setExecutor(Commands.CommandChatDirectMessage())
+		this.getCommand("reply")!!.setExecutor(Commands.CommandReply())
 		this.getCommand("staffchat")!!.setExecutor(Commands.CommandChatStaff())
 		this.getCommand("spectatorchat")!!.setExecutor(Commands.CommandChatSpectator())
 	}

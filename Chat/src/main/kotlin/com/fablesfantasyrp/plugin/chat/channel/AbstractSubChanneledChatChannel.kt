@@ -2,23 +2,23 @@ package com.fablesfantasyrp.plugin.chat.channel
 
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
-import java.io.Serializable
 
-abstract class AbstractSubChanneledChatChannel(private val name: String,
-											   private val map: Map<String, ChatChannel>,
-											   private val default: ChatChannel)
-	: ChatChannel, PreviewableChatChannel, SubChanneledChatChannel, Serializable {
+abstract class AbstractSubChanneledChatChannel(private val name: String)
+	: ChatChannel, PreviewableChatChannel, SubChanneledChatChannel {
+	abstract val default: ChatChannel?
+
 	@Transient
 	private val pattern = "^#([A-z]+)\\s?(.*)$"
-	//private val pattern = "^\\s*#([A-z]+)\\s?(.*)$"
 
-	val subChannels
-		get() = map.values
+	abstract val subChannels: Map<String, ChatChannel>
+
+	override fun getRecipients(from: Player): Sequence<Player> = default?.getRecipients(from) ?: emptySequence()
 
 	override fun sendMessage(from: Player, message: String) {
 		val resolved = this.resolveSubChannelRecursive(message)
 		val content = resolved.second
 		val channel = resolved.first.let { if(it === this) default else it }
+				?: throw ChatUnsupportedOperationException("Please choose a subchannel.")
 		channel.sendMessage(from, content)
 	}
 
@@ -36,11 +36,11 @@ abstract class AbstractSubChanneledChatChannel(private val name: String,
 
 		val channelName = match.groups[1]!!.value.uppercase()
 		val messageContent = match.groups[2]!!.value
-		val channel = map[channelName] ?: throw ChatIllegalArgumentException("Unknown relative channel '$channelName'.")
+		val channel = subChannels[channelName] ?: throw ChatIllegalArgumentException("Unknown relative channel '$channelName'.")
 		return Pair(channel, messageContent)
 	}
 
-	fun resolveSubChannelForName(name: String) = map[name.uppercase()]
+	fun resolveSubChannelForName(name: String) = subChannels[name.uppercase()]
 
 	override fun toString() = name
 }

@@ -1,0 +1,11 @@
+name: FablesWarp
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+  - FablesText
+  - FablesDatabase
+  - NinCommands
+main: com.fablesfantasyrp.plugin.warp.FablesWarp
+api-version: @bukkit_api_version@

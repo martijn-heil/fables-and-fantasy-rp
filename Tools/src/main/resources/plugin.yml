@@ -1,9 +1,11 @@
 name: FablesTools
+description: "A thick ass boy. -knight"
 version: @version@
 authors: [@authors@]
 depend:
   - FablesKotlinRuntime
   - FablesUtils
+  - FablesText
   - FablesCharacters
   - FablesInventory
   - FablesLocation
