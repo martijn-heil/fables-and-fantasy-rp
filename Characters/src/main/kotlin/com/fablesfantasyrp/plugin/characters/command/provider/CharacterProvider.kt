@@ -45,11 +45,12 @@ class CharacterProvider(private val server: Server,
 				arguments.next() // Generate MissingArgumentException
 				return null
 			}
+			return currentCharacter
 		} else {
 			// Generate MissingArgumentException
 			arguments.next()
+			return null
 		}
-		return null
 	}
 
 	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
