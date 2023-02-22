@@ -212,7 +212,7 @@ class Commands {
 		override fun onTabComplete(sender: CommandSender, command: org.bukkit.command.Command, label: String, args: Array<out String>): MutableList<String>? {
 			if (args.size > 1) return mutableListOf()
 
-			return Bukkit.getOnlinePlayers().map { it.name }.filter { it.startsWith(args[0]) }.toMutableList()
+			return Bukkit.getOnlinePlayers().map { it.name }.filter { it.lowercase().startsWith(args[0].lowercase()) }.toMutableList()
 		}
 	}
 
