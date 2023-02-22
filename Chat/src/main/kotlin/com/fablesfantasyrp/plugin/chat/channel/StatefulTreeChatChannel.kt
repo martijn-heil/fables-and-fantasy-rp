@@ -16,8 +16,8 @@ abstract class StatefulTreeChatChannel(val from: CommandSender) : AbstractSubCha
 	override fun sendMessage(from: Player, message: String) {
 		val resolved = this.resolveSubChannelRecursive(message)
 		val content = resolved.second
-		val channel = resolved.first.let { if(it === this) default else it }
-				?: throw ChatUnsupportedOperationException("Please choose a subchannel.")
+		val channel = resolved.first.let { if(it === this) (default) else it }
+				?: throw ChatUnsupportedOperationException("Please /msg someone first before replying to them.")
 		channel.sendMessage(from, content)
 		lastSubChannel = channel
 	}
