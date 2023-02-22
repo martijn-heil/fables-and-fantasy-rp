@@ -47,6 +47,7 @@ class FablesTools : JavaPlugin(), KoinComponent {
 			singleOf(::PowerToolManager)
 			singleOf(::BackManager)
 			singleOf(::Commands)
+			singleOf(::ToolsListener)
 			single { get<Commands>().Ptime() }
 			single { get<Commands>().PWeather() }
 
@@ -55,6 +56,8 @@ class FablesTools : JavaPlugin(), KoinComponent {
 		loadKoinModules(koinModule)
 
 		get<PowerToolManager>().start()
+
+		server.pluginManager.registerEvents(get<ToolsListener>(), this)
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())
