@@ -182,13 +182,17 @@ class Commands {
 				sender.sendError("You must specify a player name")
 				return false
 			}
-			val channel = ChatChannel.fromStringAliased("dm", sender)
-			if (channel == null) {
-				sender.sendError("Player not found")
+			val channel = ChatChannel.fromStringAliased("dm", sender)!!
+
+			val content = args.slice(1 until args.size).joinToString(" ")
+			if (content.isEmpty()) {
+				if (sender is Player) {
+					sender.chat.channel = (channel as SubChanneledChatChannel).resolveSubChannel("#$playerName").first
+				}
 				return true
 			}
 
-			val message = "#$playerName ${args.slice(1 until args.size).joinToString(" ")}"
+			val message = "#$playerName $content"
 			try {
 				if (sender is Player) {
 					channel.sendMessage(sender, message)
@@ -224,12 +228,19 @@ class Commands {
 				return true
 			}
 
-			try {
-				val message = args.joinToString(" ")
+			val content = args.joinToString(" ")
+			if (content.isEmpty()) {
 				if (sender is Player) {
-					channel.sendMessage(sender, message)
+					sender.chat.channel = channel
+				}
+				return true
+			}
+
+			try {
+				if (sender is Player) {
+					channel.sendMessage(sender, content)
 				} else if (channel is CommandSenderCompatibleChatChannel){
-					channel.sendMessage(sender, message)
+					channel.sendMessage(sender, content)
 				} else {
 					sender.sendError("You must be a Player to chat in this channel.")
 					return true

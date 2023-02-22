@@ -112,7 +112,7 @@ class DatabasePersistentChatPlayerDataRepository(private val server: Server, pri
 	private fun fromRow(row: ResultSet): DatabaseChatPlayerData {
 		val id = checkNotNull(row.getObject("id", UUID::class.java))
 		val channel = try {
-			row.getObject("channel") as ChatChannel
+			row.getObject("channel") as? ChatChannel ?: ChatOutOfCharacter
 		} catch (ex: JdbcSQLDataException) {
 			ChatOutOfCharacter
 		}
