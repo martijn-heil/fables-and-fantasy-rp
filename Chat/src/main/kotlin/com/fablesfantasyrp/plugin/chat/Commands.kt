@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.chat
 
 import com.fablesfantasyrp.plugin.chat.channel.*
+import com.fablesfantasyrp.plugin.chat.event.FablesChatEvent
 import com.fablesfantasyrp.plugin.chat.gui.ChatColorGui
 import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
@@ -185,10 +186,15 @@ class Commands {
 			val channel = ChatChannel.fromStringAliased("dm", sender)!!
 
 			val content = args.slice(1 until args.size).joinToString(" ")
+			val subChannel = (channel as SubChanneledChatChannel).resolveSubChannel("#$playerName").first
 			if (content.isEmpty()) {
 				if (sender is Player) {
-					sender.chat.channel = (channel as SubChanneledChatChannel).resolveSubChannel("#$playerName").first
+					sender.chat.channel = subChannel
 				}
+				return true
+			}
+
+			if (sender is Player && !FablesChatEvent(sender, channel, content, subChannel.getRecipients(sender).toSet()).callEvent()) {
 				return true
 			}
 
@@ -233,6 +239,10 @@ class Commands {
 				if (sender is Player) {
 					sender.chat.channel = channel
 				}
+				return true
+			}
+
+			if (sender is Player && !FablesChatEvent(sender, channel, content, channel.getRecipients(sender).toSet()).callEvent()) {
 				return true
 			}
 
