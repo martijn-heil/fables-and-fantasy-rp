@@ -15,8 +15,10 @@ import com.sk89q.intake.util.auth.AuthorizationException
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import org.bukkit.Bukkit
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 
 class Commands {
@@ -173,7 +175,7 @@ class Commands {
 	class CommandChatStaff : AbstractChatChannelCommand(ChatStaff, Permission.Channel.Staff)
 	class CommandChatOutOfCharacter : AbstractChatChannelCommand(ChatOutOfCharacter, Permission.Channel.Ooc)
 	class CommandChatInCharacter : AbstractChatChannelCommand(ChatInCharacter, Permission.Channel.Ic)
-	class CommandChatDirectMessage : CommandExecutor {
+	class CommandChatDirectMessage : CommandExecutor, TabCompleter {
 		override fun onCommand(sender: CommandSender, command: org.bukkit.command.Command, label: String, args: Array<out String>): Boolean {
 			val playerName = args.getOrNull(0)
 			if (playerName == null) {
@@ -197,6 +199,12 @@ class Commands {
 			}
 
 			return true
+		}
+
+		override fun onTabComplete(sender: CommandSender, command: org.bukkit.command.Command, label: String, args: Array<out String>): MutableList<String>? {
+			if (args.size > 1) return mutableListOf()
+
+			return Bukkit.getOnlinePlayers().map { it.name }.filter { it.startsWith(args[0]) }.toMutableList()
 		}
 	}
 

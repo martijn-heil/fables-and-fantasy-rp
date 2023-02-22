@@ -83,6 +83,7 @@ class FablesChat : JavaPlugin() {
 		this.getCommand("looc")!!.setExecutor(Commands.CommandChatLocalOutOfCharacter())
 		this.getCommand("ooc")!!.setExecutor(Commands.CommandChatOutOfCharacter())
 		this.getCommand("dm")!!.setExecutor(Commands.CommandChatDirectMessage())
+		this.getCommand("dm")!!.tabCompleter = Commands.CommandChatDirectMessage()
 		this.getCommand("reply")!!.setExecutor(Commands.CommandReply())
 		this.getCommand("staffchat")!!.setExecutor(Commands.CommandChatStaff())
 		this.getCommand("spectatorchat")!!.setExecutor(Commands.CommandChatSpectator())
