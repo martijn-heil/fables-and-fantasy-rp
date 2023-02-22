@@ -159,7 +159,7 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 		= parseChatMessage(rootChannel, message, false)
 
 	fun parseChatMessage(rootChannel: ChatChannel, message: String, updateState: Boolean): Pair<ChatChannel, String> {
-		val channelRegex = Regex("^\\s*\\$CHAT_CHAR([A-z.#]+)( (.*))?")
+		val channelRegex = Regex("^\\s*\\$CHAT_CHAR(\\.?[A-z0-9_.#]+)( (.*))?")
 		val matchResult = channelRegex.matchEntire(message)
 		return if (matchResult != null) {
 			val player = this.offlinePlayer.player ?: throw UnsupportedOperationException("Player is offline")
