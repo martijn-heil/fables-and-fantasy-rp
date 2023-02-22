@@ -39,7 +39,7 @@ commands:
     usage: "Usage: /<command> [message]?"
   dm:
     description: "Change to or type in direct message chat."
-    aliases: [directmessage, msg]
+    aliases: [fdm, directmessage, fdirectmessage, msg, fmsg, whisper, fwhisper]
     permission: fables.chat.channel.dm
     usage: "Usage: /<command> [message]?"
   reply:
