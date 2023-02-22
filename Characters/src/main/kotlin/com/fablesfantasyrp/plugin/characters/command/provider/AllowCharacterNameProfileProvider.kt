@@ -2,6 +2,7 @@ package com.fablesfantasyrp.plugin.characters.command.provider
 
 import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
+import com.fablesfantasyrp.plugin.profile.command.annotation.AllowPlayerName
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.utils.quoteCommandArgument
 import com.gitlab.martijn_heil.nincommands.common.CommandTarget
@@ -63,8 +64,14 @@ class AllowCharacterNameProfileProvider(private val server: Server,
 	}
 
 	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
+		val allowPlayerName = modifiers.any { it is AllowPlayerName }
+
 		return characterRepository.allNames()
+				.asSequence()
 				.filter { it.startsWith(prefix.removePrefix("\""), true) }
 				.map { quoteCommandArgument(it) }
+				.plus(if (allowPlayerName) server.onlinePlayers.map { it.name }.filter { it.lowercase().startsWith(prefix.lowercase()) } else emptyList())
+				.distinct()
+				.toList()
 	}
 }

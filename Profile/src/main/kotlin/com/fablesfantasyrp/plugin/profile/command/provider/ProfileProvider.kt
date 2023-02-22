@@ -58,7 +58,7 @@ class ProfileProvider(private val profiles: EntityProfileRepository,
 	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
 		val allowPlayerName = modifiers.any { it is AllowPlayerName }
 		return if (allowPlayerName) {
-			server.onlinePlayers.map { it.name }
+			server.onlinePlayers.map { it.name }.filter { it.lowercase().startsWith(prefix.lowercase()) }
 		} else {
 			profiles.allIds()
 					.map { "#$it" }
