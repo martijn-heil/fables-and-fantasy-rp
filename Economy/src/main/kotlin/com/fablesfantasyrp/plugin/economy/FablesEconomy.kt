@@ -69,6 +69,7 @@ class FablesEconomy : JavaPlugin(), KoinComponent {
 			factoryOf(::Commands)
 			factory { get<Commands>().Eco() }
 			factory { get<Commands>().Bank() }
+			factory { get<Commands>().PlayerEco() }
 		}
 		loadKoinModules(koinModule)
 
