@@ -27,7 +27,8 @@ class NameTagManager(private val profileManager: ProfileManager,
 				val showCharacterNames = observer.dFlags.getFlagValue("characters_togglenames")
 				  ?.let { it.asElement().asBoolean() } ?: true
 				if (target.uniqueId == ROBIN && target.gameMode == GameMode.CREATIVE &&
-						target.isFlying && target.flySpeed >= 0.3 && !target.isVanished && target.location.world == EDEN) {
+						target.isFlying && target.flySpeed >= 0.3 && !target.isVanished &&
+						target.location.world == EDEN && targetProfile != null) {
 					"'Fighter Jet' Robin"
 				} else if (showCharacterNames && targetCharacter != null) {
 					targetCharacter.name
