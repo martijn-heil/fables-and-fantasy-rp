@@ -16,6 +16,7 @@ import com.fablesfantasyrp.plugin.tools.command.provider.MinecraftTime
 import com.fablesfantasyrp.plugin.utils.SPAWN
 import com.fablesfantasyrp.plugin.utils.asEnabledDisabledComponent
 import com.fablesfantasyrp.plugin.utils.humanReadable
+import com.fablesfantasyrp.plugin.utils.isVanished
 import com.gitlab.martijn_heil.nincommands.common.CommandTarget
 import com.gitlab.martijn_heil.nincommands.common.Sender
 import com.gitlab.martijn_heil.nincommands.common.Toggle
@@ -272,6 +273,7 @@ class Commands(private val powerToolManager: PowerToolManager,
 						"Last seen: <white><last_seen></white><newline>" +
 						"Gamemode: <white><gamemode></white><newline>" +
 						"Invulnerable: <white><invulnerable></white><newline>" +
+						"Vanish: <white><vanish></white><newline>" +
 						"Fly mode: <white><fly_mode></white><newline>" +
 						"Flying speed: <white><fly_speed></white><newline>" +
 						"Walking speed: <white><walk_speed></white><newline>" +
@@ -281,6 +283,7 @@ class Commands(private val powerToolManager: PowerToolManager,
 				Placeholder.unparsed("last_seen", if (target.lastSeen != 0L) PrettyTime().format(Instant.ofEpochMilli(target.lastSeen)) else "unknown"),
 				Placeholder.unparsed("gamemode", player?.gameMode?.toString() ?: "unknown" ),
 				Placeholder.unparsed("invulnerable", player?.isInvulnerable?.toString() ?: "unknown" ),
+				Placeholder.component("vanish", player?.isVanished?.asEnabledDisabledComponent() ?: Component.text("unknown")),
 				Placeholder.component("fly_mode", miniMessage.deserialize("<allow_flight> <flight_status>",
 						Placeholder.component("allow_flight", player?.allowFlight?.asEnabledDisabledComponent() ?: Component.text("unknown")),
 						Placeholder.unparsed("flight_status",
