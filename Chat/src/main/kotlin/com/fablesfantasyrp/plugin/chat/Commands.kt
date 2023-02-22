@@ -189,13 +189,21 @@ class Commands {
 			}
 
 			val message = "#$playerName ${args.slice(1 until args.size).joinToString(" ")}"
-			if (sender is Player) {
-				channel.sendMessage(sender, message)
-			} else if (channel is CommandSenderCompatibleChatChannel){
-				channel.sendMessage(sender, message)
-			} else {
-				sender.sendError("You must be a Player to chat in this channel.")
-				return true
+			try {
+				if (sender is Player) {
+					channel.sendMessage(sender, message)
+				} else if (channel is CommandSenderCompatibleChatChannel){
+					channel.sendMessage(sender, message)
+				} else {
+					sender.sendError("You must be a Player to chat in this channel.")
+					return true
+				}
+			} catch (e: ChatIllegalArgumentException) {
+				sender.sendError(e.message ?: "Illegal argument.")
+			} catch (e: ChatIllegalStateException) {
+				sender.sendError(e.message ?: "Illegal state.")
+			} catch (e: ChatUnsupportedOperationException) {
+				sender.sendError(e.message ?: "Unsupported operation.")
 			}
 
 			return true
@@ -216,14 +224,22 @@ class Commands {
 				return true
 			}
 
-			val message = args.joinToString(" ")
-			if (sender is Player) {
-				channel.sendMessage(sender, message)
-			} else if (channel is CommandSenderCompatibleChatChannel){
-				channel.sendMessage(sender, message)
-			} else {
-				sender.sendError("You must be a Player to chat in this channel.")
-				return true
+			try {
+				val message = args.joinToString(" ")
+				if (sender is Player) {
+					channel.sendMessage(sender, message)
+				} else if (channel is CommandSenderCompatibleChatChannel){
+					channel.sendMessage(sender, message)
+				} else {
+					sender.sendError("You must be a Player to chat in this channel.")
+					return true
+				}
+			} catch (e: ChatIllegalArgumentException) {
+				sender.sendError(e.message ?: "Illegal argument.")
+			} catch (e: ChatIllegalStateException) {
+				sender.sendError(e.message ?: "Illegal state.")
+			} catch (e: ChatUnsupportedOperationException) {
+				sender.sendError(e.message ?: "Unsupported operation.")
 			}
 
 			return true
