@@ -95,8 +95,6 @@ class FablesEconomy : JavaPlugin(), KoinComponent {
 
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
 
-		//migrate(this, BankAPI.getInstance(), profileEconomyRepository, characterRepository)
-
 		val vault = server.pluginManager.getPlugin("Vault")
 		if (vault != null) {
 			logger.info("Enabling Vault integration")

@@ -6,7 +6,6 @@ depend:
   - FablesUtils
   - FablesProfile
   - FablesCharacters
-  - Bank
 softdepend:
   - Citizens
   - Vault
