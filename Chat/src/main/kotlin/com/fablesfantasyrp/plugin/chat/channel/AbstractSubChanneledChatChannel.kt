@@ -8,7 +8,7 @@ abstract class AbstractSubChanneledChatChannel(private val name: String)
 	abstract val default: ChatChannel?
 
 	@Transient
-	private val pattern = "^#([A-z0-9_]+)\\s?(.*)$"
+	private val pattern = "^#(\\.?[A-z0-9_]+)\\s?(.*)$"
 
 	abstract val subChannels: Map<String, ChatChannel>
 
