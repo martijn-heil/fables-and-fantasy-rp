@@ -35,29 +35,34 @@ class Commands(private val plugin: JavaPlugin,
 	@Command(aliases = ["pay", "fpay"], desc = "Pay someone money")
 	@Require(Permission.Command.Pay)
 	fun pay(@Sender sender: Profile, @AllowCharacterName target: Profile, @Range(min = 1.0) amount: Int) {
-		val character = characters.forProfile(target)
-		val displayName = character?.name ?: "#${target.id}"
-		val currentPlayer = profileManager.getCurrentForProfile(sender)!!
-		val ownProfiles = profiles.allForOwner(currentPlayer)
+		val targetCharacter = characters.forProfile(target)
+		val targetDisplayName = targetCharacter?.name ?: "#${target.id}"
+		val targetPlayer = profileManager.getCurrentForProfile(target)
+
+		val senderPlayer = profileManager.getCurrentForProfile(sender)!!
+		val senderCharacter = characters.forProfile(sender)
+		val senderOwnProfiles = profiles.allForOwner(senderPlayer)
+		val senderDisplayName = senderCharacter?.name ?: "#${target.id}"
 
 		if (!target.isActive) {
-			currentPlayer.sendError("You cannot pay an inactive profile!")
+			senderPlayer.sendError("You cannot pay an inactive profile!")
 			return
 		}
 
 		if (sender.money < amount) {
-			currentPlayer.sendError("You cannot afford that!")
+			senderPlayer.sendError("You cannot afford that!")
 			return
 		}
 
-		if (!currentPlayer.hasPermission(Permission.PayOwn) && ownProfiles.contains(target)) {
-			currentPlayer.sendError("You cannot pay a profile that you own!")
+		if (!senderPlayer.hasPermission(Permission.PayOwn) && senderOwnProfiles.contains(target)) {
+			senderPlayer.sendError("You cannot pay a profile that you own!")
 			return
 		}
 
 		sender.money -= amount
 		target.money += amount
-		currentPlayer.sendMessage("$SYSPREFIX Sent $CURRENCY_SYMBOL${amount} to $displayName")
+		senderPlayer.sendMessage("$SYSPREFIX Sent $CURRENCY_SYMBOL${amount} to $targetDisplayName")
+		targetPlayer?.sendMessage("$SYSPREFIX $senderDisplayName sent you $CURRENCY_SYMBOL${amount}")
 	}
 
 	inner class Eco {
