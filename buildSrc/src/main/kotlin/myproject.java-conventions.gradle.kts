@@ -21,7 +21,7 @@ plugins {
 
 group = "com.fablesfantasyrp.plugin"
 version = "1.0-SNAPSHOT"
-val authors = "Ninjoh, darwj, Appenzell"
+val authors = "Ninjoh, darwj, Appenzell, peerage"
 val bukkitApiVersion = "1.18"
 
 base.archivesName.set("Fables${name}")
