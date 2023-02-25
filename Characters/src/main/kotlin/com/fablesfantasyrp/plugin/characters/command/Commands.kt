@@ -31,6 +31,7 @@ import com.sk89q.intake.Require
 import com.sk89q.intake.parametric.annotation.Optional
 import com.sk89q.intake.parametric.annotation.Range
 import com.sk89q.intake.parametric.annotation.Switch
+import com.sk89q.intake.util.auth.AuthorizationException
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.ChatColor
@@ -44,29 +45,6 @@ import java.time.Duration
 import java.time.Instant
 import kotlin.math.max
 
-
-private fun checkAuthorization(sender: CommandSender, target: Character, permission: String, allowShelved: Boolean = false): Boolean {
-	if (!allowShelved && target.isShelved) {
-		sender.sendError("This character is shelved")
-		return false
-	}
-
-	if (target.isDead) {
-		sender.sendError("This character is dead")
-		return false
-	}
-
-	val owner = target.profile.owner
-
-	if (sender != owner &&
-			!(sender.hasPermission("$permission.any") ||
-					(sender.hasPermission(Permission.Staff) && target.isStaffCharacter))) {
-		sender.sendError("Permission denied")
-		return false
-	}
-
-	return true
-}
 
 class LegacyCommands(private val characterCommands: Commands.Characters) {
 	@Command(aliases = ["newcharacter", "newchar", "nc"], desc = "Create a new character!")
@@ -102,7 +80,8 @@ class Commands(private val plugin: JavaPlugin,
 			   private val characterRepository: EntityCharacterRepository,
 			   private val profileRepository: ProfileRepository,
 			   private val profileManager: ProfileManager,
-			   private val profilePrompter: ProfilePrompter) {
+			   private val profilePrompter: ProfilePrompter,
+			   private val authorizer: CharacterAuthorizer) {
 	private val server = plugin.server
 
 	inner class Characters {
@@ -186,7 +165,7 @@ class Commands(private val plugin: JavaPlugin,
 				return
 			}
 
-			if (!checkAuthorization(sender, target, Permission.Command.Characters.Kill)) return
+			authorizer.mayEdit(sender, target).orElse { throw AuthorizationException(it) }
 
 			target.isDead = true
 			sender.sendMessage("$SYSPREFIX Killed ${target.name}")
@@ -208,8 +187,7 @@ class Commands(private val plugin: JavaPlugin,
 			}
 
 			val owner = target.profile.owner
-
-			if (!checkAuthorization(sender, target, Permission.Command.Characters.Shelf)) return
+			authorizer.mayEdit(sender, target).orElse { throw AuthorizationException(it) }
 
 			if (force && !sender.hasPermission(Permission.Command.Characters.Shelf + ".force")) {
 				sender.sendError("Permission denied")
@@ -287,37 +265,7 @@ class Commands(private val plugin: JavaPlugin,
 					profilePrompter.promptSelect(who, profiles)
 				}
 
-				val targetCharacter = characterRepository.forProfile(target)
-
-				val owner = target.owner
-
-				if (force && !sender.hasPermission(Permission.Command.Characters.Become + ".force")) {
-					sender.sendError("Permission denied")
-					return@launch
-				}
-
-				if (instant && !sender.hasPermission(Permission.Command.Characters.Become + ".instant")) {
-					sender.sendError("Permission denied")
-					return@launch
-				}
-
-				if (owner == FABLES_ADMIN && !sender.hasPermission(Permission.Staff)) {
-					sender.sendError("You do not have permission to become a staff character.")
-					return@launch
-				} else if (owner != sender && !sender.hasPermission(Permission.Any)) {
-					sender.sendError("You do not have permission to become a character that you don't own.")
-					return@launch
-				}
-
-				if (targetCharacter?.isShelved == true) {
-					sender.sendError("This character is currently shelved")
-					return@launch
-				}
-
-				if (targetCharacter?.isDead == true) {
-					sender.sendError("This character is dead.")
-					return@launch
-				}
+				authorizer.mayBecome(sender, target).orElse { throw AuthorizationException(it) }
 
 				if (!instant && who == sender) {
 					who.countdown(10U, emptyList(), listOf(CancelReason.MOVEMENT, CancelReason.HURT))
@@ -341,7 +289,7 @@ class Commands(private val plugin: JavaPlugin,
 				return
 			}
 
-			if (!checkAuthorization(sender, target, Permission.Command.Characters.Unshelf, allowShelved = true)) return
+			authorizer.mayEdit(sender, target, allowShelved = true).orElse { throw AuthorizationException(it) }
 
 			if (!target.isShelved) {
 				sender.sendError("${target.name} is not shelved.")
@@ -365,7 +313,7 @@ class Commands(private val plugin: JavaPlugin,
 					stat: CharacterStatKind,
 					@Range(min = 0.0) value: Int,
 					@CommandTarget target: Character) {
-				if (!checkAuthorization(sender, target, Permission.Command.Characters.Stats.Set)) return
+				authorizer.mayEdit(sender, target).orElse { throw AuthorizationException(it) }
 
 				target.stats = target.stats.with(stat, value.toUInt())
 				sender.sendMessage("$SYSPREFIX Set ${target.name}'s ${stat.toString().lowercase()} to $value")
@@ -395,7 +343,7 @@ class Commands(private val plugin: JavaPlugin,
 			@Command(aliases = ["age"], desc = "Set a character's age")
 			@Require(Permission.Command.Characters.Change.Age)
 			fun age(@Sender sender: Player, @CommandTarget target: Character) {
-				if(!checkAuthorization(sender, target, Permission.Command.Characters.Change.Age)) return
+				authorizer.mayEdit(sender, target).orElse { throw AuthorizationException(it) }
 
 				plugin.launch {
 					val age = sender.promptChat("$SYSPREFIX Please enter ${target.name}'s new age")
@@ -419,7 +367,7 @@ class Commands(private val plugin: JavaPlugin,
 			@Command(aliases = ["description"], desc = "Change a character's description")
 			@Require(Permission.Command.Characters.Change.Description)
 			fun description(@Sender sender: Player, @CommandTarget target: Character) {
-				if(!checkAuthorization(sender, target, Permission.Command.Characters.Change.Description)) return
+				authorizer.mayEdit(sender, target).orElse { throw AuthorizationException(it) }
 
 				plugin.launch {
 					val newDescription = sender.promptChat("$SYSPREFIX Please enter ${target.name}'s new description:")
@@ -431,7 +379,7 @@ class Commands(private val plugin: JavaPlugin,
 			@Command(aliases = ["name"], desc = "Change a character's name")
 			@Require(Permission.Command.Characters.Change.Name)
 			fun name(@Sender sender: Player, @CommandTarget target: Character) {
-				if(!checkAuthorization(sender, target, Permission.Command.Characters.Change.Name)) return
+				authorizer.mayEdit(sender, target).orElse { throw AuthorizationException(it) }
 
 				plugin.launch {
 					val oldName = target.name
@@ -465,7 +413,7 @@ class Commands(private val plugin: JavaPlugin,
 			@Command(aliases = ["stats"], desc = "Change a character's stats")
 			@Require(Permission.Command.Characters.Change.Stats)
 			fun stats(@Sender sender: Player, @CommandTarget target: Character) {
-				if (!checkAuthorization(sender, target, Permission.Command.Characters.Change.Stats)) return
+				authorizer.mayEdit(sender, target).orElse { throw AuthorizationException(it) }
 
 				if (!target.isStaffCharacter && target.changedStatsAt != null) {
 					val daysLeft = max(0, 30 - Duration.between(target.changedStatsAt, Instant.now()).toDays())
@@ -503,7 +451,7 @@ class Commands(private val plugin: JavaPlugin,
 			@Command(aliases = ["race"], desc = "Change a character's race")
 			@Require(Permission.Command.Characters.Change.Race)
 			fun race(@Sender sender: Player, @CommandTarget target: Character) {
-				if (!checkAuthorization(sender, target, Permission.Command.Characters.Change.Race)) return
+				authorizer.mayEdit(sender, target).orElse { throw AuthorizationException(it) }
 				plugin.launch {
 					val race: Race = sender.promptGui(GuiSingleChoice(plugin,
 							"Please choose a new race",
@@ -519,7 +467,7 @@ class Commands(private val plugin: JavaPlugin,
 			@Command(aliases = ["gender"], desc = "Change a character's gender")
 			@Require(Permission.Command.Characters.Change.Gender)
 			fun gender(@Sender sender: Player, @CommandTarget target: Character) {
-				if (!checkAuthorization(sender, target, Permission.Command.Characters.Change.Gender)) return
+				authorizer.mayEdit(sender, target).orElse { throw AuthorizationException(it) }
 				plugin.launch {
 					val gender: Gender = sender.promptGui(GuiSingleChoice(FablesCharacters.instance,
 							"Please choose a new gender",

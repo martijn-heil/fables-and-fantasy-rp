@@ -8,9 +8,7 @@ import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterReposito
 import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepositoryImpl
 import com.fablesfantasyrp.plugin.characters.data.persistent.H2CharacterRepository
 import com.fablesfantasyrp.plugin.database.applyMigrations
-import com.fablesfantasyrp.plugin.profile.ProfilePrompter
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
-import com.fablesfantasyrp.plugin.utils.Services
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
@@ -68,6 +66,8 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 				characterRepositoryImpl.init()
 				characterRepositoryImpl
 			} bind CharacterRepository::class
+
+			singleOf(::CharacterAuthorizerImpl) bind CharacterAuthorizer::class
 
 			factory { CharacterModule(get(), get(), get(), get<Provider<Profile>>(named("Profile"))) }
 			singleOf(::CharactersListener)
