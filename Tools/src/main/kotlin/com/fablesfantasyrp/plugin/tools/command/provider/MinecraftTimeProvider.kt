@@ -21,7 +21,7 @@ class MinecraftTimeProvider : Provider<MinecraftTime> {
 
 	@Throws(ArgumentException::class, ProvisionException::class)
 	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): MinecraftTime {
-		val value = arguments.peek()
+		val value = arguments.next()
 		val time = constants[value] ?: value.toLongOrNull() ?: throw ArgumentParseException("Invalid time '$value'")
 		return MinecraftTime(time)
 	}
