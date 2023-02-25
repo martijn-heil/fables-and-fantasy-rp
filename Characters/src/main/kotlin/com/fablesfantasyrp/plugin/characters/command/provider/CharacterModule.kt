@@ -7,8 +7,10 @@ import com.fablesfantasyrp.plugin.characters.data.entity.Character
 import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
+import com.gitlab.martijn_heil.nincommands.common.Sender
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.OfflinePlayerProvider
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.PlayerProvider
+import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.sender.BukkitSenderProvider
 import com.sk89q.intake.parametric.AbstractModule
 import com.sk89q.intake.parametric.Provider
 import com.sk89q.intake.parametric.provider.EnumProvider
@@ -26,5 +28,6 @@ class CharacterModule(private val server: Server,
 		bind(Race::class.java).toProvider(EnumProvider(Race::class.java))
 		bind(Player::class.java).annotatedWith(AllowCharacterName::class.java).toProvider(AllowCharacterNamePlayerProvider(server, PlayerProvider(server, OfflinePlayerProvider(server)), profileManager, characters))
 		bind(Profile::class.java).annotatedWith(AllowCharacterName::class.java).toProvider(AllowCharacterNameProfileProvider(server, characters, profileProvider, profileManager))
+		bind(Character::class.java).annotatedWith(Sender::class.java).toProvider(CharacterSenderProvider(profileManager, characters, BukkitSenderProvider(Player::class.java)))
 	}
 }
