@@ -125,15 +125,14 @@ dependencies {
 		exclude(group = "io.papermc")
 	}
 	implementation("me.clip:placeholderapi:2.10.0")
-	implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.5.0")
-	implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.5.0")
+	implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.10.0")
+	implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.10.0")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4")
 	implementation("org.ocpsoft.prettytime:prettytime:5.0.6.Final")
 	implementation("com.google.guava:guava:31.1-jre")
 	implementation("io.insert-koin:koin-core:3.3.2")
 	implementation(urlFile(URL("https://github.com/Gecolay/GSit/releases/download/1.2.4/GSit-1.2.4.jar"), "GSit.jar"))
-	//implementation("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT") { isChanging = true }
 	implementation("com.gitlab.martijn-heil:NinCommands:master-SNAPSHOT") { isChanging = true }
 	implementation(fileTree("${project.projectDir.parent}/lib") { include("*.jar") })
 }
