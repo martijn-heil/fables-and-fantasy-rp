@@ -92,7 +92,7 @@ class Commands(private val powerToolManager: PowerToolManager,
 
 	@Command(aliases = ["tphere", "ftphere"], desc = "Teleport characters to you")
 	@Require(Permission.Command.Tphere)
-	fun tphere(@Sender sender: Player, @AllowCharacterName who: Profile) {
+	fun tphere(@Sender sender: Player, @AllowCharacterName @AllowPlayerName who: Profile) {
 		who.location = sender.location
 	}
 
