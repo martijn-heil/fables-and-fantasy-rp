@@ -10,6 +10,7 @@ import org.bukkit.event.Listener
 class DailyRewardsListener : Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	fun onPlayerSwitchProfile(e: PostPlayerSwitchProfileEvent) {
+		if (!e.player.isOnline) return
 		denizenRun("dailyrewards_check", mapOf("player" to PlayerTag(e.player)))
 	}
 }
