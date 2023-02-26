@@ -33,7 +33,7 @@ class EntityCharacterRepositoryImpl<C>(child: C, private val profiles: ProfileRe
 		nameMap.remove(v.name)
 	}
 
-	override fun forOwner(offlinePlayer: OfflinePlayer): Collection<Character> {
+	override fun forOwner(offlinePlayer: OfflinePlayer?): Collection<Character> {
 		return profiles.allForOwner(offlinePlayer).mapNotNull { this.forId(it.id) }
 	}
 
@@ -49,7 +49,7 @@ class EntityCharacterRepositoryImpl<C>(child: C, private val profiles: ProfileRe
 
 	override fun markDirty(v: Character) {
 		lock.writeLock().withLock {
-			super.markDirty(v)
+			super<SimpleEntityRepository>.markDirty(v)
 			nameMap.inverse()[v.id] = v.name
 		}
 	}

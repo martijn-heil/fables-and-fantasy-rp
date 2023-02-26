@@ -86,7 +86,7 @@ class H2SlidingDoorRepository(private val server: Server,
 		val handleLocationX = row.getInt("handle_location_x")
 		val handleLocationY = row.getInt("handle_location_y")
 		val handleLocationZ = row.getInt("handle_location_z")
-		val world = server.getWorld(row.getUuid("world"))!! // "Life without risks is not worth living." – Charles A. Lindbergh
+		val world = server.getWorld(row.getUuid("world")!!)!! // "Life without risks is not worth living." – Charles A. Lindbergh
 		val blocks = row.getList<OffsetBlock>("blocks")
 		val handleLocation = BlockLocation(handleLocationX, handleLocationY, handleLocationZ)
 

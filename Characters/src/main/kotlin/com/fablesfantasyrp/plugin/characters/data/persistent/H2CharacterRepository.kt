@@ -85,7 +85,7 @@ class H2CharacterRepository(private val server: Server,
 		}
 	}
 
-	override fun forOwner(offlinePlayer: OfflinePlayer): Collection<Character> {
+	override fun forOwner(offlinePlayer: OfflinePlayer?): Collection<Character> {
 		return profiles.allForOwner(offlinePlayer).mapNotNull { this.forId(it.id) }
 	}
 

@@ -13,6 +13,7 @@ object Permission {
 			const val prefix = Permission.Command.prefix + ".characters"
 			const val New = "${prefix}.new"
 			const val List = "${prefix}.list"
+			const val Listunowned = "${prefix}.listunowned"
 			const val Card = "${prefix}.card"
 			const val Kill = "${prefix}.kill"
 			const val Resurrect = "${prefix}.resurrect"

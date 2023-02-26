@@ -22,6 +22,6 @@ inline fun<reified T> PreparedStatement.setCollection(n: Int, sqlDataType: H2Typ
 	this.setArray(n, this.connection.createArrayOf("${sqlDataType.name} ARRAY", collection.toTypedArray()))
 }
 
-fun ResultSet.getUuid(column: String) = this.getObject(column, UUID::class.java)
-fun ResultSet.getUuid(column: Int) = this.getObject(column, UUID::class.java)
-fun PreparedStatement.setUuid(n: Int, uuid: UUID) = this.setObject(n, uuid)
+fun ResultSet.getUuid(column: String) = this.getObject(column) as? UUID
+fun ResultSet.getUuid(column: Int) = this.getObject(column) as? UUID
+fun PreparedStatement.setUuid(n: Int, uuid: UUID?) = this.setObject(n, uuid, H2Type.UUID)

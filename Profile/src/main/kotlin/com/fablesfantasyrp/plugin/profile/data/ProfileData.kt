@@ -6,5 +6,5 @@ import org.bukkit.OfflinePlayer
 interface ProfileData : Identifiable<Int> {
 	val isActive: Boolean
 	val description: String?
-	val owner: OfflinePlayer
+	val owner: OfflinePlayer?
 }

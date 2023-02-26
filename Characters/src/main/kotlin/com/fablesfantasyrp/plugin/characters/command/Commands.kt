@@ -151,6 +151,17 @@ class Commands(private val plugin: JavaPlugin,
 			}
 		}
 
+		@Command(aliases = ["listunowned"], desc = "List characters without an owner")
+		@Require(Permission.Command.Characters.Listunowned)
+		fun listunowned(@Sender sender: CommandSender) {
+			sender.sendMessage("$SYSPREFIX The following characters have no owner:")
+			characterRepository.forOwner(null).forEach {
+				val dead = if (it.isDead) " ${ChatColor.RED}(dead)" else ""
+				val shelved = if (it.isShelved) " ${ChatColor.YELLOW}(shelved)" else ""
+				sender.sendMessage("${ChatColor.GRAY}#${it.id} ${it.name}${dead}${shelved}")
+			}
+		}
+
 		@Command(aliases = ["card"], desc = "Display a character's card in chat.")
 		@Require(Permission.Command.Characters.Card)
 		fun card(@Sender sender: CommandSender, @CommandTarget target: Character) {
@@ -194,7 +205,7 @@ class Commands(private val plugin: JavaPlugin,
 				return
 			}
 
-			if (!target.isStaffCharacter) {
+			if (owner != null && !target.isStaffCharacter) {
 				val shelved = characterRepository.forOwner(owner).filter { it.isShelved && !it.isDead }.size
 				if (shelved >= 3) {
 					sender.sendError("You cannot shelve more than 3 characters!")

@@ -79,7 +79,7 @@ class H2WorldRestrictionRuleRepository(private val server: Server,
 			stmnt.setInt(1, profile.id)
 			val result = stmnt.executeQuery()
 			val worlds = ArrayList<World>()
-			while (result.next()) server.getWorld(result.getUuid("world"))?.let { worlds.add(it) }
+			while (result.next()) server.getWorld(result.getUuid("world")!!)?.let { worlds.add(it) }
 			worlds
 		}
 	}
@@ -92,7 +92,7 @@ class H2WorldRestrictionRuleRepository(private val server: Server,
 			val worlds = HashMap<Profile, HashSet<World>>()
 			while (result.next()) {
 				val profile = profileRepository.forId(result.getInt("profile"))!!
-				val world = server.getWorld(result.getUuid("world")) ?: continue
+				val world = server.getWorld(result.getUuid("world")!!) ?: continue
 				worlds.putIfAbsent(profile, HashSet())
 				worlds[profile]!!.add(world)
 			}

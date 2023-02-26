@@ -52,8 +52,9 @@ fun characterCard(character: Character, observer: CommandSender? = null): Compon
 			Placeholder.unparsed("id", character.id.toString()),
 			Placeholder.component("owner_info",
 					if (character.isStaffCharacter) Component.text("This is a staff character").color(NamedTextColor.YELLOW)
-					else miniMessage.deserialize("Owned by <name>",
-							Placeholder.unparsed("name",character.profile.owner.name ?: character.profile.owner.uniqueId.toString()))
+					else if (character.profile.owner != null) miniMessage.deserialize("Owned by <name>",
+							Placeholder.unparsed("name", character.profile.owner!!.name ?: character.profile.owner!!.uniqueId.toString()))
+					else Component.text("This character is not owned by anyone")
 			),
 			Placeholder.component("name", Component.text(character.name)),
 			Placeholder.component("age", Component.text(character.age.toString())),

@@ -15,10 +15,10 @@ class Profile : DataEntity<Int, Profile>, ProfileData {
 
 	override val id: Int
 
-	private var ownerUUID: UUID
-	override var owner: OfflinePlayer
-		set(value) { if (ownerUUID != value.uniqueId) { ownerUUID = value.uniqueId; dirtyMarker?.markDirty(this) } }
-		get() = Bukkit.getOfflinePlayer(ownerUUID)
+	private var ownerUUID: UUID?
+	override var owner: OfflinePlayer?
+		set(value) { if (ownerUUID != value?.uniqueId) { ownerUUID = value?.uniqueId; dirtyMarker?.markDirty(this, "owner") } }
+		get() = ownerUUID?.let { Bukkit.getOfflinePlayer(it) }
 	override var description: String? set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 	override var isActive: Boolean
 		set(value) {
@@ -33,12 +33,12 @@ class Profile : DataEntity<Int, Profile>, ProfileData {
 		}
 
 	constructor(id: Int = -1,
-				owner: OfflinePlayer,
+				owner: OfflinePlayer?,
 				description: String?,
 				isActive: Boolean,
 				dirtyMarker: DirtyMarker<Profile>? = null) {
 		this.id = id
-		this.ownerUUID = owner.uniqueId
+		this.ownerUUID = owner?.uniqueId
 		this.owner = owner
 		this.description = description
 		this.isActive = isActive

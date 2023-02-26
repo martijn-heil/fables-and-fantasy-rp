@@ -128,6 +128,7 @@ class FablesProfile : JavaPlugin(), KoinComponent {
 	}
 
 	override fun onDisable() {
+		get<EntityProfileRepository>().saveAllDirty()
 		commands.forEach { unregisterCommand(it) }
 		unloadKoinModules(koinModule)
 	}

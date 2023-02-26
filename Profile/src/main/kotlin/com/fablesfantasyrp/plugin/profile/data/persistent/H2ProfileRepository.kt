@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.profile.data.persistent
 
+import com.fablesfantasyrp.plugin.database.getUuid
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
 import com.fablesfantasyrp.plugin.database.setUuid
@@ -9,7 +10,6 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.Server
 import java.sql.ResultSet
 import java.sql.Statement
-import java.util.*
 import javax.sql.DataSource
 
 class H2ProfileRepository(private val server: Server,
@@ -17,10 +17,10 @@ class H2ProfileRepository(private val server: Server,
 	override var dirtyMarker: DirtyMarker<Profile>? = null
 	private val TABLE_NAME = "FABLES_PROFILE.PROFILE"
 
-	override fun allForOwner(offlinePlayer: OfflinePlayer): Collection<Profile> {
+	override fun allForOwner(offlinePlayer: OfflinePlayer?): Collection<Profile> {
 		return dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE owner = ?")
-			stmnt.setObject(1, offlinePlayer.uniqueId)
+			stmnt.setUuid(1, offlinePlayer?.uniqueId)
 			val result = stmnt.executeQuery()
 			val results = ArrayList<Profile>()
 			while (result.next()) {
@@ -55,7 +55,7 @@ class H2ProfileRepository(private val server: Server,
 				val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME " +
 						"(owner, description, active) " +
 						"VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS)
-				stmnt.setObject(1, v.owner.uniqueId)
+				stmnt.setUuid(1, v.owner?.uniqueId)
 				stmnt.setString(2, v.description)
 				stmnt.setBoolean(3, v.isActive)
 				stmnt.executeUpdate()
@@ -74,7 +74,7 @@ class H2ProfileRepository(private val server: Server,
 						"(id, owner, description, active) " +
 						"VALUES (?, ?, ?, ?)")
 				stmnt.setInt(1, v.id)
-				stmnt.setObject(2, v.owner.uniqueId)
+				stmnt.setUuid(2, v.owner?.uniqueId)
 				stmnt.setString(3, v.description)
 				stmnt.setBoolean(4, v.isActive)
 				stmnt.executeUpdate()
@@ -100,7 +100,7 @@ class H2ProfileRepository(private val server: Server,
 					"description = ?, " +
 					"active = ? " +
 					"WHERE id = ?")
-			stmnt.setUuid(1, v.owner.uniqueId)
+			stmnt.setUuid(1, v.owner?.uniqueId)
 			stmnt.setString(2, v.description)
 			stmnt.setBoolean(3, v.isActive)
 			stmnt.setInt(4, v.id)
@@ -130,7 +130,7 @@ class H2ProfileRepository(private val server: Server,
 
 	private fun fromRow(row: ResultSet): Profile {
 		val id = row.getInt("id")
-		val owner = server.getOfflinePlayer(row.getObject("owner", UUID::class.java))
+		val owner = row.getUuid("owner")?.let { server.getOfflinePlayer(it) }
 		val description = row.getString("description")
 		val isAccessible = row.getBoolean("active")
 

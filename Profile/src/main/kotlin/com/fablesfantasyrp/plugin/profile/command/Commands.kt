@@ -8,6 +8,7 @@ import com.gitlab.martijn_heil.nincommands.common.CommandTarget
 import com.gitlab.martijn_heil.nincommands.common.Sender
 import com.sk89q.intake.Command
 import com.sk89q.intake.Require
+import com.sk89q.intake.parametric.annotation.Optional
 import com.sk89q.intake.parametric.annotation.Switch
 import org.bukkit.ChatColor
 import org.bukkit.OfflinePlayer
@@ -53,7 +54,7 @@ class Commands(private val profiles: ProfileRepository,
 
 		@Command(aliases = ["transfer"], desc = "Transfer a profile")
 		@Require(Permission.Command.CommandProfile.Transfer)
-		fun transfer(@Sender sender: CommandSender, profile: Profile, to: OfflinePlayer) {
+		fun transfer(@Sender sender: CommandSender, profile: Profile, @Optional to: OfflinePlayer?) {
 			profile.owner = to
 		}
 
