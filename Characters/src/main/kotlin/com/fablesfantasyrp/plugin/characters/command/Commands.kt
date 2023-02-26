@@ -265,7 +265,7 @@ class Commands(private val plugin: JavaPlugin,
 					profilePrompter.promptSelect(who, profiles)
 				}
 
-				authorizer.mayBecome(sender, target).orElse { throw AuthorizationException(it) }
+				authorizer.mayBecome(sender, target).orElse { sender.sendError(it); return@launch }
 
 				if (!instant && who == sender) {
 					who.countdown(10U, emptyList(), listOf(CancelReason.MOVEMENT, CancelReason.HURT))
