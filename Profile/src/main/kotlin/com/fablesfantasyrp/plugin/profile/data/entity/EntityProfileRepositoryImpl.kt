@@ -26,9 +26,7 @@ class EntityProfileRepositoryImpl<C>(child: C) :
 	}
 
 	override fun allForOwner(offlinePlayer: OfflinePlayer?): Collection<Profile> {
-		return lock.readLock().withLock {
-			byOwner[offlinePlayer?.uniqueId]?.mapNotNull { this.forId(it) } ?: emptyList()
-		}
+		return lock.readLock().withLock { byOwner[offlinePlayer?.uniqueId] }?.mapNotNull { this.forId(it) } ?: emptyList()
 	}
 
 	override fun create(v: Profile): Profile {
