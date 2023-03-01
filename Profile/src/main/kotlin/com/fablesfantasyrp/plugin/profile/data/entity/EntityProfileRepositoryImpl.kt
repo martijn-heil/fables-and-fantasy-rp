@@ -32,8 +32,8 @@ class EntityProfileRepositoryImpl<C>(child: C) :
 	override fun create(v: Profile): Profile {
 		return lock.writeLock().withLock {
 			val result = super.create(v)
-			byOwner.computeIfAbsent(v.owner?.uniqueId) { mutableSetOf() }.add(v.id)
-			byId[v.id] = v.owner?.uniqueId
+			byOwner.computeIfAbsent(result.owner?.uniqueId) { mutableSetOf() }.add(result.id)
+			byId[result.id] = result.owner?.uniqueId
 			result
 		}
 	}
