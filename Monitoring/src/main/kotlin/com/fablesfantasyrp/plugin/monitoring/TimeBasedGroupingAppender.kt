@@ -60,10 +60,12 @@ class TimeBasedGroupingAppender(private val ignorePatterns: Collection<Regex>, p
 
 	override fun append(event: LogEvent?) {
 		if(event == null) return
-		val formattedMessage = event.message.formattedMessage
+		val copy = event.toImmutable() ?: return
+
+		val formattedMessage = copy.message.formattedMessage
 		if (ignorePatterns.find { it.containsMatchIn(formattedMessage) } != null) return
 
-		maybeFlush(event.timeMillis)
-		grouped.add(event.toImmutable())
+		maybeFlush(copy.timeMillis)
+		grouped.add(copy)
 	}
 }
