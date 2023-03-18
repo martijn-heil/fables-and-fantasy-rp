@@ -55,6 +55,11 @@ class FablesLocation : JavaPlugin(), KoinComponent {
 		profileLocationRepository = get()
 
 		server.pluginManager.registerEvents(get<ProfileLocationListener>(), this)
+
+		server.scheduler.scheduleSyncRepeatingTask(this, {
+			logger.info("Saving locations..")
+			profileLocationRepository.saveAll()
+		}, 0, 6000)
 	}
 
 	override fun onDisable() {

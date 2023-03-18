@@ -102,6 +102,14 @@ class FablesMagic : JavaPlugin(), KoinComponent {
 		val dispatcher = rootDispatcherNode.dispatcher
 
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
+
+		server.scheduler.scheduleSyncRepeatingTask(this, {
+			logger.info("Saving mages..")
+			mageRepository.saveAllDirty()
+
+			logger.info("Saving tears..")
+			tearRepository.saveAllDirty()
+		}, 0, 6000)
 	}
 
 	override fun onDisable() {

@@ -115,6 +115,11 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 		if (server.pluginManager.isPluginEnabled("TAB") && server.pluginManager.isPluginEnabled("Denizen") ) {
 			com.fablesfantasyrp.plugin.characters.nametags.NameTagManager(get(), get()).start()
 		}
+
+		server.scheduler.scheduleSyncRepeatingTask(this, {
+			logger.info("Saving characters..")
+			get<EntityCharacterRepository>().saveAllDirty()
+		}, 0, 6000)
 	}
 
 	override fun onDisable() {
