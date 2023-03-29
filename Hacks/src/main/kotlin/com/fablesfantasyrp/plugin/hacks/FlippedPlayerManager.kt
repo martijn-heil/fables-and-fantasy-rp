@@ -11,11 +11,13 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.event.player.PlayerShowEntityEvent
 import org.bukkit.plugin.Plugin
 
 class FlippedPlayerManager(private val plugin: Plugin) : Listener {
 	private val server = plugin.server
 	private val flippedPlayers = HashSet<Player>()
+	private val reloadingPlayers = HashSet<Player>()
 
 	private class FlippedPlayer(val player: Player, val profile: GameProfile, val flippedProfile: GameProfile)
 
@@ -60,6 +62,7 @@ class FlippedPlayerManager(private val plugin: Plugin) : Listener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	fun onLeave(e: PlayerQuitEvent) {
 		flippedPlayers.remove(e.player)
+		reloadingPlayers.remove(e.player)
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -71,13 +74,26 @@ class FlippedPlayerManager(private val plugin: Plugin) : Listener {
 		}
 	}
 
+	@Suppress("UnstableApiUsage")
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	fun onPlayerShowEntity(e: PlayerShowEntityEvent) {
+		val observed = e.entity as? Player ?: return
+		if (reloadingPlayers.contains(observed)) return
+
+		if (isFlipped(observed)) {
+			setFlippedAppearanceFor(e.player, true, listOf(e.player))
+		}
+	}
+
 	private fun reloadPlayer(player: Player, observer: Player) {
 		check(observer is CraftPlayer)
 		check (player is CraftPlayer)
+		reloadingPlayers.add(player)
 		observer.handle.connection.send(ClientboundRemoveEntitiesPacket(player.getEntityId()))
 		observer.handle.connection.send(ClientboundAddPlayerPacket(player.handle))
-		observer.hidePlayer(player)
-		observer.showPlayer(player)
+		observer.hidePlayer(plugin, player)
+		observer.showPlayer(plugin, player)
+		reloadingPlayers.remove(player)
 	}
 
 	private fun makeFlippedProfile(profile: GameProfile): GameProfile {
