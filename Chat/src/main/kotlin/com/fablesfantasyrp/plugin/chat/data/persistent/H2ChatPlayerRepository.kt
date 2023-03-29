@@ -1,10 +1,12 @@
-package com.fablesfantasyrp.plugin.chat.data.persistent.database
+package com.fablesfantasyrp.plugin.chat.data.persistent
 
 import com.fablesfantasyrp.plugin.chat.channel.ChatChannel
 import com.fablesfantasyrp.plugin.chat.channel.ChatOutOfCharacter
 import com.fablesfantasyrp.plugin.chat.channel.ToggleableChatChannel
-import com.fablesfantasyrp.plugin.chat.data.persistent.PersistentChatPlayerData
-import com.fablesfantasyrp.plugin.chat.data.persistent.PersistentChatPlayerDataRepository
+import com.fablesfantasyrp.plugin.chat.data.ChatPlayerRepository
+import com.fablesfantasyrp.plugin.chat.data.entity.ChatPlayer
+import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
+import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import org.bukkit.OfflinePlayer
@@ -15,20 +17,23 @@ import java.sql.ResultSet
 import java.util.*
 import javax.sql.DataSource
 
-class DatabasePersistentChatPlayerDataRepository(private val server: Server, private val dataSource: DataSource) : PersistentChatPlayerDataRepository {
+class H2ChatPlayerRepository(private val server: Server, private val dataSource: DataSource) :
+		ChatPlayerRepository, HasDirtyMarker<ChatPlayer> {
 	val TABLE_NAME = "\"fables_chat\".CHAT"
 
-	override fun all(): Collection<PersistentChatPlayerData> {
+	override var dirtyMarker: DirtyMarker<ChatPlayer>? = null
+
+	override fun all(): Collection<ChatPlayer> {
 		return dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME")
 			val result = stmnt.executeQuery()
-			val all = ArrayList<DatabaseChatPlayerData>()
+			val all = ArrayList<ChatPlayer>()
 			while (result.next()) all.add(fromRow(result))
 			all
 		}
 	}
 
-	override fun destroy(v: PersistentChatPlayerData) {
+	override fun destroy(v: ChatPlayer) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("DELETE FROM $TABLE_NAME WHERE id = ?")
 			stmnt.setObject(1, v.id)
@@ -36,7 +41,7 @@ class DatabasePersistentChatPlayerDataRepository(private val server: Server, pri
 		}
 	}
 
-	override fun create(v: PersistentChatPlayerData): PersistentChatPlayerData {
+	override fun create(v: ChatPlayer): ChatPlayer {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME (id, channel, disabled_channels, reception_indicator_enabled) " +
 					"VALUES (?, ?, ?, ?)")
@@ -49,18 +54,18 @@ class DatabasePersistentChatPlayerDataRepository(private val server: Server, pri
 		return v
 	}
 
-	override fun forOfflinePlayer(offlinePlayer: OfflinePlayer): PersistentChatPlayerData {
+	override fun forOfflinePlayer(offlinePlayer: OfflinePlayer): ChatPlayer {
 		check(offlinePlayer.hasPlayedBefore())
 		return forId(offlinePlayer.uniqueId)!!
 	}
 
-	override fun forId(id: UUID): PersistentChatPlayerData? {
-		var result: PersistentChatPlayerData?
+	override fun forId(id: UUID): ChatPlayer? {
+		var result: ChatPlayer?
 		while (true) {
 			result = this.forIdMaybe(id)
 			val offlinePlayer = server.getOfflinePlayer(id)
 			if (result == null && (offlinePlayer.isOnline || offlinePlayer.hasPlayedBefore())) {
-				this.create(DatabaseChatPlayerData(id))
+				this.create(ChatPlayer(id))
 				continue
 			}
 			break
@@ -68,7 +73,7 @@ class DatabasePersistentChatPlayerDataRepository(private val server: Server, pri
 		return result
 	}
 
-	private fun forIdMaybe(id: UUID): PersistentChatPlayerData? {
+	private fun forIdMaybe(id: UUID): ChatPlayer? {
 		return dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE id = ?")
 			stmnt.setObject(1, id)
@@ -88,7 +93,7 @@ class DatabasePersistentChatPlayerDataRepository(private val server: Server, pri
 		}
 	}
 
-	override fun update(v: PersistentChatPlayerData) {
+	override fun update(v: ChatPlayer) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("UPDATE $TABLE_NAME SET " +
 					"channel = ?, " +
@@ -109,7 +114,7 @@ class DatabasePersistentChatPlayerDataRepository(private val server: Server, pri
 		}
 	}
 
-	private fun fromRow(row: ResultSet): DatabaseChatPlayerData {
+	private fun fromRow(row: ResultSet): ChatPlayer {
 		val id = checkNotNull(row.getObject("id", UUID::class.java))
 		val channel = try {
 			row.getObject("channel") as? ChatChannel ?: ChatOutOfCharacter
@@ -138,13 +143,14 @@ class DatabasePersistentChatPlayerDataRepository(private val server: Server, pri
 		val chatStyle = row.getString("chat_style")?.let { GsonComponentSerializer.gson().deserialize(it).style() }
 		val isReceptionIndicatorEnabled = row.getBoolean("reception_indicator_enabled")
 		val isChatSpyEnabled = row.getBoolean("chat_spy_enabled")
-		return DatabaseChatPlayerData(
+		return ChatPlayer(
 				id = id,
 				channel = channel,
 				chatStyle = chatStyle,
 				disabledChannels = disabledChannels,
 				isChatSpyEnabled = isChatSpyEnabled,
 				chatSpyExcludeChannels = chatSpyExcludeChannels,
-				isReceptionIndicatorEnabled = isReceptionIndicatorEnabled)
+				isReceptionIndicatorEnabled = isReceptionIndicatorEnabled,
+				dirtyMarker = dirtyMarker)
 	}
 }

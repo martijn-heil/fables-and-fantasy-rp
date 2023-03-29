@@ -4,8 +4,8 @@ import com.fablesfantasyrp.plugin.chat.CHAT_CHAR
 import com.fablesfantasyrp.plugin.chat.Permission
 import com.fablesfantasyrp.plugin.chat.SYSPREFIX
 import com.fablesfantasyrp.plugin.chat.channel.*
-import com.fablesfantasyrp.plugin.chat.data.ChatPlayerData
 import com.fablesfantasyrp.plugin.chat.event.FablesChatEvent
+import com.fablesfantasyrp.plugin.database.entity.DataEntity
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
 import com.fablesfantasyrp.plugin.form.completeWaitForChat
@@ -20,11 +20,11 @@ import org.bukkit.OfflinePlayer
 import java.time.Instant
 import java.util.*
 
-class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> {
+class ChatPlayer : DataEntity<UUID, ChatPlayer>, HasDirtyMarker<ChatPlayer> {
 
 	private val offlinePlayer: OfflinePlayer get() = Bukkit.getOfflinePlayer(id)
 
-	override var channel: ChatChannel
+	var channel: ChatChannel
 		get() = when {
 				!offlinePlayer.isWhitelisted -> ChatSpectator
 				offlinePlayer.knockout.isKnockedOut -> ChatInCharacterQuiet
@@ -41,42 +41,44 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 			}
 		}
 
-	override var chatStyle: Style?
+	var chatStyle: Style?
 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 
-	override var disabledChannels: Set<ToggleableChatChannel> = emptySet()
+	var disabledChannels: Set<ToggleableChatChannel> = emptySet()
 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 
-	override var isChatSpyEnabled: Boolean = false
+	var isChatSpyEnabled: Boolean = false
 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 
-	override var chatSpyExcludeChannels: Set<ChatChannel> = emptySet()
+	var chatSpyExcludeChannels: Set<ChatChannel> = emptySet()
 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 
-	override var isReceptionIndicatorEnabled: Boolean = false
+	var isReceptionIndicatorEnabled: Boolean = false
 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 
 	override val id: UUID
 
 	constructor(id: UUID,
-				channel: ChatChannel,
-				chatStyle: Style?,
-				disabledChannels: Set<ToggleableChatChannel>,
-				isReceptionIndicatorEnabled: Boolean,
-				chatSpyEnabled: Boolean,
-				chatSpyExcludeChannels: Set<ChatChannel>) {
+				channel: ChatChannel = ChatOutOfCharacter,
+				chatStyle: Style? = null,
+				disabledChannels: Set<ToggleableChatChannel> = setOf(ChatSpectator),
+				isReceptionIndicatorEnabled: Boolean = false,
+				isChatSpyEnabled: Boolean = false,
+				chatSpyExcludeChannels: Set<ChatChannel> = emptySet(),
+				dirtyMarker: DirtyMarker<ChatPlayer>? = null) {
 		this.id = id
 		this.channel = channel
 		this.chatStyle = chatStyle
 		this.disabledChannels = disabledChannels
 		this.isReceptionIndicatorEnabled = isReceptionIndicatorEnabled
-		this.isChatSpyEnabled = chatSpyEnabled
+		this.isChatSpyEnabled = isChatSpyEnabled
 		this.chatSpyExcludeChannels = chatSpyExcludeChannels
+		this.dirtyMarker = dirtyMarker // must be last
 	}
 
-	override var dirtyMarker: DirtyMarker<ChatPlayerEntity>? = null
+	override var dirtyMarker: DirtyMarker<ChatPlayer>? = null
 
-	override var isTyping: Boolean = false
+	var isTyping: Boolean = false
 		set(value) {
 			if (value == field) return
 			field = value
@@ -92,11 +94,11 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 			}
 		}
 
-	override var lastTimeTyping: Instant? = null
-	override var lastTypingAnimation: String? = null
-	override var previewChannel: ChatChannel? = null
+	var lastTimeTyping: Instant? = null
+	var lastTypingAnimation: String? = null
+	var previewChannel: ChatChannel? = null
 
-	override fun mayChatIn(channel: ChatChannel): Boolean {
+	fun mayChatIn(channel: ChatChannel): Boolean {
 		val player = this.offlinePlayer.player ?: throw UnsupportedOperationException("Player is not online")
 		val permission = "${Permission.Channel.prefix}.${channel.toString().replace('#', '.')}"
 
@@ -106,17 +108,17 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 		return (!player.isWhitelisted && channel == ChatSpectator) || player.hasPermission(permission)
 	}
 
-	override fun hasPermissionForChannel(channel: ChatChannel): Boolean {
+	fun hasPermissionForChannel(channel: ChatChannel): Boolean {
 		val player = this.offlinePlayer.player ?: throw UnsupportedOperationException("Player is not online")
 		val permission = "${Permission.Channel.prefix}.${channel.toString().replace('#', '.')}"
 		return player.hasPermission(permission)
 	}
 
-	override fun doChat(message: String) {
+	fun doChat(message: String) {
 		this.doChat(channel, message)
 	}
 
-	override fun doChat(rootChannel: ChatChannel, message: String) {
+	fun doChat(rootChannel: ChatChannel, message: String) {
 		val player = this.offlinePlayer.player ?: throw UnsupportedOperationException("Player is not online")
 
 		if (!this.mayChatIn(rootChannel)) {
@@ -151,11 +153,11 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 	}
 
 
-	override fun parseChatMessage(message: String): Pair<ChatChannel, String> {
+	fun parseChatMessage(message: String): Pair<ChatChannel, String> {
 		return this.parseChatMessage(this.channel, message)
 	}
 
-	override fun parseChatMessage(rootChannel: ChatChannel, message: String): Pair<ChatChannel, String>
+	fun parseChatMessage(rootChannel: ChatChannel, message: String): Pair<ChatChannel, String>
 		= parseChatMessage(rootChannel, message, false)
 
 	fun parseChatMessage(rootChannel: ChatChannel, message: String, updateState: Boolean): Pair<ChatChannel, String> {
@@ -173,7 +175,7 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 		}
 	}
 
-	override fun cycleTypingAnimation() {
+	fun cycleTypingAnimation() {
 		val animation = when (this.lastTypingAnimation) {
 			"." -> ".."
 			".." -> "..."
@@ -188,6 +190,6 @@ class ChatPlayerDataEntity : ChatPlayerEntity, HasDirtyMarker<ChatPlayerEntity> 
 	}
 
 
-	override fun equals(other: Any?): Boolean = other is ChatPlayerData && other.id == this.id
+	override fun equals(other: Any?): Boolean = other is ChatPlayer && other.id == this.id
 	override fun hashCode(): Int = this.id.hashCode()
 }
