@@ -2,8 +2,16 @@ package com.fablesfantasyrp.plugin.whitelist
 
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.parseLinks
+import com.fablesfantasyrp.plugin.text.playerNameStyle
+import com.fablesfantasyrp.plugin.utils.isVanished
+import de.myzelyam.api.vanish.VanishAPI
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.Style
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 
 fun sendWelcomeMessage(who: CommandSender) {
 	val message = miniMessage.deserialize(
@@ -26,3 +34,39 @@ fun sendWelcomeMessage(who: CommandSender) {
 	)
 	who.sendMessage(message)
 }
+
+data class ScopedMessage(val recipients: Collection<CommandSender>?, val message: Component)
+
+private fun joinLeavePrefix(symbol: Component)
+	= miniMessage.deserialize("<dark_gray>[</dark_gray><symbol><dark_gray>]</dark_gray>",
+			Placeholder.component("symbol", symbol))
+private fun leavePrefix() = joinLeavePrefix(Component.text("-").color(NamedTextColor.RED))
+private fun joinPrefix() = joinLeavePrefix(Component.text("+").color(NamedTextColor.GREEN))
+
+private fun joinQuitMessage(p: Player, isJoin: Boolean, isSilent: Boolean): ScopedMessage? {
+	val playerNameStyle = if (p.isWhitelisted) p.playerNameStyle else Style.style(NamedTextColor.GRAY)
+	val silentSuffix = Component.text(" (silent)").color(NamedTextColor.GREEN)
+	val spectatorSuffix = Component.text( " (spectator)").color(NamedTextColor.LIGHT_PURPLE)
+
+	val message = miniMessage.deserialize("<prefix> <name><spectator><silent>",
+			Placeholder.component("name", p.name().style(playerNameStyle)),
+			Placeholder.component("prefix", if (isJoin ) joinPrefix() else leavePrefix()),
+			Placeholder.component("spectator", if (!p.isWhitelisted) spectatorSuffix else Component.empty()),
+			Placeholder.component("silent", if (isSilent) silentSuffix else Component.empty())
+	)
+
+	val recipients = when {
+		isSilent -> Bukkit.getOnlinePlayers()
+				.filter { it == p || VanishAPI.canSee(it, p) }
+				.plus(Bukkit.getConsoleSender())
+		else -> null
+	}
+
+	return ScopedMessage(recipients, message)
+}
+
+fun joinMessage(p: Player, isSilent: Boolean = p.hasPermission(Permission.SilentJoinQuit))
+	= joinQuitMessage(p, true, isSilent)
+
+fun quitMessage(p: Player, isSilent: Boolean = p.isVanished && p.hasPermission(Permission.SilentJoinQuit))
+	= joinQuitMessage(p, false, isSilent)

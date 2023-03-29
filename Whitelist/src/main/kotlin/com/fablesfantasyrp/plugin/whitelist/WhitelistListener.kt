@@ -1,6 +1,5 @@
 package com.fablesfantasyrp.plugin.whitelist
 
-import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.sendError
 import com.fablesfantasyrp.plugin.utils.SPAWN
 import com.fablesfantasyrp.plugin.utilsoffline.gameMode
@@ -9,7 +8,6 @@ import com.fablesfantasyrp.plugin.whitelist.event.WhitelistAddedPlayerEvent
 import com.fablesfantasyrp.plugin.whitelist.event.WhitelistRemovedPlayerEvent
 import de.myzelyam.api.vanish.VanishAPI
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.GameMode
 import org.bukkit.Server
 import org.bukkit.entity.Player
@@ -28,26 +26,40 @@ class WhitelistListener(private val plugin: JavaPlugin) : Listener {
 	@EventHandler(priority = HIGHEST, ignoreCancelled = true)
 	fun onPlayerJoin(e: PlayerJoinEvent) {
 		val p = e.player
-		if (p.isWhitelisted) return
 
-		e.joinMessage(miniMessage.deserialize("<light_purple>(Spectator) <name> joined the game</light_purple>",
-				Placeholder.unparsed("name", e.player.name)))
+		if (p.hasPermission(Permission.SilentJoinQuit)) VanishAPI.hidePlayer(p)
+		val message = joinMessage(p)
+		if (message == null) {
+			e.joinMessage(null)
+		} else if (message.recipients != null) {
+			e.joinMessage(null)
+			message.recipients.forEach { it.sendMessage(message.message) }
+		} else {
+			e.joinMessage(message.message)
+		}
 
-		if (p.gameMode != GameMode.SURVIVAL) p.gameMode = GameMode.SURVIVAL
-		if (!p.allowFlight) p.allowFlight = true
+		if (!p.isWhitelisted) {
+			if (p.gameMode != GameMode.SURVIVAL) p.gameMode = GameMode.SURVIVAL
+			if (!p.allowFlight) p.allowFlight = true
 
-		sendWelcomeMessage(p)
+			sendWelcomeMessage(p)
 
-		server.scheduler.scheduleSyncDelayedTask(plugin, { VanishAPI.hidePlayer(p) }, 0)
+			server.scheduler.scheduleSyncDelayedTask(plugin, { VanishAPI.hidePlayer(p) }, 0)
+		}
 	}
 
 	@EventHandler(priority = HIGHEST, ignoreCancelled = true)
 	fun onPlayerQuit(e: PlayerQuitEvent) {
-		if (e.player.isWhitelisted) return
-		if (e.quitMessage() == null) return
-
-		e.quitMessage(miniMessage.deserialize("<light_purple>(Spectator) <name> left the game</light_purple>",
-				Placeholder.unparsed("name", e.player.name)))
+		val p = e.player
+		val message = quitMessage(p)
+		if (message == null) {
+			e.quitMessage(null)
+		} else if (message.recipients != null) {
+			e.quitMessage(null)
+			message.recipients.forEach { it.sendMessage(message.message) }
+		} else {
+			e.quitMessage(message.message)
+		}
 	}
 
 	@EventHandler(priority = LOW, ignoreCancelled = true)

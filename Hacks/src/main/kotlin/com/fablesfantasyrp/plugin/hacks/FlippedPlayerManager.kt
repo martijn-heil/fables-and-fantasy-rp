@@ -81,7 +81,7 @@ class FlippedPlayerManager(private val plugin: Plugin) : Listener {
 		if (reloadingPlayers.contains(observed)) return
 
 		if (isFlipped(observed)) {
-			setFlippedAppearanceFor(e.player, true, listOf(e.player))
+			setFlippedAppearanceFor(observed, true, listOf(e.player))
 		}
 	}
 
