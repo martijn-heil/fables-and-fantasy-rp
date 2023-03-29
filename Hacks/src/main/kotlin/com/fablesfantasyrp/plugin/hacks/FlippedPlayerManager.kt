@@ -70,7 +70,9 @@ class FlippedPlayerManager(private val plugin: Plugin) : Listener {
 		val observer = e.player
 		check(observer is CraftPlayer)
 		server.scheduler.scheduleSyncDelayedTask(plugin) {
-			flippedPlayers.forEach { setFlippedAppearanceFor(it, true, listOf(e.player)) }
+			flippedPlayers
+					.filter { observer.canSee(it) }
+					.forEach { setFlippedAppearanceFor(it, true, listOf(observer)) }
 		}
 	}
 
@@ -79,9 +81,12 @@ class FlippedPlayerManager(private val plugin: Plugin) : Listener {
 	fun onPlayerShowEntity(e: PlayerShowEntityEvent) {
 		val observed = e.entity as? Player ?: return
 		if (reloadingPlayers.contains(observed)) return
+		val observer = e.player
 
-		if (isFlipped(observed)) {
-			setFlippedAppearanceFor(observed, true, listOf(e.player))
+		server.scheduler.scheduleSyncDelayedTask(plugin) {
+			if (isFlipped(observed) && observer.canSee(observed)) {
+				setFlippedAppearanceFor(observed, true, listOf(observer))
+			}
 		}
 	}
 
