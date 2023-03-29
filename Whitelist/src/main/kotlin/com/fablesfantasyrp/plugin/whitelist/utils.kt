@@ -1,5 +1,7 @@
 package com.fablesfantasyrp.plugin.whitelist
 
+import com.fablesfantasyrp.plugin.chat.channel.ChatSpectator
+import com.fablesfantasyrp.plugin.chat.chat
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.parseLinks
 import com.fablesfantasyrp.plugin.text.playerNameStyle
@@ -47,11 +49,12 @@ private fun joinQuitMessage(p: Player, isJoin: Boolean, isSilent: Boolean): Scop
 	val playerNameStyle = if (p.isWhitelisted) p.playerNameStyle else Style.style(NamedTextColor.GRAY)
 	val silentSuffix = Component.text(" (silent)").color(NamedTextColor.GREEN)
 	val spectatorSuffix = Component.text( " (spectator)").color(NamedTextColor.LIGHT_PURPLE)
+	val isSpectator = !p.isWhitelisted
 
 	val message = miniMessage.deserialize("<prefix> <name><spectator><silent>",
 			Placeholder.component("name", p.name().style(playerNameStyle)),
 			Placeholder.component("prefix", if (isJoin ) joinPrefix() else leavePrefix()),
-			Placeholder.component("spectator", if (!p.isWhitelisted) spectatorSuffix else Component.empty()),
+			Placeholder.component("spectator", if (isSpectator) spectatorSuffix else Component.empty()),
 			Placeholder.component("silent", if (isSilent) silentSuffix else Component.empty())
 	)
 
@@ -59,6 +62,8 @@ private fun joinQuitMessage(p: Player, isJoin: Boolean, isSilent: Boolean): Scop
 		isSilent -> Bukkit.getOnlinePlayers()
 				.filter { it == p || VanishAPI.canSee(it, p) }
 				.plus(Bukkit.getConsoleSender())
+		isSpectator -> Bukkit.getOnlinePlayers()
+				.filter { !it.chat.disabledChannels.contains(ChatSpectator) }
 		else -> null
 	}
 

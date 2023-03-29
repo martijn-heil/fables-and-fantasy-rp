@@ -2,6 +2,7 @@ package com.fablesfantasyrp.plugin.chat
 
 import com.fablesfantasyrp.plugin.chat.channel.ChatIllegalArgumentException
 import com.fablesfantasyrp.plugin.chat.channel.ChatIllegalStateException
+import com.fablesfantasyrp.plugin.chat.channel.ChatSpectator
 import com.fablesfantasyrp.plugin.chat.channel.ChatUnsupportedOperationException
 import com.fablesfantasyrp.plugin.chat.event.FablesChatEvent
 import com.fablesfantasyrp.plugin.text.sendError
@@ -11,8 +12,10 @@ import org.bukkit.Server
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority.HIGHEST
+import org.bukkit.event.EventPriority.MONITOR
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerChatEvent
+import org.bukkit.event.player.PlayerJoinEvent
 
 class ChatListener(private val server: Server) : Listener {
 	@EventHandler(priority = HIGHEST, ignoreCancelled = true)
@@ -48,5 +51,14 @@ class ChatListener(private val server: Server) : Listener {
 					val data = it.chat
 					data.hasPermissionForChannel(channel) && data.isChatSpyEnabled && !data.chatSpyExcludeChannels.contains(channel)
 				}.forEach { it.sendMessage(chatSpyMessage) }
+	}
+
+	@EventHandler(priority = MONITOR, ignoreCancelled = true)
+	fun onPlayerJoin(e: PlayerJoinEvent) {
+		val p = e.player
+		val data = p.chat
+		if (p.hasPermission(Permission.SpectatorDuty) && data.disabledChannels.contains(ChatSpectator)) {
+			data.disabledChannels = data.disabledChannels.minus(ChatSpectator)
+		}
 	}
 }

@@ -89,6 +89,9 @@ class FablesDatabase : JavaPlugin(), KoinComponent {
 fun applyMigrations(plugin: Plugin, schema: String?, classLoader: ClassLoader) {
 	val flywayConfig = Flyway.configure(classLoader)
 			.dataSource(FablesDatabase.fablesDatabase)
+			.locations(
+					"db/migration",
+					"${plugin.javaClass.packageName}.db.migration".replace('.', '/'))
 			.defaultSchema(schema)
 			.baselineOnMigrate(true)
 			.baselineVersion("0")

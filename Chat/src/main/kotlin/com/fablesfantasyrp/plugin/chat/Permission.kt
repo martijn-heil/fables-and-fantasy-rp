@@ -2,7 +2,7 @@ package com.fablesfantasyrp.plugin.chat
 
 object Permission {
 	const val prefix = "fables.chat"
-	const val Format = "${prefix}.format"
+	const val SpectatorDuty = "$prefix.spectatorduty"
 
 	object Channel {
 		const val prefix = Permission.prefix + ".channel"

@@ -5,6 +5,7 @@ plugins {
 dependencies {
     // internal module dependencies
     implementation(project(":Database"))
+    api(project(":Database"))
     implementation(project(":Utils"))
     implementation(project(":Text"))
     implementation(project(":Characters"))
