@@ -1,0 +1,9 @@
+name: FablesWeights
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+  - FablesGui
+main: com.fablesfantasyrp.plugin.weights.FablesWeights
+api-version: @bukkit_api_version@

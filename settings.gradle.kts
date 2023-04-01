@@ -43,4 +43,5 @@ include("examples:BlankSystem",
 		"StaffProfiles",
 		"Warp",
 		"InvisItemFrames",
-		"PetPreview")
+		"PetPreview",
+		"Weights")
