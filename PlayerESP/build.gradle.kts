@@ -5,6 +5,7 @@ plugins {
 dependencies {
     // internal module dependencies
     implementation(project(":Utils"))
-    implementation(project(":DenizenInterop"))
-    implementation("me.neznamy:tab-api:3.2.1")
+    implementation(project(":Text"))
+    implementation(project(":Glowing"))
+    implementation(project(":StaffMode"))
 }

@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.staffmode
 
+import com.fablesfantasyrp.plugin.staffmode.event.PlayerSwitchStaffDutyModeEvent
 import com.fablesfantasyrp.plugin.utils.ToggleableState
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
@@ -87,6 +88,7 @@ var Player.isOnDuty: Boolean
 				this.sendMessage("$SYSPREFIX You are now on duty!")
 				Bukkit.broadcast("$SYSPREFIX ${this.name} has gone on duty", "fables.staffmode.notify.duty")
 				moreLoggingHook?.logDutySwitch(this, ToggleableState.fromIsActiveBoolean(value))
+				Bukkit.getPluginManager().callEvent(PlayerSwitchStaffDutyModeEvent(this, true))
 			} else {
 				this.sendMessage("$SYSPREFIX You are already $onOff duty!")
 			}
@@ -102,6 +104,7 @@ var Player.isOnDuty: Boolean
 					this.sendMessage("$SYSPREFIX Your god mode was disabled because you are going off duty.")
 				}
 
+				Bukkit.getPluginManager().callEvent(PlayerSwitchStaffDutyModeEvent(this, false))
 				this.sendMessage("$SYSPREFIX You are now off duty!")
 				Bukkit.broadcast("$SYSPREFIX ${this.name} has gone off duty", "fables.staffmode.notify.duty")
 				moreLoggingHook?.logDutySwitch(this, ToggleableState.fromIsActiveBoolean(value))

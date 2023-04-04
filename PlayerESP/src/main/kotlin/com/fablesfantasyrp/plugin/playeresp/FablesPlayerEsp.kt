@@ -1,7 +1,7 @@
-package com.fablesfantasyrp.plugin.weights
+package com.fablesfantasyrp.plugin.playeresp
 
+import com.fablesfantasyrp.plugin.playeresp.command.Commands
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
-import com.fablesfantasyrp.plugin.weights.command.Commands
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.BukkitModule
@@ -13,59 +13,39 @@ import com.sk89q.intake.fluent.CommandGraph
 import com.sk89q.intake.parametric.ParametricBuilder
 import com.sk89q.intake.parametric.provider.PrimitivesModule
 import org.bukkit.ChatColor.*
-import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.context.loadKoinModules
+import org.koin.core.context.unloadKoinModules
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.binds
 import org.koin.dsl.module
 
 
-internal val SYSPREFIX = "$GOLD${BOLD}[${AQUA}${BOLD} WEIGHTS ${GOLD}${BOLD}]${GRAY}"
-internal val PLUGIN get() = FablesWeights.instance
+val SYSPREFIX = "${DARK_RED}${BOLD}[${RED}${BOLD} PlayerESP ${DARK_RED}${BOLD}]${GRAY}"
 
-class FablesWeights : JavaPlugin(), KoinComponent {
-	private lateinit var commands: Collection<Command>
+class FablesPlayerEsp : JavaPlugin(), KoinComponent {
 	private lateinit var koinModule: Module
+	private lateinit var commands: Collection<Command>
 
 	override fun onEnable() {
 		enforceDependencies(this)
 		instance = this
-		saveDefaultConfig()
-
-		val additive = HashMap<Material, Int>()
-		val additiveSection = config.getConfigurationSection("additive")!!
-		val additiveKeys = additiveSection.getKeys(false);
-		for (key in additiveKeys) {
-			val material = Material.valueOf(key.uppercase())
-			val weight = additiveSection.getInt(key)
-			additive[material] = weight
-		}
-
-		val singular = HashMap<Material, Int>()
-		val singularSection = config.getConfigurationSection("singular")!!
-		val singularKeys = singularSection.getKeys(false);
-		for (key in singularKeys) {
-			val material = Material.valueOf(key.uppercase())
-			val weight = singularSection.getInt(key)
-			singular[material] = weight
-		}
-
-		val weightsConfig = WeightsConfig(config.getInt("cap"), additive, singular)
 
 		koinModule = module(createdAtStart = true) {
-			single<Plugin> { this@FablesWeights } binds(arrayOf(JavaPlugin::class))
-			single { weightsConfig }
-			singleOf(::WeightsChecker)
+			single<Plugin> { this@FablesPlayerEsp } binds(arrayOf(JavaPlugin::class))
+			single {
+				val tmp = PlayerEspManager(get(), get())
+				tmp.start()
+				tmp
+			}
 			singleOf(::Commands)
 		}
 		loadKoinModules(koinModule)
-		get<WeightsChecker>().start()
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())
@@ -81,15 +61,19 @@ class FablesWeights : JavaPlugin(), KoinComponent {
 		val dispatcher = rootDispatcherNode.dispatcher
 
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
+
+		if (server.pluginManager.isPluginEnabled("FablesStaffMode")) {
+			com.fablesfantasyrp.plugin.playeresp.interop.staffmode.StaffModeHook(get(), get()).start()
+		}
 	}
 
 	override fun onDisable() {
-		get<WeightsChecker>().stop()
+		get<PlayerEspManager>().stop()
 		commands.forEach { unregisterCommand(it) }
+		unloadKoinModules(koinModule)
 	}
 
 	companion object {
-		lateinit var instance: FablesWeights
-			private set
+		lateinit var instance: FablesPlayerEsp
 	}
 }

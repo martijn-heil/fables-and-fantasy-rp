@@ -1,0 +1,15 @@
+name: FablesParty
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+  - FablesText
+  - FablesDatabase
+  - FablesCharacters
+  - FablesTargeting
+  - FablesGlowing
+softdepend:
+  - TAB
+main: com.fablesfantasyrp.plugin.party.FablesParty
+api-version: @bukkit_api_version@

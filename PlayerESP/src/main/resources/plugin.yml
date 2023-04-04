@@ -1,0 +1,12 @@
+name: FablesPlayerESP
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+  - FablesText
+  - FablesGlowing
+softdepend:
+  - FablesStaffMode
+main: com.fablesfantasyrp.plugin.playeresp.FablesPlayerEsp
+api-version: @bukkit_api_version@

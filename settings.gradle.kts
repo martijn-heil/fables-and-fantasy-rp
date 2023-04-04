@@ -44,4 +44,6 @@ include("examples:BlankSystem",
 		"Warp",
 		"InvisItemFrames",
 		"PetPreview",
-		"Weights")
+		"Weights",
+		"Party",
+		"PlayerESP")

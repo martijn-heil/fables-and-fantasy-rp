@@ -6,11 +6,8 @@ import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
-import org.bukkit.Bukkit
 import org.bukkit.ChatColor
-import org.bukkit.Location
 import java.net.URL
-import kotlin.math.roundToLong
 
 fun formatChat(message: String) = message
 		.replace("&l", "${ChatColor.BOLD}")
@@ -47,3 +44,16 @@ fun legacyText(legacyChat: String) = LegacyComponentSerializer.legacySection().d
 
 fun<T> Sequence<T>.join(separator: T) =
 	this.mapIndexed { index, value -> if(index != 0) listOf(separator, value) else listOf(value) }.flatten()
+
+fun isSaneName(name: String): Boolean {
+	return !Regex("[^A-Za-z0-9\\- ']").containsMatchIn(name)
+}
+
+val CHAT_COLORS = ChatColor.values().toList().minus(listOf(
+	ChatColor.BOLD,
+	ChatColor.ITALIC,
+	ChatColor.STRIKETHROUGH,
+	ChatColor.MAGIC,
+	ChatColor.RESET,
+	ChatColor.UNDERLINE
+))

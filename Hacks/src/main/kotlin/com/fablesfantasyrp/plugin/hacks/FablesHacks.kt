@@ -6,7 +6,6 @@ import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.ServicePriority
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.unloadKoinModules
 import org.koin.core.module.Module
@@ -36,14 +35,14 @@ class FablesHacks : JavaPlugin(), KoinComponent {
 		}
 		loadKoinModules(koinModule)
 
-		server.scheduler.scheduleSyncDelayedTask(this, {
+		/*server.scheduler.scheduleSyncDelayedTask(this, {
 			get<FlippedPlayerManager>().start()
 			server.pluginManager.registerEvents(get<HackyListener>(), this)
-		}, 1)
+		}, 1)*/
 	}
 
 	override fun onDisable() {
-		get<FlippedPlayerManager>().stop()
+		//get<FlippedPlayerManager>().stop()
 		unloadKoinModules(koinModule)
 	}
 }

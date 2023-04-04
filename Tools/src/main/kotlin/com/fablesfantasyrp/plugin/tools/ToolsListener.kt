@@ -7,7 +7,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerRespawnEvent
 
 class ToolsListener : Listener {
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	fun onPlayerRespawn(e: PlayerRespawnEvent) {
 		e.respawnLocation = SPAWN
 	}

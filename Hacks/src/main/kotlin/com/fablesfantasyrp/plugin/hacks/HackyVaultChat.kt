@@ -5,7 +5,6 @@ import net.milkbowl.vault.permission.Permission
 import org.bukkit.ChatColor
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
-import java.util.*
 
 class HackyVaultChat(child: Chat, perms: Permission) : DelegatedVaultChat(child, perms) {
 	private val NINJOH_CHAT_PREFIX: String = ChatColor.DARK_RED.toString()
