@@ -80,6 +80,7 @@ class DenizenGlowingManager(private val plugin: Plugin, private val tapi: TabAPI
 		),
 			"adjust <queue> linked_player:<[player]>",
 			"glow <[target]>")
+		server.scheduler.scheduleSyncDelayedTask(plugin) { viewing.hidePlayer(glowing); viewing.showPlayer(glowing) }
 	}
 
 	private fun unglowFor(glowing: Player, viewing: Player) {
@@ -89,6 +90,7 @@ class DenizenGlowingManager(private val plugin: Plugin, private val tapi: TabAPI
 		),
 			"adjust <queue> linked_player:<[player]>",
 			"glow <[target]> false")
+		server.scheduler.scheduleSyncDelayedTask(plugin) { viewing.hidePlayer(glowing); viewing.showPlayer(glowing) }
 	}
 
 	private fun reset(glowing: Player) {
