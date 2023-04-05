@@ -6,5 +6,6 @@ object Permission {
 	object Command {
 		private const val prefix = Permission.prefix + ".command"
 		const val Weights = "$prefix.weights"
+		const val Tipu = "$prefix.tipu"
 	}
 }

@@ -4,6 +4,7 @@ authors: [@authors@]
 depend:
   - FablesKotlinRuntime
   - FablesUtils
+  - FablesText
   - FablesGui
 main: com.fablesfantasyrp.plugin.weights.FablesWeights
 api-version: @bukkit_api_version@

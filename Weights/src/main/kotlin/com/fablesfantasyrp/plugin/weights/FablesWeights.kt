@@ -62,10 +62,12 @@ class FablesWeights : JavaPlugin(), KoinComponent {
 			single<Plugin> { this@FablesWeights } binds(arrayOf(JavaPlugin::class))
 			single { weightsConfig }
 			singleOf(::WeightsChecker)
+			singleOf(::ItemPickupManager)
 			singleOf(::Commands)
 		}
 		loadKoinModules(koinModule)
 		get<WeightsChecker>().start()
+		get<ItemPickupManager>().start()
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())
