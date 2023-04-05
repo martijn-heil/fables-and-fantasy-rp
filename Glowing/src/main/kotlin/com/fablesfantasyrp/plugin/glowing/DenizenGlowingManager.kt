@@ -98,7 +98,7 @@ class DenizenGlowingManager(private val plugin: Plugin, private val tapi: TabAPI
 
 	private fun updatePlayerTeam(player: Player) {
 		val glowColor = getGlowColor(player) ?: defaultGlowColor
-		val tabPlayer = tapi.getPlayer(player.uniqueId)
+		val tabPlayer = tapi.getPlayer(player.uniqueId) ?: return
 		tapi.teamManager.setPrefix(tabPlayer, glowColor.toString())
 	}
 

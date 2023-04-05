@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.chat
 
+import com.fablesfantasyrp.plugin.chat.command.Commands
 import com.fablesfantasyrp.plugin.chat.command.provider.ChatModule
 import com.fablesfantasyrp.plugin.chat.data.ChatPlayerRepository
 import com.fablesfantasyrp.plugin.chat.data.entity.EntityChatPlayerRepository
@@ -65,6 +66,7 @@ class FablesChat : JavaPlugin(), KoinComponent {
 		loadKoinModules(koinModule)
 
 		get<ChatReceptionIndicatorManager>().start()
+		get<ChatPreviewManager>().start()
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())

@@ -23,7 +23,7 @@ import java.time.Instant
 class ChatPreviewManager(private val plugin: Plugin) {
 	private val server: Server get() = plugin.server
 
-	init {
+	fun start() {
 		server.scheduler.scheduleSyncRepeatingTask(plugin, {
 			server.onlinePlayers.forEach {
 				val data = it.chat

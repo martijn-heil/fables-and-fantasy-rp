@@ -1,6 +1,10 @@
-package com.fablesfantasyrp.plugin.chat
+package com.fablesfantasyrp.plugin.chat.command
 
+import com.fablesfantasyrp.plugin.chat.FablesChat
+import com.fablesfantasyrp.plugin.chat.Permission
+import com.fablesfantasyrp.plugin.chat.SYSPREFIX
 import com.fablesfantasyrp.plugin.chat.channel.*
+import com.fablesfantasyrp.plugin.chat.chat
 import com.fablesfantasyrp.plugin.chat.event.FablesChatEvent
 import com.fablesfantasyrp.plugin.chat.gui.ChatColorGui
 import com.fablesfantasyrp.plugin.text.legacyText
@@ -178,28 +182,28 @@ class Commands {
 	class CommandChatInCharacter : AbstractChatChannelCommand(ChatInCharacter, Permission.Channel.Ic)
 	class CommandChatDirectMessage : CommandExecutor, TabCompleter {
 		override fun onCommand(sender: CommandSender, command: org.bukkit.command.Command, label: String, args: Array<out String>): Boolean {
-			val playerName = args.getOrNull(0)
-			if (playerName == null) {
-				sender.sendError("You must specify a player name")
-				return false
-			}
-			val channel = ChatChannel.fromStringAliased("dm", sender)!!
-
-			val content = args.slice(1 until args.size).joinToString(" ")
-			val subChannel = (channel as SubChanneledChatChannel).resolveSubChannel("#$playerName").first
-			if (content.isEmpty()) {
-				if (sender is Player) {
-					sender.chat.channel = subChannel
-				}
-				return true
-			}
-
-			if (sender is Player && !FablesChatEvent(sender, channel, content, subChannel.getRecipients(sender).toSet()).callEvent()) {
-				return true
-			}
-
-			val message = "#$playerName $content"
 			try {
+				val playerName = args.getOrNull(0)
+				if (playerName == null) {
+					sender.sendError("You must specify a player name")
+					return false
+				}
+				val channel = ChatChannel.fromStringAliased("dm", sender)!!
+
+				val content = args.slice(1 until args.size).joinToString(" ")
+				val subChannel = (channel as SubChanneledChatChannel).resolveSubChannel("#$playerName").first
+				if (content.isEmpty()) {
+					if (sender is Player) {
+						sender.chat.channel = subChannel
+					}
+					return true
+				}
+
+				if (sender is Player && !FablesChatEvent(sender, channel, content, subChannel.getRecipients(sender).toSet()).callEvent()) {
+					return true
+				}
+
+				val message = "#$playerName $content"
 				if (sender is Player) {
 					channel.sendMessage(sender, message)
 				} else if (channel is CommandSenderCompatibleChatChannel){
