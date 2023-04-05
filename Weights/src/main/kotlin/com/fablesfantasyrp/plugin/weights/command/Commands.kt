@@ -35,7 +35,7 @@ class Commands(private val plugin: JavaPlugin,
 		itemPickupManager.setPickupDisabled(target, newValue)
 		sender.sendMessage(miniMessage.deserialize("<gray><prefix> <status> item pickup for <player></gray>",
 			Placeholder.component("prefix", legacyText(SYSPREFIX)),
-			Placeholder.component("status", newValue.asEnabledDisabledComponent()),
+			Placeholder.component("status", (!newValue).asEnabledDisabledComponent()),
 			Placeholder.component("player", Component.text(target.name).style(target.nameStyle))
 		))
 	}
