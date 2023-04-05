@@ -7,6 +7,7 @@ interface MageAbility {
 	val id: String
 	val displayName: String
 	val description: String
+	val minimumMageLevel: Int
 	val magicPath: MagicPath
 
 	fun applyTo(mage: Mage)

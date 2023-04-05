@@ -7,6 +7,7 @@ import com.fablesfantasyrp.plugin.magic.data.entity.Mage
 object ProtectiveCoat : MageAbility {
 	override val id = "protective_coat"
 	override val magicPath = MagicPath.HEMOMANCY_HOUSE_OF_BEAST
+	override val minimumMageLevel: Int = 8
 	override val displayName: String = "Protective Coat"
 	override val description: String = ""
 

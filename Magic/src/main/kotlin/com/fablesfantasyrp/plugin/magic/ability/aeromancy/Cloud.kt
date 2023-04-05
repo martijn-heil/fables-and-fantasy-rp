@@ -7,6 +7,7 @@ import com.fablesfantasyrp.plugin.magic.data.entity.Mage
 object Cloud : MageAbility {
 	override val id = "cloud"
 	override val magicPath = MagicPath.AEROMANCY
+	override val minimumMageLevel: Int = 3
 	override val displayName: String = "Cloud"
 	override val description: String =
 			"The caster can create a cloud to sit on, giving the user a +1 to any spell roll," +

@@ -7,6 +7,7 @@ import com.fablesfantasyrp.plugin.magic.data.entity.Mage
 object Claws : MageAbility {
 	override val id = "claws"
 	override val magicPath = MagicPath.HEMOMANCY_HOUSE_OF_BEAST
+	override val minimumMageLevel: Int = 8
 	override val displayName: String = "Claws"
 	override val description: String = ""
 

@@ -7,6 +7,7 @@ import com.fablesfantasyrp.plugin.magic.data.entity.Mage
 object IcyMold : MageAbility {
 	override val id = "icy_mold"
 	override val magicPath = MagicPath.FRIGUMANCY
+	override val minimumMageLevel: Int = 8
 	override val displayName: String = "Icy Mold"
 	override val description: String = ""
 

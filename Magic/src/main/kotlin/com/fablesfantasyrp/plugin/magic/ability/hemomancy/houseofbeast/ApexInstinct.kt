@@ -7,6 +7,7 @@ import com.fablesfantasyrp.plugin.magic.data.entity.Mage
 object ApexInstinct : MageAbility {
 	override val id = "apex_instinct"
 	override val magicPath = MagicPath.HEMOMANCY_HOUSE_OF_BEAST
+	override val minimumMageLevel: Int = 8
 	override val displayName: String = "Apex Instinct"
 	override val description: String = ""
 

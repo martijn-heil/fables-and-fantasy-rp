@@ -7,6 +7,7 @@ import com.fablesfantasyrp.plugin.magic.data.entity.Mage
 object PreyingScents : MageAbility {
 	override val id = "preying_scents"
 	override val magicPath = MagicPath.HEMOMANCY_HOUSE_OF_BEAST
+	override val minimumMageLevel: Int = 8
 	override val displayName: String = "Preying Scents"
 	override val description: String = ""
 

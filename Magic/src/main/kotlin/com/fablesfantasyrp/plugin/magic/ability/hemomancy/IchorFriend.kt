@@ -7,6 +7,7 @@ import com.fablesfantasyrp.plugin.magic.data.entity.Mage
 object IchorFriend : MageAbility {
 	override val id = "ichor_friend"
 	override val magicPath = MagicPath.HEMOMANCY
+	override val minimumMageLevel: Int = 3
 	override val displayName: String = "Ichor Friend"
 	override val description: String = ""
 

@@ -7,6 +7,7 @@ import com.fablesfantasyrp.plugin.magic.data.entity.Mage
 object CleansingTouch : MageAbility {
 	override val id = "cleansing_touch"
 	override val magicPath = MagicPath.LUNARMANCY
+	override val minimumMageLevel: Int = 8
 	override val displayName: String = "Cleansing Touch"
 	override val description: String =
 			"Lunarmancers can cleanse corruption of objects and people. " +

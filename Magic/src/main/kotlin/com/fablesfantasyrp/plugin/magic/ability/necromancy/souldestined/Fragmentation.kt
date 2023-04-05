@@ -7,6 +7,7 @@ import com.fablesfantasyrp.plugin.magic.data.entity.Mage
 object Fragmentation : MageAbility {
 	override val id = "fragmentation"
 	override val magicPath = MagicPath.NECROMANCY_SOUL_DESTINED
+	override val minimumMageLevel: Int = 8
 	override val displayName: String = "Fragmentation"
 	override val description: String = ""
 

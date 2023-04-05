@@ -7,6 +7,7 @@ import com.fablesfantasyrp.plugin.magic.data.entity.Mage
 object BrilliantRadiance : MageAbility {
 	override val id = "brilliant_radiance"
 	override val magicPath = MagicPath.SOLARMANCY
+	override val minimumMageLevel: Int = 8
 	override val displayName: String = "Brilliant Radiance"
 	override val description: String = "The mage slowly consumes the sun's heat and energy throughout the battle, " +
 			"charging themselves with an unimaginable tension. " +

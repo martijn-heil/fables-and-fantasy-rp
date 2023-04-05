@@ -9,6 +9,7 @@ import com.fablesfantasyrp.plugin.chat.getPlayersWithinRange
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
 import com.fablesfantasyrp.plugin.form.YesNoChatPrompt
+import com.fablesfantasyrp.plugin.location.location
 import com.fablesfantasyrp.plugin.magic.*
 import com.fablesfantasyrp.plugin.magic.ability.MageAbility
 import com.fablesfantasyrp.plugin.magic.ability.aeromancy.Cloud
@@ -53,7 +54,25 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 	override var spells: List<SpellData>
 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 	override var activeAbilities: Set<MageAbility> = emptySet()
-		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
+		set(value) {
+			if (field != value) {
+				val added = value.minus(field)
+				val removed = field.minus(value)
+				val players = getPlayersWithinRange(character.profile.location, 15U).toList()
+				added.forEach { ability ->
+					players.forEach {
+						it.sendMessage("$SYSPREFIX ${character.name} activated ${ability.displayName}")
+					}
+				}
+				removed.forEach { ability ->
+					players.forEach {
+						it.sendMessage("$SYSPREFIX ${character.name} deactivated ${ability.displayName}")
+					}
+				}
+				field = value;
+				dirtyMarker?.markDirty(this)
+			}
+		}
 
 	override var id: Long
 

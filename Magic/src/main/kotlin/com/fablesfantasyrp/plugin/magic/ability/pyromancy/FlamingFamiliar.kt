@@ -7,6 +7,7 @@ import com.fablesfantasyrp.plugin.magic.data.entity.Mage
 object FlamingFamiliar : MageAbility {
 	override val id = "flaming_familiar"
 	override val magicPath = MagicPath.PYROMANCY
+	override val minimumMageLevel: Int = 3
 	override val displayName: String = "Flaming Familiar"
 	override val description: String =
 			"The mage is capable of creating a small, flame-like spirit, which follows them around. " +

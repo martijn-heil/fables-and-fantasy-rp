@@ -7,6 +7,7 @@ import com.fablesfantasyrp.plugin.magic.data.entity.Mage
 object RunningHot : MageAbility {
 	override val id = "running_hot"
 	override val magicPath = MagicPath.MAGMAMANCY
+	override val minimumMageLevel: Int = 8
 	override val displayName: String = "Running Hot!"
 	override val description: String = "When the spellcaster is in CRP they feel the thrill of battle and channel heat from deep within them, " +
 			"willing or not. This creates an aura of scorching heat in a radius of 2 meters around them for D3 + (Levels above Level 8)turns.\n" +

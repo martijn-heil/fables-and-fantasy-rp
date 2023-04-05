@@ -7,6 +7,7 @@ import com.fablesfantasyrp.plugin.magic.data.entity.Mage
 object CalmingAura : MageAbility {
 	override val id = "calming_aura"
 	override val magicPath = MagicPath.BIOMANCY
+	override val minimumMageLevel: Int = 8
 	override val displayName: String = "Calming Aura"
 	override val description: String = ""
 

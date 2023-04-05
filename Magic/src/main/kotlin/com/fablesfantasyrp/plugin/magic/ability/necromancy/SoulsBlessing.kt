@@ -7,6 +7,7 @@ import com.fablesfantasyrp.plugin.magic.data.entity.Mage
 object SoulsBlessing : MageAbility {
 	override val id = "souls_blessing"
 	override val magicPath = MagicPath.NECROMANCY
+	override val minimumMageLevel: Int = 3
 	override val displayName: String = "Souls Blessing"
 	override val description: String = ""
 

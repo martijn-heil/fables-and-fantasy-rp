@@ -7,6 +7,7 @@ import com.fablesfantasyrp.plugin.magic.data.entity.Mage
 object LightningReflexes : MageAbility {
 	override val id = "lightning_reflexes"
 	override val magicPath = MagicPath.TEMPESTACY
+	override val minimumMageLevel: Int = 8
 	override val displayName: String = "Lightning Reflexes"
 	override val description: String =
 			"When entering combat, the wind mage of the highest level always goes first, " +

@@ -7,6 +7,7 @@ import com.fablesfantasyrp.plugin.magic.data.entity.Mage
 object PurifyingProwess : MageAbility {
 	override val id = "purifying_prowess"
 	override val magicPath = MagicPath.AQUAMANCY
+	override val minimumMageLevel: Int = 3
 	override val displayName: String = "Purifying Prowess"
 	override val description: String = ""
 

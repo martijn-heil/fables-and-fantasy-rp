@@ -159,7 +159,7 @@ class Commands(private val profileManager: ProfileManager,
 		@Require(Permission.Command.Ability.List)
 		fun list(@Sender sender: CommandSender, @CommandTarget(Permission.Command.Ability.List + ".others") target: Mage) {
 			val allAbilities = MageAbilities.forPath(target.magicPath)
-			if (allAbilities == null) {
+			if (allAbilities.isEmpty()) {
 				sender.sendError("This mage does not have access to any abilities")
 				return
 			}
@@ -194,8 +194,13 @@ class Commands(private val profileManager: ProfileManager,
 		@Require(Permission.Command.Ability.Activate)
 		fun activate(@Sender sender: Mage,
 					 @OwnAbility ability: MageAbility) {
+			val player = profileManager.getCurrentForProfile(sender.character.profile)!!
+			if (ability.minimumMageLevel > sender.magicLevel) {
+				player.sendError("You need at least level ${ability.minimumMageLevel} magic to use this ability.")
+				return
+			}
+
 			sender.activeAbilities = sender.activeAbilities.plus(ability)
-			profileManager.getCurrentForProfile(sender.character.profile)!!.sendMessage("$SYSPREFIX Activated ${ability.displayName}")
 		}
 
 		@Command(aliases = ["deactivate"], desc = "Deactivate an ability.")
@@ -203,7 +208,6 @@ class Commands(private val profileManager: ProfileManager,
 		fun deactivate(@Sender sender: Mage,
 					 @OwnAbility ability: MageAbility) {
 			sender.activeAbilities = sender.activeAbilities.minus(ability)
-			profileManager.getCurrentForProfile(sender.character.profile)!!.sendMessage("$SYSPREFIX Deactivated ${ability.displayName}")
 		}
 	}
 }

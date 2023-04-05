@@ -7,6 +7,7 @@ import com.fablesfantasyrp.plugin.magic.data.entity.Mage
 object NecromanticResistance : MageAbility {
 	override val id = "necromantic_resistance"
 	override val magicPath = MagicPath.NECROMANCY_DEATH_DESTINED
+	override val minimumMageLevel: Int = 8
 	override val displayName: String = "Necromantic Resistance"
 	override val description: String = ""
 
