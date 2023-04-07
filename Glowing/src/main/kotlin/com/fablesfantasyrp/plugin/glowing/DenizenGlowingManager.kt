@@ -74,6 +74,8 @@ class DenizenGlowingManager(private val plugin: Plugin, private val tapi: TabAPI
 	}
 
 	private fun glowFor(glowing: Player, viewing: Player) {
+		if (glowing == viewing) return
+
 		ex(mapOf(
 			Pair("player", PlayerTag.mirrorBukkitPlayer(viewing)),
 			Pair("target", PlayerTag.mirrorBukkitPlayer(glowing))
@@ -89,6 +91,8 @@ class DenizenGlowingManager(private val plugin: Plugin, private val tapi: TabAPI
 	}
 
 	private fun unglowFor(glowing: Player, viewing: Player) {
+		if (glowing == viewing) return
+
 		ex(mapOf(
 			Pair("player", PlayerTag.mirrorBukkitPlayer(viewing)),
 			Pair("target", PlayerTag.mirrorBukkitPlayer(glowing))
