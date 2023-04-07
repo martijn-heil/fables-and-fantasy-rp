@@ -270,9 +270,13 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 				val success = castingRoll >= spell.castingValue
 
 				val effectivenessRoll = roll(20U, CharacterStatKind.INTELLIGENCE, stats).second
-				val effectiveness = if (!success) null else SpellEffectiveness.fromRoll(effectivenessRoll)
+				val effectiveness = if (success) {
+					if (effectivenessRoll > 16) SpellEffectiveness.CRITICAL_SUCCESS else SpellEffectiveness.SUCCESS
+				} else {
+					if (effectivenessRoll < 7) SpellEffectiveness.CRITICAL_FAILURE else SpellEffectiveness.FAILURE
+				}
 
-				val message = getSpellCastingMessage(character, spell, success, castingRoll, effectiveness)
+				val message = getSpellCastingMessage(character, spell, castingRoll, effectiveness)
 				val messageTargets = getPlayersWithinRange(player.location, 15U).toList()
 
 				val spellTargets = player.targeting.targets

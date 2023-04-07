@@ -27,6 +27,7 @@ fun getSpellCastingBonus(path: MagicPath, level: Int): Int {
 
 val SpellEffectiveness.color get() = when(this) {
 	SpellEffectiveness.CRITICAL_FAILURE -> NamedTextColor.DARK_RED
+	SpellEffectiveness.FAILURE -> NamedTextColor.RED
 	SpellEffectiveness.SUCCESS -> NamedTextColor.GREEN
 	SpellEffectiveness.CRITICAL_SUCCESS -> NamedTextColor.DARK_GREEN
 }
@@ -41,17 +42,14 @@ fun spellDisplay(spell: SpellData): Component = Component.text(spell.displayName
 		.color(NamedTextColor.DARK_PURPLE)
 		.hoverEvent(HoverEvent.showText(spellCard(spell)))
 
-fun getSpellCastingMessage(playerCharacter: Character, spell: SpellData,
-						   success: Boolean, castingRoll: Int, effectiveness: SpellEffectiveness? = null): Component {
-	require(!success || effectiveness != null)
+fun getSpellCastingMessage(playerCharacter: Character,
+						   spell: SpellData,
+						   castingRoll: Int,
+						   effectiveness: SpellEffectiveness): Component {
 	val profileManager = Services.get<ProfileManager>()
 	val player = profileManager.getCurrentForProfile(playerCharacter.profile)!!
 
-	val resultMessage = if (!success) {
-		Component.text("failure").color(NamedTextColor.RED)
-	} else {
-		Component.text(effectiveness!!.displayName).color(effectiveness.color)
-	}
+	val resultMessage = Component.text(effectiveness.displayName).color(effectiveness.color)
 
 	return miniMessage.deserialize(
 			"<yellow><character_name></yellow> attempts to cast <spell_name> " +
