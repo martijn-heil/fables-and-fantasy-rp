@@ -40,13 +40,13 @@ class PlayerEspManager(private val plugin: Plugin, private val glowingManager: G
 	}
 
 	private fun glowUp(viewer: Player) {
-		for (glowing in server.onlinePlayers) {
+		for (glowing in server.onlinePlayers.asSequence().minus(viewer)) {
 			glowingManager.setIsGlowingFor(glowing, viewer, true)
 		}
 	}
 
 	private fun glowDown(viewer: Player) {
-		for (glowing in server.onlinePlayers) {
+		for (glowing in server.onlinePlayers.asSequence().minus(viewer)) {
 			glowingManager.setIsGlowingFor(glowing, viewer, false)
 		}
 	}
@@ -57,6 +57,7 @@ class PlayerEspManager(private val plugin: Plugin, private val glowingManager: G
 			if (isStopped) return
 			server.scheduler.scheduleSyncDelayedTask(plugin) {
 				for (viewer in esp.mapNotNull { server.getPlayer(it) }) {
+					if (viewer == e.player) continue
 					glowingManager.setIsGlowingFor(e.player, viewer, true)
 				}
 			}

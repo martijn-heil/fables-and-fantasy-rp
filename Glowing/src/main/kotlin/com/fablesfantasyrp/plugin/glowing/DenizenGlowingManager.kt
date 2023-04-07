@@ -74,37 +74,32 @@ class DenizenGlowingManager(private val plugin: Plugin, private val tapi: TabAPI
 	}
 
 	private fun glowFor(glowing: Player, viewing: Player) {
-		if (glowing == viewing) return
-
 		ex(mapOf(
 			Pair("player", PlayerTag.mirrorBukkitPlayer(viewing)),
 			Pair("target", PlayerTag.mirrorBukkitPlayer(glowing))
 		),
 			"adjust <queue> linked_player:<[player]>",
 			"glow <[target]>")
-		server.scheduler.scheduleSyncDelayedTask(plugin) {
-			if (glowing.isOnline) {
-				viewing.hidePlayer(glowing)
-				viewing.showPlayer(glowing)
-			}
-		}
+		server.scheduler.scheduleSyncDelayedTask(plugin) { reloadPlayer(glowing, viewing) }
 	}
 
 	private fun unglowFor(glowing: Player, viewing: Player) {
-		if (glowing == viewing) return
-
 		ex(mapOf(
 			Pair("player", PlayerTag.mirrorBukkitPlayer(viewing)),
 			Pair("target", PlayerTag.mirrorBukkitPlayer(glowing))
 		),
 			"adjust <queue> linked_player:<[player]>",
 			"glow <[target]> false")
-		server.scheduler.scheduleSyncDelayedTask(plugin) {
-			if (glowing.isOnline) {
-				viewing.hidePlayer(glowing)
-				viewing.showPlayer(glowing)
-			}
-		}
+		server.scheduler.scheduleSyncDelayedTask(plugin) { reloadPlayer(glowing, viewing) }
+	}
+
+	private fun reloadPlayer(glowing: Player, viewing: Player) {
+		if (!glowing.isOnline || !viewing.isOnline) return
+		if (glowing == viewing) return
+		if (!viewing.canSee(glowing)) return
+
+		viewing.hidePlayer(plugin, glowing)
+		viewing.showPlayer(plugin, glowing)
 	}
 
 	private fun reset(glowing: Player) {
