@@ -144,7 +144,7 @@ class Commands(private val profileManager: ProfileManager,
 
 	@Command(aliases = ["setmagiclevel"], desc = "Set a character's magic level.")
 	@Require(Permission.Command.Setmagiclevel)
-	fun setmagiclevel(@Sender sender: CommandSender, target: Mage, @Range(min = 0.00) magicLevel: Int) {
+	fun setmagiclevel(@Sender sender: CommandSender, target: Mage, @Range(min = 0.00, max = 10.00) magicLevel: Int) {
 		if (magicLevel != 0) {
 			target.magicLevel = magicLevel
 			sender.sendMessage("$SYSPREFIX set ${target.character.name}'s magic level to $magicLevel")
