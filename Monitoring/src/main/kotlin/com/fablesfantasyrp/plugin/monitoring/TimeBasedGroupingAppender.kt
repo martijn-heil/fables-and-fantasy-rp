@@ -59,7 +59,8 @@ class TimeBasedGroupingAppender(private val ignorePatterns: Collection<Regex>, p
 	}
 
 	override fun append(event: LogEvent?) {
-		if(event == null) return
+		if (event == null) return
+		if (event.message == null) return
 		val copy = event.toImmutable() ?: return
 
 		val formattedMessage = copy.message.formattedMessage
