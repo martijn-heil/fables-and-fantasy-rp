@@ -38,7 +38,8 @@ class TimeBasedGroupingAppender(private val ignorePatterns: Collection<Regex>, p
 		AbstractAppender("MonitoringAppender", null, null, true, emptyArray()) {
 	private val grouped = LinkedList<LogEvent>()
 
-	private fun fuzzyMatch(event: LogEvent): Boolean {
+	private fun fuzzyMatch(event: LogEvent?): Boolean {
+		if (event == null) return false
 		return event.message.formattedMessage.lowercase().contains("error")
 	}
 
