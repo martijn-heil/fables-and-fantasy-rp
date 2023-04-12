@@ -1,0 +1,8 @@
+name: FablesAlternateMechanics
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+main: com.fablesfantasyrp.plugin.alternatemechanics.FablesAlternateMechanics
+api-version: @bukkit_api_version@

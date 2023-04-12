@@ -46,4 +46,5 @@ include("examples:BlankSystem",
 		"PetPreview",
 		"Weights",
 		"Party",
-		"PlayerESP")
+		"PlayerESP",
+		"AlternateMechanics")
