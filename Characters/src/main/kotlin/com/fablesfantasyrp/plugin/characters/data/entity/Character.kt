@@ -81,14 +81,6 @@ class Character : DataEntity<Int, Character>, CharacterData {
 	override var stats: CharacterStats 	set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 	val totalStats: CharacterStats get() = stats + race.boosters + CHARACTER_STATS_FLOOR
 
-	override var money: ULong
-		get() = throw NotImplementedError() // See FablesEconomy based on Profile instead
-		set(value) { throw NotImplementedError() }
-
-	override var location: Location
-		get() = profile.location
-		set(value) { profile.location = value }
-
 	override val maximumHealth: UInt get() = (12 + CharacterStatKind.STRENGTH.getRollModifierFor(totalStats.strength)).toUInt()
 
 	override val id: Int
