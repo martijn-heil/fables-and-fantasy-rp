@@ -322,7 +322,7 @@ class Commands(private val plugin: JavaPlugin,
 			@Require(Permission.Command.Characters.Stats.Set)
 			fun set(@Sender sender: CommandSender,
 					stat: CharacterStatKind,
-					@Range(min = 0.0) value: Int,
+					@Range(min = 0.0, max = 127.0) value: Int,
 					@CommandTarget target: Character) {
 				authorizer.mayEdit(sender, target).orElse { throw AuthorizationException(it) }
 

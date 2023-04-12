@@ -6,11 +6,9 @@ import com.fablesfantasyrp.plugin.database.entity.DataEntity
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.denizeninterop.dFlags
 import com.fablesfantasyrp.plugin.inventory.inventory
-import com.fablesfantasyrp.plugin.location.location
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.utils.Services
-import org.bukkit.Location
 import java.time.Instant
 
 class Character : DataEntity<Int, Character>, CharacterData {
@@ -78,8 +76,18 @@ class Character : DataEntity<Int, Character>, CharacterData {
 	override var description: String 	set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 	override var gender: Gender 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 	override var race: Race 			set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
-	override var stats: CharacterStats 	set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 	val totalStats: CharacterStats get() = stats + race.boosters + CHARACTER_STATS_FLOOR
+	override var stats: CharacterStats
+		set(value) {
+			if (field != value) {
+				require(value.agility < 128U)
+				require(value.strength < 128U)
+				require(value.defense < 128U)
+				require(value.intelligence < 128U)
+				field = value
+				dirtyMarker?.markDirty(this)
+			}
+		}
 
 	override val maximumHealth: UInt get() = (12 + CharacterStatKind.STRENGTH.getRollModifierFor(totalStats.strength)).toUInt()
 
