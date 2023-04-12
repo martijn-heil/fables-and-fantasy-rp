@@ -4,6 +4,7 @@ import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.Identifiable
 import com.fablesfantasyrp.plugin.database.repository.KeyedRepository
 import com.fablesfantasyrp.plugin.database.repository.MutableRepository
+import org.bukkit.Bukkit
 import java.lang.ref.SoftReference
 import java.util.concurrent.locks.ReadWriteLock
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -26,8 +27,11 @@ open class SimpleEntityRepository<K, T: Identifiable<K>, C>(protected var child:
 	override fun markWeak(v: T) { lock.writeLock().withLock { strongCache.remove(v) } }
 
 	override fun saveAllDirty() {
+		Bukkit.getLogger().info("saveAllDirty()")
 		lock.writeLock().withLock {
+			Bukkit.getLogger().info("saveAllDirty(): updating")
 			dirty.forEach { child.update(it) }
+			Bukkit.getLogger().info("saveAllDirty(): clearing")
 			dirty.clear()
 		}
 	}

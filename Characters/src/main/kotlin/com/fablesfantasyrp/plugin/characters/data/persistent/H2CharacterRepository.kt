@@ -142,7 +142,9 @@ class H2CharacterRepository(private val server: Server,
 	}
 
 	override fun update(v: Character) {
+		server.logger.info("update(Character)")
 		dataSource.connection.use { connection ->
+			server.logger.info("update(Character) prepareStatement()")
 			val stmnt = connection.prepareStatement("UPDATE $TABLE_NAME SET " +
 					"name = ?, " +
 					"description = ?, " +
@@ -161,25 +163,45 @@ class H2CharacterRepository(private val server: Server,
 					"stat_agility = ?, " +
 					"stat_intelligence = ? " +
 					"WHERE id = ?")
+			server.logger.info("update(Character) 1")
 			stmnt.setString(1, v.name)
+			server.logger.info("update(Character) 2")
 			stmnt.setString(2, v.description)
+			server.logger.info("update(Character) 3")
 			stmnt.setInt(3, v.age.toInt())
+			server.logger.info("update(Character) 4")
 			stmnt.setString(4, v.race.name)
+			server.logger.info("update(Character) 5")
 			stmnt.setString(5, v.gender.name)
+			server.logger.info("update(Character) 6")
 			stmnt.setObject(6, v.createdAt)
+			server.logger.info("update(Character) 7")
 			stmnt.setObject(7, v.lastSeen)
+			server.logger.info("update(Character) 8")
 			stmnt.setBoolean(8, v.isDead)
+			server.logger.info("update(Character) 9")
 			stmnt.setBoolean(9, v.isShelved)
+			server.logger.info("update(Character) 10")
 			stmnt.setObject(10, v.diedAt)
+			server.logger.info("update(Character) 11")
 			stmnt.setObject(11, v.shelvedAt)
+			server.logger.info("update(Character) 12")
 			stmnt.setObject(12, v.changedStatsAt)
+			server.logger.info("update(Character) 13")
 			stmnt.setInt(13, v.stats.strength.toInt())
+			server.logger.info("update(Character) 14")
 			stmnt.setInt(14, v.stats.defense.toInt())
+			server.logger.info("update(Character) 15")
 			stmnt.setInt(15, v.stats.agility.toInt())
+			server.logger.info("update(Character) 16")
 			stmnt.setInt(16, v.stats.intelligence.toInt())
+			server.logger.info("update(Character) 17")
 			stmnt.setInt(17, v.id)
+			server.logger.info("update(Character) 18")
 			stmnt.executeUpdate()
+			server.logger.info("update(Character) 19")
 		}
+		server.logger.info("update(Character) done!")
 	}
 
 	private fun fromRow(result: ResultSet): Character {

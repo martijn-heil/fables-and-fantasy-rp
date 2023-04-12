@@ -123,8 +123,11 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 	}
 
 	override fun onDisable() {
+		logger.info("Unregistering commands")
 		commands.forEach { unregisterCommand(it) }
+		logger.info("EntityCharacterRepository#saveAllDirty()")
 		get<EntityCharacterRepository>().saveAllDirty()
+		logger.info("unloadKoinModules()")
 		unloadKoinModules(koinModule)
 	}
 
