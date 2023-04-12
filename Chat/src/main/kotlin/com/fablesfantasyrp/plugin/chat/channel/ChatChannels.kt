@@ -1,5 +1,10 @@
 package com.fablesfantasyrp.plugin.chat.channel
 
+import com.fablesfantasyrp.plugin.characters.data.entity.CharacterRepository
+import com.fablesfantasyrp.plugin.party.PartySpectatorManager
+import com.fablesfantasyrp.plugin.party.data.PartyRepository
+import com.fablesfantasyrp.plugin.profile.ProfileManager
+import com.fablesfantasyrp.plugin.utils.Services
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Bukkit
@@ -72,6 +77,14 @@ private val statefulTreeChannels = HashMap<CommandSender, HashMap<KClass<*>, Sta
 
 fun ChatChannel.Companion.fromStringAliased(s: String, from: CommandSender): ChatChannel? {
 	val name = s.lowercase()
+
+	val profileManager = Services.get<ProfileManager>()
+	val partySpectatorManager = Services.get<PartySpectatorManager>()
+	val characters = Services.get<CharacterRepository>()
+	val character = (from as? Player)?.let { profileManager.getCurrentForPlayer(it) }?.let { characters.forProfile(it) }
+	val parties = Services.get<PartyRepository>()
+	val party = character?.let { parties.forMember(it) } ?: (from as? Player)?.let { partySpectatorManager.getParty(it) }
+
 	return when {
 		name == "ooc" -> ChatOutOfCharacter
 		name == "looc" -> ChatLocalOutOfCharacter
@@ -81,6 +94,7 @@ fun ChatChannel.Companion.fromStringAliased(s: String, from: CommandSender): Cha
 		Regex("(ic|rp)[.#](shout|s)").matches(name) -> ChatInCharacterShout
 		Regex("(ic|rp)[.#](contextual)").matches(name) -> ChatInCharacterContextual
 		Regex("(spectator|sc|spectatorchat|specchat)").matches(name) -> ChatSpectator
+		party != null && Regex("(party|pc|partychat)").matches(name) -> ChatParty(party)
 		Regex("(staff|st|staffchat)").matches(name) -> ChatStaff
 		Regex("(staff|st|staffchat)[.#].+").matches(name) -> {
 			val subChannelName = Regex("(staff|st|staffchat)[.#](.+)").matchEntire(name)!!.groupValues[2].uppercase()

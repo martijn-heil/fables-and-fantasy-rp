@@ -10,6 +10,7 @@ depend:
   - FablesForm
   - FablesCharacters
   - FablesDenizenInterop
+  - FablesParty
   - NinCommands
   - TAB
   - ProtocolLib
@@ -36,6 +37,11 @@ commands:
     description: "Change to or type in OOC chat."
     aliases: []
     permission: fables.chat.channel.ooc
+    usage: "Usage: /<command> [message]?"
+  partychat:
+    description: "Change to or type in PARTY chat."
+    aliases: [pc]
+    permission: fables.chat.channel.ic
     usage: "Usage: /<command> [message]?"
   dm:
     description: "Change to or type in direct message chat."

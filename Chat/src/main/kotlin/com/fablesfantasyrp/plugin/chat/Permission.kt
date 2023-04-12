@@ -11,6 +11,7 @@ object Permission {
 		const val Looc = "${prefix}.looc"
 		const val Spectator = "${prefix}.spectator"
 		const val Staff = "${prefix}.staff"
+		const val Party = "${prefix}.party"
 	}
 
 	object Command {

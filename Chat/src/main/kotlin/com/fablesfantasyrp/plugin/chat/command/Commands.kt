@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.chat.command
 
+import com.fablesfantasyrp.plugin.characters.data.entity.CharacterRepository
 import com.fablesfantasyrp.plugin.chat.FablesChat
 import com.fablesfantasyrp.plugin.chat.Permission
 import com.fablesfantasyrp.plugin.chat.SYSPREFIX
@@ -7,6 +8,9 @@ import com.fablesfantasyrp.plugin.chat.channel.*
 import com.fablesfantasyrp.plugin.chat.chat
 import com.fablesfantasyrp.plugin.chat.event.FablesChatEvent
 import com.fablesfantasyrp.plugin.chat.gui.ChatColorGui
+import com.fablesfantasyrp.plugin.party.PartySpectatorManager
+import com.fablesfantasyrp.plugin.party.data.PartyRepository
+import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.nameStyle
@@ -164,6 +168,52 @@ class Commands {
 					}
 				} else {
 					(sender as Player).chat.doChat(channel, message)
+				}
+			} catch (e: ChatIllegalArgumentException) {
+				sender.sendError(e.message ?: "Illegal argument.")
+			} catch (e: ChatIllegalStateException) {
+				sender.sendError(e.message ?: "Illegal state.")
+			}
+
+			return true
+		}
+	}
+
+	open class CommandChatParty(private val profileManager: ProfileManager,
+								private val characters: CharacterRepository,
+								private val parties: PartyRepository,
+								private val partySpectatorManager: PartySpectatorManager) : CommandExecutor {
+		override fun onCommand(sender: CommandSender, command: org.bukkit.command.Command, label: String, args: Array<out String>): Boolean {
+			if (!sender.hasPermission(Permission.Channel.Party)) {
+				sender.sendError("Permission denied.")
+				return true
+			}
+
+			val message = args.joinToString(" ")
+			if (sender !is Player) {
+				sender.sendError("You have to be a Player to use this command. You are a ${sender::class.java.simpleName}.")
+				return true
+			}
+
+			val character = (sender as? Player)?.let { profileManager.getCurrentForPlayer(it) }?.let { characters.forProfile(it) }
+			val party = character?.let { parties.forMember(it) } ?: partySpectatorManager.getParty(sender)
+
+			if (party == null) {
+				sender.sendError("You are not a member of any party.")
+				return true
+			}
+
+			val channel = ChatParty(party)
+
+			try {
+				if (message.isEmpty()) {
+					sender.chat.channel = channel
+				} else {
+					if (!FablesChatEvent(sender, channel, message, channel.getRecipients(sender).toSet()).callEvent()) {
+						return true
+					}
+
+					sender.chat.doChat(channel, message)
 				}
 			} catch (e: ChatIllegalArgumentException) {
 				sender.sendError(e.message ?: "Illegal argument.")

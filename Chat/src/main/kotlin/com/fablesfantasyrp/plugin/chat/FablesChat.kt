@@ -56,6 +56,7 @@ class FablesChat : JavaPlugin(), KoinComponent {
 			singleOf(::ChatPreviewManager)
 			singleOf(::ChatReceptionIndicatorManager)
 			singleOf(::ChatListener)
+			single { Commands.CommandChatParty(get(), get(), get(), get()) }
 			single {
 				val tmp = EntityChatPlayerRepositoryImpl(get(), H2ChatPlayerRepository(server, fablesDatabase))
 				tmp.init()
@@ -99,6 +100,7 @@ class FablesChat : JavaPlugin(), KoinComponent {
 		this.getCommand("reply")!!.setExecutor(Commands.CommandReply())
 		this.getCommand("staffchat")!!.setExecutor(Commands.CommandChatStaff())
 		this.getCommand("spectatorchat")!!.setExecutor(Commands.CommandChatSpectator())
+		this.getCommand("partychat")!!.setExecutor(get<Commands.CommandChatParty>())
 	}
 
 	override fun onDisable() {

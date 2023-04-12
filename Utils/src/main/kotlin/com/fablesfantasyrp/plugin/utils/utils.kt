@@ -2,10 +2,7 @@ package com.fablesfantasyrp.plugin.utils
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
-import org.bukkit.Bukkit
-import org.bukkit.Location
-import org.bukkit.Server
-import org.bukkit.World
+import org.bukkit.*
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 import java.util.*
@@ -78,3 +75,28 @@ fun quoteCommandArgument(s: String): String {
 }
 
 data class BlockLocation(val x: Int, val y: Int, val z: Int)
+
+fun ChatColor.toNamedTextColor(): NamedTextColor? = when (this) {
+	ChatColor.BLACK -> NamedTextColor.BLACK
+	ChatColor.DARK_BLUE -> NamedTextColor.DARK_BLUE
+	ChatColor.DARK_GREEN -> NamedTextColor.DARK_GREEN
+	ChatColor.DARK_AQUA -> NamedTextColor.DARK_AQUA
+	ChatColor.DARK_RED -> NamedTextColor.DARK_RED
+	ChatColor.DARK_PURPLE -> NamedTextColor.DARK_PURPLE
+	ChatColor.GOLD -> NamedTextColor.GOLD
+	ChatColor.GRAY -> NamedTextColor.GRAY
+	ChatColor.DARK_GRAY -> NamedTextColor.DARK_GRAY
+	ChatColor.BLUE -> NamedTextColor.BLUE
+	ChatColor.GREEN -> NamedTextColor.GREEN
+	ChatColor.AQUA -> NamedTextColor.AQUA
+	ChatColor.RED -> NamedTextColor.RED
+	ChatColor.LIGHT_PURPLE -> NamedTextColor.LIGHT_PURPLE
+	ChatColor.YELLOW -> NamedTextColor.YELLOW
+	ChatColor.WHITE -> NamedTextColor.WHITE
+	ChatColor.MAGIC -> null
+	ChatColor.BOLD -> null
+	ChatColor.STRIKETHROUGH -> null
+	ChatColor.UNDERLINE -> null
+	ChatColor.ITALIC -> null
+	ChatColor.RESET -> null
+}
