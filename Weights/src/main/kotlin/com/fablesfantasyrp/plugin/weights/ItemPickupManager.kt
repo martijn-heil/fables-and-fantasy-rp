@@ -5,6 +5,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority.NORMAL
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityPickupItemEvent
+import org.bukkit.event.player.PlayerPickupArrowEvent
 import org.bukkit.plugin.Plugin
 import java.util.*
 
@@ -26,6 +27,13 @@ class ItemPickupManager(private val plugin: Plugin) {
 		fun onPlayerPickupItem(e: EntityPickupItemEvent) {
 			val player = e.entity as? Player ?: return
 			if (hasPickupDisabled(player)) {
+				e.isCancelled = true
+			}
+		}
+
+		@EventHandler(priority = NORMAL, ignoreCancelled = true)
+		fun onPlayerPickupArrow(e: PlayerPickupArrowEvent) {
+			if (hasPickupDisabled(e.player)) {
 				e.isCancelled = true
 			}
 		}
