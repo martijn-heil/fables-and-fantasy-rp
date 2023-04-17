@@ -6,17 +6,19 @@ import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.text.join
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.parseLinks
+import com.fablesfantasyrp.plugin.utils.Services
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import net.milkbowl.vault.chat.Chat
 import org.bukkit.command.CommandSender
-import org.koin.core.context.GlobalContext
 import org.ocpsoft.prettytime.PrettyTime
 
 fun characterCard(character: Character, observer: CommandSender? = null): Component {
-	val profileManager = GlobalContext.get().get<ProfileManager>()
+	val profileManager = Services.get<ProfileManager>()
+	val vaultChat = Services.get<Chat>()
 
 	val statsMessage = Component.text().append(CharacterStatKind.values().asSequence().map { statKind ->
 		val statValue = character.totalStats[statKind]
@@ -33,11 +35,15 @@ fun characterCard(character: Character, observer: CommandSender? = null): Compon
 			.clickEvent(ClickEvent.runCommand("/char change $property #${character.id}"))
 		else Component.text("[E]").color(NamedTextColor.DARK_GRAY)
 
+	val player = profileManager.getCurrentForProfile(character.profile)
+	val isMetaGamer = if (player != null) vaultChat.playerInGroup(player, "metagamer") else false
+
 	return miniMessage.deserialize(
 			"<newline>" +
 					"<gray>═════ <white><player_name></white> <dark_gray>Character #<id></dark_gray> <status>═════</gray><newline>" +
 					"<gray><owner_info>, last seen: <last_seen></gray><newline>" +
 					"<red>Please do not metagame this information.</red><newline>" +
+					"<metagamer_warning>" +
 					"<green>" +
 					"<change_name> Name: <white><name></white><newline>" +
 					"<change_age> Age: <white><age></white><newline>" +
@@ -48,13 +54,17 @@ fun characterCard(character: Character, observer: CommandSender? = null): Compon
 					"<change_stats> Stats:<newline>" +
 					"<stats><newline>" +
 					"</green>",
-			Placeholder.unparsed("player_name", profileManager.getCurrentForProfile(character.profile)?.name ?: "(offline)"),
+			Placeholder.unparsed("player_name", player?.name ?: "(offline)"),
 			Placeholder.unparsed("id", character.id.toString()),
 			Placeholder.component("owner_info",
 					if (character.isStaffCharacter) Component.text("This is a staff character").color(NamedTextColor.YELLOW)
 					else if (character.profile.owner != null) miniMessage.deserialize("Owned by <name>",
 							Placeholder.unparsed("name", character.profile.owner!!.name ?: character.profile.owner!!.uniqueId.toString()))
 					else Component.text("This character is not owned by anyone")
+			),
+			Placeholder.component("metagamer_warning",
+				if (isMetaGamer) miniMessage.deserialize("<dark_red>WARNING: This user is a registered metagamer.</dark_red><newline>")
+				else Component.empty()
 			),
 			Placeholder.component("name", Component.text(character.name)),
 			Placeholder.component("age", Component.text(character.age.toString())),

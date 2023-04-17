@@ -15,6 +15,7 @@ depend:
   - FablesLocation
   - FablesTimers
   - FablesStaffProfiles
+  - Vault
   - SuperVanish
   - NinCommands
 softdepend:
