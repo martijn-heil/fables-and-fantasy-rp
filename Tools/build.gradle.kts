@@ -10,4 +10,5 @@ dependencies {
     implementation(project(":Inventory"))
     implementation(project(":Profile"))
     implementation(project(":Location"))
+    implementation(project(":MoreLogging"))
 }

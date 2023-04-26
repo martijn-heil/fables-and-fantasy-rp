@@ -2,13 +2,26 @@ package com.fablesfantasyrp.plugin.morelogging
 
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import org.bukkit.plugin.java.JavaPlugin
+import org.koin.core.component.KoinComponent
+import org.koin.core.context.loadKoinModules
+import org.koin.core.context.unloadKoinModules
+import org.koin.core.module.Module
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
+import org.koin.dsl.module
 
 
-class FablesMoreLogging : JavaPlugin() {
+class FablesMoreLogging : JavaPlugin(), KoinComponent {
+	private lateinit var koinModule: Module
 
 	override fun onEnable() {
 		enforceDependencies(this)
 		instance = this
+
+		koinModule = module(createdAtStart = true) {
+			singleOf(::StaffActionBroadcasterImpl) bind StaffActionBroadcaster::class
+		}
+		loadKoinModules(koinModule)
 
 		ModerationLoggerManager(this).start()
 
@@ -27,6 +40,7 @@ class FablesMoreLogging : JavaPlugin() {
 
 	override fun onDisable() {
 		MODERATION_LOGGER.info("Logging system shutting down")
+		unloadKoinModules(koinModule)
 	}
 
 	companion object {

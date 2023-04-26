@@ -1,10 +1,12 @@
 package com.fablesfantasyrp.plugin.tools.command
 
 import com.fablesfantasyrp.plugin.characters.command.provider.AllowCharacterName
+import com.fablesfantasyrp.plugin.characters.displayName
 import com.fablesfantasyrp.plugin.inventory.MirroredInventory
 import com.fablesfantasyrp.plugin.inventory.MirroredInventoryManager
 import com.fablesfantasyrp.plugin.inventory.inventory
 import com.fablesfantasyrp.plugin.location.location
+import com.fablesfantasyrp.plugin.morelogging.StaffActionBroadcaster
 import com.fablesfantasyrp.plugin.profile.command.annotation.AllowPlayerName
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.text.legacyText
@@ -39,7 +41,8 @@ import org.bukkit.entity.Player
 import org.ocpsoft.prettytime.PrettyTime
 import java.time.Instant
 
-class InventoryCommands(private val mirroredInventoryManager: MirroredInventoryManager) {
+class InventoryCommands(private val mirroredInventoryManager: MirroredInventoryManager,
+						private val broadcaster: StaffActionBroadcaster) {
 	@Command(aliases = ["invsee", "finvsee"], desc = "Invsee a character")
 	@Require(Permission.Command.Invsee)
 	fun invsee(@Sender sender: Player, @AllowCharacterName target: Profile) {
@@ -50,6 +53,7 @@ class InventoryCommands(private val mirroredInventoryManager: MirroredInventoryM
 		mirroredInventoryManager.register(inventory)
 
 		sender.openInventory(inventory.bukkitInventory)
+		broadcaster.log(sender, "Invsee ${target.displayName}")
 	}
 
 	@Command(aliases = ["endersee", "enderchest", "echest", "fendersee", "fechest", "fenderchest"], desc = "Endersee a character")
@@ -62,11 +66,13 @@ class InventoryCommands(private val mirroredInventoryManager: MirroredInventoryM
 		mirroredInventoryManager.register(inventory)
 
 		sender.openInventory(inventory.bukkitInventory)
+		broadcaster.log(sender, "Endersee ${target.displayName}")
 	}
 }
 
 class Commands(private val powerToolManager: PowerToolManager,
-			   private val backManager: BackManager) {
+			   private val backManager: BackManager,
+			   private val broadcaster: StaffActionBroadcaster) {
 	@Command(aliases = ["teleport", "fteleport", "tp", "ftp", "tele", "ftele"], desc = "Teleport characters")
 	@Require(Permission.Command.Teleport)
 	fun teleport(@Sender sender: CommandSender,
@@ -74,8 +80,10 @@ class Commands(private val powerToolManager: PowerToolManager,
 				 @Optional @AllowCharacterName @AllowPlayerName two: Profile?) {
 		if (two != null) {
 			one.location = two.location
+			broadcaster.log(sender, "Teleported ${one.displayName} to ${two.displayName}")
 		} else if (sender is Player) {
 			sender.teleport(one.location)
+			broadcaster.log(sender, "Teleported themself to ${one.displayName}")
 		} else {
 			sender.sendError("You have to be a player to use this command.")
 		}
@@ -87,13 +95,15 @@ class Commands(private val powerToolManager: PowerToolManager,
 			  to: Location,
 			  @CommandTarget(Permission.Command.Tppos + ".others") @AllowCharacterName @AllowPlayerName target: Profile) {
 		target.location = to
-		sender.sendMessage("$SYSPREFIX Teleported #${target.id} to ${to.humanReadable()}")
+		sender.sendMessage("$SYSPREFIX Teleported ${target.displayName} to ${to.humanReadable()}")
+		broadcaster.log(sender, "Teleported ${target.displayName} to ${to.humanReadable()}")
 	}
 
 	@Command(aliases = ["tphere", "ftphere"], desc = "Teleport characters to you")
 	@Require(Permission.Command.Tphere)
 	fun tphere(@Sender sender: Player, @AllowCharacterName @AllowPlayerName who: Profile) {
 		who.location = sender.location
+		broadcaster.log(sender, "Teleported ${who.displayName} to themself")
 	}
 
 	inner class Ptime {
@@ -139,6 +149,7 @@ class Commands(private val powerToolManager: PowerToolManager,
 		world.setStorm(weather != Weather.CLEAR)
 		world.isThundering = weather == Weather.THUNDER
 		sender.sendMessage("$SYSPREFIX Set ${world.name}'s weather to $weather")
+		broadcaster.log(sender, "Set ${world.name}'s weather to $weather")
 	}
 
 	@Command(aliases = ["gamemode", "gm", "fgamemode"], desc = "")
@@ -149,30 +160,35 @@ class Commands(private val powerToolManager: PowerToolManager,
 		}
 
 		target.gameMode = gameMode
+		broadcaster.log(sender, "Set ${target.name}'s gamemode to $gameMode")
 	}
 
 	@Command(aliases = ["survival", "gms", "survivalmode", "fsurvival"], desc = "")
 	@Require(Permission.Command.GameMode + ".survival")
 	fun survival(@Sender sender: CommandSender, @CommandTarget(Permission.Command.GameMode + ".others") target: Player) {
 		target.gameMode = GameMode.SURVIVAL
+		broadcaster.log(sender, "Set ${target.name}'s gamemode to ${GameMode.SURVIVAL}")
 	}
 
 	@Command(aliases = ["creative", "gmc", "creativemode", "fcreative"], desc = "")
 	@Require(Permission.Command.GameMode + ".creative")
 	fun creative(@Sender sender: CommandSender, @CommandTarget(Permission.Command.GameMode + ".others") target: Player) {
 		target.gameMode = GameMode.CREATIVE
+		broadcaster.log(sender, "Set ${target.name}'s gamemode to ${GameMode.CREATIVE}")
 	}
 
 	@Command(aliases = ["spectator", "gmsp", "spectatormode", "fspectator"], desc = "")
 	@Require(Permission.Command.GameMode + ".spectator")
 	fun spectator(@Sender sender: CommandSender, @CommandTarget(Permission.Command.GameMode + ".others") target: Player) {
 		target.gameMode = GameMode.SPECTATOR
+		broadcaster.log(sender, "Set ${target.name}'s gamemode to ${GameMode.SPECTATOR}")
 	}
 
 	@Command(aliases = ["adventure", "gma", "adventuremode", "fadventure"], desc = "")
 	@Require(Permission.Command.GameMode + ".adventure")
 	fun adventure(@Sender sender: CommandSender, @CommandTarget(Permission.Command.GameMode + ".others") target: Player) {
 		target.gameMode = GameMode.ADVENTURE
+		broadcaster.log(sender, "Set ${target.name}'s gamemode to ${GameMode.ADVENTURE}")
 	}
 
 	@Command(aliases = ["powertool", "pt", "fpt", "fpowertool"], desc = "")
@@ -199,6 +215,7 @@ class Commands(private val powerToolManager: PowerToolManager,
 				Placeholder.component("value", finalValue.asEnabledDisabledComponent()),
 				Placeholder.component("player", Component.text(target.name).style(target.nameStyle))
 		))
+		broadcaster.log(sender, "Set ${target.name}'s fly mode to $finalValue")
 	}
 
 	@Command(aliases = ["speed", "fspeed"], desc = "Speedy boi")
@@ -226,6 +243,7 @@ class Commands(private val powerToolManager: PowerToolManager,
 				Placeholder.unparsed("value", speed.toString()),
 				Placeholder.component("player", Component.text(target.name).style(target.nameStyle))
 		))
+		broadcaster.log(sender, "Set ${target.name}'s speed to $speed")
 	}
 
 	@Command(aliases = ["god", "godmode", "fgod", "fgodmode"], desc = "Invulnerability!!")
@@ -240,6 +258,7 @@ class Commands(private val powerToolManager: PowerToolManager,
 				Placeholder.component("value", finalValue.asEnabledDisabledComponent()),
 				Placeholder.component("player", Component.text(target.name).style(target.nameStyle))
 		))
+		broadcaster.log(sender, "Set ${target.name}'s god mode to $finalValue")
 	}
 
 	@Command(aliases = ["seen", "fseen"], desc = "Look up when a player was last seen")
@@ -297,16 +316,23 @@ class Commands(private val powerToolManager: PowerToolManager,
 		)
 
 		sender.sendMessage(message)
+		broadcaster.log(sender, "whois ${target.name}")
 	}
 
 	@Command(aliases = ["back", "fback"], desc = "Teleport back to your previous location")
 	@Require(Permission.Command.Back)
 	fun back(@Sender sender: CommandSender, @CommandTarget(Permission.Command.Back + ".others") target: Player) {
-		backManager.getPreviousLocation(target)?.let { target.teleport(it) }
+		val previousLocation = backManager.getPreviousLocation(target) ?: run {
+			sender.sendError("${target.name} has no previous location.")
+			return
+		}
+		target.teleport(previousLocation)
 		sender.sendMessage(miniMessage.deserialize("<gray><prefix> Teleported <player> to their previous location.</gray>",
 				Placeholder.component("prefix", legacyText(SYSPREFIX)),
 				Placeholder.component("player", Component.text(target.name).style(target.nameStyle))
 		))
+
+		broadcaster.log(sender, "Teleported ${target.name} back to their previous location (${previousLocation.humanReadable()})")
 	}
 
 	@Command(aliases = ["spawn", "fspawn"], desc = "Teleport to spawn")
@@ -317,6 +343,7 @@ class Commands(private val powerToolManager: PowerToolManager,
 				Placeholder.component("prefix", legacyText(SYSPREFIX)),
 				Placeholder.component("player", Component.text(target.name).style(target.nameStyle))
 		))
+		broadcaster.log(sender, "Teleported ${target.name} to spawn")
 	}
 
 	@Command(aliases = ["rigcheer"], desc = "Rig the cheer")

@@ -5,6 +5,7 @@ depend:
   - FablesKotlinRuntime
   - FablesUtils
   - FablesDenizenInterop
+  - FablesText
   - dDiscordBot
 softdepend:
   - Essentials

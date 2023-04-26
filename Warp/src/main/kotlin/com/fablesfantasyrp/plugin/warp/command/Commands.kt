@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.warp.command
 
+import com.fablesfantasyrp.plugin.morelogging.StaffActionBroadcaster
 import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.nameStyle
@@ -17,7 +18,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class Commands(private val warps: SimpleWarpRepository) {
+class Commands(private val warps: SimpleWarpRepository, private val broadcaster: StaffActionBroadcaster) {
 	@Command(aliases = ["warp", "fwarp"], desc = "Warp to a place")
 	@Require(Permission.Command.Warp)
 	fun warp(@Sender sender: CommandSender, warp: SimpleWarp, @CommandTarget(Permission.Command.Warp + ".others") target: Player) {
@@ -27,6 +28,7 @@ class Commands(private val warps: SimpleWarpRepository) {
 				Placeholder.unparsed("warp", warp.id)
 		))
 		target.teleport(warp.location)
+		broadcaster.log(sender, "Warped ${target.name} to ${warp.id}")
 	}
 
 	@Command(aliases = ["setwarp", "fsetwarp"], desc = "Set a warp")
@@ -47,6 +49,7 @@ class Commands(private val warps: SimpleWarpRepository) {
 		}
 
 		sender.sendMessage("$SYSPREFIX Set warp ${warp.id} to your current location.")
+		broadcaster.log(sender, "Set warp ${warp.id} to their current location.")
 	}
 
 	@Command(aliases = ["delwarp", "fdelwarp"], desc = "Delete a warp")
@@ -54,5 +57,6 @@ class Commands(private val warps: SimpleWarpRepository) {
 	fun delwarp(@Sender sender: CommandSender, warp: SimpleWarp) {
 		warps.destroy(warp)
 		sender.sendMessage("$SYSPREFIX Deleted warp ${warp.id}")
+		broadcaster.log(sender, "Deleted warp ${warp.id}")
 	}
 }

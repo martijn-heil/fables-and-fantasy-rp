@@ -48,6 +48,7 @@ class FablesTools : JavaPlugin(), KoinComponent {
 			singleOf(::BackManager)
 			singleOf(::Commands)
 			singleOf(::ToolsListener)
+			singleOf(::InventoryCommands)
 			single { get<Commands>().Ptime() }
 			single { get<Commands>().PWeather() }
 
@@ -75,7 +76,7 @@ class FablesTools : JavaPlugin(), KoinComponent {
 		rootDispatcherNode.registerMethods(get<Commands>())
 		rootDispatcherNode.group("ptime", "playertime", "fptime", "fplayertime").registerMethods(get<Commands.Ptime>())
 		rootDispatcherNode.group("pweather", "playerweather", "fpweather", "fplayerweather").registerMethods(get<Commands.PWeather>())
-		rootDispatcherNode.registerMethods(InventoryCommands(get()))
+		rootDispatcherNode.registerMethods(get<InventoryCommands>())
 		val dispatcher = rootDispatcherNode.dispatcher
 
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }

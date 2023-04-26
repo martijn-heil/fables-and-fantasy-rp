@@ -10,6 +10,7 @@ depend:
   - FablesInventory
   - FablesLocation
   - FablesProfile
+  - FablesMoreLogging
   - NinCommands
 main: com.fablesfantasyrp.plugin.tools.FablesTools
 api-version: @bukkit_api_version@
