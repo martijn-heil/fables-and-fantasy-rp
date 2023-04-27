@@ -5,6 +5,7 @@ depend:
   - FablesKotlinRuntime
   - FablesUtils
   - FablesCharacters
+  - FablesProfile
   - FablesText
   - FablesChat
   - NinCommands

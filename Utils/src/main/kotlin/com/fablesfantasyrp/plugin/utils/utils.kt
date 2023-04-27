@@ -33,12 +33,14 @@ fun Location.distanceSafe(to: Location): Double {
 	return this.distance(to)
 }
 
-fun Server.broadcast(location: Location, range: Int, message: Component) {
+fun Server.broadcast(location: Location, range: Int, message: Component, toConsoleSender: Boolean = true) {
 	getPlayersWithinRange(location, range.toUInt()).forEach { it.sendMessage(message) }
+	if (toConsoleSender) consoleSender.sendMessage(message)
 }
 
-fun Server.broadcast(location: Location, range: Int, message: String) {
+fun Server.broadcast(location: Location, range: Int, message: String, toConsoleSender: Boolean = true) {
 	getPlayersWithinRange(location, range.toUInt()).forEach { it.sendMessage(message) }
+	if (toConsoleSender) consoleSender.sendMessage(message)
 }
 
 fun getPlayersWithinRange(from: Location, range: UInt) =

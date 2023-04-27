@@ -14,4 +14,5 @@ dependencies {
     shadow("org.ocpsoft.prettytime:prettytime:5.0.6.Final")
     shadow("com.google.guava:guava:31.1-jre")
     shadow("io.insert-koin:koin-core:3.3.2")
+    shadow("com.github.Keelar:ExprK:master-SNAPSHOT")
 }

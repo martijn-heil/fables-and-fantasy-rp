@@ -3,71 +3,92 @@ package com.fablesfantasyrp.plugin.rolls.command
 import com.fablesfantasyrp.plugin.characters.data.CharacterStatKind
 import com.fablesfantasyrp.plugin.characters.data.entity.CharacterRepository
 import com.fablesfantasyrp.plugin.chat.chat
-import com.fablesfantasyrp.plugin.chat.getPlayersWithinRange
 import com.fablesfantasyrp.plugin.profile.ProfileManager
+import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.rolls.ROLL_RANGE
+import com.fablesfantasyrp.plugin.rolls.rollExpression
 import com.fablesfantasyrp.plugin.text.miniMessage
-import com.fablesfantasyrp.plugin.text.sendError
+import com.fablesfantasyrp.plugin.utils.broadcast
 import com.gitlab.martijn_heil.nincommands.common.FixedSuggestions
 import com.gitlab.martijn_heil.nincommands.common.Sender
 import com.gitlab.martijn_heil.nincommands.common.Suggestions
 import com.sk89q.intake.Command
+import com.sk89q.intake.CommandException
 import com.sk89q.intake.Require
 import com.sk89q.intake.parametric.annotation.Optional
-import com.sk89q.intake.parametric.annotation.Range
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.Style
 import net.kyori.adventure.text.minimessage.tag.Tag
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
-import org.bukkit.Bukkit
-import org.bukkit.entity.Player
+import org.bukkit.Server
 
-class Commands(private val characters: CharacterRepository,
+class Commands(private val server: Server,
+			   private val characters: CharacterRepository,
 			   private val profileManager: ProfileManager) {
 	@Command(aliases = ["roll", "dice"], desc = "Roll the dice!")
 	@Require("fables.rolls.command.roll")
-	fun roll(@Sender sender: Player,
-			 @FixedSuggestions @Suggestions(["3", "6", "20", "100"]) @Range(min = 2.0, max = 200.0) @Optional("20") dice: Int,
+	fun roll(@Sender sender: Profile,
+			 @FixedSuggestions @Suggestions(["3", "6", "20", "100"]) @Optional("20") expression: String,
 			 @Optional kind: CharacterStatKind?) {
-		val senderCharacter = profileManager.getCurrentForPlayer(sender)?.let { characters.forProfile(it) }
+		val senderPlayer = profileManager.getCurrentForProfile(sender) ?: throw IllegalStateException()
+		val senderCharacter = characters.forProfile(sender)
+		val senderName = senderCharacter?.name ?: senderPlayer.name
 		val stats = senderCharacter?.totalStats
-
-		if (senderCharacter == null && kind != null) {
-			sender.sendError("You cannot roll a specific stat kind while you are out of character")
-			return
-		}
-
-		val roll = com.fablesfantasyrp.plugin.rolls.roll(dice.toUInt(), kind, stats)
-		val random = roll.first
-		val result = roll.second
-
-		val prefix = "<bold><gold>[</gold> <blue>ROLL</blue> <gold>]</gold></bold> "
-
-		val messages = if (kind != null) {
-			listOf(
-					"$prefix <yellow><name></yellow> <chat_color>rolls <roll> out of <dice> for $kind.</chat_color>",
-					"$prefix <chat_color>Result after applying $kind modifier: <bold><result></bold></chat_color>"
-			)
-		} else {
-			listOf(
-					"$prefix <yellow><name></yellow> <chat_color>rolls <roll> out of <dice>.</chat_color>"
-			)
-		}
-
-		val chatStyle = sender.chat.chatStyle ?: Style.style(NamedTextColor.YELLOW)
+		val prefix = miniMessage.deserialize("<bold><gold>[</gold> <blue>ROLL</blue> <gold>]</gold></bold>")
+		val chatStyle = senderPlayer.chat.chatStyle ?: Style.style(NamedTextColor.YELLOW)
 		val resolver = TagResolver.builder().tag("chat_color", Tag.styling { it.merge(chatStyle) }).build()
-		val parsed = messages.map {
-			miniMessage.deserialize(it,
-					Placeholder.unparsed("name", senderCharacter?.name ?: sender.name),
-					Placeholder.unparsed("roll", random.toString()),
-					Placeholder.unparsed("dice", dice.toString()),
-					Placeholder.unparsed("result", result.toString()),
-					resolver
-			)
-		}
 
-		getPlayersWithinRange(sender.location, ROLL_RANGE).forEach { parsed.forEach { message -> it.sendMessage(message) } }
-		parsed.forEach { Bukkit.getConsoleSender().sendMessage(it) }
+		val isComplex = !expression.matches(Regex("[0-9]+"))
+
+		if (isComplex) {
+			val result = try {
+				rollExpression(expression, stats, kind)
+			} catch (ex: Exception) {
+				throw CommandException(ex.message)
+			}
+
+			server.broadcast(senderPlayer.location, 15,
+				miniMessage.deserialize(
+					"<prefix> <yellow><name></yellow> <chat_color>rolls <kind><expression> = <bold><result></bold></chat_color>",
+					Placeholder.component("prefix", prefix),
+					Placeholder.unparsed("expression", expression),
+					Placeholder.unparsed("kind", if (kind != null) "${kind.shortName} " else ""),
+					Placeholder.unparsed("result", result.toString()),
+					Placeholder.unparsed("name", senderName),
+					resolver
+				)
+			)
+			return
+		} else {
+			if (senderCharacter == null && kind != null) {
+				throw CommandException("You cannot roll a specific stat kind while you are out of character")
+			}
+
+			val dice = expression.toIntOrNull() ?: throw CommandException("Could not parse '$expression' as an integer")
+
+			val roll = com.fablesfantasyrp.plugin.rolls.roll(dice.toUInt(), kind, stats)
+			val result = roll.second
+
+			val letter = when(kind) {
+				CharacterStatKind.AGILITY -> "a"
+				CharacterStatKind.DEFENSE -> "d"
+				CharacterStatKind.STRENGTH -> "s"
+				CharacterStatKind.INTELLIGENCE -> "i"
+				null -> ""
+			}
+
+			val message = miniMessage.deserialize(
+				"<prefix> <yellow><name></yellow> <chat_color>rolls d<dice><stat_letter> = <bold><result></bold></chat_color>",
+				Placeholder.component("prefix", prefix),
+				Placeholder.unparsed("dice", dice.toString()),
+				Placeholder.unparsed("result", result.toString()),
+				Placeholder.unparsed("stat_letter", letter),
+				Placeholder.unparsed("name", senderName),
+				resolver
+			)
+
+			server.broadcast(senderPlayer.location, ROLL_RANGE.toInt(), message)
+		}
 	}
 }

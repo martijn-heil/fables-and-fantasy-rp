@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.rolls
 
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
+import com.fablesfantasyrp.plugin.profile.command.provider.ProfileModule
 import com.fablesfantasyrp.plugin.rolls.command.Commands
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
@@ -36,6 +37,7 @@ class FablesRolls : JavaPlugin(), KoinComponent {
 		injector.install(CommonModule())
 		injector.install(FixedSuggestionsModule(injector))
 		injector.install(get<CharacterModule>())
+		injector.install(get<ProfileModule>())
 
 		val builder = ParametricBuilder(injector)
 		builder.authorizer = BukkitAuthorizer()
@@ -43,7 +45,7 @@ class FablesRolls : JavaPlugin(), KoinComponent {
 		val dispatcher = CommandGraph()
 				.builder(builder)
 				.commands()
-				.registerMethods(Commands(get(), get()))
+				.registerMethods(Commands(get(), get(), get()))
 				.graph()
 				.dispatcher
 
