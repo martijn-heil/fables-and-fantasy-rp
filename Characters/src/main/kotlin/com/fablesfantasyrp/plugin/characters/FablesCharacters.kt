@@ -113,7 +113,13 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 		server.pluginManager.registerEvents(get<CharacterCreationListener>(), this)
 
 		if (server.pluginManager.isPluginEnabled("TAB") && server.pluginManager.isPluginEnabled("Denizen") ) {
+			logger.info("Enabling TAB integration")
 			com.fablesfantasyrp.plugin.characters.nametags.NameTagManager(get(), get()).start()
+		}
+
+		if (server.pluginManager.isPluginEnabled("FablesWeb")) {
+			logger.info("Enabling FablesWeb integration")
+			com.fablesfantasyrp.plugin.characters.web.WebHook().start()
 		}
 
 		server.scheduler.scheduleSyncRepeatingTask(this, {

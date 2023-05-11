@@ -15,6 +15,7 @@ plugins {
 	idea
 	id("io.papermc.paperweight.userdev")
 	id("com.vanniktech.dependency.graph.generator")
+	id("org.jetbrains.kotlin.plugin.serialization")
 
 	// NOTE: external plugin version is specified in implementation dependency artifact of the project's build file
 }

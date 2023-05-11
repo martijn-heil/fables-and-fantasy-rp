@@ -17,6 +17,7 @@ dependencies {
     implementation(project(":Location"))
     implementation(project(":Inventory"))
     implementation(project(":StaffProfiles"))
+    implementation(project(":Web"))
     api(project(":Profile"))
     api(project(":Database"))
     api(project(":Inventory"))

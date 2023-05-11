@@ -47,4 +47,5 @@ include("examples:BlankSystem",
 		"Weights",
 		"Party",
 		"PlayerESP",
-		"AlternateMechanics")
+		"AlternateMechanics",
+		"Web")

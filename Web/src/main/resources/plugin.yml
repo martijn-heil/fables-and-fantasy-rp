@@ -1,0 +1,10 @@
+name: FablesWeb
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+  - FablesText
+  - NinCommands
+main: com.fablesfantasyrp.plugin.web.FablesWeb
+api-version: @bukkit_api_version@
