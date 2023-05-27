@@ -42,7 +42,7 @@ object ChatSpectator : ChatChannel, RawChatChannel, ToggleableChatChannel, Comma
 				.tag("message", Tag.selfClosingInserting(message))
 				.build()
 		return miniMessage.deserialize(
-				"<green>[SC]</green> <gray><player_name></gray> <dark_gray>»</dark_gray> <yellow><message></yellow>",
+				"<click:run_command:/sc><green>[SC]</green></click> <gray><player_name></gray> <dark_gray>»</dark_gray> <yellow><message></yellow>",
 				TagResolver.standard(), customResolver)
 	}
 

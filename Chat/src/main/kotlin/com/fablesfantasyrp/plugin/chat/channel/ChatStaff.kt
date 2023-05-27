@@ -60,6 +60,7 @@ abstract class AbstractChatStaff : ChatChannel, RawChatChannel, CommandSenderCom
 		val chatSuffix = if (from is Player) from.suffix else Component.text()
 		val teamName = if (channelName != "") channelName else null
 		val channelName = Component.text(listOfNotNull("ST", teamName).joinToString("#"))
+		val subChannelSyntax = if(teamName != null) " #$teamName" else ""
 
 		val customResolver = TagResolver.builder()
 				.tag("prefix", Tag.selfClosingInserting(chatPrefix))
@@ -69,7 +70,7 @@ abstract class AbstractChatStaff : ChatChannel, RawChatChannel, CommandSenderCom
 				.tag("channel", Tag.selfClosingInserting(channelName))
 				.build()
 		return miniMessage.deserialize(
-				"<dark_red>[<channel>]</dark_red> <gray><prefix><player_name><suffix></gray> <dark_gray>»</dark_gray> <red><message></red>",
+				"<click:run_command:'/st$subChannelSyntax'><dark_red>[<channel>]</dark_red></click> <gray><prefix><player_name><suffix></gray> <dark_gray>»</dark_gray> <red><message></red>",
 				TagResolver.standard(), customResolver)
 	}
 

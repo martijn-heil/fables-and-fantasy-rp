@@ -55,7 +55,7 @@ object ChatOutOfCharacter : ChatChannel, RawChatChannel, ToggleableChatChannel, 
 				.tag("message", Tag.selfClosingInserting(message))
 				.build()
 		return miniMessage.deserialize(
-				"<gold>[G]</gold> <gray><prefix><player_name><suffix></gray> <dark_gray>»</dark_gray> <gray><message></gray>",
+				"<click:run_command:/ooc><gold>[G]</gold></click> <gray><prefix><player_name><suffix></gray> <dark_gray>»</dark_gray> <gray><message></gray>",
 				TagResolver.standard(), customResolver)
 	}
 

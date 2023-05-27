@@ -52,7 +52,7 @@ object ChatLocalOutOfCharacter : ChatChannel, RawChatChannel, ToggleableChatChan
 				.tag("message", Tag.selfClosingInserting(message))
 				.build()
 		return miniMessage.deserialize(
-				"<yellow>[L]</yellow> <white><player_name></white> " +
+				"<click:run_command:/looc><yellow>[L]</yellow></click> <white><player_name></white> " +
 						"<dark_gray>(</dark_gray><gray><character_name></gray><dark_gray>)</dark_gray> <yellow>»</yellow> " +
 						"<gray><message></gray>", TagResolver.standard(), customResolver)
 	}
