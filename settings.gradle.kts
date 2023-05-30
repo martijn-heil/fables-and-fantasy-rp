@@ -48,4 +48,5 @@ include("examples:BlankSystem",
 		"Party",
 		"PlayerESP",
 		"AlternateMechanics",
-		"Web")
+		"Web",
+		"Time")
