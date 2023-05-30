@@ -17,6 +17,7 @@ class Character : DataEntity<Int, Character>, CharacterData {
 	val createdAt: Instant?
 	var lastSeen: Instant?
 		get() = if (Services.get<ProfileManager>().getCurrentForProfile(profile) != null) Instant.now() else field
+		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 
 	var diedAt: Instant? 			set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 	var shelvedAt: Instant? 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }

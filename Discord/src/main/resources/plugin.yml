@@ -1,0 +1,10 @@
+name: FablesDiscord
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+  - FablesText
+  - FablesDenizenInterop
+main: com.fablesfantasyrp.plugin.discord.FablesDiscord
+api-version: @bukkit_api_version@

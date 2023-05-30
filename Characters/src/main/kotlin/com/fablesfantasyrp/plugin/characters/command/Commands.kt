@@ -32,6 +32,8 @@ import com.sk89q.intake.parametric.annotation.Optional
 import com.sk89q.intake.parametric.annotation.Range
 import com.sk89q.intake.parametric.annotation.Switch
 import com.sk89q.intake.util.auth.AuthorizationException
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.ChatColor
@@ -143,23 +145,24 @@ class Commands(private val plugin: JavaPlugin,
 		@Require(Permission.Command.Characters.List)
 		fun list(@Sender sender: CommandSender,
 				@CommandTarget(Permission.Command.Characters.List + ".others") owner: OfflinePlayer) {
-			sender.sendMessage("$SYSPREFIX ${owner.name} has the following characters:")
-			characterRepository.forOwner(owner).forEach {
+			val message = legacyText("$SYSPREFIX ${owner.name} has the following characters:").append(
+			Component.join(JoinConfiguration.newlines(), characterRepository.forOwner(owner).map {
 				val dead = if (it.isDead) " ${ChatColor.RED}(dead)" else ""
 				val shelved = if (it.isShelved) " ${ChatColor.YELLOW}(shelved)" else ""
-				sender.sendMessage("${ChatColor.GRAY}#${it.id} ${it.name}${dead}${shelved}")
-			}
+				legacyText("${ChatColor.GRAY}#${it.id} ${it.name}${dead}${shelved}")
+			}))
+			sender.sendMessage(message)
 		}
 
 		@Command(aliases = ["listunowned"], desc = "List characters without an owner")
 		@Require(Permission.Command.Characters.Listunowned)
 		fun listunowned(@Sender sender: CommandSender) {
-			sender.sendMessage("$SYSPREFIX The following characters have no owner:")
-			characterRepository.forOwner(null).forEach {
+			legacyText("$SYSPREFIX The following characters have no owner:").append(
+			Component.join(JoinConfiguration.newlines(), characterRepository.forOwner(null).map {
 				val dead = if (it.isDead) " ${ChatColor.RED}(dead)" else ""
 				val shelved = if (it.isShelved) " ${ChatColor.YELLOW}(shelved)" else ""
-				sender.sendMessage("${ChatColor.GRAY}#${it.id} ${it.name}${dead}${shelved}")
-			}
+				legacyText("${ChatColor.GRAY}#${it.id} ${it.name}${dead}${shelved}")
+			}))
 		}
 
 		@Command(aliases = ["card"], desc = "Display a character's card in chat.")
@@ -237,31 +240,6 @@ class Commands(private val plugin: JavaPlugin,
 			target.race = race
 			sender.sendMessage("$SYSPREFIX Set ${target.name}'s race to $race")
 		}
-
-		/*@Command(aliases = ["setage"], desc = "Set a character's age")
-		@Require(Permission.Command.Characters.SetAge)
-		fun setage(@Sender sender: CommandSender, @Range(min = 13.0, max = 999.0) age: Int, target: Character) {
-			if (target.isShelved) {
-				sender.sendError("This character is shelved")
-				return
-			}
-
-			if (target.isDead) {
-				sender.sendError("This character is dead")
-				return
-			}
-
-			val owner = target.profile.owner
-
-			if (sender != owner &&
-					!(sender.hasPermission(Permission.Command.Characters.Shelf + ".any") ||
-							(sender.hasPermission(Permission.Staff) && target.isStaffCharacter))) {
-				sender.sendError("Permission denied")
-				return
-			}
-
-			target.age = age.toUInt()
-		}*/
 
 		@Command(aliases = ["become", "switch"], desc = "Become a character")
 		@Require(Permission.Command.Characters.Become)

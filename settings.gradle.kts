@@ -49,4 +49,5 @@ include("examples:BlankSystem",
 		"PlayerESP",
 		"AlternateMechanics",
 		"Web",
+		"Discord",
 		"Time")
