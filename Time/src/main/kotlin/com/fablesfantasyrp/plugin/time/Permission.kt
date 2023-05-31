@@ -9,6 +9,7 @@ object Permission {
 
 		object DateTime {
 			const val Set = "${prefix}.date"
+			const val DebugInfo = "${prefix}.debuginfo"
 		}
 	}
 }

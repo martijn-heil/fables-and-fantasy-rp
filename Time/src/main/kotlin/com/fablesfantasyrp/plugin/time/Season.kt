@@ -7,4 +7,8 @@ enum class Season(private val displayName: String) {
 	THE_AMBER_DAWN("The Amber Dawn");
 
 	override fun toString() = displayName
+
+	companion object {
+		fun ofYear(year: Int) = values()[year % values().size]
+	}
 }

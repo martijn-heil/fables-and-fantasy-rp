@@ -16,7 +16,9 @@ class WorldTimeSynchronizer(private val plugin: Plugin,
 
 	fun start() {
 		taskId = server.scheduler.scheduleSyncRepeatingTask(plugin, {
-			val time = (clock.instant().epochSecond.toDouble() * TICKS_IN_SECOND).roundToLong()
+			val epochSecond = clock.instant().epochSecond
+			// Offset by -6000 because 0 ticks in Minecraft is actually 6 AM instead of midnight
+			val time = (epochSecond.toDouble() * TICKS_IN_SECOND).roundToLong() - 6000
 			worlds.forEach { it.time = time }
 		}, 0, 1)
 		check(taskId != -1)

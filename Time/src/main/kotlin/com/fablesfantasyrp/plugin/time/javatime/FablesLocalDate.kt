@@ -584,9 +584,9 @@ class FablesLocalDate private constructor(val year: Int, private val month: Int,
 			ChronoField.EPOCH_DAY.checkValidValue(epochDay)
 			val zeroDay = epochDay + DAYS_0000_TO_1970
 
-			val year = (zeroDay / DAYS_IN_YEAR)
-			val month = (zeroDay % DAYS_IN_YEAR) / DAYS_IN_MONTH + 1
-			val day = (zeroDay % DAYS_IN_MONTH) + 1
+			val year = Math.floorDiv(zeroDay, DAYS_IN_YEAR)
+			val month = Math.floorDiv(Math.floorMod(zeroDay, DAYS_IN_YEAR), DAYS_IN_MONTH) + 1
+			val day = Math.floorMod(zeroDay, DAYS_IN_MONTH) + 1
 
 			return FablesLocalDate(year.toInt(), month.toInt(), day.toInt())
 		}

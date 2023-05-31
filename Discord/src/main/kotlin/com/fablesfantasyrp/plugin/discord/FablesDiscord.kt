@@ -26,6 +26,12 @@ class FablesDiscord : JavaPlugin(), KoinComponent {
 		instance = this
 		saveDefaultConfig()
 
+		if (config.getString("token")!!.isEmpty()) {
+			logger.warning("Discord bot token is not filled in config.yml, shutting down plugin.")
+			isEnabled = false
+			return
+		}
+
 		koinModule = module(createdAtStart = true) {
 			single<Plugin> { this@FablesDiscord } binds(arrayOf(JavaPlugin::class))
 
