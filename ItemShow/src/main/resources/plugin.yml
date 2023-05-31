@@ -1,0 +1,11 @@
+name: FablesItemShow
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+  - FablesText
+  - FablesCharacters
+  - NinCommands
+main: com.fablesfantasyrp.plugin.itemshow.FablesItemShow
+api-version: @bukkit_api_version@

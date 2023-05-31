@@ -50,4 +50,5 @@ include("examples:BlankSystem",
 		"AlternateMechanics",
 		"Web",
 		"Discord",
-		"Time")
+		"Time",
+		"ItemShow")
