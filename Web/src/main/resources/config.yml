@@ -4,3 +4,7 @@ bind:
 discord:
   client_id: ''
   client_secret: ''
+allowHosts:
+  - 'localhost'
+  - 'localhost:7009'
+  - 'localhost:4200'

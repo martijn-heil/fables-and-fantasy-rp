@@ -18,6 +18,7 @@ import com.gitlab.martijn_heil.nincommands.common.Sender
 import com.sk89q.intake.Command
 import com.sk89q.intake.Require
 import com.sk89q.intake.parametric.annotation.Optional
+import com.sk89q.intake.parametric.annotation.Range
 import com.sk89q.intake.util.auth.AuthorizationException
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
@@ -154,6 +155,18 @@ class Commands(private val plugin: Plugin,
 			party.respawnLocation = sender.location
 		}
 
+		@Command(aliases = ["setrespawns"], desc = "Set a party's respawn count")
+		@Require(Permission.Command.Party.Setrespawns)
+		fun setrespawns(@Sender sender: CommandSender, @Range(min = 0.00) respawns: Int, @CommandTarget party: Party) {
+			party.respawns = respawns
+		}
+
+		@Command(aliases = ["togglerespawns"], desc = "Toggle whether a party uses their respawns")
+		@Require(Permission.Command.Party.Togglerespawns)
+		fun togglerespawns(@Sender sender: CommandSender, @CommandTarget party: Party) {
+			party.useRespawns = !party.useRespawns
+		}
+
 		@Command(aliases = ["resetspawn"], desc = "Reset a party spawn")
 		@Require(Permission.Command.Party.Setspawn)
 		fun resetspawn(@Sender sender: CommandSender, @CommandTarget party: Party) {
@@ -273,6 +286,12 @@ class Commands(private val plugin: Plugin,
 					.map { Component.text(it.name) })).color(NamedTextColor.GRAY)
 
 			sender.sendMessage(message)
+		}
+
+		@Command(aliases = ["card"], desc = "Display a party's card")
+		@Require(Permission.Command.Party.Card)
+		fun card(@Sender sender: CommandSender, @CommandTarget party: Party) {
+			sender.sendMessage(partyCard(party))
 		}
 
 		@Command(aliases = ["select"], desc = "Select a party for targeting")

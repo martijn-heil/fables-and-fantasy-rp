@@ -40,6 +40,21 @@ class PartyListener(private val parties: PartyRepository,
 	fun onPlayerRespawn(e: PlayerRespawnEvent) {
 		val character = profileManager.getCurrentForPlayer(e.player)?.let { characters.forProfile(it) } ?: return
 		val party = parties.forMember(character) ?: return
+
+		if (party.useRespawns) {
+			if (party.respawns <= 0) {
+				if (party.owner != character) {
+					party.members = party.members.minus(character)
+					e.player.sendMessage("$SYSPREFIX Your party has run out of respawns! You've been kicked.")
+				} else {
+					e.player.sendMessage("$SYSPREFIX Your party has run out of respawns!")
+				}
+				return
+			} else {
+				party.respawns--
+			}
+		}
+
 		val respawnLocation = party.respawnLocation ?: return
 		e.respawnLocation = respawnLocation
 	}

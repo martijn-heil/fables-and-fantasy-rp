@@ -147,6 +147,26 @@ class Party : DataEntity<Int, Party> {
 			}
 		}
 
+	var respawns: Int = 0
+		set(value) {
+			if (field != value) {
+				field = value
+				this.broadcast("$SYSPREFIX The party's number of respawns was set to $value")
+			}
+		}
+
+	var useRespawns: Boolean = false
+		set(value) {
+			if (field != value) {
+				if (value) {
+					this.broadcast("$SYSPREFIX The party is now using respawns")
+				} else {
+					this.broadcast("$SYSPREFIX The party is no longer using respawns")
+				}
+				field = value
+			}
+		}
+
 	fun updateGlow() {
 		if (this.color != null) {
 			val glowingManager = GlobalContext.get().get<GlowingManager>()

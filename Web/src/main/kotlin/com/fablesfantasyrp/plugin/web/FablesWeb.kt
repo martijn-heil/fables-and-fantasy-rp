@@ -58,15 +58,14 @@ class FablesWeb : JavaPlugin(), KoinComponent {
 		val discordClientSecret = config.getString("discord.client_secret")!!
 		val port = config.getInt("bind.port")
 		val host = config.getString("bind.host")!!
+		val allowHosts = config.getStringList("allowHosts")
 
 		server.scheduler.scheduleSyncDelayedTask(this, {
 			embeddedServer(Netty, port = port, host = host) {
 				install(Resources)
 
 				install(CORS) {
-					allowHost("localhost")
-					allowHost("localhost:7009")
-					allowHost("localhost:4200")
+					allowHosts.forEach { allowHost(it) }
 					allowCredentials = true
 				}
 

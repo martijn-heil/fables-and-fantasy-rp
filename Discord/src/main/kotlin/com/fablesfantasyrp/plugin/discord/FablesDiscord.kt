@@ -19,7 +19,7 @@ internal val SYSPREFIX = "$GOLD${BOLD}[${LIGHT_PURPLE}${BOLD} DISCORD ${GOLD}${B
 internal val PLUGIN get() = FablesDiscord.instance
 
 class FablesDiscord : JavaPlugin(), KoinComponent {
-	private lateinit var koinModule: Module
+	private var koinModule: Module? = null
 
 	override fun onEnable() {
 		enforceDependencies(this)
@@ -39,14 +39,14 @@ class FablesDiscord : JavaPlugin(), KoinComponent {
 
 			single { FablesDiscordBot(get(), config.getString("token")!!) }
 		}
-		loadKoinModules(koinModule)
+		loadKoinModules(koinModule!!)
 
 		get<DiscordLinkingTracker>().start()
 		get<FablesDiscordBot>().start()
 	}
 
 	override fun onDisable() {
-		unloadKoinModules(koinModule)
+		koinModule?.let { unloadKoinModules(it) }
 	}
 
 	companion object {
