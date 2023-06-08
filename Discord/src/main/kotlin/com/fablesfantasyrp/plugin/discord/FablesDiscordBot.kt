@@ -8,7 +8,6 @@ import dev.kord.core.event.message.MessageCreateEvent
 import dev.kord.core.on
 import dev.kord.gateway.Intent
 import dev.kord.gateway.Intents
-import dev.kord.gateway.PrivilegedIntent
 import kotlinx.coroutines.withContext
 import org.bukkit.plugin.java.JavaPlugin
 
@@ -20,16 +19,6 @@ class FablesDiscordBot(private val plugin: JavaPlugin, private val token: String
 
 	private val COMMAND_PREFIX = "?"
 	private val IGNORE_COMMANDS = setOf("date", "character", "whitelist", "parse")
-
-	@OptIn(PrivilegedIntent::class)
-	private val intents = Intents(listOf(
-		Intent.MessageContent,
-		Intent.DirectMessages,
-		Intent.DirectMessagesReactions,
-		Intent.Guilds,
-		Intent.GuildMessages,
-		Intent.GuildMembers,
-	))
 
 	suspend fun getMainDiscord() = kord.getGuildOrThrow(MAIN_DISCORD_ID)
 	suspend fun getSupportDiscord() = kord.getGuildOrThrow(SUPPORT_DISCORD_ID)
