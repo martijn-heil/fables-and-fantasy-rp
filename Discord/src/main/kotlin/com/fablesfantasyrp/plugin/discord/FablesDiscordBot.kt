@@ -54,7 +54,7 @@ class FablesDiscordBot(private val plugin: JavaPlugin, private val token: String
 			if (!message.content.startsWith(COMMAND_PREFIX)) return@on
 			val command = message.content.removePrefix(COMMAND_PREFIX)
 
-			if (IGNORE_COMMANDS.contains(command)) return@on
+			if (command.isEmpty() || IGNORE_COMMANDS.contains(command)) return@on
 
 			val channel = message.channel
 			val sender = DiscordCommandSender(this.member!!.asUser()) {
