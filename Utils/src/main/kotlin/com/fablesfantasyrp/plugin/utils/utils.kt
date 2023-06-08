@@ -73,10 +73,18 @@ fun Location.humanReadable() = "${blockX},${blockY},${blockZ},${world.name}"
 val Player.isRealPlayer: Boolean get() = server.onlinePlayers.contains(player)
 
 fun quoteCommandArgument(s: String): String {
-	return if (s.contains(" ")) "\"$s\"" else s
+	return if (s.contains(" ") || s.contains("'")) "\"$s\"" else s
 }
 
-data class BlockLocation(val x: Int, val y: Int, val z: Int)
+data class BlockCoordinates(val x: Int, val y: Int, val z: Int) {
+	fun withWorld(world: UUID) = BlockIdentifier(world, x, y, z)
+}
+data class BlockIdentifier(val world: UUID, val x: Int, val y: Int, val z: Int) {
+	fun toBlockCoordinates() = BlockCoordinates(x, y, z)
+	fun toLocation() = Location(Bukkit.getWorld(world)!!, x.toDouble(), y.toDouble(), z.toDouble())
+}
+
+fun Location.toBlockIdentifier() = BlockIdentifier(this.world.uid, this.blockX, this.blockY, this.blockZ)
 
 fun ChatColor.toNamedTextColor(): NamedTextColor? = when (this) {
 	ChatColor.BLACK -> NamedTextColor.BLACK

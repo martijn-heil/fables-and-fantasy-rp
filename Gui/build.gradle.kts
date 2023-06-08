@@ -5,6 +5,7 @@ plugins {
 dependencies {
     // internal module dependencies
     implementation(project(":KotlinRuntime"))
+    implementation(project(":Utils"))
     shadow("de.themoep:inventorygui:1.4.3-SNAPSHOT")
     api("de.themoep:inventorygui:1.4.3-SNAPSHOT")
     shadow("net.wesjd:anvilgui:1.6.0-SNAPSHOT")

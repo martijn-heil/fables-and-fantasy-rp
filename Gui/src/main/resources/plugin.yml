@@ -3,5 +3,6 @@ version: @version@
 authors: [@authors@]
 depend:
   - FablesKotlinRuntime
+  - FablesUtils
 main: com.fablesfantasyrp.plugin.gui.FablesGui
 api-version: @bukkit_api_version@

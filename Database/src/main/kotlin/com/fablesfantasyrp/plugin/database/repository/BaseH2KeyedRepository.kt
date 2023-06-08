@@ -44,7 +44,13 @@ abstract class BaseH2KeyedRepository<K, T: Identifiable<K>>(private val keyClass
 			val stmnt = connection.prepareStatement("SELECT id FROM $TABLE_NAME")
 			val result = stmnt.executeQuery()
 			val all = ArrayList<K>()
-			while (result.next()) all.add(result.getObject("id", keyClass))
+			while (result.next()) {
+				when (keyClass) {
+					Int::class.java -> all.add(result.getInt("id") as K)
+					Long::class.java -> all.add(result.getLong("id") as K)
+					else -> all.add(result.getObject("id", keyClass))
+				}
+			}
 			all
 		}
 	}

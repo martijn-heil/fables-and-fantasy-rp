@@ -1,0 +1,13 @@
+name: FablesBell
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+  - FablesDatabase
+  - FablesForm
+  - FablesChat
+  - FablesDiscord
+  - NinCommands
+main: com.fablesfantasyrp.plugin.bell.FablesBell
+api-version: @bukkit_api_version@

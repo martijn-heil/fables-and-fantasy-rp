@@ -12,20 +12,22 @@ import org.koin.core.context.GlobalContext
 val OfflinePlayer.chat: ChatPlayer
 	get() = GlobalContext.get().get<EntityChatPlayerRepository>().forId(uniqueId)!!
 
-suspend fun Player.awaitEmote(prompt: String) {
+suspend fun Player.awaitEmote(prompt: String): String {
 	val chatEntity = chat
 	val oldChannel = chatEntity.channel
 	chatEntity.channel = ChatInCharacter
 	val message = this.promptChat(prompt)
 	ChatInCharacter.sendMessage(this, message)
 	chatEntity.channel = oldChannel
+	return message
 }
 
-suspend fun Player.awaitEmote(prompt: Component) {
+suspend fun Player.awaitEmote(prompt: Component): String {
 	val chatEntity = chat
 	val oldChannel = chatEntity.channel
 	chatEntity.channel = ChatInCharacter
 	val message = this.promptChat(prompt)
 	ChatInCharacter.sendMessage(this, message)
 	chatEntity.channel = oldChannel
+	return message
 }

@@ -9,7 +9,7 @@ import com.fablesfantasyrp.plugin.database.repository.BaseH2KeyedRepository
 import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
 import com.fablesfantasyrp.plugin.database.setCollection
 import com.fablesfantasyrp.plugin.database.setUuid
-import com.fablesfantasyrp.plugin.utils.BlockLocation
+import com.fablesfantasyrp.plugin.utils.BlockCoordinates
 import org.bukkit.Server
 import org.h2.api.H2Type
 import java.sql.ResultSet
@@ -88,7 +88,7 @@ class H2SlidingDoorRepository(private val server: Server,
 		val handleLocationZ = row.getInt("handle_location_z")
 		val world = server.getWorld(row.getUuid("world")!!)!! // "Life without risks is not worth living." – Charles A. Lindbergh
 		val blocks = row.getList<OffsetBlock>("blocks")
-		val handleLocation = BlockLocation(handleLocationX, handleLocationY, handleLocationZ)
+		val handleLocation = BlockCoordinates(handleLocationX, handleLocationY, handleLocationZ)
 
 		return SlidingDoor(
 				id = id,
