@@ -21,6 +21,8 @@ class Bell : DataEntity<Int, Bell>, Named {
 
 	var isDestroyed: Boolean = false
 
+	var isRinging = false
+		private set
 	val location: BlockIdentifier
 	var discordChannelId: Snowflake		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 	var discordRoleIds: Set<Snowflake>	set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
@@ -40,12 +42,15 @@ class Bell : DataEntity<Int, Bell>, Named {
 	}
 
 	fun ringFor(duration: Duration) {
+		check(!isRinging)
+		isRinging = true
 		PLUGIN.launch {
 			val start = Instant.now()
 			while (Duration.between(start, Instant.now()).seconds < duration.seconds) {
 				ringOnce()
 				delay(Random.nextInt(1000, 1500).toLong())
 			}
+			isRinging = false
 		}
 	}
 

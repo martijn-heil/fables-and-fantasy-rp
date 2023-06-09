@@ -3,7 +3,7 @@ package com.fablesfantasyrp.plugin.bell
 import com.fablesfantasyrp.plugin.bell.data.entity.Bell
 import com.fablesfantasyrp.plugin.characters.data.entity.Character
 import com.fablesfantasyrp.plugin.chat.awaitEmote
-import com.fablesfantasyrp.plugin.chat.channel.ChatInCharacter
+import com.fablesfantasyrp.plugin.chat.channel.ChatInCharacterShout
 import com.fablesfantasyrp.plugin.discord.FablesDiscordBot
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.text.sendError
@@ -22,8 +22,8 @@ fun tryRingBell(bell: Bell, who: Character) {
 		val player = profileManager.getCurrentForProfile(who.profile) ?: return@launch
 		player.sendMessage("$SYSPREFIX You are attempting to ring the bell!")
 
-		val emote = player.awaitEmote("$SYSPREFIX Please emote to ring the bell:")
-			.let { ChatInCharacter.getPreview(player, it) }
+		val emote = player.awaitEmote("$SYSPREFIX Please emote to ring the bell:", ChatInCharacterShout)
+			.let { ChatInCharacterShout.getPreview(player, it) }
 			.let { PlainTextComponentSerializer.plainText().serialize(it) }
 
 		if (emote.length < 64) {
@@ -33,6 +33,11 @@ fun tryRingBell(bell: Bell, who: Character) {
 
 		if (player.location.distanceSafe(bell.location.toLocation()) > 10) {
 			player.sendError("You moved too far away from the bell!")
+			return@launch
+		}
+
+		if (bell.isRinging) {
+			player.sendError("The bell is already ringing")
 			return@launch
 		}
 
