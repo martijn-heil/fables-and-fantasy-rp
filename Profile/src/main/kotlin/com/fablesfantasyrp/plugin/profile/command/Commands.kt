@@ -24,7 +24,7 @@ class Commands(private val profiles: ProfileRepository,
 				 @CommandTarget(Permission.Command.CommandProfile.List + ".others") owner: OfflinePlayer) {
 			sender.sendMessage("$SYSPREFIX ${owner.name} has the following profiles:")
 			for (profile in profiles.allForOwner(owner)) {
-				sender.sendMessage("${ChatColor.GRAY}#${profile.id}")
+				sender.sendMessage("${ChatColor.GRAY}#${profile.id} ${ChatColor.DARK_PURPLE}${profile.description}")
 			}
 		}
 
