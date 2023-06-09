@@ -6,9 +6,9 @@ import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
 
 private val currentChatWaitMap = HashMap<Player, CompletableDeferred<Unit>>()
-private val currentChatInputFormMap = HashMap<Player, CompletableDeferred<String>>()
+private val currentChatInputFormMap = HashMap<Player, ChatPrompt>()
 
-var Player.currentChatInputForm: CompletableDeferred<String>?
+var Player.currentChatInputForm: ChatPrompt?
 	get() = currentChatInputFormMap[this]
 	set(value) {
 		if (value != null) {
@@ -29,7 +29,7 @@ fun Player.completeWaitForChat() {
 	currentChatWaitMap.remove(this)?.complete(Unit)
 }
 
-suspend fun Player.promptChat(query: String) = promptChat(this, query)
-suspend fun Player.promptChat(query: Component) = promptChat(this, query)
+suspend fun Player.promptChat(query: String, getPreview: ((String) -> Component)? = null) = promptChat(this, query, getPreview)
+suspend fun Player.promptChat(query: Component, getPreview: ((String) -> Component)? = null) = promptChat(this, query, getPreview)
 
 suspend fun<T> Player.promptGui(gui: ResultProducingInventoryGui<T>) = promptGui(this, gui)

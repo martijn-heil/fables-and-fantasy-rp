@@ -2,6 +2,7 @@ package com.fablesfantasyrp.plugin.chat
 
 import com.fablesfantasyrp.plugin.chat.channel.ChatChannel
 import com.fablesfantasyrp.plugin.chat.channel.ChatInCharacter
+import com.fablesfantasyrp.plugin.chat.channel.PreviewableChatChannel
 import com.fablesfantasyrp.plugin.chat.data.entity.ChatPlayer
 import com.fablesfantasyrp.plugin.chat.data.entity.EntityChatPlayerRepository
 import com.fablesfantasyrp.plugin.form.promptChat
@@ -17,7 +18,7 @@ suspend fun Player.awaitEmote(prompt: String, channel: ChatChannel = ChatInChara
 	val chatEntity = chat
 	val oldChannel = chatEntity.channel
 	chatEntity.channel = channel
-	val message = this.promptChat(prompt)
+	val message = this.promptChat(prompt, if (channel is PreviewableChatChannel) { { channel.getPreview(this, it) } } else null)
 	channel.sendMessage(this, message)
 	chatEntity.channel = oldChannel
 	return message
@@ -27,7 +28,7 @@ suspend fun Player.awaitEmote(prompt: Component, channel: ChatChannel = ChatInCh
 	val chatEntity = chat
 	val oldChannel = chatEntity.channel
 	chatEntity.channel = channel
-	val message = this.promptChat(prompt)
+	val message = this.promptChat(prompt, if (channel is PreviewableChatChannel) { { channel.getPreview(this, it) } } else null)
 	channel.sendMessage(this, message)
 	chatEntity.channel = oldChannel
 	return message

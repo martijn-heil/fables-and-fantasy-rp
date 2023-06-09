@@ -8,6 +8,7 @@ import com.comphenix.protocol.events.PacketContainer
 import com.comphenix.protocol.events.PacketEvent
 import com.comphenix.protocol.wrappers.WrappedChatComponent
 import com.fablesfantasyrp.plugin.chat.channel.*
+import com.fablesfantasyrp.plugin.form.currentChatInputForm
 import com.fablesfantasyrp.plugin.text.formatError
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
@@ -79,7 +80,7 @@ class ChatPreviewManager(private val plugin: Plugin) {
 							val result: Pair<ChatChannel, String> = chatPlayerEntity.parseChatMessage(rawChatMessage)
 							val message = result.second
 							val channel = result.first
-							val messageComponent = if (channel is PreviewableChatChannel) {
+							val messageComponent = if (channel is PreviewableChatChannel && player.currentChatInputForm == null) {
 								chatPlayerEntity.previewChannel = channel
 								channel.getPreview(player, message)
 							} else Component.text("")
