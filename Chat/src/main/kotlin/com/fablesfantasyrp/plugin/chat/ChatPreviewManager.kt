@@ -80,7 +80,9 @@ class ChatPreviewManager(private val plugin: Plugin) {
 							val result: Pair<ChatChannel, String> = chatPlayerEntity.parseChatMessage(rawChatMessage)
 							val message = result.second
 							val channel = result.first
-							val messageComponent = if (channel is PreviewableChatChannel && player.currentChatInputForm == null) {
+							val messageComponent = if (player.currentChatInputForm != null) {
+								player.currentChatInputForm!!.getPreview(message)
+							} else if (channel is PreviewableChatChannel) {
 								chatPlayerEntity.previewChannel = channel
 								channel.getPreview(player, message)
 							} else Component.text("")
