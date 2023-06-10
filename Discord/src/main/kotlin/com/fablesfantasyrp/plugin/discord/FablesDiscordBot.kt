@@ -18,7 +18,7 @@ class FablesDiscordBot(private val plugin: JavaPlugin, private val token: String
 	private val server = plugin.server
 
 	private val COMMAND_PREFIX = "?"
-	private val IGNORE_COMMANDS = setOf("date", "character", "whitelist", "parse")
+	private val IGNORE_COMMANDS = setOf("character", "whitelist", "parse")
 
 	suspend fun getMainDiscord() = kord.getGuildOrThrow(MAIN_DISCORD_ID)
 	suspend fun getSupportDiscord() = kord.getGuildOrThrow(SUPPORT_DISCORD_ID)
@@ -43,7 +43,7 @@ class FablesDiscordBot(private val plugin: JavaPlugin, private val token: String
 			if (!message.content.startsWith(COMMAND_PREFIX)) return@on
 			val command = message.content.removePrefix(COMMAND_PREFIX)
 
-			if (command.isEmpty() || IGNORE_COMMANDS.contains(command)) return@on
+			if (command.isEmpty() || IGNORE_COMMANDS.contains(command.split(" ")[0])) return@on
 
 			val channel = message.channel
 			val sender = DiscordCommandSender(this.member!!.asUser()) {
