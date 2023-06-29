@@ -4,11 +4,12 @@ import com.fablesfantasyrp.plugin.characters.NAME_DISALLOWED_CHARACTERS
 import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
 import com.fablesfantasyrp.plugin.characters.web.model.WebCharacter
 import com.fablesfantasyrp.plugin.web.loaders.BaseRequestValidationLoader
+import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import io.ktor.server.plugins.requestvalidation.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.bukkit.plugin.Plugin
 
-class WebRequestValidation(private val characters: EntityCharacterRepository) : BaseRequestValidationLoader() {
+class WebRequestValidation(private val plugin: Plugin, private val characters: EntityCharacterRepository) : BaseRequestValidationLoader() {
 	override val validation: RequestValidationConfig.() -> Unit = {
 		validate<WebCharacter> {
 			if (it.description.length > 255) {
@@ -35,7 +36,7 @@ class WebRequestValidation(private val characters: EntityCharacterRepository) : 
 				return@validate ValidationResult.Invalid("Character age must not be greater than 1000 years old.")
 			}
 
-			val isNameConflict = withContext(Dispatchers.Main) {
+			val isNameConflict = withContext(plugin.minecraftDispatcher) {
 				val otherCharacter = characters.forName(it.name)
 				otherCharacter != null && otherCharacter.id != it.id
 			}
