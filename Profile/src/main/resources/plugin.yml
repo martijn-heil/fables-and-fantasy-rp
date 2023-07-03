@@ -10,5 +10,7 @@ depend:
   - FablesForm
   - FablesGui
   - NinCommands
+softdepend:
+  - FablesWeb
 main: com.fablesfantasyrp.plugin.profile.FablesProfile
 api-version: @bukkit_api_version@

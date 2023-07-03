@@ -46,7 +46,6 @@ class MageTag(private val mage: Mage) : ObjectTag {
 	}
 
 	override fun isUnique(): Boolean = true
-	override fun getObjectType(): String = "Mage"
 	override fun identify(): String = "mage@${mage.id}"
 	override fun identifySimple(): String = identify()
 	override fun toString(): String = identify()

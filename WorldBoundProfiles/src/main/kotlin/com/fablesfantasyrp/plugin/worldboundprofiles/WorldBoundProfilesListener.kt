@@ -6,7 +6,7 @@ import com.fablesfantasyrp.plugin.profile.ProfilePrompter
 import com.fablesfantasyrp.plugin.profile.data.entity.EntityProfileRepository
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.profile.event.PostPlayerSwitchProfileEvent
-import com.fablesfantasyrp.plugin.profile.event.PrePlayerSwitchProfileEvent
+import com.fablesfantasyrp.plugin.profile.event.PlayerSwitchProfileEvent
 import com.fablesfantasyrp.plugin.utils.FLATROOM
 import com.fablesfantasyrp.plugin.utils.PLOTS
 import com.fablesfantasyrp.plugin.utils.Services
@@ -73,7 +73,7 @@ class WorldBoundProfilesListener(private val plugin: Plugin,
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-	fun onPreProfileSwitch(e: PrePlayerSwitchProfileEvent) {
+	fun onPreProfileSwitch(e: PlayerSwitchProfileEvent) {
 		ignoreList.add(e.player.uniqueId)
 	}
 

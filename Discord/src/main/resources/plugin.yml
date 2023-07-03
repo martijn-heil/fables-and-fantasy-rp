@@ -6,5 +6,7 @@ depend:
   - FablesUtils
   - FablesText
   - FablesDenizenInterop
+softdepend:
+  - FablesWeb
 main: com.fablesfantasyrp.plugin.discord.FablesDiscord
 api-version: @bukkit_api_version@

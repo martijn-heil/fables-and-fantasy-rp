@@ -18,7 +18,6 @@ fun denizenRun(task: String, definitions: Map<String, ObjectTag>) {
 	queue.addDefinition("thedefmap", defMap)
 
 	val entry = ScriptEntry("run", arrayOf(task, "defmap:<[thedefmap]>"), null, null, 1)
-	entry.shouldDebugBool = false
 	queue.addEntries(listOf(entry))
 	queue.start()
 }
@@ -29,7 +28,6 @@ fun ex(entry: String) {
 
 fun ex(definitions: Map<String, ObjectTag>, vararg entries: String) {
 	val scriptEntries = ScriptBuilder.buildScriptEntries(entries.toList() as List<Any>, null, null)
-	scriptEntries.forEach { it.shouldDebugBool = false }
 	val queue = InstantQueue("EXFUNCTION")
 	definitions.forEach { queue.addDefinition(it.key, it.value) }
 	queue.addEntries(scriptEntries)

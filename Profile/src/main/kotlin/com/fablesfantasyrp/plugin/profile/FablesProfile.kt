@@ -9,6 +9,7 @@ import com.fablesfantasyrp.plugin.profile.data.entity.EntityProfileRepository
 import com.fablesfantasyrp.plugin.profile.data.entity.EntityProfileRepositoryImpl
 import com.fablesfantasyrp.plugin.profile.data.entity.ProfileRepository
 import com.fablesfantasyrp.plugin.profile.data.persistent.H2ProfileRepository
+import com.fablesfantasyrp.plugin.profile.web.WebHook
 import com.fablesfantasyrp.plugin.utils.Services
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
@@ -125,6 +126,11 @@ class FablesProfile : JavaPlugin(), KoinComponent {
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
 
 		server.pluginManager.registerEvents(get<ProfileListener>(), this)
+
+		if (server.pluginManager.isPluginEnabled("FablesWeb")) {
+			logger.info("Enabling FablesWeb integration")
+			WebHook().start()
+		}
 	}
 
 	override fun onDisable() {

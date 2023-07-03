@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.discord
 
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
+import dev.kord.common.entity.Snowflake
 import org.bukkit.ChatColor.*
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
@@ -32,17 +33,27 @@ class FablesDiscord : JavaPlugin(), KoinComponent {
 			return
 		}
 
+		val botConfig = FablesDiscordBotConfig(
+			token = config.getString("token")!!,
+			nationDiscords = config.getStringList("nation_discords").map { Snowflake(it) }.toSet()
+		)
+
 		koinModule = module(createdAtStart = true) {
 			single<Plugin> { this@FablesDiscord } binds(arrayOf(JavaPlugin::class))
 
 			singleOf(::DiscordLinkingTracker) bind DiscordLinkService::class
 
-			single { FablesDiscordBot(get(), config.getString("token")!!) }
+			single { FablesDiscordBot(get(), botConfig) }
 		}
 		loadKoinModules(koinModule!!)
 
 		get<DiscordLinkingTracker>().start()
 		get<FablesDiscordBot>().start()
+
+		if (server.pluginManager.isPluginEnabled("FablesWeb")) {
+			logger.info("Enabling FablesWeb integration")
+			com.fablesfantasyrp.plugin.discord.web.WebHook().start()
+		}
 	}
 
 	override fun onDisable() {

@@ -1,8 +1,8 @@
 package com.fablesfantasyrp.plugin.profile
 
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
+import com.fablesfantasyrp.plugin.profile.event.PlayerSwitchProfileEvent
 import com.fablesfantasyrp.plugin.profile.event.PostPlayerSwitchProfileEvent
-import com.fablesfantasyrp.plugin.profile.event.PrePlayerSwitchProfileEvent
 import org.bukkit.Server
 import org.bukkit.entity.Player
 import java.util.*
@@ -27,7 +27,9 @@ internal class ProfileManagerImpl(private val server: Server) : ProfileManager {
 			}
 		}
 
-		server.pluginManager.callEvent(PrePlayerSwitchProfileEvent(player, currentProfile, profile))
+		val event = PlayerSwitchProfileEvent(player, currentProfile, profile)
+		server.pluginManager.callEvent(event)
+		event.transaction.execute()
 
 		currentProfilesTwo.remove(currentProfile)
 		currentProfiles[player.uniqueId] = profile
@@ -39,7 +41,9 @@ internal class ProfileManagerImpl(private val server: Server) : ProfileManager {
 	override fun stopTracking(player: Player) {
 		val currentProfile = this.getCurrentForPlayer(player) ?: return
 
-		server.pluginManager.callEvent(PrePlayerSwitchProfileEvent(player, currentProfile, null))
+		val event = PlayerSwitchProfileEvent(player, currentProfile, null)
+		server.pluginManager.callEvent(event)
+		event.transaction.execute()
 
 		val result = currentProfiles.remove(player.uniqueId)
 		currentProfilesTwo.remove(result)

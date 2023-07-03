@@ -3,10 +3,11 @@ package com.fablesfantasyrp.plugin.profile
 import com.fablesfantasyrp.plugin.profile.data.entity.EntityProfileRepository
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.profile.event.PlayerForceProfileSelectionEvent
+import com.fablesfantasyrp.plugin.profile.event.PlayerSwitchProfileEvent
 import com.fablesfantasyrp.plugin.profile.event.PostPlayerSwitchProfileEvent
-import com.fablesfantasyrp.plugin.profile.event.PrePlayerSwitchProfileEvent
 import com.fablesfantasyrp.plugin.text.sendError
 import com.fablesfantasyrp.plugin.utils.SPAWN
+import com.fablesfantasyrp.plugin.utils.TransactionStep
 import com.github.shynixn.mccoroutine.bukkit.launch
 import kotlinx.coroutines.CancellationException
 import org.bukkit.entity.Player
@@ -71,8 +72,11 @@ class ProfileListener(private val plugin: JavaPlugin,
 	}
 
 	@EventHandler(priority = LOW, ignoreCancelled = true)
-	fun onPreProfileSwitch(e: PrePlayerSwitchProfileEvent) {
-		playersCurrentlySwitchingProfile.add(e.player)
+	fun onPreProfileSwitch(e: PlayerSwitchProfileEvent) {
+		e.transaction.steps.add(TransactionStep(
+			{ playersCurrentlySwitchingProfile.add(e.player) },
+			{ playersCurrentlySwitchingProfile.remove(e.player) }
+		))
 	}
 
 	@EventHandler(priority = MONITOR, ignoreCancelled = true)

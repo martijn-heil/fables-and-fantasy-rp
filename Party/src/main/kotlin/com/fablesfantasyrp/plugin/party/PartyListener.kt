@@ -4,7 +4,7 @@ import com.fablesfantasyrp.plugin.characters.data.entity.CharacterRepository
 import com.fablesfantasyrp.plugin.glowing.GlowingManager
 import com.fablesfantasyrp.plugin.party.data.PartyRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
-import com.fablesfantasyrp.plugin.profile.event.PrePlayerSwitchProfileEvent
+import com.fablesfantasyrp.plugin.profile.event.PlayerSwitchProfileEvent
 import org.bukkit.entity.Player
 import org.bukkit.entity.Projectile
 import org.bukkit.event.EventHandler
@@ -60,7 +60,7 @@ class PartyListener(private val parties: PartyRepository,
 	}
 
 	@EventHandler(priority = HIGH, ignoreCancelled = true)
-	fun onPlayerSwitchProfile(e: PrePlayerSwitchProfileEvent) {
+	fun onPlayerSwitchProfile(e: PlayerSwitchProfileEvent) {
 		glowingManager.setGlowColor(e.player, null)
 		val party = e.new?.let { characters.forProfile(it) }?.let { parties.forMember(it) } ?: return
 		glowingManager.setGlowColor(e.player, party.color?.chatColor)

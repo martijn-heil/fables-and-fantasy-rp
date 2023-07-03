@@ -9,6 +9,7 @@ import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterReposito
 import com.fablesfantasyrp.plugin.characters.data.persistent.H2CharacterRepository
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
+import com.fablesfantasyrp.plugin.characters.web.WebHook
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
@@ -119,7 +120,7 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 
 		if (server.pluginManager.isPluginEnabled("FablesWeb")) {
 			logger.info("Enabling FablesWeb integration")
-			com.fablesfantasyrp.plugin.characters.web.WebHook().start()
+			WebHook().start()
 		}
 
 		server.scheduler.scheduleSyncRepeatingTask(this, {
