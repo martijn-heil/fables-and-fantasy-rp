@@ -3,6 +3,7 @@ package com.fablesfantasyrp.plugin.profile
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.profile.event.PlayerSwitchProfileEvent
 import com.fablesfantasyrp.plugin.profile.event.PostPlayerSwitchProfileEvent
+import com.fablesfantasyrp.plugin.text.sendError
 import org.bukkit.Server
 import org.bukkit.entity.Player
 import java.util.*
@@ -29,7 +30,12 @@ internal class ProfileManagerImpl(private val server: Server) : ProfileManager {
 
 		val event = PlayerSwitchProfileEvent(player, currentProfile, profile)
 		server.pluginManager.callEvent(event)
-		event.transaction.execute()
+		try {
+			event.transaction.execute()
+		} catch (ex: Exception) {
+			ex.printStackTrace()
+			player.sendError("An unknown error occurred during profile switch.")
+		}
 
 		currentProfilesTwo.remove(currentProfile)
 		currentProfiles[player.uniqueId] = profile
@@ -43,7 +49,12 @@ internal class ProfileManagerImpl(private val server: Server) : ProfileManager {
 
 		val event = PlayerSwitchProfileEvent(player, currentProfile, null)
 		server.pluginManager.callEvent(event)
-		event.transaction.execute()
+		try {
+			event.transaction.execute()
+		} catch (ex: Exception) {
+			ex.printStackTrace()
+			player.sendError("An unknown error occurred during profile switch.")
+		}
 
 		val result = currentProfiles.remove(player.uniqueId)
 		currentProfilesTwo.remove(result)
