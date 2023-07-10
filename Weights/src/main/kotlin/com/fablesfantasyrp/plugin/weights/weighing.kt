@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.weights
 
 import org.bukkit.Material
+import org.bukkit.Tag
 import org.bukkit.block.ShulkerBox
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BlockStateMeta
@@ -29,15 +30,17 @@ fun flattenItems(items: Sequence<ItemStack>): Sequence<ItemStack> {
 }
 
 fun flattenItemStack(item: ItemStack): Sequence<ItemStack> {
-	return when (item.type) {
-		Material.SHULKER_BOX -> {
+	return when {
+		 Tag.SHULKER_BOXES.isTagged(item.type) -> {
 			val shulker = (item.itemMeta as BlockStateMeta).blockState as ShulkerBox
 			shulker.inventory.contents.asSequence().filterNotNull().map { flattenItemStack(it) }.flatten().plus(item)
 		}
-		Material.BUNDLE -> {
+
+		item.type == Material.BUNDLE -> {
 			val bundleMeta = item.itemMeta as BundleMeta
 			bundleMeta.items.asSequence().map { flattenItemStack(it) }.flatten().plus(item)
 		}
+
 		else -> {
 			sequenceOf(item)
 		}
