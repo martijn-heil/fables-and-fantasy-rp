@@ -18,6 +18,7 @@ object Permission {
 			const val Kick = "${prefix}.kick"
 			const val Leave = "${prefix}.leave"
 			const val Invite = "${prefix}.invite"
+			const val InviteNear = "${prefix}.invitenear"
 			const val Invites = "${prefix}.invites"
 			const val Uninvite = "${prefix}.uninvite"
 			const val Join = "${prefix}.join"

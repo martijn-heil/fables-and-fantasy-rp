@@ -13,6 +13,7 @@ import com.fablesfantasyrp.plugin.profile.command.annotation.AllowPlayerName
 import com.fablesfantasyrp.plugin.targeting.data.SimpleTargetingPlayerDataRepository
 import com.fablesfantasyrp.plugin.targeting.targetingPlayerDataRepository
 import com.fablesfantasyrp.plugin.text.*
+import com.fablesfantasyrp.plugin.utils.getPlayersWithinRange
 import com.gitlab.martijn_heil.nincommands.common.CommandTarget
 import com.gitlab.martijn_heil.nincommands.common.Sender
 import com.sk89q.intake.Command
@@ -189,6 +190,22 @@ class Commands(private val plugin: Plugin,
 			}
 
 			party.invites = party.invites.plus(who)
+		}
+
+		@Command(aliases = ["invitenear"], desc = "Invite everyone within a specified radius to a party")
+		@Require(Permission.Command.Party.InviteNear)
+		fun invitenear(@Sender sender: Player,
+					   @Optional("30") @Range(min = 0.00, max = 100.0) radius: Int,
+					   @CommandTarget party: Party) {
+			partyAuthorizer.mayInviteMember(party, sender).orElse { throw AuthorizationException(it) }
+
+			val characters = getPlayersWithinRange(sender.location, radius.toUInt())
+				.mapNotNull { profileManager.getCurrentForPlayer(it) }
+				.mapNotNull { characters.forProfile(it) }
+				.filter { !party.members.contains(it) }
+				.filter { !party.invites.contains(it) }
+
+			party.invites = party.invites.plus(characters)
 		}
 
 		@Command(aliases = ["uninvite"], desc = "Retract an invite to a party")
