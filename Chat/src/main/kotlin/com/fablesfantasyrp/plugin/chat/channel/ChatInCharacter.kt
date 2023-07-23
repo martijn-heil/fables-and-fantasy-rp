@@ -10,9 +10,11 @@ import com.fablesfantasyrp.plugin.text.join
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.utils.humanReadable
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.Style
 import net.kyori.adventure.text.minimessage.tag.Tag
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.entity.Player
@@ -81,7 +83,7 @@ private fun alternateStyle(message: String, startsWithAction: Boolean, actionSty
 			}.join(Component.text(" ")).asIterable()).asComponent().compact()
 }
 
-private fun startsWithAction(message: String) = Regex("^\\s*\\*.*").matches(message)
+private fun startsWithAction(message: String) = Regex("^\\s*\\*\\s*[^\"\\s]+.*").matches(message)
 private fun stripLeadingStar(s: String) = Regex("^\\s*\\*\\s*(.*)").matchEntire(s)?.groupValues?.get(1) ?: s
 
 abstract class AbstractChatInCharacter : ChatChannel, PreviewableChatChannel {
@@ -108,13 +110,16 @@ abstract class AbstractChatInCharacter : ChatChannel, PreviewableChatChannel {
 				.build())
 	}
 
-	protected open fun formatMessage(from: Player, message: String): Component? {
+
+	protected open fun formatMessage(from: Player, message: String): Component? = formatMessage(from, message, false)
+
+	private fun formatMessage(from: Player, message: String, preview: Boolean): Component? {
 		val actionStyle = from.chat.chatStyle ?: Style.style(NamedTextColor.YELLOW)
 		val speechStyle = Style.style(NamedTextColor.WHITE)
 		val profile = profileManager.getCurrentForPlayer(from)
 		val character = profile?.let { characters.forProfile(it) }
 		val characterName = character?.name ?:
-		throw ChatIllegalStateException("Player without current character cannot chat in in-character chat.")
+			throw ChatIllegalStateException("Player without current character cannot chat in in-character chat.")
 
 		val startsWithAction = startsWithAction(message)
 		val finalMessage = message
@@ -122,19 +127,28 @@ abstract class AbstractChatInCharacter : ChatChannel, PreviewableChatChannel {
 				.let { if(from.hasPermission(Permission.Format)) formatChat(it) else it }
 				.let { alternateStyle(it.trim(), startsWithAction, actionStyle, speechStyle) }
 
-		if(PlainTextComponentSerializer.plainText().serialize(finalMessage).isEmpty()) return null
+		val plainTextFinalMessage = PlainTextComponentSerializer.plainText().serialize(finalMessage)
+		if(plainTextFinalMessage.isEmpty()) return null
+		val insertActionWord = !startsWithAction && !stripLeadingStar(message).trim().startsWith('"')
 
-		val customResolver = TagResolver.builder()
-				.tag("character_name", Tag.selfClosingInserting(Component.text(characterName)
-						.style(Style.style(NamedTextColor.YELLOW))))
-				.tag("default_emote", Tag.selfClosingInserting(Component.text(if (!startsWithAction) "$actionWord " else "")
-						.style(actionStyle)))
-				.tag("message", Tag.selfClosingInserting(finalMessage))
-				.build()
-		return miniMessage.deserialize("<character_name> <default_emote><message>", TagResolver.standard(), customResolver)
+		val characterNameComponent = Component.text(characterName).style(Style.style(NamedTextColor.YELLOW))
+		val characterNameHoverComponent = miniMessage.deserialize("<dark_gray><character_name> is played by <gray><player_name></gray></dark_gray>",
+			Placeholder.unparsed("character_name", characterName),
+			Placeholder.unparsed("player_name", from.name)
+		)
+
+		return miniMessage.deserialize("<character_name> <default_emote><message>",
+			Placeholder.component("character_name",
+				if (preview) characterNameComponent
+				else characterNameComponent.hoverEvent(HoverEvent.showText(characterNameHoverComponent))
+			),
+			Placeholder.component("default_emote", (Component.text(if (insertActionWord) "$actionWord " else "").style(actionStyle))),
+			Placeholder.component("message", (finalMessage))
+		)
 	}
 
-	override fun getPreview(from: Player, message: String): Component = this.formatMessage(from, message) ?: Component.text("")
+	override fun getPreview(from: Player, message: String): Component
+		= this.formatMessage(from, message, true) ?: Component.text("")
 }
 
 object ChatInCharacterStandard : AbstractChatInCharacter(), Serializable {
