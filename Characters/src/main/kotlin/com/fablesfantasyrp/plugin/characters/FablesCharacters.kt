@@ -7,9 +7,9 @@ import com.fablesfantasyrp.plugin.characters.data.entity.CharacterRepository
 import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
 import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepositoryImpl
 import com.fablesfantasyrp.plugin.characters.data.persistent.H2CharacterRepository
+import com.fablesfantasyrp.plugin.characters.web.WebHook
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
-import com.fablesfantasyrp.plugin.characters.web.WebHook
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
@@ -100,7 +100,7 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 
 		val charactersCommand = rootDispatcherNode.group("character", "char", "fchar", "fcharacter")
 		charactersCommand.registerMethods(commandsInstance.Characters())
-		rootDispatcherNode.registerMethods(LegacyCommands(commandsInstance.Characters()))
+		rootDispatcherNode.registerMethods(LegacyCommands(this, commandsInstance.Characters()))
 
 		charactersCommand.group("stats").registerMethods(get<Commands.Characters.Stats>())
 		charactersCommand.group("change").registerMethods(get<Commands.Characters.Change>())
