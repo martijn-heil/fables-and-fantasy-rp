@@ -253,6 +253,11 @@ class Commands(private val plugin: JavaPlugin,
 				   @Optional @CommandTarget(Permission.Command.Characters.Become + ".others") who: Player,
 				   @Switch('f') force: Boolean,
 				   @Switch('i') instant: Boolean) {
+			if (!sender.hasPermission(Permission.Command.Characters.Become + ".instant")) {
+				sender.sendError("Permission denied")
+				return
+			}
+
 			plugin.launch {
 				val target: Profile = targetMaybe ?: run {
 					val profiles = profileRepository.activeForOwner(who)
