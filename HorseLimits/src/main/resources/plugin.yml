@@ -1,6 +1,0 @@
-name: FablesHorseLimits
-version: @version@
-authors: [@authors@]
-depend: [FablesKotlinRuntime]
-main: com.fablesfantasyrp.plugin.horselimits.FablesHorseLimits
-api-version: @bukkit_api_version@

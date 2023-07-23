@@ -1,15 +1,19 @@
 package com.fablesfantasyrp.plugin.alternatemechanics
 
 import org.bukkit.Material
+import org.bukkit.Sound
+import org.bukkit.entity.Horse
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority.MONITOR
 import org.bukkit.event.EventPriority.NORMAL
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityResurrectEvent
+import org.bukkit.event.entity.EntityUnleashEvent
 import org.bukkit.event.entity.PlayerLeashEntityEvent
 import org.bukkit.event.player.PlayerItemConsumeEvent
 import org.bukkit.event.vehicle.VehicleEnterEvent
+import org.spigotmc.event.entity.EntityMountEvent
 
 class AlternateMechanicsListener : Listener {
 	@EventHandler(priority = NORMAL, ignoreCancelled = true)
@@ -40,6 +44,28 @@ class AlternateMechanicsListener : Listener {
 		val location = player.location
 		location.getNearbyLivingEntities(30.0)
 			.filter { it.isLeashed && it.leashHolder == player }
-			.forEach { it.setLeashHolder(null) }
+			.forEach {
+				it.setLeashHolder(null)
+				location.world.playSound(location, Sound.ENTITY_LEASH_KNOT_BREAK, 1f, 1f)
+			}
+	}
+
+	@EventHandler(priority = MONITOR, ignoreCancelled = true)
+	fun onPlayerBreaksLead(event: EntityUnleashEvent) {
+		if (event.reason == EntityUnleashEvent.UnleashReason.DISTANCE ||
+			event.reason == EntityUnleashEvent.UnleashReason.HOLDER_GONE) {
+			val location = event.entity.location
+			val world = location.world
+			world.playSound(location, Sound.ENTITY_LEASH_KNOT_BREAK, 1f, 1f)
+		}
+	}
+
+	val MAX_JUMP_STRENGTH = 0.6
+	@EventHandler(priority = MONITOR, ignoreCancelled = true)
+	fun onPlayerMountHorse(e: EntityMountEvent) {
+		val horse = e.mount as? Horse ?: return
+		if (horse.jumpStrength > MAX_JUMP_STRENGTH) {
+			horse.jumpStrength = MAX_JUMP_STRENGTH
+		}
 	}
 }
