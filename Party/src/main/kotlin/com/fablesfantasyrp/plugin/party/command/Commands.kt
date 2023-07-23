@@ -196,7 +196,7 @@ class Commands(private val plugin: Plugin,
 		@Require(Permission.Command.Party.InviteNear)
 		fun invitenear(@Sender sender: Player,
 					   @Optional("30") @Range(min = 0.00, max = 100.0) radius: Int,
-					   @CommandTarget party: Party) {
+					   @Optional @CommandTarget party: Party) {
 			partyAuthorizer.mayInviteMember(party, sender).orElse { throw AuthorizationException(it) }
 
 			val characters = getPlayersWithinRange(sender.location, radius.toUInt())
