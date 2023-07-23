@@ -11,6 +11,7 @@ import com.fablesfantasyrp.plugin.form.YesNoChatPrompt
 import com.fablesfantasyrp.plugin.form.promptChat
 import com.fablesfantasyrp.plugin.form.promptGui
 import com.fablesfantasyrp.plugin.gui.GuiSingleChoice
+import com.fablesfantasyrp.plugin.gui.confirm
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.ProfileOccupiedException
 import com.fablesfantasyrp.plugin.profile.ProfilePrompter
@@ -42,13 +43,14 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import java.time.Duration
 import java.time.Instant
 import kotlin.math.max
 
 
-class LegacyCommands(private val characterCommands: Commands.Characters) {
+class LegacyCommands(private val plugin: Plugin, private val characterCommands: Commands.Characters) {
 	@Command(aliases = ["newcharacter", "newchar", "nc"], desc = "Create a new character!")
 	@Require(Permission.Command.Characters.New)
 	fun newCharacter(@Sender sender: Player) {
@@ -71,10 +73,13 @@ class LegacyCommands(private val characterCommands: Commands.Characters) {
 		characterCommands.card(sender, target)
 	}
 
-	@Command(aliases = ["removecharacter", "removechar", "rc", "permakill", "pk"], desc = "Kill a character")
+	@Command(aliases = ["removecharacter", "removechar", "permakill", "pk"], desc = "Kill a character")
 	@Require(Permission.Command.Characters.Kill)
 	fun removeCharacter(@Sender sender: CommandSender, @CommandTarget target: Character) {
-		characterCommands.kill(sender, target)
+		plugin.launch {
+			if (sender is Player && !sender.confirm("Permanently kill ${target.name}?")) return@launch
+			characterCommands.kill(sender, target)
+		}
 	}
 }
 
