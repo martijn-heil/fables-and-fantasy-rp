@@ -59,6 +59,7 @@ class BankGuiMoney(plugin: JavaPlugin, private val data: ProfileEconomyData)
 		data.money += amount
 		data.bankMoney = 0
 		whoClicked.sendMessage("$SYSPREFIX Withdrew ${CURRENCY_SYMBOL}$amount")
+		draw()
 	}
 
 	suspend fun withdraw(whoClicked: Player) {
@@ -75,6 +76,7 @@ class BankGuiMoney(plugin: JavaPlugin, private val data: ProfileEconomyData)
 		data.bankMoney += amount
 		data.money = 0
 		whoClicked.sendMessage("$SYSPREFIX Deposited ${CURRENCY_SYMBOL}$amount")
+		draw()
 	}
 
 	suspend fun deposit(whoClicked: Player) {
