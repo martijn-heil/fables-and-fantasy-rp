@@ -1,11 +1,12 @@
 package com.fablesfantasyrp.plugin.weights
 
+import org.bukkit.GameMode
 import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
 fun applyWeight(player: Player, weight: Int, cap: Int) {
-	if (weight > cap) {
+	if (player.gameMode != GameMode.SPECTATOR && player.gameMode != GameMode.CREATIVE && weight > cap) {
 		if (!(player.hasPotionEffect(PotionEffectType.WEAKNESS) && player.hasPotionEffect(PotionEffectType.SLOW))) {
 			player.sendMessage("$SYSPREFIX You're carrying too much equipment. Check your weights with /weights")
 		}
