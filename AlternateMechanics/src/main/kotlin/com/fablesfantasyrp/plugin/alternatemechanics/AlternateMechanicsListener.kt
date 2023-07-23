@@ -67,5 +67,7 @@ class AlternateMechanicsListener : Listener {
 		if (horse.jumpStrength > MAX_JUMP_STRENGTH) {
 			horse.jumpStrength = MAX_JUMP_STRENGTH
 		}
+
+		horse.setAI(false)
 	}
 }
