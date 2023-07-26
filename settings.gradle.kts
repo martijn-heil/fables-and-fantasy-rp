@@ -52,4 +52,5 @@ include("examples:BlankSystem",
 		"Discord",
 		"Time",
 		"ItemShow",
-		"Bell")
+		"Bell",
+		"Wardrobe")

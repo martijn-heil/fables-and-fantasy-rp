@@ -1,0 +1,14 @@
+name: FablesWardrobe
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+  - FablesDatabase
+  - FablesProfile
+  - FablesCharacters
+  - FablesGui
+  - FablesForm
+  - NinCommands
+main: com.fablesfantasyrp.plugin.wardrobe.FablesWardrobe
+api-version: @bukkit_api_version@

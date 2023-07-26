@@ -30,3 +30,12 @@ val Profile.displayName: String
 			"#${this.id}$suffix"
 		}
 	}
+
+val Character.shortName: String get() = name.substringBefore(" ").substringBefore("-")
+
+val Profile.shortName: String
+	get() {
+		val characters = Services.get<CharacterRepository>()
+		val character = characters.forProfile(this)
+		return character?.shortName ?: "#${this.id}"
+	}

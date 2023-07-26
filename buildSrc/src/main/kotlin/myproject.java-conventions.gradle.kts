@@ -70,6 +70,7 @@ repositories {
 	maven { url = URI("https://repo.codemc.io/repository/maven-public/") }
 	maven { url = URI("https://maven.enginehub.org/repo/")}
 	maven { url = URI("https://oss.sonatype.org/content/repositories/snapshots/") }
+	maven { url = URI("https://repo.codemc.org/repository/maven-releases/") }
 	mavenLocal()
 	maven { url = URI("https://jitpack.io") }
 

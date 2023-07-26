@@ -2,6 +2,7 @@ package com.fablesfantasyrp.plugin.party.command
 
 import com.fablesfantasyrp.plugin.characters.data.entity.Character
 import com.fablesfantasyrp.plugin.characters.data.entity.CharacterRepository
+import com.fablesfantasyrp.plugin.characters.shortName
 import com.fablesfantasyrp.plugin.glowing.GlowingManager
 import com.fablesfantasyrp.plugin.party.*
 import com.fablesfantasyrp.plugin.party.Permission
@@ -94,7 +95,7 @@ class Commands(private val plugin: Plugin,
 				return
 			}
 
-			val finalName = name ?: "${sender.name.substringBefore(" ").substringBefore("-")}'s party"
+			val finalName = name ?: "${sender.shortName}'s party"
 
 			if (parties.forName(finalName) != null) {
 				player.sendError("The default name \"$finalName\" for your party is already in use. " +
