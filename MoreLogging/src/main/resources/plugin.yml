@@ -8,7 +8,6 @@ depend:
   - FablesText
   - dDiscordBot
 softdepend:
-  - Essentials
   - SuperVanish
 main: com.fablesfantasyrp.plugin.morelogging.FablesMoreLogging
 api-version: @bukkit_api_version@

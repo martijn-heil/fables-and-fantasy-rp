@@ -29,10 +29,6 @@ class FablesMoreLogging : JavaPlugin(), KoinComponent {
 
 		server.pluginManager.registerEvents(BukkitListener(MODERATION_LOGGER, this), this)
 
-		if (server.pluginManager.isPluginEnabled("Essentials")) {
-			server.pluginManager.registerEvents(EssentialsListener(MODERATION_LOGGER, this), this)
-		}
-
 		if (server.pluginManager.isPluginEnabled("SuperVanish")) {
 			server.pluginManager.registerEvents(SuperVanishListener(MODERATION_LOGGER, this), this)
 		}

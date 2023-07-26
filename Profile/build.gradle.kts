@@ -11,5 +11,4 @@ dependencies {
     implementation(project(":Form"))
     implementation(project(":Gui"))
     implementation(project(":Web"))
-    implementation("com.github.LeonMangler:SuperVanish:6.2.6-4")
 }
