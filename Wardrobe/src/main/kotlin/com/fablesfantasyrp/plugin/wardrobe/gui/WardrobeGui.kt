@@ -117,7 +117,7 @@ class WardrobeGui(private val plugin: JavaPlugin,
 					.itemLeft(item)
 					.itemOutput(item)
 					.onComplete { _, s ->
-						deferred.complete(s)
+						deferred.complete(s.trim())
 						AnvilGUI.Response.close()
 					}
 					.onClose {
