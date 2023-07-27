@@ -3,6 +3,7 @@ package com.fablesfantasyrp.plugin.wardrobe
 import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.profile.command.provider.ProfileModule
+import com.fablesfantasyrp.plugin.utils.Services
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.fablesfantasyrp.plugin.wardrobe.data.ProfileSkinRepository
 import com.fablesfantasyrp.plugin.wardrobe.data.SkinRepository
@@ -63,6 +64,8 @@ class FablesWardrobe : JavaPlugin(), KoinComponent {
 				originalProfileTrackerService.init()
 				originalProfileTrackerService
 			} bind OriginalPlayerProfileService::class
+
+			single { SkinSlotCountService(get(), Services.get()) }
 
 			singleOf(::SkinServiceImpl) bind SkinService::class
 			singleOf(::WardrobeListener)

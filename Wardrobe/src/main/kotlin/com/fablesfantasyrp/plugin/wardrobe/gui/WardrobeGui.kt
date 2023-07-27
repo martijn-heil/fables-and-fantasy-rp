@@ -28,10 +28,12 @@ import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.plugin.java.JavaPlugin
 import java.time.Instant
 import java.util.*
+import kotlin.math.min
 
 class WardrobeGui(private val plugin: JavaPlugin,
 				  private val player: Player,
 				  private val profile: Profile,
+				  private val slotCount: Int,
 				  private val skinRepository: SkinRepository,
 				  private val profileSkinRepository: ProfileSkinRepository,
 				  private val skinService: SkinService)
@@ -39,8 +41,6 @@ class WardrobeGui(private val plugin: JavaPlugin,
 	private val server = plugin.server
 
 	init {
-		val slotCount = 4
-
 		this.addElement(DynamicGuiElement('g') { viewer ->
 			val skins = profileSkinRepository.forProfile(profile).sortedByDescending { it.lastUsedAt }
 			val group = GuiElementGroup('g')
@@ -52,7 +52,7 @@ class WardrobeGui(private val plugin: JavaPlugin,
 				}, "${ChatColor.GOLD}${profileSkin.description}", "${ChatColor.GRAY}Click to apply this skin.")
 			})
 
-			group.addElements((skins.size until slotCount).map {
+			group.addElements((min(skins.size, slotCount) until slotCount).map {
 				StaticGuiElement('g', ItemStack(Material.SKELETON_SKULL), {
 					saveSkin()
 					true

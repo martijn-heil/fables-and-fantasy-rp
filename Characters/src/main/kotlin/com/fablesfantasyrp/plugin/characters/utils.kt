@@ -16,6 +16,7 @@ val Player.characterSlotCount: Int get()
 	).asElement().asInt()
 
 val Character.isStaffCharacter get() = this.profile.owner == FABLES_ADMIN
+val Profile.isStaffCharacter get() = this.owner == FABLES_ADMIN
 
 val Profile.displayName: String
 	get() {
