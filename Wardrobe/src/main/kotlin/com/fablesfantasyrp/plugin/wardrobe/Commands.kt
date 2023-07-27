@@ -16,7 +16,8 @@ class Commands(private val plugin: JavaPlugin,
 			   private val skins: SkinRepository,
 			   private val profileSkins: ProfileSkinRepository,
 			   private val skinService: SkinService,
-			   private val slotCounter: SkinSlotCountService) {
+			   private val slotCounter: SkinSlotCountService,
+			   private val originalPlayerProfileService: OriginalPlayerProfileService) {
 
 	@Command(aliases = ["wardrobe"], desc = "")
 	@Require(Permission.Command.Wardrobe)
@@ -24,7 +25,8 @@ class Commands(private val plugin: JavaPlugin,
 		val player = profileManager.getCurrentForProfile(sender)!!
 		plugin.launch {
 			val slotCount = slotCounter.calculateSkinSlotCount(sender)
-			WardrobeGui(plugin, player, sender, slotCount, skins, profileSkins, skinService).show(player)
+			WardrobeGui(plugin, player, sender, slotCount, skins, profileSkins, skinService, originalPlayerProfileService)
+				.show(player)
 		}
 	}
 }

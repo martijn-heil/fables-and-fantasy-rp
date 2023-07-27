@@ -4,9 +4,11 @@ import com.fablesfantasyrp.plugin.characters.shortName
 import com.fablesfantasyrp.plugin.gui.GuiSingleChoice
 import com.fablesfantasyrp.plugin.gui.Icon
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
+import com.fablesfantasyrp.plugin.text.sendError
 import com.fablesfantasyrp.plugin.utils.itemStack
 import com.fablesfantasyrp.plugin.utils.meta
 import com.fablesfantasyrp.plugin.utils.name
+import com.fablesfantasyrp.plugin.wardrobe.OriginalPlayerProfileService
 import com.fablesfantasyrp.plugin.wardrobe.SkinService
 import com.fablesfantasyrp.plugin.wardrobe.data.ProfileSkin
 import com.fablesfantasyrp.plugin.wardrobe.data.ProfileSkinRepository
@@ -36,7 +38,8 @@ class WardrobeGui(private val plugin: JavaPlugin,
 				  private val slotCount: Int,
 				  private val skinRepository: SkinRepository,
 				  private val profileSkinRepository: ProfileSkinRepository,
-				  private val skinService: SkinService)
+				  private val skinService: SkinService,
+				  private val originalPlayerProfileService: OriginalPlayerProfileService)
 	: InventoryGui(plugin, player, "${profile.shortName}'s wardrobe", arrayOf("gggggggxd")) {
 	private val server = plugin.server
 
@@ -59,7 +62,7 @@ class WardrobeGui(private val plugin: JavaPlugin,
 				},
 					"${ChatColor.DARK_AQUA}Click to save!",
 					"${ChatColor.GRAY}Clicking this will allow you to name",
-					"${ChatColor.GRAY}and save your current skin.")
+					"${ChatColor.GRAY}and save your current launcher skin.")
 			})
 
 			group.addElements((slotCount..6).map {
@@ -123,7 +126,14 @@ class WardrobeGui(private val plugin: JavaPlugin,
 					.open(player)
 				val description = deferred.await()
 
-				val skin = skinRepository.create(player.playerProfile.skin)
+				val originalProfile = originalPlayerProfileService.getOriginalPlayerProfile(player)!!
+
+				if (originalProfile.textures.skin == null) {
+					player.sendError("You have no skin")
+					return@launch
+				}
+
+				val skin = skinRepository.create(originalProfile.skin)
 				profileSkinRepository.createOrUpdate(ProfileSkin(profile, skin, description, null))
 			} finally {
 				this@WardrobeGui.show(player)
