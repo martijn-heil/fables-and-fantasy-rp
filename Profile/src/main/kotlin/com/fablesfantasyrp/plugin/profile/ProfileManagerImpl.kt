@@ -14,7 +14,7 @@ internal class ProfileManagerImpl(private val server: Server) : ProfileManager {
 
 	override fun getCurrentForPlayer(player: Player) = currentProfiles[player.uniqueId]
 
-	@Throws(ProfileOccupiedException::class)
+	@Throws(ProfileSwitchException::class)
 	override fun setCurrentForPlayer(player: Player, profile: Profile, force: Boolean) {
 		val currentProfile = this.getCurrentForPlayer(player)
 		if (currentProfile == profile) return
@@ -33,8 +33,8 @@ internal class ProfileManagerImpl(private val server: Server) : ProfileManager {
 		try {
 			event.transaction.execute()
 		} catch (ex: Exception) {
-			ex.printStackTrace()
 			player.sendError("An unknown error occurred during profile switch.")
+			throw ProfileSwitchException(ex)
 		}
 
 		currentProfilesTwo.remove(currentProfile)
@@ -52,8 +52,8 @@ internal class ProfileManagerImpl(private val server: Server) : ProfileManager {
 		try {
 			event.transaction.execute()
 		} catch (ex: Exception) {
-			ex.printStackTrace()
 			player.sendError("An unknown error occurred during profile switch.")
+			throw ProfileSwitchException(ex)
 		}
 
 		val result = currentProfiles.remove(player.uniqueId)

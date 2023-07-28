@@ -5,11 +5,12 @@ import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.ProfilePrompter
 import com.fablesfantasyrp.plugin.profile.data.entity.EntityProfileRepository
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
-import com.fablesfantasyrp.plugin.profile.event.PostPlayerSwitchProfileEvent
 import com.fablesfantasyrp.plugin.profile.event.PlayerSwitchProfileEvent
+import com.fablesfantasyrp.plugin.profile.event.PostPlayerSwitchProfileEvent
 import com.fablesfantasyrp.plugin.utils.FLATROOM
 import com.fablesfantasyrp.plugin.utils.PLOTS
 import com.fablesfantasyrp.plugin.utils.Services
+import com.fablesfantasyrp.plugin.utils.TransactionStep
 import com.fablesfantasyrp.plugin.worldboundprofiles.data.WorldRestrictionRule
 import com.fablesfantasyrp.plugin.worldboundprofiles.data.WorldRestrictionRuleAction
 import com.fablesfantasyrp.plugin.worldboundprofiles.data.WorldRestrictionRuleRepository
@@ -73,8 +74,11 @@ class WorldBoundProfilesListener(private val plugin: Plugin,
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-	fun onPreProfileSwitch(e: PlayerSwitchProfileEvent) {
-		ignoreList.add(e.player.uniqueId)
+	fun onProfileSwitch(e: PlayerSwitchProfileEvent) {
+		e.transaction.steps.add(TransactionStep(
+			{ ignoreList.add(e.player.uniqueId) },
+			{ ignoreList.remove((e.player.uniqueId)) }
+		))
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
