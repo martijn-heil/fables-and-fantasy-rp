@@ -150,12 +150,14 @@ class Commands(private val plugin: JavaPlugin,
 		@Require(Permission.Command.Characters.List)
 		fun list(@Sender sender: CommandSender,
 				@CommandTarget(Permission.Command.Characters.List + ".others") owner: OfflinePlayer) {
-			val message = legacyText("$SYSPREFIX ${owner.name} has the following characters:").append(
-			Component.join(JoinConfiguration.newlines(), characterRepository.forOwner(owner).map {
-				val dead = if (it.isDead) " ${ChatColor.RED}(dead)" else ""
-				val shelved = if (it.isShelved) " ${ChatColor.YELLOW}(shelved)" else ""
-				legacyText("${ChatColor.GRAY}#${it.id} ${it.name}${dead}${shelved}")
-			}))
+			val message = legacyText("$SYSPREFIX ${owner.name} has the following characters:")
+				.append(Component.newline())
+				.append(
+					Component.join(JoinConfiguration.newlines(), characterRepository.forOwner(owner).map {
+						val dead = if (it.isDead) " ${ChatColor.RED}(dead)" else ""
+						val shelved = if (it.isShelved) " ${ChatColor.YELLOW}(shelved)" else ""
+						legacyText("${ChatColor.GRAY}#${it.id} ${it.name}${dead}${shelved}")
+					}))
 			sender.sendMessage(message)
 		}
 
