@@ -39,6 +39,7 @@ class TimeBasedGroupingAppender(private val ignorePatterns: Collection<Regex>, p
 	private val grouped = LinkedList<LogEvent>()
 
 	private fun fuzzyMatch(event: LogEvent?): Boolean {
+		if (checkNull(event)) return false
 		if (event == null) return false
 		return event.message.formattedMessage.lowercase().contains("error")
 	}
@@ -59,10 +60,29 @@ class TimeBasedGroupingAppender(private val ignorePatterns: Collection<Regex>, p
 		if (first != null && (time - first.timeMillis > 50)) this.flush()
 	}
 
+	private fun checkNull(event: LogEvent?): Boolean {
+		return event == null ||
+			// confirmed to never be null in documentation.
+			event.contextMap == null ||
+			event.contextData == null ||
+			event.contextStack == null ||
+
+			// not confirmed to never be null, but unlikely to be.
+			event.loggerFqcn == null ||
+			event.level == null ||
+			event.message == null ||
+			event.instant == null
+
+			// confirmed to be able to be nullable.
+			// event.loggerName
+			// event.marker
+			// event.source
+			// event.threadName
+			// event.thrown
+	}
 	override fun append(event: LogEvent?) {
-		if (event == null) return
-		if (event.message == null) return
-		val copy = event.toImmutable() ?: return
+		if (checkNull(event)) return
+		val copy = event?.toImmutable() ?: return
 
 		val formattedMessage = copy.message.formattedMessage
 		if (ignorePatterns.find { it.containsMatchIn(formattedMessage) } != null) return
