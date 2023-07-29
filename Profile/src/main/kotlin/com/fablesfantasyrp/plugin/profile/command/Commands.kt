@@ -20,7 +20,7 @@ class Commands(private val profiles: ProfileRepository,
 	inner class CommandProfile {
 		@Command(aliases = ["list"], desc = "List profiles")
 		@Require(Permission.Command.CommandProfile.List)
-		fun list(@Sender sender: Player,
+		fun list(@Sender sender: CommandSender,
 				 @CommandTarget(Permission.Command.CommandProfile.List + ".others") owner: OfflinePlayer) {
 			sender.sendMessage("$SYSPREFIX ${owner.name} has the following profiles:")
 			for (profile in profiles.allForOwner(owner)) {
