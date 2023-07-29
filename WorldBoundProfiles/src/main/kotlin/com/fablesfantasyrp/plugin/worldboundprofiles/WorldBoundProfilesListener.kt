@@ -87,7 +87,7 @@ class WorldBoundProfilesListener(private val plugin: Plugin,
 		val ownProfiles = profiles.activeForOwner(e.player)
 		val rules = worldRestrictionRuleRepository.forProfiles(ownProfiles)
 
-		if (FLATROOM != null && rules.values.find { it.find { it.id.second == FLATROOM!!.uid && it.action == WorldRestrictionRuleAction.BOUND } != null } == null) {
+		if (PLOTS != null && FLATROOM != null && rules.values.find { it.find { it.id.second == FLATROOM!!.uid && it.action == WorldRestrictionRuleAction.BOUND } != null } == null) {
 			val newProfile = this.profiles.create(Profile(
 					owner = e.player,
 					description = "Builder",
