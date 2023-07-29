@@ -4,5 +4,6 @@ authors: [@authors@]
 depend:
   - FablesKotlinRuntime
   - FablesUtils
+  - WorldGuard
 main: com.fablesfantasyrp.plugin.alternatemechanics.FablesAlternateMechanics
 api-version: @bukkit_api_version@

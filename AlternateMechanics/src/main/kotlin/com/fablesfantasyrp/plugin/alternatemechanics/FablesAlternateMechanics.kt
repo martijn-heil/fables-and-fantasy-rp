@@ -2,7 +2,10 @@ package com.fablesfantasyrp.plugin.alternatemechanics
 
 import com.fablesfantasyrp.plugin.alternatemechanics.mechanic.*
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
+import com.sk89q.worldguard.WorldGuard
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin
 import org.bukkit.ChatColor.*
+import org.bukkit.Server
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.component.KoinComponent
@@ -30,12 +33,17 @@ class FablesAlternateMechanics : JavaPlugin(), KoinComponent {
 		koinModule = module(createdAtStart = true) {
 			single<Plugin> { this@FablesAlternateMechanics } binds (arrayOf(JavaPlugin::class))
 
+			single { WorldGuard.getInstance() }
+			single { get<Server>().pluginManager.getPlugin("WorldGuard") as WorldGuardPlugin }
+			single { get<WorldGuard>().platform.regionContainer }
+
 			singleOf(::HorseJumpStrength) bind Mechanic::class
 			singleOf(::LeadBreakSound) bind Mechanic::class
 			singleOf(::NoGoldenApples) bind Mechanic::class
 			singleOf(::NoHorseAi) bind Mechanic::class
 			singleOf(::NoLeashingWhileInVehicle) bind Mechanic::class
 			singleOf(::NoTotemOfUndying) bind Mechanic::class
+			singleOf(::FarmReplant) bind Mechanic::class
 		}
 		loadKoinModules(koinModule)
 
