@@ -38,4 +38,11 @@ class Transaction(val steps: MutableList<TransactionStep> = ArrayList()) {
 			undo = { property.setter.call(oldValue) }
 		))
 	}
+
+	fun<T> addToCollection(collection: MutableCollection<T>, value: T) {
+		steps.add(TransactionStep(
+			execute = { collection.add(value) },
+			undo = { collection.remove(value) }
+		))
+	}
 }

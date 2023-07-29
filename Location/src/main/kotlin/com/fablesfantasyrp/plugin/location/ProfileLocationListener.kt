@@ -7,7 +7,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 
 class ProfileLocationListener(private val profileLocationRepository: EntityProfileLocationRepository<*>) : Listener {
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	fun onPlayerSwitchProfile(e: PlayerSwitchProfileEvent) {
 		val old = e.old
 		val new = e.new
