@@ -5,6 +5,7 @@ import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
 import com.fablesfantasyrp.plugin.magic.MagicType
 import com.fablesfantasyrp.plugin.magic.data.TearData
+import com.fablesfantasyrp.plugin.utils.DISTANCE_TALK
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.sound.Sound
 import org.bukkit.Bukkit
@@ -46,7 +47,7 @@ class Tear : TearData, HasDirtyMarker<Tear> {
 
 	fun despawn() {
 		location.block.type = Material.AIR
-		getPlayersWithinRange(location, 15U).forEach {
+		getPlayersWithinRange(location, DISTANCE_TALK).forEach {
 			it.playSound(Sound.sound(Key.key("minecraft", "entity.enderman.teleport"),
 					Sound.Source.AMBIENT, 1.0f, 1.0f))
 		}
@@ -57,7 +58,7 @@ class Tear : TearData, HasDirtyMarker<Tear> {
 		val blockState = location.block.state as EndGateway
 		blockState.age = Long.MAX_VALUE // This will effectively delay the beam effect for ages
 		blockState.update(true)
-		getPlayersWithinRange(location, 15U).forEach {
+		getPlayersWithinRange(location, DISTANCE_TALK).forEach {
 			it.playSound(Sound.sound(Key.key("minecraft", "entity.enderman.teleport"),
 					Sound.Source.AMBIENT, 1.0f, 1.0f))
 		}

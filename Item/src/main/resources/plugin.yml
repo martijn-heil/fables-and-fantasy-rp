@@ -1,0 +1,9 @@
+name: FablesItem
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+  - FablesDenizenInterop
+main: com.fablesfantasyrp.plugin.item.FablesItem
+api-version: @bukkit_api_version@

@@ -3,6 +3,7 @@ package com.fablesfantasyrp.plugin.economy.gui.bank
 import com.fablesfantasyrp.plugin.economy.CURRENCY_SYMBOL
 import com.fablesfantasyrp.plugin.economy.SYSPREFIX
 import com.fablesfantasyrp.plugin.economy.data.ProfileEconomyData
+import com.fablesfantasyrp.plugin.economy.formatMoney
 import com.fablesfantasyrp.plugin.utils.itemStack
 import com.fablesfantasyrp.plugin.utils.meta
 import com.fablesfantasyrp.plugin.utils.name
@@ -40,7 +41,7 @@ class BankGuiMoney(plugin: JavaPlugin, private val data: ProfileEconomyData)
 				),
 				DynamicGuiElement('4') { ->
 					StaticGuiElement('4', ItemStack(Material.LIGHT_BLUE_STAINED_GLASS_PANE), { true },
-							"${ChatColor.AQUA}Balance: $CURRENCY_SYMBOL${"%,d".format(data.bankMoney)}",
+							"${ChatColor.AQUA}Balance: ${formatMoney(data.bankMoney)}",
 							"${ChatColor.GREEN}Your current amount of $CURRENCY_SYMBOL"
 					)
 				},

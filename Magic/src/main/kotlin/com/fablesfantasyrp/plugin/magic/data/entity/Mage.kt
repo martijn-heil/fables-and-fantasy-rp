@@ -26,6 +26,7 @@ import com.fablesfantasyrp.plugin.targeting.targeting
 import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.sendError
+import com.fablesfantasyrp.plugin.utils.DISTANCE_TALK
 import com.fablesfantasyrp.plugin.utils.Services
 import com.fablesfantasyrp.plugin.utils.isVanished
 import com.github.shynixn.mccoroutine.bukkit.launch
@@ -58,7 +59,7 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 			if (field != value) {
 				val added = value.minus(field)
 				val removed = field.minus(value)
-				val players = getPlayersWithinRange(character.profile.location, 15U).toList()
+				val players = getPlayersWithinRange(character.profile.location, DISTANCE_TALK).toList()
 				added.forEach { ability ->
 					players.forEach {
 						it.sendMessage("$SYSPREFIX ${character.name} activated ${ability.displayName}")
@@ -138,7 +139,7 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 					Placeholder.unparsed("their_name", them.character.name),
 					Placeholder.component("result", resultMessage)).style(myPlayer.chat.chatStyle ?: Style.style(NamedTextColor.YELLOW))
 
-			getPlayersWithinRange(myPlayer.location, 15U).forEach { it.sendMessage(message) }
+			getPlayersWithinRange(myPlayer.location, DISTANCE_TALK).forEach { it.sendMessage(message) }
 
 			return if (success) {
 				tearRepository.destroy(tear)
@@ -171,8 +172,8 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 
 		val roll = roll(20U, CharacterStatKind.INTELLIGENCE, this.character.totalStats).second
 		val enemyPlayer = profileManager.getCurrentForProfile(enemy.character.profile)!!
-		val messageTargets = getPlayersWithinRange(player.location, 15U)
-				.plus(getPlayersWithinRange(enemyPlayer.location, 15U)).distinct()
+		val messageTargets = getPlayersWithinRange(player.location, DISTANCE_TALK)
+				.plus(getPlayersWithinRange(enemyPlayer.location, DISTANCE_TALK)).distinct()
 
 		if (roll > castingRoll) {
 			val message = miniMessage.deserialize("<yellow><my_name></yellow> <green>successfully</green> unbound " +
@@ -200,7 +201,7 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 		val characters = GlobalContext.get().get<EntityCharacterRepository>()
 		val player = profileManager.getCurrentForProfile(this.character.profile) ?: throw IllegalStateException()
 		check(player.isOnline)
-		val otherMages = getPlayersWithinRange(player.location, 15U)
+		val otherMages = getPlayersWithinRange(player.location, DISTANCE_TALK)
 				.mapNotNull { profileManager.getCurrentForPlayer(it) }
 				.mapNotNull { characters.forProfile(it) }
 				.mapNotNull { mageRepository.forPlayerCharacter(it) }
@@ -277,7 +278,7 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 				}
 
 				val message = getSpellCastingMessage(character, spell, castingRoll, effectiveness)
-				val messageTargets = getPlayersWithinRange(player.location, 15U).toList()
+				val messageTargets = getPlayersWithinRange(player.location, DISTANCE_TALK).toList()
 
 				val spellTargets = player.targeting.targets
 

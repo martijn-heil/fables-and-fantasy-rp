@@ -45,7 +45,7 @@ class InventoryCommands(private val mirroredInventoryManager: MirroredInventoryM
 						private val broadcaster: StaffActionBroadcaster) {
 	@Command(aliases = ["invsee", "finvsee"], desc = "Invsee a character")
 	@Require(Permission.Command.Invsee)
-	fun invsee(@Sender sender: Player, @AllowCharacterName target: Profile) {
+	fun invsee(@Sender sender: Player, @AllowCharacterName @AllowPlayerName target: Profile) {
 		val inventory = MirroredInventory(
 				target.inventory.inventory,
 				sender,
@@ -58,7 +58,7 @@ class InventoryCommands(private val mirroredInventoryManager: MirroredInventoryM
 
 	@Command(aliases = ["endersee", "enderchest", "echest", "fendersee", "fechest", "fenderchest"], desc = "Endersee a character")
 	@Require(Permission.Command.Endersee)
-	fun endersee(@Sender sender: Player, @AllowCharacterName target: Profile) {
+	fun endersee(@Sender sender: Player, @AllowCharacterName @AllowPlayerName target: Profile) {
 		val inventory = MirroredInventory(
 				target.inventory.enderChest,
 				sender,

@@ -1,0 +1,15 @@
+name: FablesInventorySearch
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+  - FablesForm
+  - FablesGui
+  - FablesText
+  - FablesCharacters
+  - FablesEconomy
+  - FablesItem
+  - NinCommands
+main: com.fablesfantasyrp.plugin.inventorysearch.FablesInventorySearch
+api-version: @bukkit_api_version@

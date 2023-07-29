@@ -53,4 +53,6 @@ include("examples:BlankSystem",
 		"Time",
 		"ItemShow",
 		"Bell",
-		"Wardrobe")
+		"Wardrobe",
+		"InventorySearch",
+		"Item")

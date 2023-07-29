@@ -8,7 +8,7 @@ import com.fablesfantasyrp.plugin.text.Permission
 import com.fablesfantasyrp.plugin.text.formatChat
 import com.fablesfantasyrp.plugin.text.join
 import com.fablesfantasyrp.plugin.text.miniMessage
-import com.fablesfantasyrp.plugin.utils.humanReadable
+import com.fablesfantasyrp.plugin.utils.*
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.NamedTextColor
@@ -153,7 +153,7 @@ abstract class AbstractChatInCharacter : ChatChannel, PreviewableChatChannel {
 
 object ChatInCharacterStandard : AbstractChatInCharacter(), Serializable {
 	@Transient
-	override val range = 15U
+	override val range = DISTANCE_TALK
 
 	@Transient
 	override val actionWord = "says"
@@ -165,7 +165,7 @@ object ChatInCharacterStandard : AbstractChatInCharacter(), Serializable {
 
 object ChatInCharacterWhisper : AbstractChatInCharacter(), Serializable {
 	@Transient
-	override val range = 2U
+	override val range = DISTANCE_WHISPER
 
 	@Transient
 	override val actionWord = "whispers"
@@ -182,7 +182,7 @@ object ChatInCharacterWhisper : AbstractChatInCharacter(), Serializable {
 
 object ChatInCharacterQuiet : AbstractChatInCharacter(), Serializable {
 	@Transient
-	override val range = 8U
+	override val range = DISTANCE_QUIET
 
 	@Transient
 	override val actionWord = "says quietly"
@@ -199,7 +199,7 @@ object ChatInCharacterQuiet : AbstractChatInCharacter(), Serializable {
 
 object ChatInCharacterShout : AbstractChatInCharacter(), Serializable {
 	@Transient
-	override val range = 30U
+	override val range = DISTANCE_SHOUT
 
 	@Transient
 	override val actionWord = "shouts"
@@ -216,7 +216,7 @@ object ChatInCharacterShout : AbstractChatInCharacter(), Serializable {
 
 object ChatInCharacterContextual : AbstractChatInCharacter(), Serializable {
 	@Transient
-	override val range = 15U
+	override val range = DISTANCE_TALK
 
 	@Transient
 	override val actionWord = ""

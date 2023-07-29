@@ -6,6 +6,7 @@ import com.fablesfantasyrp.plugin.chat.getPlayersWithinRange
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.parseLinks
+import com.fablesfantasyrp.plugin.utils.DISTANCE_TALK
 import com.fablesfantasyrp.plugin.utils.humanReadable
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.Tag
@@ -20,7 +21,7 @@ object ChatLocalOutOfCharacter : ChatChannel, RawChatChannel, ToggleableChatChan
 	private val characters: CharacterRepository = GlobalContext.get().get()
 
 	override fun getRecipients(from: Player): Sequence<Player> =
-			getPlayersWithinRange(from.location, 15U)
+			getPlayersWithinRange(from.location, DISTANCE_TALK)
 					.filter { !it.chat.disabledChannels.contains(this) }
 
 	override fun sendMessage(from: Player, message: String) {
