@@ -16,11 +16,11 @@ class SkinSlotCountService(private val plugin: Plugin,
 
 		return withContext(plugin.asyncDispatcher) {
 			when {
-				vaultPermission.playerInGroup(EDEN!!.name, player, "donator-explorer") -> 1
-				vaultPermission.playerInGroup(EDEN!!.name, player, "donator-adventurer") -> 2
-				vaultPermission.playerInGroup(EDEN!!.name, player, "donator-elementalnavigator") -> 3
-				vaultPermission.playerInGroup(EDEN!!.name, player, "donator-voidwalker") -> 4
 				vaultPermission.playerInGroup(EDEN!!.name, player, "donator-heraldoflilith") -> 5
+				vaultPermission.playerInGroup(EDEN!!.name, player, "donator-voidwalker") -> 4
+				vaultPermission.playerInGroup(EDEN!!.name, player, "donator-elementalnavigator") -> 3
+				vaultPermission.playerInGroup(EDEN!!.name, player, "donator-adventurer") -> 2
+				vaultPermission.playerInGroup(EDEN!!.name, player, "donator-explorer") -> 1
 				else -> 0
 			}
 		} + 2
