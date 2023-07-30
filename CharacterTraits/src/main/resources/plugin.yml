@@ -1,0 +1,10 @@
+name: FablesCharacterTraits
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesCharacters
+  - FablesUtils
+  - FablesDatabase
+main: com.fablesfantasyrp.plugin.charactertraits.FablesCharacterTraits
+api-version: @bukkit_api_version@
