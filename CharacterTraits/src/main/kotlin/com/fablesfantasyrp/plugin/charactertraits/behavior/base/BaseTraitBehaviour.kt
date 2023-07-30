@@ -27,6 +27,7 @@ abstract class BaseTraitBehaviour(
 		return server.onlinePlayers.asSequence().mapNotNull {
 			val profile = profileManager.getCurrentForPlayer(it) ?: return@mapNotNull null
 			val character = characters.forProfile(profile) ?: return@mapNotNull null
+			if (!traits.forCharacter(character).contains(trait)) return@mapNotNull null
 			ActiveTraitHolder(it, character)
 		}
 	}
