@@ -2,9 +2,9 @@ package com.fablesfantasyrp.plugin.charactertraits
 
 import com.fablesfantasyrp.plugin.charactertraits.dal.h2.H2CharacterTraitDataRepository
 import com.fablesfantasyrp.plugin.charactertraits.dal.repository.CharacterTraitDataRepository
-import com.fablesfantasyrp.plugin.charactertraits.domain.repository.CharacterTraitRepositoryImpl
 import com.fablesfantasyrp.plugin.charactertraits.domain.mapper.CharacterTraitMapper
 import com.fablesfantasyrp.plugin.charactertraits.domain.repository.CharacterTraitRepository
+import com.fablesfantasyrp.plugin.charactertraits.domain.repository.CharacterTraitRepositoryImpl
 import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
@@ -12,6 +12,7 @@ import org.bukkit.ChatColor.*
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.unloadKoinModules
 import org.koin.core.module.Module
@@ -46,10 +47,15 @@ class FablesCharacterTraits : JavaPlugin(), KoinComponent {
 			singleOf(::CharacterTraitRepositoryImpl) bind CharacterTraitRepository::class
 		}
 		loadKoinModules(koinModule)
+
+		server.scheduler.scheduleSyncRepeatingTask(this, {
+			get<CharacterTraitRepositoryImpl>().saveAllDirty()
+		}, 0L, 300L)
 	}
 
 	override fun onDisable() {
 		unloadKoinModules(koinModule)
+		get<CharacterTraitRepositoryImpl>().saveAllDirty()
 	}
 
 	companion object {
