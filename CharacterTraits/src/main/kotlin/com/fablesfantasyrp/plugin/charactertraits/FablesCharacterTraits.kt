@@ -1,5 +1,7 @@
 package com.fablesfantasyrp.plugin.charactertraits
 
+import com.fablesfantasyrp.plugin.charactertraits.behavior.Nightseer
+import com.fablesfantasyrp.plugin.charactertraits.behavior.base.TraitBehavior
 import com.fablesfantasyrp.plugin.charactertraits.dal.h2.H2CharacterTraitDataRepository
 import com.fablesfantasyrp.plugin.charactertraits.dal.repository.CharacterTraitDataRepository
 import com.fablesfantasyrp.plugin.charactertraits.domain.mapper.CharacterTraitMapper
@@ -13,6 +15,7 @@ import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.koin.core.context.GlobalContext
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.unloadKoinModules
 import org.koin.core.module.Module
@@ -45,8 +48,12 @@ class FablesCharacterTraits : JavaPlugin(), KoinComponent {
 			single { H2CharacterTraitDataRepository(fablesDatabase) } bind CharacterTraitDataRepository::class
 			singleOf(::CharacterTraitMapper)
 			singleOf(::CharacterTraitRepositoryImpl) bind CharacterTraitRepository::class
+
+			singleOf(::Nightseer) bind TraitBehavior::class
 		}
 		loadKoinModules(koinModule)
+
+		GlobalContext.get().getAll<TraitBehavior>().forEach { it.init() }
 
 		server.scheduler.scheduleSyncRepeatingTask(this, {
 			get<CharacterTraitRepositoryImpl>().saveAllDirty()

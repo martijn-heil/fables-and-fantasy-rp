@@ -12,14 +12,14 @@ class CharacterTraitRepositoryImpl(child: CharacterTraitMapper)
 	: MassivelyCachingEntityRepository<String, CharacterTrait, CharacterTraitMapper>(child),
 	CharacterTraitRepository {
 
-	private val byRace = HashMap<Race, MutableSet<CharacterTrait>>()
-	private val byCharacter = WeakHashMap<Character, MutableSet<CharacterTrait>>()
-	private val byCharacterDirty = HashMap<Character, MutableSet<CharacterTrait>>()
+	private val byRace = HashMap<Race, HashSet<CharacterTrait>>()
+	private val byCharacter = WeakHashMap<Character, HashSet<CharacterTrait>>()
+	private val byCharacterDirty = HashMap<Character, HashSet<CharacterTrait>>()
 
 	override fun init() {
 		super.init()
 
-		Race.values().forEach { byRace[it] = child.forRace(it).map { forId(it.id)!! }.toMutableSet() }
+		Race.values().forEach { byRace[it] = child.forRace(it).map { forId(it.id)!! }.toHashSet() }
 	}
 
 	override fun forRace(race: Race): Collection<CharacterTrait> {
@@ -30,7 +30,7 @@ class CharacterTraitRepositoryImpl(child: CharacterTraitMapper)
 		return lock.readLock().withLock { byCharacter[character] } ?: run {
 			lock.writeLock().withLock {
 				byCharacter[character] ?: run {
-					val traits = child.forCharacter(character).toMutableSet()
+					val traits = child.forCharacter(character).toHashSet()
 					byCharacter[character] = traits
 					traits
 				}
@@ -54,7 +54,7 @@ class CharacterTraitRepositoryImpl(child: CharacterTraitMapper)
 		lock.writeLock().withLock {
 			byCharacterDirty.computeIfAbsent(character) {
 				byCharacter[character] ?: run {
-					val traits = child.forCharacter(character).toMutableSet()
+					val traits = child.forCharacter(character).toHashSet()
 					byCharacter[character] = traits
 					traits
 				}
@@ -66,7 +66,7 @@ class CharacterTraitRepositoryImpl(child: CharacterTraitMapper)
 		lock.writeLock().withLock {
 			byCharacterDirty.computeIfAbsent(character) {
 				byCharacter[character] ?: run {
-					val traits = child.forCharacter(character).toMutableSet()
+					val traits = child.forCharacter(character).toHashSet()
 					byCharacter[character] = traits
 					traits
 				}
