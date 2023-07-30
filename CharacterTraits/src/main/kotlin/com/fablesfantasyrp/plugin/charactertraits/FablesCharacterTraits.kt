@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.charactertraits
 
 import com.fablesfantasyrp.plugin.charactertraits.behavior.Nightseer
+import com.fablesfantasyrp.plugin.charactertraits.behavior.Swift
 import com.fablesfantasyrp.plugin.charactertraits.behavior.base.TraitBehavior
 import com.fablesfantasyrp.plugin.charactertraits.dal.h2.H2CharacterTraitDataRepository
 import com.fablesfantasyrp.plugin.charactertraits.dal.repository.CharacterTraitDataRepository
@@ -50,6 +51,7 @@ class FablesCharacterTraits : JavaPlugin(), KoinComponent {
 			singleOf(::CharacterTraitRepositoryImpl) bind CharacterTraitRepository::class
 
 			singleOf(::Nightseer) bind TraitBehavior::class
+			singleOf(::Swift) bind TraitBehavior::class
 		}
 		loadKoinModules(koinModule)
 
