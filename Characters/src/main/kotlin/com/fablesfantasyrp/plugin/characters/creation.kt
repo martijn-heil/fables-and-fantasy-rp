@@ -41,6 +41,7 @@ data class NewCharacterData(val name: String, val age: UInt, val gender: Gender,
 fun getAllowedRaces(isStaffCharacter: Boolean): Collection<Race> = Race.values().asSequence()
 				.filter { it != Race.HUMAN }
 				.filter { if (!isStaffCharacter) it != Race.OTHER else true }
+				.filter { if (!isStaffCharacter) it != Race.SYLVANI else true }
 				.toList()
 
 val NAME_DISALLOWED_CHARACTERS = Regex("[^A-Za-z0-9\\- ']")
@@ -58,6 +59,7 @@ val Race.itemStackRepresentation: ItemStack get() = ItemStack(when (this) {
 			Race.ORC -> Material.MOSS_BLOCK
 			Race.GOBLIN -> Material.LIGHT_GRAY_TERRACOTTA
 			Race.HALFLING -> Material.CRAFTING_TABLE
+			Race.SYLVANI -> Material.OAK_LEAVES
 			Race.OTHER -> Material.CARVED_PUMPKIN
 		})
 
@@ -146,7 +148,7 @@ suspend fun promptNewCharacterInfo(player: Player, allowedRaces: Collection<Race
 						val statValue = stats[it]
 						Component.text("$statValue $displayName").color(NamedTextColor.YELLOW)
 					}.join(Component.text(", ")).asIterable()
-			)
+		 	)
 
 	player.sendMessage(miniMessage.deserialize(
 			"<gray>" +
@@ -191,7 +193,7 @@ suspend fun forceCharacterCreation(player: Player,
 								   profiles: EntityProfileRepository = Services.get(),
 								   characters: EntityCharacterRepository = Services.get(),
 								   profileManager: ProfileManager = Services.get()) {
-	val newCharacterData = forcePromptNewCharacterInfo(player, Race.values().filter { it != Race.HUMAN && it != Race.OTHER})
+	val newCharacterData = forcePromptNewCharacterInfo(player, Race.values().filter { it != Race.HUMAN && it != Race.OTHER && it != Race.SYLVANI})
 
 	val profile = profiles.create(Profile(
 			owner = player,
