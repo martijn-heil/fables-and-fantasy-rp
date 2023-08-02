@@ -20,7 +20,7 @@ val PLOTS: World? get() = Bukkit.getWorld("plots")
 val EDEN: World? get() = Bukkit.getWorld("Eden")
 
 const val DISTANCE_WHISPER = 2U
-const val DISTANCE_QUIET = 15U
+const val DISTANCE_QUIET = 8u
 const val DISTANCE_TALK = 15U
 const val DISTANCE_SHOUT = 30U
 
