@@ -185,7 +185,7 @@ INSERT INTO character_trait (id, description) VALUES ('mushroom_addict',
 	'Players with this trait can once per battle consume a mushroom item using their action. If they do, they go in a trance that allows them to take two actions in their next turn. Additionally, they can add a +1 to all their rolls for that turn.');
 
 INSERT INTO character_trait (id, description) VALUES ('big_thinka',
-	'Players with this tait can once per battle cast a spell that they have seen another mage cast. Even if they do not have that spell in their spellbook. This only works when the character is a spellcaster.');
+	'Players with this trait can once per battle cast a spell that they have seen another mage cast. Even if they do not have that spell in their spellbook. This only works when the character is a spellcaster.');
 
 INSERT INTO character_trait (id, description) VALUES ('acid_spitta',
 	'Players with this trait can spit acid at other players, giving them the "Blindness" status effect for 1 turn if they hit. (roll agility) Range: 10 blocks.');
