@@ -22,10 +22,8 @@ jobs:
     steps:
     - uses: shaunco/ssh-agent@git-repo-mapping # this action will configure git to use the right SSH key per each repository. 
       with:
-        ssh-private-key: |
-        "${{ secrets.BUKKIT_DEPENDENCY_PLUGIN_JARS_DEPLOY_KEY}}"
-        repo-mappings: |
-        github.com/fablesfantasyrp/bukkit-dependency-plugin-jars
+        ssh-private-key: "${{ secrets.BUKKIT_DEPENDENCY_PLUGIN_JARS_DEPLOY_KEY}}"
+        repo-mappings: github.com/fablesfantasyrp/bukkit-dependency-plugin-jars
     - uses: actions/checkout@v3
       with:
         submodules: recursive
