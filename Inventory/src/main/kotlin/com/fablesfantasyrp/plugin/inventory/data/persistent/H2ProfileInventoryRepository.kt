@@ -17,18 +17,12 @@ class H2ProfileInventoryRepository(private val dataSource: DataSource)
 
 	override fun forOwner(profile: Profile): ProfileInventory {
 		check(!profile.isDestroyed)
-		val offlinePlayer = profile.owner
-		val player = offlinePlayer?.player
 		val inventory = this.forId(profile.id) ?: run {
 			this.create(ProfileInventory(
 					id = profile.id,
 					inventory = PassthroughPlayerInventory.createEmpty(),
 					enderChest = PassthroughInventory(arrayOfNulls(27)))
 			)
-		}
-		if (offlinePlayer != null && offlinePlayer.isOnline && player != null) {
-			inventory.inventory.bukkitInventory = player.inventory
-			inventory.enderChest.bukkitInventory = player.enderChest
 		}
 		return inventory
 	}
