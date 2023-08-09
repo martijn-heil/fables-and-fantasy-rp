@@ -456,7 +456,7 @@ class Commands(private val plugin: JavaPlugin,
 				plugin.launch {
 					val race: Race = sender.promptGui(GuiSingleChoice(plugin,
 							"Please choose a new race",
-							getAllowedRaces(target.isStaffCharacter).asSequence(),
+							Race.values().asSequence(),
 							{ it.itemStackRepresentation },
 							{ "${ChatColor.GOLD}$it" }
 					))
