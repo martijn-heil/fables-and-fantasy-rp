@@ -19,6 +19,7 @@ import org.ocpsoft.prettytime.PrettyTime
 fun characterCard(character: Character, observer: CommandSender? = null): Component {
 	val profileManager = Services.get<ProfileManager>()
 	val vaultChat = Services.get<Chat>()
+	val authorizer = Services.get<CharacterAuthorizer>()
 
 	val statsMessage = Component.text().append(CharacterStatKind.values().asSequence().map { statKind ->
 		val statValue = character.totalStats[statKind]
@@ -28,11 +29,12 @@ fun characterCard(character: Character, observer: CommandSender? = null): Compon
 		)
 	}.join(Component.newline()).asIterable()).build()
 
-	fun editButton(permission: String, property: String)
-		= if (observer == null || observer.hasPermission(permission)) Component.text("[E]")
-			.color(NamedTextColor.GOLD)
-			.hoverEvent(HoverEvent.showText(Component.text("Click to change!")))
-			.clickEvent(ClickEvent.runCommand("/char change $property #${character.id}"))
+	fun editButton(canEdit: Boolean, property: String)
+		= if (canEdit)
+			Component.text("[E]")
+				.color(NamedTextColor.GOLD)
+				.hoverEvent(HoverEvent.showText(Component.text("Click to change!")))
+				.clickEvent(ClickEvent.runCommand("/char change $property #${character.id}"))
 		else Component.text("[E]").color(NamedTextColor.DARK_GRAY)
 
 	val player = profileManager.getCurrentForProfile(character.profile)
@@ -74,12 +76,12 @@ fun characterCard(character: Character, observer: CommandSender? = null): Compon
 			Placeholder.unparsed("maximum_health", character.maximumHealth.toString()),
 			Placeholder.component("stats", statsMessage),
 			Placeholder.unparsed("last_seen", character.lastSeen?.let { PrettyTime().format(it) } ?: "unknown"),
-			Placeholder.component("change_name", editButton(Permission.Command.Characters.Change.Name, "name")),
-			Placeholder.component("change_age", editButton(Permission.Command.Characters.Change.Age, "age")),
-			Placeholder.component("change_description", editButton(Permission.Command.Characters.Change.Description, "description")),
-			Placeholder.component("change_race", editButton(Permission.Command.Characters.Change.Race, "race")),
-			Placeholder.component("change_gender", editButton(Permission.Command.Characters.Change.Gender, "gender")),
-			Placeholder.component("change_stats", editButton(Permission.Command.Characters.Change.Stats, "stats")),
+			Placeholder.component("change_name", editButton(observer == null || authorizer.mayEditName(observer, character).result, "name")),
+			Placeholder.component("change_age", editButton(observer == null || authorizer.mayEditAge(observer, character).result, "age")),
+			Placeholder.component("change_description", editButton(observer == null || authorizer.mayEditDescription(observer, character).result, "description")),
+			Placeholder.component("change_race", editButton(observer == null || authorizer.mayEditRace(observer, character).result, "race")),
+			Placeholder.component("change_gender", editButton(observer == null || authorizer.mayEditGender(observer, character).result, "gender")),
+			Placeholder.component("change_stats", editButton(observer == null || authorizer.mayEditStats(observer, character).result, "stats")),
 			Placeholder.component("status", if (character.isDead) Component.text("(dead) ").color(NamedTextColor.RED)
 											else if (character.isShelved) Component.text("(shelved) ").color(NamedTextColor.YELLOW)
 											else Component.empty())

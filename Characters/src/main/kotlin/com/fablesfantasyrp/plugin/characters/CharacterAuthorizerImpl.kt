@@ -5,11 +5,11 @@ import com.fablesfantasyrp.plugin.characters.data.entity.CharacterRepository
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.utils.AuthorizationResult
 import com.fablesfantasyrp.plugin.utils.FABLES_ADMIN
-import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.permissions.Permissible
 
 class CharacterAuthorizerImpl(private val characters: CharacterRepository) : CharacterAuthorizer {
-	override fun mayEdit(who: CommandSender, what: Character, allowShelved: Boolean): AuthorizationResult {
+	override fun mayEdit(who: Permissible, what: Character, allowShelved: Boolean): AuthorizationResult {
 		if (!allowShelved && what.isShelved) {
 			return AuthorizationResult(false, "This character is shelved")
 		}
@@ -21,8 +21,8 @@ class CharacterAuthorizerImpl(private val characters: CharacterRepository) : Cha
 		val owner = what.profile.owner
 
 		if (who != owner &&
-				!(who.hasPermission(Permission.Any) ||
-						(who.hasPermission(Permission.Staff) && what.isStaffCharacter))) {
+			!(who.hasPermission(Permission.Any) ||
+				(who.hasPermission(Permission.Staff) && what.isStaffCharacter))) {
 			return AuthorizationResult(false)
 		}
 
@@ -59,6 +59,33 @@ class CharacterAuthorizerImpl(private val characters: CharacterRepository) : Cha
 
 		if (whatCharacter?.isDead == true) {
 			return AuthorizationResult(false, "This character is dead.")
+		}
+
+		return AuthorizationResult(true)
+	}
+
+	override fun mayEditRace(who: Permissible, what: Character, allowShelved: Boolean): AuthorizationResult
+		= mayEditProperty(who, what, allowShelved, Permission.Change.Race)
+
+	override fun mayEditGender(who: Permissible, what: Character, allowShelved: Boolean): AuthorizationResult
+		= mayEditProperty(who, what, allowShelved, Permission.Change.Gender)
+
+	override fun mayEditAge(who: Permissible, what: Character, allowShelved: Boolean): AuthorizationResult
+		= mayEditProperty(who, what, allowShelved, Permission.Change.Age)
+
+	override fun mayEditName(who: Permissible, what: Character, allowShelved: Boolean): AuthorizationResult
+		= mayEditProperty(who, what, allowShelved, Permission.Change.Name)
+
+	override fun mayEditDescription(who: Permissible, what: Character, allowShelved: Boolean): AuthorizationResult
+		= mayEditProperty(who, what, allowShelved, Permission.Change.Description)
+
+	override fun mayEditStats(who: Permissible, what: Character, allowShelved: Boolean): AuthorizationResult
+		= mayEditProperty(who, what, allowShelved, Permission.Change.Stats)
+
+	private fun mayEditProperty(who: Permissible, what: Character, allowShelved: Boolean, permission: String): AuthorizationResult {
+		mayEdit(who, what, allowShelved).orElse { return AuthorizationResult(false, it) }
+		if (!what.isStaffCharacter && !who.hasPermission(permission)) {
+			return AuthorizationResult(false)
 		}
 
 		return AuthorizationResult(true)

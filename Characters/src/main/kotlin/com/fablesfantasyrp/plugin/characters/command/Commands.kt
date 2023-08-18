@@ -314,7 +314,7 @@ class Commands(private val plugin: JavaPlugin,
 					stat: CharacterStatKind,
 					@Range(min = 0.0, max = 127.0) value: Int,
 					@CommandTarget target: Character) {
-				authorizer.mayEdit(sender, target).orElse { throw AuthorizationException(it) }
+				authorizer.mayEditStats(sender, target).orElse { throw AuthorizationException(it) }
 
 				target.stats = target.stats.with(stat, value.toUInt())
 				sender.sendMessage("$SYSPREFIX Set ${target.name}'s ${stat.toString().lowercase()} to $value")
@@ -342,9 +342,8 @@ class Commands(private val plugin: JavaPlugin,
 
 		inner class Change {
 			@Command(aliases = ["age"], desc = "Set a character's age")
-			@Require(Permission.Command.Characters.Change.Age)
 			fun age(@Sender sender: Player, @CommandTarget target: Character) {
-				authorizer.mayEdit(sender, target).orElse { throw AuthorizationException(it) }
+				authorizer.mayEditAge(sender, target).orElse { throw AuthorizationException(it) }
 
 				plugin.launch {
 					val age = sender.promptChat("$SYSPREFIX Please enter ${target.name}'s new age")
@@ -366,9 +365,8 @@ class Commands(private val plugin: JavaPlugin,
 			}
 
 			@Command(aliases = ["description"], desc = "Change a character's description")
-			@Require(Permission.Command.Characters.Change.Description)
 			fun description(@Sender sender: Player, @CommandTarget target: Character) {
-				authorizer.mayEdit(sender, target).orElse { throw AuthorizationException(it) }
+				authorizer.mayEditDescription(sender, target).orElse { throw AuthorizationException(it) }
 
 				plugin.launch {
 					val newDescription = sender.promptChat("$SYSPREFIX Please enter ${target.name}'s new description:")
@@ -378,9 +376,8 @@ class Commands(private val plugin: JavaPlugin,
 			}
 
 			@Command(aliases = ["name"], desc = "Change a character's name")
-			@Require(Permission.Command.Characters.Change.Name)
 			fun name(@Sender sender: Player, @CommandTarget target: Character) {
-				authorizer.mayEdit(sender, target).orElse { throw AuthorizationException(it) }
+				authorizer.mayEditName(sender, target).orElse { throw AuthorizationException(it) }
 
 				plugin.launch {
 					val oldName = target.name
@@ -412,9 +409,8 @@ class Commands(private val plugin: JavaPlugin,
 			}
 
 			@Command(aliases = ["stats"], desc = "Change a character's stats")
-			@Require(Permission.Command.Characters.Change.Stats)
 			fun stats(@Sender sender: Player, @CommandTarget target: Character) {
-				authorizer.mayEdit(sender, target).orElse { throw AuthorizationException(it) }
+				authorizer.mayEditStats(sender, target).orElse { throw AuthorizationException(it) }
 
 				if (!target.isStaffCharacter && target.changedStatsAt != null) {
 					val daysLeft = max(0, 30 - Duration.between(target.changedStatsAt, Instant.now()).toDays())
@@ -450,9 +446,9 @@ class Commands(private val plugin: JavaPlugin,
 			}
 
 			@Command(aliases = ["race"], desc = "Change a character's race")
-			@Require(Permission.Command.Characters.Change.Race)
 			fun race(@Sender sender: Player, @CommandTarget target: Character) {
-				authorizer.mayEdit(sender, target).orElse { throw AuthorizationException(it) }
+				authorizer.mayEditRace(sender, target).orElse { throw AuthorizationException(it) }
+
 				plugin.launch {
 					val race: Race = sender.promptGui(GuiSingleChoice(plugin,
 							"Please choose a new race",
@@ -466,9 +462,9 @@ class Commands(private val plugin: JavaPlugin,
 			}
 
 			@Command(aliases = ["gender"], desc = "Change a character's gender")
-			@Require(Permission.Command.Characters.Change.Gender)
 			fun gender(@Sender sender: Player, @CommandTarget target: Character) {
-				authorizer.mayEdit(sender, target).orElse { throw AuthorizationException(it) }
+				authorizer.mayEditGender(sender, target).orElse { throw AuthorizationException(it) }
+
 				plugin.launch {
 					val gender: Gender = sender.promptGui(GuiSingleChoice(FablesCharacters.instance,
 							"Please choose a new gender",

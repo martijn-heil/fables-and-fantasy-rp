@@ -5,9 +5,18 @@ object Permission {
 	const val Staff = "${prefix}.staff"
 	const val Any = "${prefix}.any"
 
+	object Change {
+		private const val prefix = Permission.Command.Characters.prefix + ".change"
+		const val Description = "${prefix}.description"
+		const val Age = "${prefix}.age"
+		const val Name = "${prefix}.name"
+		const val Stats = "${prefix}.stats"
+		const val Race = "${prefix}.race"
+		const val Gender = "${prefix}.gender"
+	}
+
 	object Command {
 		const val prefix = Permission.prefix + ".command"
-		const val Updatestats = "${prefix}.updatestats"
 
 		object Characters {
 			const val prefix = Permission.Command.prefix + ".characters"
@@ -27,16 +36,6 @@ object Permission {
 				private const val prefix = Permission.Command.Characters.prefix + ".stats"
 				const val Set = "${prefix}.set"
 				const val Edit = "${prefix}.edit"
-			}
-
-			object Change {
-				private const val prefix = Permission.Command.Characters.prefix + ".change"
-				const val Description = "${prefix}.description"
-				const val Age = "${prefix}.age"
-				const val Name = "${prefix}.name"
-				const val Stats = "${prefix}.stats"
-				const val Race = "${prefix}.race"
-				const val Gender = "${prefix}.gender"
 			}
 		}
 	}
