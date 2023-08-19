@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.alternatemechanics
 
 import com.fablesfantasyrp.plugin.alternatemechanics.mechanic.*
+import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.sk89q.worldguard.WorldGuard
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin
@@ -19,7 +20,7 @@ import org.koin.dsl.binds
 import org.koin.dsl.module
 
 
-internal val SYSPREFIX = "$GOLD${BOLD}[${LIGHT_PURPLE}${BOLD} ALTERNATE MECHANICS ${GOLD}${BOLD}]${GRAY}"
+internal val SYSPREFIX = GLOBAL_SYSPREFIX
 internal val PLUGIN get() = FablesAlternateMechanics.instance
 
 class FablesAlternateMechanics : JavaPlugin(), KoinComponent {

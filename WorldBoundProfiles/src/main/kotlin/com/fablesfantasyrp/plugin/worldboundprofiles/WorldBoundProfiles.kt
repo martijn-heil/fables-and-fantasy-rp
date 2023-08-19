@@ -4,15 +4,15 @@ import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDataba
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.data.entity.EntityProfileRepository
+import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.fablesfantasyrp.plugin.utils.Services
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.fablesfantasyrp.plugin.worldboundprofiles.data.H2WorldRestrictionRuleRepository
 import com.fablesfantasyrp.plugin.worldboundprofiles.data.WorldRestrictionRuleRepository
-import org.bukkit.ChatColor.*
 import org.bukkit.plugin.java.JavaPlugin
 
 
-internal val SYSPREFIX = "$GOLD${BOLD}[${LIGHT_PURPLE}${BOLD} WORLD BINDING ${GOLD}${BOLD}]${GRAY}"
+internal val SYSPREFIX = GLOBAL_SYSPREFIX
 internal val PLUGIN get() = FablesWorldBoundProfiles.instance
 
 class FablesWorldBoundProfiles : JavaPlugin() {

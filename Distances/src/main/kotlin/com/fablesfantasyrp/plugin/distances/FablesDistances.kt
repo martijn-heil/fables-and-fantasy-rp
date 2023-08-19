@@ -2,6 +2,7 @@ package com.fablesfantasyrp.plugin.distances
 
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
 import com.fablesfantasyrp.plugin.distances.command.Commands
+import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.FixedSuggestionsModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
@@ -13,13 +14,12 @@ import com.sk89q.intake.Intake
 import com.sk89q.intake.fluent.CommandGraph
 import com.sk89q.intake.parametric.ParametricBuilder
 import com.sk89q.intake.parametric.provider.PrimitivesModule
-import org.bukkit.ChatColor
 import org.bukkit.command.Command
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 
-internal val SYSPREFIX = "${ChatColor.GOLD}[${ChatColor.DARK_AQUA}${ChatColor.BOLD} DISTANCES ${ChatColor.GOLD}] ${ChatColor.GRAY}"
+internal val SYSPREFIX = GLOBAL_SYSPREFIX
 
 class FablesDistances : JavaPlugin(), KoinComponent {
 	private lateinit var commands: Collection<Command>

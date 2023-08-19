@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.weights
 
+import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.fablesfantasyrp.plugin.weights.command.Commands
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
@@ -12,7 +13,6 @@ import com.sk89q.intake.Intake
 import com.sk89q.intake.fluent.CommandGraph
 import com.sk89q.intake.parametric.ParametricBuilder
 import com.sk89q.intake.parametric.provider.PrimitivesModule
-import org.bukkit.ChatColor.*
 import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.plugin.Plugin
@@ -26,7 +26,7 @@ import org.koin.dsl.binds
 import org.koin.dsl.module
 
 
-internal val SYSPREFIX = "$GOLD${BOLD}[${AQUA}${BOLD} WEIGHTS ${GOLD}${BOLD}]${GRAY}"
+internal val SYSPREFIX = GLOBAL_SYSPREFIX
 internal val PLUGIN get() = FablesWeights.instance
 
 class FablesWeights : JavaPlugin(), KoinComponent {

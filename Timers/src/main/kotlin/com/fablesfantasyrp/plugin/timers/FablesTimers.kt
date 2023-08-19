@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.timers
 
+import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.BukkitModule
@@ -10,11 +11,10 @@ import com.sk89q.intake.Intake
 import com.sk89q.intake.fluent.CommandGraph
 import com.sk89q.intake.parametric.ParametricBuilder
 import com.sk89q.intake.parametric.provider.PrimitivesModule
-import org.bukkit.ChatColor.*
 import org.bukkit.command.Command
 import org.bukkit.plugin.java.JavaPlugin
 
-val SYSPREFIX = "${DARK_RED}${BOLD}[${RED}${BOLD} TIMERS ${DARK_RED}${BOLD}]${GRAY}"
+val SYSPREFIX = GLOBAL_SYSPREFIX
 internal val PLUGIN get() = FablesTimers.instance
 
 class FablesTimers : JavaPlugin() {

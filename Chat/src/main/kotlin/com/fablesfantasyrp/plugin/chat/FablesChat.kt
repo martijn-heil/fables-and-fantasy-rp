@@ -8,6 +8,7 @@ import com.fablesfantasyrp.plugin.chat.data.entity.EntityChatPlayerRepositoryImp
 import com.fablesfantasyrp.plugin.chat.data.persistent.H2ChatPlayerRepository
 import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
 import com.fablesfantasyrp.plugin.database.applyMigrations
+import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
@@ -19,7 +20,6 @@ import com.sk89q.intake.Intake
 import com.sk89q.intake.fluent.CommandGraph
 import com.sk89q.intake.parametric.ParametricBuilder
 import com.sk89q.intake.parametric.provider.PrimitivesModule
-import org.bukkit.ChatColor.*
 import org.bukkit.command.Command
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
@@ -33,7 +33,7 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.binds
 import org.koin.dsl.module
 
-internal val SYSPREFIX = "${GOLD}[${DARK_AQUA}${BOLD} CHAT ${GOLD}]$GRAY"
+internal val SYSPREFIX = GLOBAL_SYSPREFIX
 val CHAT_CHAR = "$"
 
 class FablesChat : JavaPlugin(), KoinComponent {

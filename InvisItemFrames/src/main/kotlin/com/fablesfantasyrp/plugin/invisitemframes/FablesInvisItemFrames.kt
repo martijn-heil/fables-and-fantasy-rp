@@ -1,12 +1,12 @@
 package com.fablesfantasyrp.plugin.invisitemframes
 
-import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.fablesfantasyrp.plugin.invisitemframes.listeners.ItemFrameListener
-import org.bukkit.ChatColor.*
+import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
+import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import org.bukkit.plugin.java.JavaPlugin
 
 
-internal val SYSPREFIX = "$GOLD${BOLD}[${LIGHT_PURPLE}${BOLD} INVIS ITEMFRAMES ${GOLD}${BOLD}]${GRAY}"
+internal val SYSPREFIX = GLOBAL_SYSPREFIX
 internal val PLUGIN get() = FablesInvisItemFrames.instance
 
 class FablesInvisItemFrames : JavaPlugin() {

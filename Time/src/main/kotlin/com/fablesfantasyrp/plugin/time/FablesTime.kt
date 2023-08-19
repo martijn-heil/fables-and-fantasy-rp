@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.time
 
 import com.fablesfantasyrp.plugin.time.command.Commands
+import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
@@ -12,7 +13,6 @@ import com.sk89q.intake.Intake
 import com.sk89q.intake.fluent.CommandGraph
 import com.sk89q.intake.parametric.ParametricBuilder
 import com.sk89q.intake.parametric.provider.PrimitivesModule
-import org.bukkit.ChatColor.*
 import org.bukkit.command.Command
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
@@ -28,7 +28,7 @@ import org.koin.dsl.module
 import java.time.Instant
 
 
-internal val SYSPREFIX = "$GOLD${BOLD}[${RED}${BOLD} TIME ${GOLD}${BOLD}]${GRAY}"
+internal val SYSPREFIX = GLOBAL_SYSPREFIX
 internal val PLUGIN get() = FablesTime.instance
 
 class FablesTime : JavaPlugin(), KoinComponent {

@@ -1,8 +1,8 @@
 package com.fablesfantasyrp.plugin.discord
 
+import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import dev.kord.common.entity.Snowflake
-import org.bukkit.ChatColor.*
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.component.KoinComponent
@@ -16,7 +16,7 @@ import org.koin.dsl.binds
 import org.koin.dsl.module
 
 
-internal val SYSPREFIX = "$GOLD${BOLD}[${LIGHT_PURPLE}${BOLD} DISCORD ${GOLD}${BOLD}]${GRAY}"
+internal val SYSPREFIX = GLOBAL_SYSPREFIX
 internal val PLUGIN get() = FablesDiscord.instance
 
 class FablesDiscord : JavaPlugin(), KoinComponent {

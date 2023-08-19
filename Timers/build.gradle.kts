@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    // internal module dependencies
+    implementation(project(":Utils"))
 }

@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.itemshow
 
+import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
@@ -11,13 +12,12 @@ import com.sk89q.intake.Intake
 import com.sk89q.intake.fluent.CommandGraph
 import com.sk89q.intake.parametric.ParametricBuilder
 import com.sk89q.intake.parametric.provider.PrimitivesModule
-import org.bukkit.ChatColor.*
 import org.bukkit.command.Command
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 
-val SYSPREFIX = "${GOLD}${BOLD}[${GRAY}${BOLD} ITEM SHOW ${GOLD}${BOLD}]${GRAY}"
+val SYSPREFIX = GLOBAL_SYSPREFIX
 
 class FablesItemShow : JavaPlugin(), KoinComponent {
 	private lateinit var commands: Collection<Command>

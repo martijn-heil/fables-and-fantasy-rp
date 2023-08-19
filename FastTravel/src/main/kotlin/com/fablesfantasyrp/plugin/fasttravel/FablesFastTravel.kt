@@ -7,6 +7,7 @@ import com.fablesfantasyrp.plugin.fasttravel.data.entity.FastTravelLinkRepositor
 import com.fablesfantasyrp.plugin.fasttravel.data.entity.FastTravelPlayerRepository
 import com.fablesfantasyrp.plugin.fasttravel.data.entity.MapFastTravelPlayerRepository
 import com.fablesfantasyrp.plugin.fasttravel.data.persistent.H2FastTravelLinkRepository
+import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.fablesfantasyrp.plugin.worldguardinterop.command.WorldGuardModule
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
@@ -20,11 +21,10 @@ import com.sk89q.intake.fluent.CommandGraph
 import com.sk89q.intake.parametric.ParametricBuilder
 import com.sk89q.intake.parametric.provider.PrimitivesModule
 import com.sk89q.worldguard.WorldGuard
-import org.bukkit.ChatColor.*
 import org.bukkit.command.Command
 import org.bukkit.plugin.java.JavaPlugin
 
-val SYSPREFIX = "${GOLD}${BOLD}[${LIGHT_PURPLE}${BOLD} FAST TRAVEL ${GOLD}${BOLD}]${GRAY}"
+val SYSPREFIX = GLOBAL_SYSPREFIX
 internal val PLUGIN get() = FablesFastTravel.instance
 internal val regionContainer get() = WorldGuard.getInstance().platform.regionContainer
 

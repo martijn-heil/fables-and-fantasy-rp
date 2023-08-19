@@ -7,7 +7,9 @@ import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.rolls.ROLL_RANGE
 import com.fablesfantasyrp.plugin.rolls.rollExpression
+import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
+import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.fablesfantasyrp.plugin.utils.broadcast
 import com.gitlab.martijn_heil.nincommands.common.FixedSuggestions
 import com.gitlab.martijn_heil.nincommands.common.Sender
@@ -35,7 +37,7 @@ class Commands(private val server: Server,
 		val senderCharacter = characters.forProfile(sender)
 		val senderName = senderCharacter?.name ?: senderPlayer.name
 		val stats = senderCharacter?.totalStats
-		val prefix = miniMessage.deserialize("<bold><gold>[</gold> <blue>ROLL</blue> <gold>]</gold></bold>")
+		val prefix = legacyText(GLOBAL_SYSPREFIX)
 		val chatStyle = senderPlayer.chat.chatStyle ?: Style.style(NamedTextColor.YELLOW)
 		val resolver = TagResolver.builder().tag("chat_color", Tag.styling { it.merge(chatStyle) }).build()
 

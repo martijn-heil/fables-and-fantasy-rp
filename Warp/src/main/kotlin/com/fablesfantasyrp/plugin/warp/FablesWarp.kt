@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.warp
 
+import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.fablesfantasyrp.plugin.warp.command.Commands
 import com.fablesfantasyrp.plugin.warp.command.provider.WarpModule
@@ -15,7 +16,6 @@ import com.sk89q.intake.Intake
 import com.sk89q.intake.fluent.CommandGraph
 import com.sk89q.intake.parametric.ParametricBuilder
 import com.sk89q.intake.parametric.provider.PrimitivesModule
-import org.bukkit.ChatColor.*
 import org.bukkit.command.Command
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
@@ -28,7 +28,7 @@ import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.binds
 import org.koin.dsl.module
 
-internal val SYSPREFIX = "${GOLD}${BOLD}[${LIGHT_PURPLE}${BOLD} WARP ${GOLD}${BOLD}]${GRAY}"
+internal val SYSPREFIX = GLOBAL_SYSPREFIX
 internal val PLUGIN get() = FablesWarp.instance
 
 class FablesWarp : JavaPlugin(), KoinComponent {

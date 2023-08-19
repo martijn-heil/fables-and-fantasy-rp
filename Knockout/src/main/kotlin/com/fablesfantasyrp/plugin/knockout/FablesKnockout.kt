@@ -8,7 +8,8 @@ import com.fablesfantasyrp.plugin.knockout.data.entity.KnockoutPlayerDataEntityM
 import com.fablesfantasyrp.plugin.knockout.data.entity.KnockoutPlayerDataEntityRepository
 import com.fablesfantasyrp.plugin.knockout.data.entity.KnockoutPlayerEntity
 import com.fablesfantasyrp.plugin.knockout.data.persistent.database.DatabasePersistentKnockoutPlayerDataRepository
-import com.fablesfantasyrp.plugin.text.miniMessage
+import com.fablesfantasyrp.plugin.text.legacyText
+import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
@@ -24,8 +25,7 @@ import org.bukkit.command.Command
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
 
-internal val SYSPREFIX =
-		miniMessage.deserialize("<gold>[</gold> <yellow><bold>KNOCKOUT</bold></yellow> <gold>]</gold> ")
+internal val SYSPREFIX = legacyText(GLOBAL_SYSPREFIX)
 
 internal lateinit var knockoutPlayerDataManager: EntityRepository<UUID, KnockoutPlayerEntity>
 

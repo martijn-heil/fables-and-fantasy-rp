@@ -8,6 +8,7 @@ import com.fablesfantasyrp.plugin.economy.data.entity.EntityProfileEconomyReposi
 import com.fablesfantasyrp.plugin.economy.data.entity.ProfileEconomyRepository
 import com.fablesfantasyrp.plugin.economy.data.persistent.H2ProfileEconomyRepository
 import com.fablesfantasyrp.plugin.profile.command.provider.ProfileModule
+import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
@@ -19,7 +20,6 @@ import com.sk89q.intake.Intake
 import com.sk89q.intake.fluent.CommandGraph
 import com.sk89q.intake.parametric.ParametricBuilder
 import com.sk89q.intake.parametric.provider.PrimitivesModule
-import org.bukkit.ChatColor.*
 import org.bukkit.command.Command
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.ServicePriority
@@ -37,7 +37,7 @@ internal val PLUGIN get() = FablesEconomy.instance
 
 const val CURRENCY_SYMBOL = "Ⓐ"
 
-internal val SYSPREFIX = "$GOLD$BOLD[$LIGHT_PURPLE$BOLD ECONOMY $GOLD$BOLD]$GRAY"
+internal val SYSPREFIX = GLOBAL_SYSPREFIX
 
 
 class FablesEconomy : JavaPlugin(), KoinComponent {

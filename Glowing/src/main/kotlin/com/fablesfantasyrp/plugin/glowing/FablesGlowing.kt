@@ -1,8 +1,8 @@
 package com.fablesfantasyrp.plugin.glowing
 
+import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import me.neznamy.tab.api.TabAPI
-import org.bukkit.ChatColor.*
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.component.KoinComponent
@@ -15,7 +15,7 @@ import org.koin.dsl.binds
 import org.koin.dsl.module
 
 
-val SYSPREFIX = "${DARK_RED}${BOLD}[${RED}${BOLD} GLOWING ${DARK_RED}${BOLD}]${GRAY}"
+val SYSPREFIX = GLOBAL_SYSPREFIX
 
 
 class FablesGlowing : JavaPlugin(), KoinComponent {

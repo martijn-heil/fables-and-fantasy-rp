@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.playeresp
 
 import com.fablesfantasyrp.plugin.playeresp.command.Commands
+import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
@@ -12,7 +13,6 @@ import com.sk89q.intake.Intake
 import com.sk89q.intake.fluent.CommandGraph
 import com.sk89q.intake.parametric.ParametricBuilder
 import com.sk89q.intake.parametric.provider.PrimitivesModule
-import org.bukkit.ChatColor.*
 import org.bukkit.command.Command
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
@@ -26,7 +26,7 @@ import org.koin.dsl.binds
 import org.koin.dsl.module
 
 
-val SYSPREFIX = "${DARK_RED}${BOLD}[${RED}${BOLD} PlayerESP ${DARK_RED}${BOLD}]${GRAY}"
+val SYSPREFIX = GLOBAL_SYSPREFIX
 
 class FablesPlayerEsp : JavaPlugin(), KoinComponent {
 	private lateinit var koinModule: Module

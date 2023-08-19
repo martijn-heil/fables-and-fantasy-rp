@@ -3,6 +3,7 @@ package com.fablesfantasyrp.plugin.halt
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
 import com.fablesfantasyrp.plugin.characters.data.entity.Character
 import com.fablesfantasyrp.plugin.profile.ProfileManager
+import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
@@ -22,7 +23,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.context.GlobalContext
 
-val SYSPREFIX = "${DARK_RED}${BOLD}[${RED}${BOLD} HALT ${DARK_RED}${BOLD}]${GRAY}"
+val SYSPREFIX = GLOBAL_SYSPREFIX
 
 class FablesHalt : JavaPlugin(), KoinComponent {
 	private lateinit var commands: Collection<Command>
