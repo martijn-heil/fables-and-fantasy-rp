@@ -95,7 +95,6 @@ class Commands(private val powerToolManager: PowerToolManager,
 			  to: Location,
 			  @CommandTarget(Permission.Command.Tppos + ".others") @AllowCharacterName @AllowPlayerName target: Profile) {
 		target.location = to
-		sender.sendMessage("$SYSPREFIX Teleported ${target.displayName} to ${to.humanReadable()}")
 		broadcaster.log(sender, "Teleported ${target.displayName} to ${to.humanReadable()}")
 	}
 
@@ -148,7 +147,6 @@ class Commands(private val powerToolManager: PowerToolManager,
 		val world = sender.world
 		world.setStorm(weather != Weather.CLEAR)
 		world.isThundering = weather == Weather.THUNDER
-		sender.sendMessage("$SYSPREFIX Set ${world.name}'s weather to $weather")
 		broadcaster.log(sender, "Set ${world.name}'s weather to $weather")
 	}
 
@@ -210,11 +208,6 @@ class Commands(private val powerToolManager: PowerToolManager,
 			@Optional @CommandTarget(Permission.Command.Fly + ".others") target: Player) {
 		val finalValue = value ?: !target.allowFlight
 		target.allowFlight = finalValue
-		sender.sendMessage(miniMessage.deserialize("<gray><prefix> Set fly mode <value> for <player></gray>",
-				Placeholder.component("prefix", legacyText(SYSPREFIX)),
-				Placeholder.component("value", finalValue.asEnabledDisabledComponent()),
-				Placeholder.component("player", Component.text(target.name).style(target.nameStyle))
-		))
 		broadcaster.log(sender, "Set ${target.name}'s fly mode to $finalValue")
 	}
 
@@ -237,13 +230,7 @@ class Commands(private val powerToolManager: PowerToolManager,
 			MovementType.FLY -> target.flySpeed = speed
 		}
 
-		sender.sendMessage(miniMessage.deserialize("<gray><prefix> Set <type> speed to <value> for <player></gray>",
-				Placeholder.component("prefix", legacyText(SYSPREFIX)),
-				Placeholder.unparsed("type", finalType.name.lowercase()),
-				Placeholder.unparsed("value", speed.toString()),
-				Placeholder.component("player", Component.text(target.name).style(target.nameStyle))
-		))
-		broadcaster.log(sender, "Set ${target.name}'s speed to $speed")
+		broadcaster.log(sender, "Set ${target.name}'s ${finalType.name.lowercase()} speed to $speed")
 	}
 
 	@Command(aliases = ["god", "godmode", "fgod", "fgodmode"], desc = "Invulnerability!!")
@@ -253,11 +240,6 @@ class Commands(private val powerToolManager: PowerToolManager,
 			@Optional @CommandTarget(Permission.Command.God + ".others") target: Player) {
 		val finalValue = value ?: !target.isInvulnerable
 		target.isInvulnerable = finalValue
-		sender.sendMessage(miniMessage.deserialize("<gray><prefix> Set god mode to <value> for <player></gray>",
-				Placeholder.component("prefix", legacyText(SYSPREFIX)),
-				Placeholder.component("value", finalValue.asEnabledDisabledComponent()),
-				Placeholder.component("player", Component.text(target.name).style(target.nameStyle))
-		))
 		broadcaster.log(sender, "Set ${target.name}'s god mode to $finalValue")
 	}
 
@@ -327,11 +309,6 @@ class Commands(private val powerToolManager: PowerToolManager,
 			return
 		}
 		target.teleport(previousLocation)
-		sender.sendMessage(miniMessage.deserialize("<gray><prefix> Teleported <player> to their previous location.</gray>",
-				Placeholder.component("prefix", legacyText(SYSPREFIX)),
-				Placeholder.component("player", Component.text(target.name).style(target.nameStyle))
-		))
-
 		broadcaster.log(sender, "Teleported ${target.name} back to their previous location (${previousLocation.humanReadable()})")
 	}
 
@@ -339,10 +316,6 @@ class Commands(private val powerToolManager: PowerToolManager,
 	@Require(Permission.Command.Spawn)
 	fun spawn(@Sender sender: CommandSender, @CommandTarget(Permission.Command.Spawn + ".others") target: Player) {
 		target.teleport(SPAWN)
-		sender.sendMessage(miniMessage.deserialize("<gray><prefix> Teleported <player> to spawn.</gray>",
-				Placeholder.component("prefix", legacyText(SYSPREFIX)),
-				Placeholder.component("player", Component.text(target.name).style(target.nameStyle))
-		))
 		broadcaster.log(sender, "Teleported ${target.name} to spawn")
 	}
 
