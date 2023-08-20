@@ -37,7 +37,7 @@ class H2CharacterTraitDataRepository(private val dataSource: DataSource)
 	override fun forRace(race: Race): Collection<CharacterTraitData> {
 		return dataSource.connection.use { connection ->
 			connection.prepareStatement("SELECT * FROM $TABLE_NAME " +
-				"LEFT JOIN $SCHEMA.RACE_CHARACTER_TRAIT ON " +
+				"JOIN $SCHEMA.RACE_CHARACTER_TRAIT ON " +
 				"$SCHEMA.RACE_CHARACTER_TRAIT.character_trait_id = $TABLE_NAME.id AND " +
 				"$SCHEMA.RACE_CHARACTER_TRAIT.race = ?").apply {
 				this.setString(1, race.name)

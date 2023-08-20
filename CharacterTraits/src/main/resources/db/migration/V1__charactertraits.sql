@@ -12,7 +12,7 @@ CREATE TABLE character_character_trait (
 );
 
 CREATE TABLE race_character_trait (
-	race				ENUM('HUMAN', 'ATTIAN_HUMAN', 'HINTERLANDER_HUMAN', 'KHADAN_HUMAN', 'HIGH_ELF', 'DARK_ELF', 'WOOD_ELF', 'DWARF', 'TIEFLING', 'ORC', 'GOBLIN', 'HALFLING', 'OTHER') NOT NULL,
+	race				ENUM('HUMAN', 'ATTIAN_HUMAN', 'HINTERLANDER_HUMAN', 'KHADAN_HUMAN', 'HIGH_ELF', 'DARK_ELF', 'WOOD_ELF', 'DWARF', 'TIEFLING', 'ORC', 'GOBLIN', 'HALFLING', 'SYLVANI', 'OTHER') NOT NULL,
 	character_trait_id 	VARCHAR NOT NULL,
 
 	UNIQUE(race, character_trait_id),
@@ -111,9 +111,6 @@ INSERT INTO character_trait (id, description) VALUES ('follower_of_akhmat',
 
 INSERT INTO character_trait (id, description) VALUES ('decapitating_strike',
 	'Once per battle during CRP. The player can choose to instead of making a normal attack it will do a single Decapitating blow. If they do, they may do a single attack with any weapon that does D6 damage.');
-
-INSERT INTO character_trait (id, description) VALUES ('attuned_to_ignos',
-	'Players with this trait can ignite their weapon. Applying the "Burning" status effect to whoever they hit.');
 
 INSERT INTO character_trait (id, description) VALUES ('soul_reaper',
 	'At the start of combat, players with this trait can select a target who''s soul is marked by Akhmat and which they must claim. If they do, the player can re-roll attack rolls against this target for the duration of the battle.');

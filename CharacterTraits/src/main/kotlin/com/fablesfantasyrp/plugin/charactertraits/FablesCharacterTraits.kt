@@ -54,10 +54,12 @@ class FablesCharacterTraits : JavaPlugin(), KoinComponent {
 			singleOf(::Swift) bind TraitBehavior::class
 		}
 		loadKoinModules(koinModule)
+		get<CharacterTraitRepositoryImpl>().init()
 
 		GlobalContext.get().getAll<TraitBehavior>().forEach { it.init() }
 
 		server.scheduler.scheduleSyncRepeatingTask(this, {
+			logger.info("Saving character traits..")
 			get<CharacterTraitRepositoryImpl>().saveAllDirty()
 		}, 0L, 300L)
 	}

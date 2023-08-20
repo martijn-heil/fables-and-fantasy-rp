@@ -11,7 +11,8 @@ class CharacterTrait : DataEntity<String, CharacterTrait> {
 
 	constructor(id: String, description: String?, dirtyMarker: DirtyMarker<CharacterTrait>? = null) {
 		this.id = id
-		this.dirtyMarker = dirtyMarker
 		this.description = description
+
+		this.dirtyMarker = dirtyMarker
 	}
 }
