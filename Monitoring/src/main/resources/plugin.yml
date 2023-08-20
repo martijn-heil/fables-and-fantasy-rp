@@ -5,6 +5,7 @@ depend:
   - FablesKotlinRuntime
   - FablesUtils
   - FablesDenizenInterop
+  - FablesDiscord
   - dDiscordBot
 main: com.fablesfantasyrp.plugin.monitoring.FablesMonitoring
 api-version: @bukkit_api_version@
