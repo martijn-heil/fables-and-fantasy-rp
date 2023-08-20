@@ -5,6 +5,7 @@ depend:
   - FablesKotlinRuntime
   - FablesCharacters
   - FablesUtils
+  - FablesText
   - FablesDatabase
 main: com.fablesfantasyrp.plugin.charactertraits.FablesCharacterTraits
 api-version: @bukkit_api_version@

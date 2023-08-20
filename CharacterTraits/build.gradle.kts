@@ -6,4 +6,5 @@ dependencies {
     implementation(project(":Utils"))
     implementation(project(":Characters"))
     implementation(project(":Database"))
+    implementation(project(":Text"))
 }
