@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.characters.data.entity
 
 import com.denizenscript.denizencore.objects.core.ElementTag
+import com.fablesfantasyrp.plugin.characters.StatsModifier
 import com.fablesfantasyrp.plugin.characters.data.*
 import com.fablesfantasyrp.plugin.database.entity.DataEntity
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
@@ -9,6 +10,7 @@ import com.fablesfantasyrp.plugin.inventory.inventory
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.utils.Services
+import org.koin.core.context.GlobalContext
 import java.time.Instant
 
 class Character : DataEntity<Int, Character>, CharacterData {
@@ -77,7 +79,9 @@ class Character : DataEntity<Int, Character>, CharacterData {
 	override var description: String 	set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 	override var gender: Gender 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 	override var race: Race 			set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
-	val totalStats: CharacterStats get() = stats + race.boosters + CHARACTER_STATS_FLOOR
+	val totalStats: CharacterStats get() = stats + CHARACTER_STATS_FLOOR.withModifiers(
+		GlobalContext.get().getAll<StatsModifier>().map { it.calculateModifiers(this) }
+	)
 	override var stats: CharacterStats
 		set(value) {
 			if (field != value) {

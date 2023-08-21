@@ -17,18 +17,6 @@ import kotlin.math.roundToLong
 val Player.isVanished: Boolean
 	get() = getMetadata("vanished").find { it.asBoolean() } != null
 
-
-
-const val DISTANCE_WHISPER = 2U
-const val DISTANCE_QUIET = 8u
-const val DISTANCE_TALK = 15U
-const val DISTANCE_SHOUT = 30U
-
-const val DISTANCE_WHISPER = 2U
-const val DISTANCE_QUIET = 15U
-const val DISTANCE_TALK = 15U
-const val DISTANCE_SHOUT = 30U
-
 fun enforceDependencies(plugin: Plugin) {
 	for (dependencyName in plugin.description.depend) {
 		val dependency = plugin.server.pluginManager.getPlugin(dependencyName)

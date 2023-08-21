@@ -33,6 +33,7 @@ import org.koin.core.component.get
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.unloadKoinModules
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind
@@ -69,6 +70,8 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 			} bind CharacterRepository::class
 
 			singleOf(::CharacterAuthorizerImpl) bind CharacterAuthorizer::class
+
+			factoryOf(::RaceStatsModifier) bind StatsModifier::class
 
 			factory { CharacterModule(get(), get(), get(), get<Provider<Profile>>(named("Profile"))) }
 			singleOf(::CharactersListener)

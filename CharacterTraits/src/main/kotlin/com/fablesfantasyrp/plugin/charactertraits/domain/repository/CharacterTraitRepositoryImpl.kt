@@ -20,6 +20,7 @@ class CharacterTraitRepositoryImpl(child: CharacterTraitMapper)
 		super.init()
 
 		Race.values().forEach { byRace[it] = child.forRace(it).map { forId(it.id)!! }.toHashSet() }
+		// TODO listen to Profile become events to strongly cache byCharacter
 	}
 
 	override fun forRace(race: Race): Collection<CharacterTrait> {

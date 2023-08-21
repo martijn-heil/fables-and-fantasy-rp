@@ -1,9 +1,6 @@
 package com.fablesfantasyrp.plugin.characters
 
-import com.fablesfantasyrp.plugin.characters.data.CharacterStatKind
-import com.fablesfantasyrp.plugin.characters.data.CharacterStats
-import com.fablesfantasyrp.plugin.characters.data.Gender
-import com.fablesfantasyrp.plugin.characters.data.Race
+import com.fablesfantasyrp.plugin.characters.data.*
 import com.fablesfantasyrp.plugin.characters.data.entity.Character
 import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
 import com.fablesfantasyrp.plugin.characters.gui.CharacterStatsGui
@@ -138,7 +135,7 @@ suspend fun promptNewCharacterInfo(player: Player, allowedRaces: Collection<Race
 	player.sendMessage(miniMessage.deserialize("<gray>Your character's description is <yellow><description></yellow></gray>",
 			Placeholder.unparsed("description", description)))
 
-	val baseStats = CharacterStats(2U, 2U, 2U, 2U) + race.boosters
+	val baseStats = CHARACTER_STATS_FLOOR.withModifiers(listOf(race.boosters))
 	val stats = player.promptGui(CharacterStatsGui(FablesCharacters.instance, baseStats, "Please choose $name's stats"))
 	Component.text().color(NamedTextColor.GRAY)
 			.append(Component.text("Your character's stats are "))

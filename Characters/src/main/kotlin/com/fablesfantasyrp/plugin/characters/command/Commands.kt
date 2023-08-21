@@ -323,7 +323,7 @@ class Commands(private val plugin: JavaPlugin,
 			@Command(aliases = ["edit"], desc = "Edit character stats")
 			@Require(Permission.Command.Characters.Stats.Edit)
 			fun edit(@Sender sender: Player, target: Character) {
-				val minimums = target.race.boosters + CHARACTER_STATS_FLOOR
+				val minimums = CHARACTER_STATS_FLOOR.withModifiers(listOf(target.race.boosters))
 				var initialSliderValues = target.stats
 				if (initialSliderValues.strength > 8U ||
 						initialSliderValues.defense > 8U ||
@@ -420,7 +420,7 @@ class Commands(private val plugin: JavaPlugin,
 					}
 				}
 
-				val minimums = target.race.boosters + CHARACTER_STATS_FLOOR
+				val minimums = CHARACTER_STATS_FLOOR.withModifiers(listOf(target.race.boosters))
 				var initialSliderValues = target.stats
 				if (initialSliderValues.strength > 8U ||
 						initialSliderValues.defense > 8U ||
