@@ -7,4 +7,7 @@ dependencies {
     implementation(project(":Characters"))
     implementation(project(":Database"))
     implementation(project(":Text"))
+
+
+    api(project(":Characters"))
 }

@@ -15,7 +15,7 @@ class Sturdy(plugin: Plugin,
 			 characters: EntityCharacterRepository,
 			 profileManager: ProfileManager,
 			 traits: CharacterTraitRepository)
-	: BaseTraitBehaviour(KnownCharacterTraits.INTELLIGENT, plugin, characters, profileManager, traits), StatsModifier {
+	: BaseTraitBehaviour(KnownCharacterTraits.STURDY, plugin, characters, profileManager, traits), StatsModifier {
 
 	override fun calculateModifiers(who: Character): CharacterStatsModifier
 		= if (traits.hasTrait(who, trait)) CharacterStatsModifier(defense = 2) else CharacterStatsModifier()

@@ -63,4 +63,5 @@ object KnownCharacterTraits {
 	const val PIERCING_GAZE = "piercing_gaze"
 	const val MISSILE_MIRROR = "missile_mirror"
 	const val HINTISH_HERITAGE = "hintish_heritage"
+	const val PACK_MULE = "packmule"
 }
