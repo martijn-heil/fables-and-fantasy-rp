@@ -10,8 +10,7 @@ import com.fablesfantasyrp.plugin.charactertraits.domain.repository.CharacterTra
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import org.bukkit.plugin.Plugin
 
-// Players with this trait can move 6+d6 (agility) instead of 4+d6 (agility) -
-// Outside CRP, players with this trait get a permanent speed 1 boost. (Speed 2 on roads)
+// Players with this trait get two extra points in the strength stat.
 class Strong(plugin: Plugin,
 			 characters: EntityCharacterRepository,
 			 profileManager: ProfileManager,
