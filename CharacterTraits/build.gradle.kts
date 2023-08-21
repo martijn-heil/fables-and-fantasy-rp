@@ -8,6 +8,5 @@ dependencies {
     implementation(project(":Database"))
     implementation(project(":Text"))
 
-
     api(project(":Characters"))
 }
