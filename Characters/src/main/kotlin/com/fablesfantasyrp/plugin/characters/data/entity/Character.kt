@@ -1,8 +1,9 @@
 package com.fablesfantasyrp.plugin.characters.data.entity
 
 import com.denizenscript.denizencore.objects.core.ElementTag
-import com.fablesfantasyrp.plugin.characters.StatsModifier
 import com.fablesfantasyrp.plugin.characters.data.*
+import com.fablesfantasyrp.plugin.characters.modifiers.health.HealthModifier
+import com.fablesfantasyrp.plugin.characters.modifiers.stats.StatsModifier
 import com.fablesfantasyrp.plugin.database.entity.DataEntity
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.denizeninterop.dFlags
@@ -12,6 +13,7 @@ import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.utils.Services
 import org.koin.core.context.GlobalContext
 import java.time.Instant
+import kotlin.math.max
 
 class Character : DataEntity<Int, Character>, CharacterData {
 	val profile: Profile
@@ -94,7 +96,9 @@ class Character : DataEntity<Int, Character>, CharacterData {
 			}
 		}
 
-	override val maximumHealth: UInt get() = (12 + CharacterStatKind.STRENGTH.getRollModifierFor(totalStats.strength)).toUInt()
+	override val maximumHealth: UInt get() =
+		max(0, (12 + CharacterStatKind.STRENGTH.getRollModifierFor(totalStats.strength) +
+			GlobalContext.get().getAll<HealthModifier>().sumOf { it.calculateModifier(this) })).toUInt()
 
 	override val id: Int
 	override var dirtyMarker: DirtyMarker<Character>? = null

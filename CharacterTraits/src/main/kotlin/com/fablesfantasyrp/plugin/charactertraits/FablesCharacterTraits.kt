@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.charactertraits
 
-import com.fablesfantasyrp.plugin.characters.StatsModifier
+import com.fablesfantasyrp.plugin.characters.modifiers.stats.StatsModifier
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
 import com.fablesfantasyrp.plugin.charactertraits.behavior.Nightseer
 import com.fablesfantasyrp.plugin.charactertraits.behavior.Strong

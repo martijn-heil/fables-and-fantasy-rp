@@ -7,6 +7,8 @@ import com.fablesfantasyrp.plugin.characters.data.entity.CharacterRepository
 import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
 import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepositoryImpl
 import com.fablesfantasyrp.plugin.characters.data.persistent.H2CharacterRepository
+import com.fablesfantasyrp.plugin.characters.modifiers.stats.RaceStatsModifier
+import com.fablesfantasyrp.plugin.characters.modifiers.stats.StatsModifier
 import com.fablesfantasyrp.plugin.characters.web.WebHook
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
