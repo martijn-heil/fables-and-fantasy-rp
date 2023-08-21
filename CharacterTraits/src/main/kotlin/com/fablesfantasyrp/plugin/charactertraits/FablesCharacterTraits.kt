@@ -3,10 +3,7 @@ package com.fablesfantasyrp.plugin.charactertraits
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
 import com.fablesfantasyrp.plugin.characters.modifiers.health.HealthModifier
 import com.fablesfantasyrp.plugin.characters.modifiers.stats.StatsModifier
-import com.fablesfantasyrp.plugin.charactertraits.behavior.AttianHeritage
-import com.fablesfantasyrp.plugin.charactertraits.behavior.Nightseer
-import com.fablesfantasyrp.plugin.charactertraits.behavior.Strong
-import com.fablesfantasyrp.plugin.charactertraits.behavior.Swift
+import com.fablesfantasyrp.plugin.charactertraits.behavior.*
 import com.fablesfantasyrp.plugin.charactertraits.behavior.base.TraitBehavior
 import com.fablesfantasyrp.plugin.charactertraits.command.Commands
 import com.fablesfantasyrp.plugin.charactertraits.command.provider.CharacterTraitModule
@@ -76,6 +73,8 @@ class FablesCharacterTraits : JavaPlugin(), KoinComponent {
 			singleOf(::Nightseer) bind TraitBehavior::class
 			singleOf(::Swift) bind TraitBehavior::class
 			singleOf(::Strong) binds arrayOf(TraitBehavior::class, StatsModifier::class)
+			singleOf(::Sturdy) binds arrayOf(TraitBehavior::class, StatsModifier::class)
+			singleOf(::Intelligent) binds arrayOf(TraitBehavior::class, StatsModifier::class)
 			singleOf(::AttianHeritage) binds arrayOf(TraitBehavior::class, HealthModifier::class)
 		}
 		loadKoinModules(koinModule)
