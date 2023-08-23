@@ -18,13 +18,13 @@ class IronDoorsListener : Listener {
 	@EventHandler(priority = MONITOR, ignoreCancelled = true)
 	fun onPlayerIronDoorInteract(e: PlayerInteractEvent) {
 		val p = e.player
-
+		if(p.isSneaking) return
 		if (e.action != Action.RIGHT_CLICK_BLOCK) return
 		val clickedBlock = e.clickedBlock ?: return
 		val correct_block = clickedBlock.type == Material.IRON_TRAPDOOR || clickedBlock.type == Material.IRON_DOOR
 		if (!correct_block) return
 		if (e.hand == EquipmentSlot.OFF_HAND) return
-		if (p.inventory.itemInMainHand.type == Material.WOODEN_HOE ) return;
+		if (p.inventory.itemInMainHand.type == Material.WOODEN_HOE ) return
 
 		val lock: LockData? = lockRepository.forLocation(clickedBlock.location)
 		if (lock != null && lock.calculateAccess(p) == LockAccess.NONE) return
