@@ -1,23 +1,23 @@
-package com.fablesfantasyrp.plugin.magic.data.persistent
+package com.fablesfantasyrp.plugin.magic.dal.repository.yaml
 
-import com.fablesfantasyrp.plugin.magic.MagicPath
-import com.fablesfantasyrp.plugin.magic.data.SimpleSpellData
-import com.fablesfantasyrp.plugin.magic.data.SimpleSpellDataRepository
+import com.fablesfantasyrp.plugin.magic.dal.enums.MagicPath
+import com.fablesfantasyrp.plugin.magic.dal.model.SpellData
+import com.fablesfantasyrp.plugin.magic.dal.repository.SpellDataRepository
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.Plugin
 import org.yaml.snakeyaml.error.YAMLException
 import java.io.File
 
-class YamlSimpleSpellDataRepository(private val plugin: Plugin, private val directory: File) : SimpleSpellDataRepository {
+class YamlSpellDataRepository(private val plugin: Plugin, private val directory: File) : SpellDataRepository {
 	private fun fileForId(id: String): File {
 		require(isValidId(id))
 		return directory.resolve("${id}.yml")
 	}
 
-	override fun forLevelAndPath(level: Int, path: MagicPath): Collection<SimpleSpellData>
+	override fun forLevelAndPath(level: Int, path: MagicPath): Collection<SpellData>
 		= this.all().filter { it.level == level && (it.magicPath == path || path.basePath == it.magicPath) }
 
-	override fun forId(id: String): SimpleSpellData? {
+	override fun forId(id: String): SpellData? {
 		if (!isValidId(id)) return null
 		val file = fileForId(id)
 		if (!file.exists()) return null
@@ -29,15 +29,15 @@ class YamlSimpleSpellDataRepository(private val plugin: Plugin, private val dire
 		return this.all().map { it.id }
 	}
 
-	override fun all(): Collection<SimpleSpellData> {
+	override fun all(): Collection<SpellData> {
 		return directory.listFiles()!!.mapNotNull { fromFileMaybe(it) }
 	}
 
-	override fun destroy(v: SimpleSpellData) {
+	override fun destroy(v: SpellData) {
 		fileForId(v.id).delete()
 	}
 
-	override fun create(v: SimpleSpellData): SimpleSpellData {
+	override fun create(v: SpellData): SpellData {
 		val file = fileForId(v.id)
 		require(!file.exists())
 
@@ -48,7 +48,7 @@ class YamlSimpleSpellDataRepository(private val plugin: Plugin, private val dire
 		return v
 	}
 
-	override fun update(v: SimpleSpellData) {
+	override fun update(v: SpellData) {
 		val file = fileForId(v.id)
 		check(file.exists())
 		val yaml = YamlConfiguration.loadConfiguration(file)
@@ -56,7 +56,7 @@ class YamlSimpleSpellDataRepository(private val plugin: Plugin, private val dire
 		yaml.save(file)
 	}
 
-	private fun updateYaml(v: SimpleSpellData, yaml: YamlConfiguration) {
+	private fun updateYaml(v: SpellData, yaml: YamlConfiguration) {
 		yaml.set("display_name", v.displayName)
 		yaml.set("magic_path", v.magicPath.name)
 		yaml.set("level", v.level)
@@ -64,7 +64,7 @@ class YamlSimpleSpellDataRepository(private val plugin: Plugin, private val dire
 		yaml.set("description", v.description)
 	}
 
-	private fun fromFileMaybe(file: File): SimpleSpellData? {
+	private fun fromFileMaybe(file: File): SpellData? {
 		return try {
 			fromFile(file)
 		} catch (ex: Exception) {
@@ -76,7 +76,7 @@ class YamlSimpleSpellDataRepository(private val plugin: Plugin, private val dire
 	}
 
 	@Throws(YAMLException::class, IllegalStateException::class)
-	private fun fromFile(file: File): SimpleSpellData {
+	private fun fromFile(file: File): SpellData {
 		val yaml = YamlConfiguration.loadConfiguration(file)
 
 		fun missingField(fieldName: String): Nothing {
@@ -97,7 +97,7 @@ class YamlSimpleSpellDataRepository(private val plugin: Plugin, private val dire
 		if (castingValue == Int.MAX_VALUE) missingField("casting_value")
 
 
-		return SimpleSpellData(
+		return SpellData(
 				id = file.nameWithoutExtension,
 				displayName = displayName,
 				description = description,

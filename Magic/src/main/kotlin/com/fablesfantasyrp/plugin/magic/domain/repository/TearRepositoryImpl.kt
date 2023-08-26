@@ -1,21 +1,24 @@
-package com.fablesfantasyrp.plugin.magic.data
+package com.fablesfantasyrp.plugin.magic.domain.repository
 
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.SimpleMapRepository
-import com.fablesfantasyrp.plugin.magic.data.entity.Mage
-import com.fablesfantasyrp.plugin.magic.data.entity.Tear
-import com.fablesfantasyrp.plugin.magic.data.entity.TearRepository
+import com.fablesfantasyrp.plugin.magic.domain.entity.Mage
+import com.fablesfantasyrp.plugin.magic.domain.entity.Tear
 import org.bukkit.Location
 
-class MapTearRepository : SimpleMapRepository<Long, Tear>(), TearRepository, HasDirtyMarker<Tear> {
+class TearRepositoryImpl : SimpleMapRepository<Long, Tear>(), TearRepository, HasDirtyMarker<Tear> {
 	override var dirtyMarker: DirtyMarker<Tear>? = null
 
 	private var idCounter = 0L
 	override fun create(v: Tear): Tear {
-		v.id = idCounter++
 		v.dirtyMarker = dirtyMarker
-		return super.create(v)
+		return super.create(Tear(
+			id = idCounter++,
+			location = v.location,
+			magicType = v.magicType,
+			owner = v.owner,
+		))
 	}
 
 	override fun forOwner(owner: Mage): Collection<Tear> {

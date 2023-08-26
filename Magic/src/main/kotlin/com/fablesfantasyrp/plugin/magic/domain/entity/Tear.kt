@@ -1,22 +1,17 @@
-package com.fablesfantasyrp.plugin.magic.data.entity
+package com.fablesfantasyrp.plugin.magic.domain.entity
 
 import com.fablesfantasyrp.plugin.chat.getPlayersWithinRange
+import com.fablesfantasyrp.plugin.database.entity.DataEntity
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
-import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
-import com.fablesfantasyrp.plugin.magic.MagicType
-import com.fablesfantasyrp.plugin.magic.data.TearData
+import com.fablesfantasyrp.plugin.magic.dal.enums.MagicType
 import com.fablesfantasyrp.plugin.utils.DISTANCE_TALK
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.sound.Sound
-import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.EndGateway
 
-class Tear : TearData, HasDirtyMarker<Tear> {
-	private val server
-		get() = Bukkit.getServer()
-
+class Tear : DataEntity<Long, Tear> {
 	var isDeleted = false
 		set(value) {
 			if (value) this.despawn()
@@ -25,23 +20,27 @@ class Tear : TearData, HasDirtyMarker<Tear> {
 
 	override var dirtyMarker: DirtyMarker<Tear>? = null
 
-	override var id: Long
+	override val id: Long
+
+	var magicType: MagicType
 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 
-	override var magicType: MagicType
+	var owner: Mage
 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 
-	override var owner: Mage
+	var location: Location
 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 
-	override var location: Location
-		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
-
-	constructor(id: Long, location: Location, magicType: MagicType, owner: Mage) : super() {
+	constructor(id: Long,
+				location: Location,
+				magicType: MagicType,
+				owner: Mage,
+				dirtyMarker: DirtyMarker<Tear>? = null) : super() {
 		this.id = id
 		this.location = location
 		this.magicType = magicType
 		this.owner = owner
+		this.dirtyMarker = dirtyMarker
 		this.spawn()
 	}
 

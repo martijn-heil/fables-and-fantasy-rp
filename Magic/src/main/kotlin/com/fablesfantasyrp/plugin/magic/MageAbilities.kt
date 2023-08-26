@@ -20,6 +20,7 @@ import com.fablesfantasyrp.plugin.magic.ability.necromancy.souldestined.Fragment
 import com.fablesfantasyrp.plugin.magic.ability.pyromancy.FlamingFamiliar
 import com.fablesfantasyrp.plugin.magic.ability.pyromancy.magmamancy.RunningHot
 import com.fablesfantasyrp.plugin.magic.ability.pyromancy.solarmancy.BrilliantRadiance
+import com.fablesfantasyrp.plugin.magic.dal.enums.MagicPath
 
 object MageAbilities {
 	private val data = listOf(

@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.magic.ability
 
-import com.fablesfantasyrp.plugin.magic.MagicPath
-import com.fablesfantasyrp.plugin.magic.data.entity.Mage
+import com.fablesfantasyrp.plugin.magic.dal.enums.MagicPath
+import com.fablesfantasyrp.plugin.magic.domain.entity.Mage
 
 interface MageAbility {
 	val id: String

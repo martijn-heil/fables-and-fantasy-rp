@@ -1,4 +1,4 @@
-package com.fablesfantasyrp.plugin.magic.data.entity
+package com.fablesfantasyrp.plugin.magic.domain.entity
 
 import com.fablesfantasyrp.plugin.characters.data.CharacterStatKind
 import com.fablesfantasyrp.plugin.characters.data.entity.Character
@@ -6,16 +6,18 @@ import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterReposito
 import com.fablesfantasyrp.plugin.chat.awaitEmote
 import com.fablesfantasyrp.plugin.chat.chat
 import com.fablesfantasyrp.plugin.chat.getPlayersWithinRange
+import com.fablesfantasyrp.plugin.database.entity.DataEntity
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
-import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
 import com.fablesfantasyrp.plugin.form.YesNoChatPrompt
 import com.fablesfantasyrp.plugin.location.location
 import com.fablesfantasyrp.plugin.magic.*
 import com.fablesfantasyrp.plugin.magic.ability.MageAbility
 import com.fablesfantasyrp.plugin.magic.ability.aeromancy.Cloud
 import com.fablesfantasyrp.plugin.magic.ability.pyromancy.FlamingFamiliar
-import com.fablesfantasyrp.plugin.magic.data.MageData
-import com.fablesfantasyrp.plugin.magic.data.SpellData
+import com.fablesfantasyrp.plugin.magic.dal.enums.MagicPath
+import com.fablesfantasyrp.plugin.magic.dal.model.SpellData
+import com.fablesfantasyrp.plugin.magic.domain.repository.MageRepository
+import com.fablesfantasyrp.plugin.magic.domain.repository.TearRepository
 import com.fablesfantasyrp.plugin.magic.exception.CasterBusyException
 import com.fablesfantasyrp.plugin.magic.exception.NoSpaceForTearException
 import com.fablesfantasyrp.plugin.magic.exception.OpenTearException
@@ -42,19 +44,23 @@ import org.bukkit.GameMode
 import org.koin.core.context.GlobalContext
 
 
-class Mage : MageData, HasDirtyMarker<Mage> {
+class Mage : DataEntity<Long, Mage> {
+	private val characters: EntityCharacterRepository get() = GlobalContext.get().get<EntityCharacterRepository>()
+	private val mages: MageRepository get() = GlobalContext.get().get<MageRepository>()
+	private val tears: TearRepository get() = GlobalContext.get().get<TearRepository>()
+
 	val character: Character
-		get() = GlobalContext.get().get<EntityCharacterRepository>().forId(id.toInt())!!
+		get() = characters.forId(id.toInt())!!
 
 	var isDeleted: Boolean = false
 
-	override var magicPath: MagicPath
+	var magicPath: MagicPath
 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
-	override var magicLevel: Int
+	var magicLevel: Int
 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
-	override var spells: List<SpellData>
+	var spells: List<SpellData>
 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
-	override var activeAbilities: Set<MageAbility> = emptySet()
+	var activeAbilities: Set<MageAbility> = emptySet()
 		set(value) {
 			if (field != value) {
 				val added = value.minus(field)
@@ -75,7 +81,9 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 			}
 		}
 
-	override var id: Long
+	val spellCastingBonus: UInt get() = getSpellCastingBonus(this.magicPath, this.magicLevel).toUInt()
+
+	override val id: Long
 
 	private var isCasting = false
 
@@ -110,14 +118,14 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 		val them = tear.owner
 		val theirPlayer = profileManager.getCurrentForProfile(them.character.profile) ?: run {
 			myPlayer.awaitEmote(prompt)
-			tearRepository.destroy(tear)
+			tears.destroy(tear)
 			return true
 		}
 		val theirStats = them.character.totalStats
 
 		myPlayer.awaitEmote(prompt)
 		if (theirPlayer == myPlayer) {
-			tearRepository.destroy(tear)
+			tears.destroy(tear)
 			return true
 		} else {
 			val myRoll = roll(10U, CharacterStatKind.INTELLIGENCE, myStats)
@@ -142,7 +150,7 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 			getPlayersWithinRange(myPlayer.location, DISTANCE_TALK).forEach { it.sendMessage(message) }
 
 			return if (success) {
-				tearRepository.destroy(tear)
+				tears.destroy(tear)
 				true
 			} else {
 				false
@@ -196,7 +204,7 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 		}
 	}
 
-	suspend fun awaitUnbindAttempts(spell: SpellData, castingRoll: Int): Boolean {
+	private suspend fun awaitUnbindAttempts(spell: SpellData, castingRoll: Int): Boolean {
 		val profileManager = GlobalContext.get().get<ProfileManager>()
 		val characters = GlobalContext.get().get<EntityCharacterRepository>()
 		val player = profileManager.getCurrentForProfile(this.character.profile) ?: throw IllegalStateException()
@@ -204,7 +212,7 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 		val otherMages = getPlayersWithinRange(player.location, DISTANCE_TALK)
 				.mapNotNull { profileManager.getCurrentForPlayer(it) }
 				.mapNotNull { characters.forProfile(it) }
-				.mapNotNull { mageRepository.forPlayerCharacter(it) }
+				.mapNotNull { mages.forCharacter(it) }
 				.filter { it != this }
 				.filter { !profileManager.getCurrentForProfile(it.character.profile)!!.isVanished }
 				.filter { profileManager.getCurrentForProfile(it.character.profile)!!.gameMode != GameMode.SPECTATOR }
@@ -326,24 +334,21 @@ class Mage : MageData, HasDirtyMarker<Mage> {
 		val profileManager = Services.get<ProfileManager>()
 		val player = profileManager.getCurrentForProfile(character.profile) ?: throw IllegalStateException()
 		check(player.isOnline)
-		if (tearRepository.forOwner(this).size >= MAX_TEARS_PER_MAGE) throw TooManyTearsException()
+		if (tears.forOwner(this).size >= MAX_TEARS_PER_MAGE) throw TooManyTearsException()
 
 		player.awaitEmote(legacyText("$SYSPREFIX Please emote to open a tear:"))
 
 		val location = calculateTearLocation(player.eyeLocation) ?: throw NoSpaceForTearException()
-		return tearRepository.create(Tear(0, location, magicPath.magicType, this))
+		return tears.create(Tear(0, location, magicPath.magicType, this))
 	}
 
 	fun findTear(): Tear? {
 		val profileManager = Services.get<ProfileManager>()
 		val player = profileManager.getCurrentForProfile(character.profile) ?: throw IllegalStateException()
 		check(player.isOnline)
-		return tearRepository.all().asSequence()
+		return tears.all().asSequence()
 				.filter { it.magicType == this.magicPath.magicType }
 				.filter { it.location.world == player.location.world }
 				.find { it.location.distance(player.location) <= 15 }
 	}
-
-	override fun equals(other: Any?): Boolean = other is MageData && other.id == this.id
-	override fun hashCode(): Int = this.id.hashCode()
 }
