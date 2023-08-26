@@ -19,6 +19,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.plugin.Plugin
+import org.koin.core.context.GlobalContext
 import java.time.Instant
 
 class CharactersListener(private val plugin: Plugin,
@@ -27,6 +28,7 @@ class CharactersListener(private val plugin: Plugin,
 						 private val profileManager: ProfileManager,
 						 private val staffProfiles: StaffProfileRepository) : Listener {
 	private val server = plugin.server
+	private val characterCardGenerator by lazy { GlobalContext.get().get<CharacterCardGenerator>() }
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	fun onPlayerSwitchProfile(e: PostPlayerSwitchProfileEvent) {
@@ -72,6 +74,6 @@ class CharactersListener(private val plugin: Plugin,
 			e.player.sendMessage("$SYSPREFIX ${e.rightClicked.name} is currently not in-character")
 			return
 		}
-		e.player.sendMessage(characterCard(character, e.player))
+		e.player.sendMessage(characterCardGenerator.card(character, e.player))
 	}
 }

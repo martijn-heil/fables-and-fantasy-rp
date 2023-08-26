@@ -45,6 +45,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
+import org.koin.core.context.GlobalContext
 import java.time.Duration
 import java.time.Instant
 import kotlin.math.max
@@ -90,6 +91,7 @@ class Commands(private val plugin: JavaPlugin,
 			   private val profilePrompter: ProfilePrompter,
 			   private val authorizer: CharacterAuthorizer) {
 	private val server = plugin.server
+	private val characterCardGenerator by lazy { GlobalContext.get().get<CharacterCardGenerator>() }
 
 	inner class Characters {
 		@Command(aliases = ["new"], desc = "Create a new character!")
@@ -175,7 +177,7 @@ class Commands(private val plugin: JavaPlugin,
 		@Command(aliases = ["card"], desc = "Display a character's card in chat.")
 		@Require(Permission.Command.Characters.Card)
 		fun card(@Sender sender: CommandSender, @CommandTarget target: Character) {
-			sender.sendMessage(characterCard(target, sender))
+			sender.sendMessage(characterCardGenerator.card(target, sender))
 		}
 
 		@Command(aliases = ["kill"], desc = "Kill a character")

@@ -2,6 +2,7 @@ package com.fablesfantasyrp.plugin.charactermechanics
 
 import com.fablesfantasyrp.plugin.charactermechanics.traits.*
 import com.fablesfantasyrp.plugin.charactermechanics.traits.base.TraitBehavior
+import com.fablesfantasyrp.plugin.characters.CharacterCardGenerator
 import com.fablesfantasyrp.plugin.characters.modifiers.health.HealthModifier
 import com.fablesfantasyrp.plugin.characters.modifiers.stats.StatsModifier
 import com.fablesfantasyrp.plugin.charactertraits.domain.repository.CharacterTraitRepositoryImpl
@@ -45,6 +46,8 @@ class FablesCharacterMechanics : JavaPlugin(), KoinComponent {
 			singleOf(::Sturdy) binds arrayOf(TraitBehavior::class, StatsModifier::class)
 			singleOf(::Intelligent) binds arrayOf(TraitBehavior::class, StatsModifier::class)
 			singleOf(::AttianHeritage) binds arrayOf(TraitBehavior::class, HealthModifier::class)
+
+			singleOf(::CharacterCardGeneratorImpl) bind CharacterCardGenerator::class
 		}
 		loadKoinModules(koinModule)
 

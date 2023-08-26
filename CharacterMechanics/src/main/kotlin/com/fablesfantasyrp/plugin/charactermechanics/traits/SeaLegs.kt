@@ -6,6 +6,7 @@ import com.fablesfantasyrp.plugin.charactertraits.domain.KnownCharacterTraits
 import com.fablesfantasyrp.plugin.charactertraits.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.event.PlayerSwitchProfileEvent
+import com.fablesfantasyrp.plugin.utils.TransactionStep
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -37,9 +38,19 @@ class SeaLegs(plugin: Plugin,
 			val newCharacter = e.new?.let { characters.forProfile(it) }
 
 			if (newCharacter != null && traits.hasTrait(newCharacter, trait)) {
-				e.transaction.setProperty(player::maximumAir, 600) // 30 seconds of breath
+				val oldValue = player.maximumAir
+				e.transaction.steps.add(TransactionStep({
+					player.maximumAir = 600 // 30 seconds of breath
+				}, {
+					player.maximumAir = oldValue
+				}))
 			} else {
-				e.transaction.setProperty(player::maximumAir, 300) // this is the default of 15 seconds
+				val oldValue = player.maximumAir
+				e.transaction.steps.add(TransactionStep({
+					player.maximumAir = 300 // this is the default of 15 seconds
+				}, {
+					player.maximumAir = oldValue
+				}))
 			}
 		}
 	}

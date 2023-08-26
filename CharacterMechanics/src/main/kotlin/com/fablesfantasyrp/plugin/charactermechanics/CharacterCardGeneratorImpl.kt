@@ -1,7 +1,10 @@
-package com.fablesfantasyrp.plugin.characters
+package com.fablesfantasyrp.plugin.charactermechanics
 
+import com.fablesfantasyrp.plugin.characters.CharacterAuthorizer
+import com.fablesfantasyrp.plugin.characters.CharacterCardGenerator
 import com.fablesfantasyrp.plugin.characters.data.CharacterStatKind
 import com.fablesfantasyrp.plugin.characters.data.entity.Character
+import com.fablesfantasyrp.plugin.characters.isStaffCharacter
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.text.join
 import com.fablesfantasyrp.plugin.text.miniMessage
@@ -16,53 +19,55 @@ import net.milkbowl.vault.chat.Chat
 import org.bukkit.command.CommandSender
 import org.ocpsoft.prettytime.PrettyTime
 
-fun characterCard(character: Character, observer: CommandSender? = null): Component {
-	val profileManager = Services.get<ProfileManager>()
-	val vaultChat = Services.get<Chat>()
-	val authorizer = Services.get<CharacterAuthorizer>()
+class CharacterCardGeneratorImpl : CharacterCardGenerator {
+	override fun card(character: Character, observer: CommandSender?): Component {
+		val profileManager = Services.get<ProfileManager>()
+		val vaultChat = Services.get<Chat>()
+		val authorizer = Services.get<CharacterAuthorizer>()
 
-	val statsMessage = Component.text().append(CharacterStatKind.values().asSequence().map { statKind ->
-		val statValue = character.totalStats[statKind]
-		miniMessage.deserialize("     <gold>»</gold> <green><stat_name>:</green> <white><stat_value></white>",
+		val statsMessage = Component.text().append(CharacterStatKind.values().asSequence().map { statKind ->
+			val statValue = character.totalStats[statKind]
+			miniMessage.deserialize("     <gold>»</gold> <green><stat_name>:</green> <white><stat_value></white>",
 				Placeholder.unparsed("stat_name", statKind.toString().replaceFirstChar { it.uppercaseChar() }),
 				Placeholder.unparsed("stat_value", statValue.toString())
-		)
-	}.join(Component.newline()).asIterable()).build()
+			)
+		}.join(Component.newline()).asIterable()).build()
 
-	fun editButton(canEdit: Boolean, property: String)
-		= if (canEdit)
+		fun editButton(canEdit: Boolean, property: String)
+			= if (canEdit)
 			Component.text("[E]")
 				.color(NamedTextColor.GOLD)
 				.hoverEvent(HoverEvent.showText(Component.text("Click to change!")))
 				.clickEvent(ClickEvent.runCommand("/char change $property #${character.id}"))
 		else Component.text("[E]").color(NamedTextColor.DARK_GRAY)
 
-	val player = profileManager.getCurrentForProfile(character.profile)
-	val isMetaGamer = if (player != null) vaultChat.playerInGroup(player, "metagamer") else false
+		val player = profileManager.getCurrentForProfile(character.profile)
+		val isMetaGamer = if (player != null) vaultChat.playerInGroup(player, "metagamer") else false
 
-	return miniMessage.deserialize(
+		return miniMessage.deserialize(
 			"<newline>" +
-					"<gray>═════ <white><player_name></white> <dark_gray>Character #<id></dark_gray> <status>═════</gray><newline>" +
-					"<gray><owner_info>, last seen: <last_seen></gray><newline>" +
-					"<red>Please do not metagame this information.</red><newline>" +
-					"<metagamer_warning>" +
-					"<green>" +
-					"<change_name> Name: <white><name></white><newline>" +
-					"<change_age> Age: <white><age></white><newline>" +
-					"<change_gender> Gender: <white><gender></white><newline>" +
-					"<change_race> Race: <white><race></white><newline>" +
-					"<change_description> Description: <white><description></white><newline>" +
-					"<black>[E]</black> Maximum health: <white><maximum_health></white><newline>" +
-					"<change_stats> Stats:<newline>" +
-					"<stats><newline>" +
-					"</green>",
+				"<gray>═════ <white><player_name></white> <dark_gray>Character #<id></dark_gray> <status>═════</gray><newline>" +
+				"<gray><owner_info>, last seen: <last_seen></gray><newline>" +
+				"<red>Please do not metagame this information.</red><newline>" +
+				"<metagamer_warning>" +
+				"<green>" +
+				"<change_name> Name: <white><name></white><newline>" +
+				"<change_age> Age: <white><age></white><newline>" +
+				"<change_gender> Gender: <white><gender></white><newline>" +
+				"<change_race> Race: <white><race></white><newline>" +
+				"<change_description> Description: <white><description></white><newline>" +
+				"<black>[E]</black> Maximum health: <white><maximum_health></white><newline>" +
+				"" +
+				"<change_stats> Stats:<newline>" +
+				"<stats><newline>" +
+				"</green>",
 			Placeholder.unparsed("player_name", player?.name ?: "(offline)"),
 			Placeholder.unparsed("id", character.id.toString()),
 			Placeholder.component("owner_info",
-					if (character.isStaffCharacter) Component.text("This is a staff character").color(NamedTextColor.YELLOW)
-					else if (character.profile.owner != null) miniMessage.deserialize("Owned by <name>",
-							Placeholder.unparsed("name", character.profile.owner!!.name ?: character.profile.owner!!.uniqueId.toString()))
-					else Component.text("This character is not owned by anyone")
+				if (character.isStaffCharacter) Component.text("This is a staff character").color(NamedTextColor.YELLOW)
+				else if (character.profile.owner != null) miniMessage.deserialize("Owned by <name>",
+					Placeholder.unparsed("name", character.profile.owner!!.name ?: character.profile.owner!!.uniqueId.toString()))
+				else Component.text("This character is not owned by anyone")
 			),
 			Placeholder.component("metagamer_warning",
 				if (isMetaGamer) miniMessage.deserialize("<dark_red>WARNING: This user is a registered metagamer.</dark_red><newline>")
@@ -83,7 +88,8 @@ fun characterCard(character: Character, observer: CommandSender? = null): Compon
 			Placeholder.component("change_gender", editButton(observer == null || authorizer.mayEditGender(observer, character).result, "gender")),
 			Placeholder.component("change_stats", editButton(observer == null || authorizer.mayEditStats(observer, character).result, "stats")),
 			Placeholder.component("status", if (character.isDead) Component.text("(dead) ").color(NamedTextColor.RED)
-											else if (character.isShelved) Component.text("(shelved) ").color(NamedTextColor.YELLOW)
-											else Component.empty())
-	)
+			else if (character.isShelved) Component.text("(shelved) ").color(NamedTextColor.YELLOW)
+			else Component.empty())
+		)
+	}
 }
