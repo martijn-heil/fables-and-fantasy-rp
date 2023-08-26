@@ -1,7 +1,7 @@
-package com.fablesfantasyrp.plugin.charactertraits.behavior
+package com.fablesfantasyrp.plugin.charactermechanics.traits
 
+import com.fablesfantasyrp.plugin.charactermechanics.traits.base.BaseTraitBehaviour
 import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
-import com.fablesfantasyrp.plugin.charactertraits.behavior.base.BaseTraitBehaviour
 import com.fablesfantasyrp.plugin.charactertraits.domain.KnownCharacterTraits
 import com.fablesfantasyrp.plugin.charactertraits.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
@@ -15,7 +15,7 @@ class Nightseer(plugin: Plugin,
 				profileManager: ProfileManager,
 				traits: CharacterTraitRepository)
 	: BaseTraitBehaviour(KnownCharacterTraits.NIGHTSEER, plugin, characters, profileManager, traits) {
-	private val effect = PotionEffect(PotionEffectType.NIGHT_VISION, 30, 1, false, false, true)
+	private val effect = PotionEffect(PotionEffectType.NIGHT_VISION, 200, 1, false, false, false)
 
 	override fun init() {
 		super.init()
@@ -23,6 +23,6 @@ class Nightseer(plugin: Plugin,
 		server.scheduler.scheduleSyncRepeatingTask(plugin, {
 			getPlayersWithTrait().filter { it.player.location.block.lightLevel == 0.toByte() }
 				.forEach { it.player.addPotionEffect(effect) }
-		}, 0L, 20L)
+		}, 0, 1)
 	}
 }

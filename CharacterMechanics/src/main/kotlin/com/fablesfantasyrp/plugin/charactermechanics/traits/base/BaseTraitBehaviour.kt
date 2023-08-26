@@ -1,4 +1,4 @@
-package com.fablesfantasyrp.plugin.charactertraits.behavior.base
+package com.fablesfantasyrp.plugin.charactermechanics.traits.base
 
 import com.fablesfantasyrp.plugin.characters.data.entity.Character
 import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository

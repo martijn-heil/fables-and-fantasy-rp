@@ -1,10 +1,6 @@
 package com.fablesfantasyrp.plugin.charactertraits
 
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
-import com.fablesfantasyrp.plugin.characters.modifiers.health.HealthModifier
-import com.fablesfantasyrp.plugin.characters.modifiers.stats.StatsModifier
-import com.fablesfantasyrp.plugin.charactertraits.behavior.*
-import com.fablesfantasyrp.plugin.charactertraits.behavior.base.TraitBehavior
 import com.fablesfantasyrp.plugin.charactertraits.command.Commands
 import com.fablesfantasyrp.plugin.charactertraits.command.provider.CharacterTraitModule
 import com.fablesfantasyrp.plugin.charactertraits.dal.h2.H2CharacterTraitDataRepository
@@ -31,7 +27,6 @@ import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.koin.core.context.GlobalContext
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.unloadKoinModules
 import org.koin.core.module.Module
@@ -69,14 +64,6 @@ class FablesCharacterTraits : JavaPlugin(), KoinComponent {
 
 			singleOf(::Commands)
 			factoryOf(::CharacterTraitModule)
-
-			singleOf(::Nightseer) bind TraitBehavior::class
-			singleOf(::Swift) bind TraitBehavior::class
-			singleOf(::EnduringAsRock) bind TraitBehavior::class
-			singleOf(::Strong) binds arrayOf(TraitBehavior::class, StatsModifier::class)
-			singleOf(::Sturdy) binds arrayOf(TraitBehavior::class, StatsModifier::class)
-			singleOf(::Intelligent) binds arrayOf(TraitBehavior::class, StatsModifier::class)
-			singleOf(::AttianHeritage) binds arrayOf(TraitBehavior::class, HealthModifier::class)
 		}
 		loadKoinModules(koinModule)
 		get<CharacterTraitRepositoryImpl>().init()
@@ -99,8 +86,6 @@ class FablesCharacterTraits : JavaPlugin(), KoinComponent {
 		val dispatcher = rootDispatcherNode.dispatcher
 
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
-
-		GlobalContext.get().getAll<TraitBehavior>().forEach { it.init() }
 
 		server.scheduler.scheduleSyncRepeatingTask(this, {
 			logger.info("Saving character traits..")

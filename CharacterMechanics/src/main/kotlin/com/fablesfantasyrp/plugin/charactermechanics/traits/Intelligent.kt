@@ -1,10 +1,10 @@
-package com.fablesfantasyrp.plugin.charactertraits.behavior
+package com.fablesfantasyrp.plugin.charactermechanics.traits
 
+import com.fablesfantasyrp.plugin.charactermechanics.traits.base.BaseTraitBehaviour
 import com.fablesfantasyrp.plugin.characters.data.CharacterStatsModifier
 import com.fablesfantasyrp.plugin.characters.data.entity.Character
 import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
 import com.fablesfantasyrp.plugin.characters.modifiers.stats.StatsModifier
-import com.fablesfantasyrp.plugin.charactertraits.behavior.base.BaseTraitBehaviour
 import com.fablesfantasyrp.plugin.charactertraits.domain.KnownCharacterTraits
 import com.fablesfantasyrp.plugin.charactertraits.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager

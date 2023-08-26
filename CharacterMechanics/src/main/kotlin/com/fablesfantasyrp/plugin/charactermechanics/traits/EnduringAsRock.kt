@@ -1,7 +1,7 @@
-package com.fablesfantasyrp.plugin.charactertraits.behavior
+package com.fablesfantasyrp.plugin.charactermechanics.traits
 
+import com.fablesfantasyrp.plugin.charactermechanics.traits.base.BaseTraitBehaviour
 import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
-import com.fablesfantasyrp.plugin.charactertraits.behavior.base.BaseTraitBehaviour
 import com.fablesfantasyrp.plugin.charactertraits.domain.KnownCharacterTraits
 import com.fablesfantasyrp.plugin.charactertraits.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
@@ -22,6 +22,6 @@ class EnduringAsRock(plugin: Plugin,
 
 		server.scheduler.scheduleSyncRepeatingTask(plugin, {
 			getPlayersWithTrait().forEach { it.player.addPotionEffect(effect) }
-		}, 0L, 20L)
+		}, 0, 1)
 	}
 }

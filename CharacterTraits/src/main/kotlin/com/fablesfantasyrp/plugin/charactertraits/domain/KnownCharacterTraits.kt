@@ -64,4 +64,6 @@ object KnownCharacterTraits {
 	const val MISSILE_MIRROR = "missile_mirror"
 	const val HINTISH_HERITAGE = "hintish_heritage"
 	const val PACK_MULE = "packmule"
+	const val NOMADS_STOMACH = "nomads_stomach"
+	const val SEA_LEGS = "sea_legs"
 }

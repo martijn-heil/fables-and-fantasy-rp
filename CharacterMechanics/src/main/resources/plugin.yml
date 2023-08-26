@@ -1,0 +1,13 @@
+name: FablesCharacterMechanics
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesCharacters
+  - FablesCharacterTraits
+  - FablesUtils
+  - FablesText
+  - FablesDatabase
+  - NinCommands
+main: com.fablesfantasyrp.plugin.charactermechanics.FablesCharacterMechanics
+api-version: @bukkit_api_version@
