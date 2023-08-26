@@ -4,8 +4,9 @@ plugins {
 
 dependencies {
     implementation(project(":Utils"))
-    implementation(project(":Characters"))
-    implementation(project(":CharacterTraits"))
     implementation(project(":Database"))
     implementation(project(":Text"))
+    implementation(project(":Characters"))
+    implementation(project(":CharacterTraits"))
+    implementation(project(":Knockout"))
 }

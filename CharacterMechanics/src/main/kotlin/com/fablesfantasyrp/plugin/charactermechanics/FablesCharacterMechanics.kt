@@ -40,6 +40,7 @@ class FablesCharacterMechanics : JavaPlugin(), KoinComponent {
 			singleOf(::SeaLegs) bind TraitBehavior::class
 			singleOf(::EnduringAsRock) bind TraitBehavior::class
 			singleOf(::NaturallyStealthy) bind TraitBehavior::class
+			singleOf(::TooAngryToDie) bind TraitBehavior::class
 			singleOf(::Strong) binds arrayOf(TraitBehavior::class, StatsModifier::class)
 			singleOf(::Sturdy) binds arrayOf(TraitBehavior::class, StatsModifier::class)
 			singleOf(::Intelligent) binds arrayOf(TraitBehavior::class, StatsModifier::class)

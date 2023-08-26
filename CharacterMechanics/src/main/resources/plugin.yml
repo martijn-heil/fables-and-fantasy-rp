@@ -5,6 +5,7 @@ depend:
   - FablesKotlinRuntime
   - FablesCharacters
   - FablesCharacterTraits
+  - FablesKnockout
   - FablesUtils
   - FablesText
   - FablesDatabase
