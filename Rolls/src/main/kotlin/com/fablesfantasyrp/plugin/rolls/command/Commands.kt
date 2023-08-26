@@ -36,7 +36,6 @@ class Commands(private val server: Server,
 		val senderPlayer = profileManager.getCurrentForProfile(sender) ?: throw IllegalStateException()
 		val senderCharacter = characters.forProfile(sender)
 		val senderName = senderCharacter?.name ?: senderPlayer.name
-		val stats = senderCharacter?.totalStats
 		val prefix = legacyText(GLOBAL_SYSPREFIX)
 		val chatStyle = senderPlayer.chat.chatStyle ?: Style.style(NamedTextColor.YELLOW)
 		val resolver = TagResolver.builder().tag("chat_color", Tag.styling { it.merge(chatStyle) }).build()
@@ -45,7 +44,7 @@ class Commands(private val server: Server,
 
 		if (isComplex) {
 			val result = try {
-				rollExpression(expression, stats, kind)
+				rollExpression(expression, senderCharacter, kind)
 			} catch (ex: Exception) {
 				throw CommandException(ex.message)
 			}
@@ -69,7 +68,7 @@ class Commands(private val server: Server,
 
 			val dice = expression.toIntOrNull() ?: throw CommandException("Could not parse '$expression' as an integer")
 
-			val roll = com.fablesfantasyrp.plugin.rolls.roll(dice.toUInt(), kind, stats)
+			val roll = com.fablesfantasyrp.plugin.rolls.roll(dice.toUInt(), senderCharacter, kind)
 			val result = roll.second
 
 			val letter = when(kind) {

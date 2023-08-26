@@ -106,8 +106,6 @@ class Mage : DataEntity<Long, Mage> {
 		val profileManager = Services.get<ProfileManager>()
 		val myPlayer = profileManager.getCurrentForProfile(character.profile)!!
 
-		val myStats = character.totalStats
-
 		if (myPlayer.location.world != tear.location.world || myPlayer.location.distance(tear.location) > 15) {
 			myPlayer.sendError("Targeted tear is out of range, you need to be within 15 blocks of the tear")
 			return false
@@ -121,18 +119,17 @@ class Mage : DataEntity<Long, Mage> {
 			tears.destroy(tear)
 			return true
 		}
-		val theirStats = them.character.totalStats
 
 		myPlayer.awaitEmote(prompt)
 		if (theirPlayer == myPlayer) {
 			tears.destroy(tear)
 			return true
 		} else {
-			val myRoll = roll(10U, CharacterStatKind.INTELLIGENCE, myStats)
-			val myResult = myRoll.second + this.spellCastingBonus.toInt()
+			val myRoll = character.roll(10U, CharacterStatKind.INTELLIGENCE)
+			val myResult = myRoll + this.spellCastingBonus.toInt()
 
-			val theirRoll = roll(10U, CharacterStatKind.INTELLIGENCE, theirStats)
-			val theirResult = theirRoll.second + them.spellCastingBonus.toInt()
+			val theirRoll = them.character.roll(10U, CharacterStatKind.INTELLIGENCE)
+			val theirResult = theirRoll + them.spellCastingBonus.toInt()
 
 			val success = myResult > theirResult
 			val resultMessage = if (success) {
@@ -178,7 +175,7 @@ class Mage : DataEntity<Long, Mage> {
 		player.awaitEmote(legacyText("$SYSPREFIX Please emote to try and unbind " +
 				"${enemy.character.name}'s ${spell.displayName} spell"))
 
-		val roll = roll(20U, CharacterStatKind.INTELLIGENCE, this.character.totalStats).second
+		val roll = character.roll(20U, CharacterStatKind.INTELLIGENCE)
 		val enemyPlayer = profileManager.getCurrentForProfile(enemy.character.profile)!!
 		val messageTargets = getPlayersWithinRange(player.location, DISTANCE_TALK)
 				.plus(getPlayersWithinRange(enemyPlayer.location, DISTANCE_TALK)).distinct()
@@ -260,8 +257,6 @@ class Mage : DataEntity<Long, Mage> {
 		this.isCasting = true
 
 		try {
-			val stats = character.totalStats
-
 			val tear = this.findTear()
 			if (tear == null) {
 				player.sendError("No tear found within 15 blocks. Please open a tear with first with /opentear.")
@@ -273,12 +268,12 @@ class Mage : DataEntity<Long, Mage> {
 			try {
 				player.awaitEmote(legacyText("$SYSPREFIX Please emote to try to cast a spell:"))
 				val additionalBonus = if (this.activeAbilities.any { it == Cloud || it == FlamingFamiliar }) 1U else 0U
-				val castingRoll = roll(20U, CharacterStatKind.INTELLIGENCE, stats).second +
+				val castingRoll = character.roll(20U, CharacterStatKind.INTELLIGENCE) +
 						this.spellCastingBonus.toInt() +
 						additionalBonus.toInt()
 				val success = castingRoll >= spell.castingValue
 
-				val effectivenessRoll = roll(20U, CharacterStatKind.INTELLIGENCE, stats).second
+				val effectivenessRoll = character.roll(20U, CharacterStatKind.INTELLIGENCE)
 				val effectiveness = if (success) {
 					if (effectivenessRoll > 16) SpellEffectiveness.CRITICAL_SUCCESS else SpellEffectiveness.SUCCESS
 				} else {
