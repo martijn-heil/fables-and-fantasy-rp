@@ -70,7 +70,7 @@ class FablesMagic : JavaPlugin(), KoinComponent {
 			single { MageRepositoryImpl(get()).apply { init() } } bind MageRepository::class
 			singleOf(::EntityTearRepository)
 
-			singleOf(::TearRepositoryImpl)
+			singleOf(::TearRepositoryImpl) bind TearRepository::class
 			singleOf(::TearClosureManager)
 
 			factoryOf(::Commands)

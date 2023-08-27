@@ -90,7 +90,7 @@ class FablesCharacterTraits : JavaPlugin(), KoinComponent {
 		server.scheduler.scheduleSyncRepeatingTask(this, {
 			logger.info("Saving character traits..")
 			get<CharacterTraitRepositoryImpl>().saveAllDirty()
-		}, 0L, 300L)
+		}, 0, 6000)
 	}
 
 	override fun onDisable() {

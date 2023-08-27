@@ -73,7 +73,7 @@ class NaturallyStealthy(plugin: Plugin,
 
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 		fun onPlayerMove(e: PlayerMoveEvent) {
-			if (e.hasChangedPosition()) {
+			if (e.hasExplicitlyChangedPosition()) {
 				lastMoved[e.player] = Instant.now()
 			}
 		}

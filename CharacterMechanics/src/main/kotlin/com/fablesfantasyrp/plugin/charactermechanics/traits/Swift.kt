@@ -15,8 +15,8 @@ class Swift(plugin: Plugin,
 			characters: EntityCharacterRepository,
 			profileManager: ProfileManager,
 			traits: CharacterTraitRepository)
-	: BaseTraitBehaviour(KnownCharacterTraits.NIGHTSEER, plugin, characters, profileManager, traits) {
-	private val effect = PotionEffect(PotionEffectType.SPEED, 30, 1, false, false, true)
+	: BaseTraitBehaviour(KnownCharacterTraits.SWIFT, plugin, characters, profileManager, traits) {
+	private val effect = PotionEffect(PotionEffectType.SPEED, 30, 0, false, false, true)
 
 	override fun init() {
 		super.init()

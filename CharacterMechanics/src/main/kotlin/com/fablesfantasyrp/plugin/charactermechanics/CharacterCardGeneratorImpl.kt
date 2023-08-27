@@ -5,23 +5,28 @@ import com.fablesfantasyrp.plugin.characters.CharacterCardGenerator
 import com.fablesfantasyrp.plugin.characters.data.CharacterStatKind
 import com.fablesfantasyrp.plugin.characters.data.entity.Character
 import com.fablesfantasyrp.plugin.characters.isStaffCharacter
+import com.fablesfantasyrp.plugin.charactertraits.domain.entity.CharacterTrait
+import com.fablesfantasyrp.plugin.charactertraits.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.text.join
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.parseLinks
 import com.fablesfantasyrp.plugin.utils.Services
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.milkbowl.vault.chat.Chat
+import org.apache.commons.lang.WordUtils
 import org.bukkit.command.CommandSender
 import org.ocpsoft.prettytime.PrettyTime
 
 class CharacterCardGeneratorImpl : CharacterCardGenerator {
 	override fun card(character: Character, observer: CommandSender?): Component {
 		val profileManager = Services.get<ProfileManager>()
+		val characterTraitRepository = Services.get<CharacterTraitRepository>()
 		val vaultChat = Services.get<Chat>()
 		val authorizer = Services.get<CharacterAuthorizer>()
 
@@ -55,9 +60,9 @@ class CharacterCardGeneratorImpl : CharacterCardGenerator {
 				"<change_age> Age: <white><age></white><newline>" +
 				"<change_gender> Gender: <white><gender></white><newline>" +
 				"<change_race> Race: <white><race></white><newline>" +
+				"<black>[E]</black> Character traits: <white><traits></white><newline>" +
 				"<change_description> Description: <white><description></white><newline>" +
 				"<black>[E]</black> Maximum health: <white><maximum_health></white><newline>" +
-				"" +
 				"<change_stats> Stats:<newline>" +
 				"<stats><newline>" +
 				"</green>",
@@ -79,6 +84,7 @@ class CharacterCardGeneratorImpl : CharacterCardGenerator {
 			Placeholder.unparsed("race", character.race.toString()),
 			Placeholder.component("description", parseLinks(character.description)),
 			Placeholder.unparsed("maximum_health", character.maximumHealth.toString()),
+			Placeholder.component("traits", formatTraits(characterTraitRepository.forCharacter(character))),
 			Placeholder.component("stats", statsMessage),
 			Placeholder.unparsed("last_seen", character.lastSeen?.let { PrettyTime().format(it) } ?: "unknown"),
 			Placeholder.component("change_name", editButton(observer == null || authorizer.mayEditName(observer, character).result, "name")),
@@ -90,6 +96,27 @@ class CharacterCardGeneratorImpl : CharacterCardGenerator {
 			Placeholder.component("status", if (character.isDead) Component.text("(dead) ").color(NamedTextColor.RED)
 			else if (character.isShelved) Component.text("(shelved) ").color(NamedTextColor.YELLOW)
 			else Component.empty())
+		)
+	}
+
+	private fun formatTraits(traits: Collection<CharacterTrait>): Component {
+		return Component.join(JoinConfiguration.separator(Component.text(", ")),
+			traits.map {
+				val descriptionLines = (it.description ?: "No description.")
+					.let { WordUtils.wrap(it, 40) }
+					.lines()
+					.map { Component.text(it) }
+					.let { Component.join(JoinConfiguration.newlines(), it) }
+
+				val description = miniMessage.deserialize(
+					"<bold><display_name></bold><newline>" +
+					"<gray><lines></gray>",
+					Placeholder.unparsed("display_name", it.displayName),
+					Placeholder.component("lines", descriptionLines)
+				)
+
+				Component.text(it.displayName).hoverEvent(HoverEvent.showText(description))
+			}
 		)
 	}
 }

@@ -15,7 +15,7 @@ class EnduringAsRock(plugin: Plugin,
 					 profileManager: ProfileManager,
 					 traits: CharacterTraitRepository)
 	: BaseTraitBehaviour(KnownCharacterTraits.ENDURING_AS_ROCK, plugin, characters, profileManager, traits) {
-	private val effect = PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 30, 1, false, false, true)
+	private val effect = PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 30, 0, false, false, true)
 
 	override fun init() {
 		super.init()

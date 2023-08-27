@@ -96,4 +96,10 @@ open class SimpleEntityRepository<K, T: Identifiable<K>, C>(protected var child:
 			return cache[id]?.get()
 		}
 	}
+
+	protected fun deduplicate(entities: Collection<T>): Collection<T> {
+		return lock.writeLock().withLock {
+			entities.map { cache.merge(it.id, SoftReference(it)) { a, b -> if (a.get() != null) a else b }!!.get()!! }
+		}
+	}
 }

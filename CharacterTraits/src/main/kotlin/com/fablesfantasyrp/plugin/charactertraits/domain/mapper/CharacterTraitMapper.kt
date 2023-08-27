@@ -16,8 +16,8 @@ class CharacterTraitMapper(private val child: CharacterTraitDataRepository)
 
 	override var dirtyMarker: DirtyMarker<CharacterTrait>? = null
 
-	override fun convertFromChild(v: CharacterTraitData) = CharacterTrait(v.id, v.description, dirtyMarker)
-	override fun convertToChild(v: CharacterTrait) = CharacterTraitData(v.id, v.description)
+	override fun convertFromChild(v: CharacterTraitData) = CharacterTrait(v.id, v.displayName, v.description, dirtyMarker)
+	override fun convertToChild(v: CharacterTrait) = CharacterTraitData(v.id, v.displayName, v.description)
 	override fun forRace(race: Race) = child.forRace(race).map { convertFromChild(it) }
 	override fun forCharacter(character: Character) = child.forCharacter(character).map { convertFromChild(it) }
 	override fun linkToRace(race: Race, trait: CharacterTrait) = child.linkToRace(race, convertToChild(trait))

@@ -16,18 +16,20 @@ class H2CharacterTraitDataRepository(private val dataSource: DataSource)
 
 	override fun update(v: CharacterTraitData) {
 		dataSource.connection.use { connection ->
-			connection.prepareStatement("UPDATE $TABLE_NAME SET description = ? WHERE id = ?").apply {
-				this.setString(1, v.description)
-				this.setString(2, v.id)
+			connection.prepareStatement("UPDATE $TABLE_NAME SET display_name = ?, description = ? WHERE id = ?").apply {
+				this.setString(1, v.displayName)
+				this.setString(2, v.description)
+				this.setString(3, v.id)
 			}.executeUpdate()
 		}
 	}
 
 	override fun create(v: CharacterTraitData): CharacterTraitData {
 		dataSource.connection.use { connection ->
-			connection.prepareStatement("INSERT INTO $TABLE_NAME (id, description) VALUES (?, ?)").apply {
+			connection.prepareStatement("INSERT INTO $TABLE_NAME (id, display_name, description) VALUES (?, ?, ?)").apply {
 				this.setString(1, v.id)
-				this.setString(2, v.description)
+				this.setString(2, v.displayName)
+				this.setString(3, v.description)
 			}.executeUpdate()
 		}
 
@@ -48,7 +50,7 @@ class H2CharacterTraitDataRepository(private val dataSource: DataSource)
 	override fun forCharacter(character: Character): Collection<CharacterTraitData> {
 		return dataSource.connection.use { connection ->
 			connection.prepareStatement("SELECT * FROM $TABLE_NAME " +
-				"LEFT JOIN $SCHEMA.CHARACTER_CHARACTER_TRAIT ON " +
+				"JOIN $SCHEMA.CHARACTER_CHARACTER_TRAIT ON " +
 				"$SCHEMA.CHARACTER_CHARACTER_TRAIT.character_trait_id = $TABLE_NAME.id AND " +
 				"$SCHEMA.CHARACTER_CHARACTER_TRAIT.character_id = ?").apply {
 				this.setInt(1, character.id)
@@ -99,5 +101,5 @@ class H2CharacterTraitDataRepository(private val dataSource: DataSource)
 	}
 
 	override fun fromRow(row: ResultSet): CharacterTraitData
-		= CharacterTraitData(row.getString("id"), row.getString("description"))
+		= CharacterTraitData(row.getString("id"), row.getString("display_name"), row.getString("description"))
 }

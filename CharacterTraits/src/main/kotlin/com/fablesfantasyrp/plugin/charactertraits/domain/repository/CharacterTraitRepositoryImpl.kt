@@ -31,7 +31,7 @@ class CharacterTraitRepositoryImpl(child: CharacterTraitMapper)
 		return lock.readLock().withLock { byCharacter[character] } ?: run {
 			lock.writeLock().withLock {
 				byCharacter[character] ?: run {
-					val traits = child.forCharacter(character).toHashSet()
+					val traits = deduplicate(child.forCharacter(character)).toHashSet()
 					byCharacter[character] = traits
 					traits
 				}
@@ -55,7 +55,7 @@ class CharacterTraitRepositoryImpl(child: CharacterTraitMapper)
 		lock.writeLock().withLock {
 			byCharacterDirty.computeIfAbsent(character) {
 				byCharacter[character] ?: run {
-					val traits = child.forCharacter(character).toHashSet()
+					val traits = deduplicate(child.forCharacter(character)).toHashSet()
 					byCharacter[character] = traits
 					traits
 				}
@@ -67,7 +67,7 @@ class CharacterTraitRepositoryImpl(child: CharacterTraitMapper)
 		lock.writeLock().withLock {
 			byCharacterDirty.computeIfAbsent(character) {
 				byCharacter[character] ?: run {
-					val traits = child.forCharacter(character).toHashSet()
+					val traits = deduplicate(child.forCharacter(character)).toHashSet()
 					byCharacter[character] = traits
 					traits
 				}

@@ -19,7 +19,7 @@ class SeaLegs(plugin: Plugin,
 			  profileManager: ProfileManager,
 			  traits: CharacterTraitRepository)
 	: BaseTraitBehaviour(KnownCharacterTraits.SEA_LEGS, plugin, characters, profileManager, traits) {
-	private val effect = PotionEffect(PotionEffectType.DOLPHINS_GRACE, 200, 1, false, false, true)
+	private val effect = PotionEffect(PotionEffectType.DOLPHINS_GRACE, 200, 0, false, false, true)
 
 	override fun init() {
 		super.init()
