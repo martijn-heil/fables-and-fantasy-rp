@@ -1,32 +1,33 @@
 package com.fablesfantasyrp.plugin.magic.command.provider
 
 import com.fablesfantasyrp.plugin.characters.data.entity.CharacterRepository
-import com.fablesfantasyrp.plugin.magic.authorizer.SpellAuthorizer
-import com.fablesfantasyrp.plugin.magic.dal.model.SpellData
-import com.fablesfantasyrp.plugin.magic.domain.repository.MageRepository
+import com.fablesfantasyrp.plugin.magic.authorizer.MagicTypeAuthorizer
+import com.fablesfantasyrp.plugin.magic.dal.enums.MagicType
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.sender.BukkitSenderProvider
 import com.sk89q.intake.argument.ArgumentParseException
 import com.sk89q.intake.argument.CommandArgs
 import com.sk89q.intake.argument.Namespace
-import com.sk89q.intake.parametric.Provider
+import com.sk89q.intake.parametric.provider.EnumProvider
 import org.bukkit.entity.Player
 
-class OwnSpellDataProvider(private val spellProvider: Provider<SpellData>,
-						   private val profileManager: ProfileManager,
+class OwnMagicTypeProvider(private val profileManager: ProfileManager,
 						   private val characters: CharacterRepository,
-						   private val mages: MageRepository,
-						   private val spellAuthorizer: SpellAuthorizer) : Provider<SpellData> {
+						   private val magicTypeAuthorizer: MagicTypeAuthorizer) : EnumProvider<MagicType>(MagicType::class.java) {
 
 	override fun isProvided(): Boolean = false
 
-	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): SpellData {
+	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): MagicType {
 		val sender = BukkitSenderProvider(Player::class.java).get(arguments, modifiers)!!
 		val character = profileManager.getCurrentForPlayer(sender)?.let { characters.forProfile(it) }
 				?: throw ArgumentParseException("You are not currently in character.")
-		val spell = spellProvider.get(arguments, modifiers) ?: throw ArgumentParseException("Spell not found.")
-		if (spellAuthorizer.hasSpell(character, spell)) throw ArgumentParseException("You don't have access to this spell.")
-		return spell
+
+		val magicType = super.get(arguments, modifiers)!!
+
+		if (!magicTypeAuthorizer.getMagicTypes(character).contains(magicType))
+			throw ArgumentParseException("You don't have access to this element.")
+
+		return magicType
 	}
 
 	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
@@ -34,10 +35,8 @@ class OwnSpellDataProvider(private val spellProvider: Provider<SpellData>,
 		val character = profileManager.getCurrentForPlayer(sender)?.let { characters.forProfile(it) }
 				?: return emptyList()
 
-		return spellAuthorizer.getSpells(character)
-			.asSequence()
-			.filter { it.id.startsWith(prefix) }
-			.map { it.id }
-			.toList()
+		return magicTypeAuthorizer.getMagicTypes(character)
+			.map { it.name }
+			.filter { it.startsWith(prefix) }
 	}
 }

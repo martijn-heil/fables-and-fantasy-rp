@@ -33,7 +33,7 @@ class TearClosureManager(private val plugin: Plugin,
 
 	private fun shouldTearClose(tear: Tear): Boolean {
 		val owner = tear.owner
-		val player = profileManager.getCurrentForProfile(owner.character.profile)
-		return player == null || owner.character.profile.location.distanceSafe(tear.location) > 15.0
+		val player = profileManager.getCurrentForProfile(owner.profile)
+		return player == null || owner.profile.location.distanceSafe(tear.location) > 15.0
 	}
 }

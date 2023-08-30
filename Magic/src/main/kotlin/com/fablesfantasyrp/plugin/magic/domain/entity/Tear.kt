@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.magic.domain.entity
 
+import com.fablesfantasyrp.plugin.characters.data.entity.Character
 import com.fablesfantasyrp.plugin.chat.getPlayersWithinRange
 import com.fablesfantasyrp.plugin.database.entity.DataEntity
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
@@ -25,7 +26,7 @@ class Tear : DataEntity<Long, Tear> {
 	var magicType: MagicType
 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 
-	var owner: Mage
+	var owner: Character
 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 
 	var location: Location
@@ -34,7 +35,7 @@ class Tear : DataEntity<Long, Tear> {
 	constructor(id: Long,
 				location: Location,
 				magicType: MagicType,
-				owner: Mage,
+				owner: Character,
 				dirtyMarker: DirtyMarker<Tear>? = null) : super() {
 		this.id = id
 		this.location = location

@@ -5,8 +5,10 @@ import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterReposito
 import com.fablesfantasyrp.plugin.magic.*
 import com.fablesfantasyrp.plugin.magic.ability.MageAbility
 import com.fablesfantasyrp.plugin.magic.command.provider.OwnAbility
+import com.fablesfantasyrp.plugin.magic.command.provider.OwnMagicType
 import com.fablesfantasyrp.plugin.magic.command.provider.OwnSpell
 import com.fablesfantasyrp.plugin.magic.dal.enums.MagicPath
+import com.fablesfantasyrp.plugin.magic.dal.enums.MagicType
 import com.fablesfantasyrp.plugin.magic.dal.model.SpellData
 import com.fablesfantasyrp.plugin.magic.dal.repository.SpellDataRepository
 import com.fablesfantasyrp.plugin.magic.domain.entity.Mage
@@ -42,18 +44,18 @@ class Commands(private val plugin: JavaPlugin,
 			   private val spells: SpellDataRepository) {
 	@Command(aliases = ["castspell", "cast"], desc = "Cast a magic spell.")
 	@Require(Permission.Command.Castspell)
-	fun castspell(@Sender sender: Mage, @OwnSpell spell: SpellData) {
+	fun castspell(@Sender sender: Character, @OwnSpell spell: SpellData) {
 		plugin.launch { sender.tryCastSpell(spell) }
 	}
 
 	@Command(aliases = ["opentear"], desc = "Open a tear.")
 	@Require(Permission.Command.Opentear)
-	fun opentear(@Sender sender: Mage) {
+	fun opentear(@Sender sender: Character, @OwnMagicType element: MagicType) {
 		plugin.launch {
 			try {
-				sender.openTear()
+				sender.openTear(element)
 			} catch (ex: OpenTearException) {
-				val player = profileManager.getCurrentForProfile(sender.character.profile)
+				val player = profileManager.getCurrentForProfile(sender.profile)
 				player?.sendError(ex.message ?: "Unknown error (${ex.javaClass.simpleName})")
 			} catch (ex: Exception) {
 				ex.printStackTrace()
@@ -101,7 +103,7 @@ class Commands(private val plugin: JavaPlugin,
 			tears.all().asSequence().map {
 				Component.text()
 						.append(Component.text("[${it.location.humanReadable()}]"))
-						.append(Component.text(" ${it.magicType} tear by ${it.owner.character.name}"))
+						.append(Component.text(" ${it.magicType} tear by ${it.owner.name}"))
 						.color(NamedTextColor.GRAY)
 		}.join(Component.newline()).toList())
 

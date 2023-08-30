@@ -3,6 +3,10 @@ package com.fablesfantasyrp.plugin.magic
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
 import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
 import com.fablesfantasyrp.plugin.database.applyMigrations
+import com.fablesfantasyrp.plugin.magic.authorizer.MagicTypeAuthorizer
+import com.fablesfantasyrp.plugin.magic.authorizer.MagicTypeAuthorizerImpl
+import com.fablesfantasyrp.plugin.magic.authorizer.SpellAuthorizer
+import com.fablesfantasyrp.plugin.magic.authorizer.SpellAuthorizerImpl
 import com.fablesfantasyrp.plugin.magic.command.Commands
 import com.fablesfantasyrp.plugin.magic.command.provider.MagicModule
 import com.fablesfantasyrp.plugin.magic.dal.repository.MageDataRepository
@@ -72,6 +76,10 @@ class FablesMagic : JavaPlugin(), KoinComponent {
 
 			singleOf(::TearRepositoryImpl) bind TearRepository::class
 			singleOf(::TearClosureManager)
+			singleOf(::CastingTracker)
+
+			singleOf(::SpellAuthorizerImpl) bind SpellAuthorizer::class
+			singleOf(::MagicTypeAuthorizerImpl) bind MagicTypeAuthorizer::class
 
 			factoryOf(::Commands)
 			factory { get<Commands>().Ability() }

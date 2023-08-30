@@ -67,4 +67,5 @@ object KnownCharacterTraits {
 	const val NOMADS_STOMACH = "nomads_stomach"
 	const val SEA_LEGS = "sea_legs"
 	const val ABNORMALLY_TALL = "abnormally_tall"
+	const val DRAGON_BLOODED = "dragon_blooded"
 }

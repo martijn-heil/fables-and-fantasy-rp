@@ -14,4 +14,5 @@ interface CharacterTraitRepository : MutableRepository<CharacterTrait>, KeyedRep
 	fun linkToCharacter(character: Character, trait: CharacterTrait)
 	fun unlinkFromCharacter(character: Character, trait: CharacterTrait)
 	fun hasTrait(character: Character, trait: CharacterTrait): Boolean = forCharacter(character).contains(trait)
+	fun hasTrait(character: Character, id: String): Boolean = forCharacter(character).contains(forId(id))
 }

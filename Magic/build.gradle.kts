@@ -7,6 +7,7 @@ dependencies {
     implementation(project(":Utils"))
     implementation(project(":Math"))
     implementation(project(":Characters"))
+    implementation(project(":CharacterTraits"))
     implementation(project(":Profile"))
     implementation(project(":Location"))
     implementation(project(":KotlinRuntime"))

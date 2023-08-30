@@ -1,10 +1,10 @@
 package com.fablesfantasyrp.plugin.magic.domain.repository
 
+import com.fablesfantasyrp.plugin.characters.data.entity.Character
 import com.fablesfantasyrp.plugin.database.entity.SimpleEntityRepository
 import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.KeyedRepository
 import com.fablesfantasyrp.plugin.database.repository.MutableRepository
-import com.fablesfantasyrp.plugin.magic.domain.entity.Mage
 import com.fablesfantasyrp.plugin.magic.domain.entity.Tear
 import org.bukkit.Location
 
@@ -28,7 +28,7 @@ class EntityTearRepository<C>(child: C) : SimpleEntityRepository<Long, Tear, C>(
 		return result
 	}
 
-	override fun forOwner(owner: Mage): Collection<Tear> {
+	override fun forOwner(owner: Character): Collection<Tear> {
 		return this.all().filter { it.owner == owner }
 	}
 
