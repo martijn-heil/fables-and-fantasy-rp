@@ -32,5 +32,10 @@ abstract class BaseTraitBehaviour(
 		}
 	}
 
+	protected fun hasTrait(player: Player): Boolean {
+		val character = profileManager.getCurrentForPlayer(player)?.let { characters.forProfile(it) } ?: return false
+		return traits.hasTrait(character, trait)
+	}
+
 	protected data class ActiveTraitHolder(val player: Player, val character: Character)
 }

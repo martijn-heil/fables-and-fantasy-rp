@@ -9,4 +9,5 @@ dependencies {
     implementation(project(":Characters"))
     implementation(project(":CharacterTraits"))
     implementation(project(":Knockout"))
+    implementation(project(":Hacks"))
 }

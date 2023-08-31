@@ -24,7 +24,6 @@ import com.fablesfantasyrp.plugin.timers.CancelReason
 import com.fablesfantasyrp.plugin.timers.countdown
 import com.fablesfantasyrp.plugin.utils.FABLES_ADMIN
 import com.fablesfantasyrp.plugin.utils.broadcast
-import com.fablesfantasyrp.plugin.utils.showEndCredits
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.gitlab.martijn_heil.nincommands.common.CommandTarget
 import com.gitlab.martijn_heil.nincommands.common.Sender

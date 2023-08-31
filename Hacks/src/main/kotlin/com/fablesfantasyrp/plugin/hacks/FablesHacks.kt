@@ -6,6 +6,7 @@ import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.ServicePriority
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.unloadKoinModules
 import org.koin.core.module.Module
@@ -24,14 +25,20 @@ class FablesHacks : JavaPlugin(), KoinComponent {
 		val perms = server.servicesManager.getRegistration(Permission::class.java)!!
 		val chat = server.servicesManager.getRegistration(Chat::class.java)!!
 
+		val permissionInjector = PermissionInjectorImpl(get(), perms.provider)
+
+		server.servicesManager.register(Permission::class.java,
+			permissionInjector, this, ServicePriority.Highest)
+
 		server.servicesManager.register(Chat::class.java,
-				HackyVaultChat(chat.provider, perms.provider), this, ServicePriority.Highest)
+			HackyVaultChat(chat.provider, permissionInjector), this, ServicePriority.Highest)
 
 		koinModule = module(createdAtStart = false) {
 			single<Plugin> { this@FablesHacks } binds(arrayOf(JavaPlugin::class))
 
 			singleOf(::FlippedPlayerManager)
 			singleOf(::HackyListener)
+			single { permissionInjector }
 		}
 		loadKoinModules(koinModule)
 
