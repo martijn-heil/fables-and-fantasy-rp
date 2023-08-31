@@ -2,6 +2,7 @@ package com.fablesfantasyrp.plugin.charactermechanics
 
 import com.fablesfantasyrp.plugin.characters.CharacterAuthorizer
 import com.fablesfantasyrp.plugin.characters.CharacterCardGenerator
+import com.fablesfantasyrp.plugin.characters.CreatureSizeCalculator
 import com.fablesfantasyrp.plugin.characters.data.CharacterStatKind
 import com.fablesfantasyrp.plugin.characters.data.entity.Character
 import com.fablesfantasyrp.plugin.characters.isStaffCharacter
@@ -23,7 +24,7 @@ import org.apache.commons.lang.WordUtils
 import org.bukkit.command.CommandSender
 import org.ocpsoft.prettytime.PrettyTime
 
-class CharacterCardGeneratorImpl : CharacterCardGenerator {
+class CharacterCardGeneratorImpl(private val creatureSizeCalculator: CreatureSizeCalculator) : CharacterCardGenerator {
 	override fun card(character: Character, observer: CommandSender?): Component {
 		val profileManager = Services.get<ProfileManager>()
 		val characterTraitRepository = Services.get<CharacterTraitRepository>()
@@ -49,6 +50,8 @@ class CharacterCardGeneratorImpl : CharacterCardGenerator {
 		val player = profileManager.getCurrentForProfile(character.profile)
 		val isMetaGamer = if (player != null) vaultChat.playerInGroup(player, "metagamer") else false
 
+		val creatureSize = creatureSizeCalculator.getCreatureSize(character)
+
 		return miniMessage.deserialize(
 			"<newline>" +
 				"<gray>═════ <white><player_name></white> <dark_gray>Character #<id></dark_gray> <status>═════</gray><newline>" +
@@ -60,6 +63,7 @@ class CharacterCardGeneratorImpl : CharacterCardGenerator {
 				"<change_age> Age: <white><age></white><newline>" +
 				"<change_gender> Gender: <white><gender></white><newline>" +
 				"<change_race> Race: <white><race></white><newline>" +
+				"<black>[E]</black> Creature size: <white><creature_size></white><newline>" +
 				"<black>[E]</black> Character traits: <white><traits></white><newline>" +
 				"<change_description> Description: <white><description></white><newline>" +
 				"<black>[E]</black> Maximum health: <white><maximum_health></white><newline>" +
@@ -82,6 +86,7 @@ class CharacterCardGeneratorImpl : CharacterCardGenerator {
 			Placeholder.component("age", Component.text(character.age.toString())),
 			Placeholder.unparsed("gender", character.gender.toString().replaceFirstChar { it.uppercaseChar() }),
 			Placeholder.unparsed("race", character.race.toString()),
+			Placeholder.unparsed("creature_size", creatureSize.displayName),
 			Placeholder.component("description", parseLinks(character.description)),
 			Placeholder.unparsed("maximum_health", character.maximumHealth.toString()),
 			Placeholder.component("traits", formatTraits(characterTraitRepository.forCharacter(character))),

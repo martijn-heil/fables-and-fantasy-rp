@@ -1,0 +1,19 @@
+package com.fablesfantasyrp.plugin.charactermechanics
+
+import com.fablesfantasyrp.plugin.characters.CreatureSizeCalculator
+import com.fablesfantasyrp.plugin.characters.data.CreatureSize
+import com.fablesfantasyrp.plugin.characters.data.entity.Character
+import com.fablesfantasyrp.plugin.charactertraits.domain.KnownCharacterTraits
+import com.fablesfantasyrp.plugin.charactertraits.domain.repository.CharacterTraitRepository
+
+class CreatureSizeCalculatorImpl(private val traits: CharacterTraitRepository) : CreatureSizeCalculator {
+	override fun getCreatureSize(character: Character): CreatureSize {
+		return if (
+			traits.hasTrait(character, KnownCharacterTraits.ABNORMALLY_TALL) ||
+			traits.hasTrait(character, KnownCharacterTraits.HULKING_BRUTE)) {
+			CreatureSize.LARGE
+		} else {
+			character.race.creatureSize
+		}
+	}
+}
