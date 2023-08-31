@@ -167,12 +167,12 @@ class Commands(private val plugin: JavaPlugin,
 		@Command(aliases = ["listunowned"], desc = "List characters without an owner")
 		@Require(Permission.Command.Characters.Listunowned)
 		fun listunowned(@Sender sender: CommandSender) {
-			legacyText("$SYSPREFIX The following characters have no owner:").append(
+			sender.sendMessage(legacyText("$SYSPREFIX The following characters have no owner:").append(
 			Component.join(JoinConfiguration.newlines(), characterRepository.forOwner(null).map {
 				val dead = if (it.isDead) " ${ChatColor.RED}(dead)" else ""
 				val shelved = if (it.isShelved) " ${ChatColor.YELLOW}(shelved)" else ""
 				legacyText("${ChatColor.GRAY}#${it.id} ${it.name}${dead}${shelved}")
-			}))
+			})))
 		}
 
 		@Command(aliases = ["card"], desc = "Display a character's card in chat.")
