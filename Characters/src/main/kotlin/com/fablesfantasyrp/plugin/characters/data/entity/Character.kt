@@ -11,6 +11,7 @@ import com.fablesfantasyrp.plugin.inventory.inventory
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.utils.Services
+import com.fablesfantasyrp.plugin.utils.showEndCredits
 import org.koin.core.context.GlobalContext
 import java.time.Instant
 import kotlin.math.max
@@ -37,7 +38,7 @@ class Character : DataEntity<Int, Character>, CharacterData {
 				val player = Services.get<ProfileManager>().getCurrentForProfile(profile)
 				if (player != null) {
 					player.health = 0.0
-					player.spigot().respawn()
+					player.showEndCredits()
 				}
 				val inventory = profile.inventory
 				inventory.inventory.clear()
