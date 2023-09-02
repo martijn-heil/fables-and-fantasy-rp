@@ -1,20 +1,21 @@
-package com.fablesfantasyrp.plugin.gui
+package com.fablesfantasyrp.plugin.gui.element
 
 import de.themoep.inventorygui.DynamicGuiElement
 import de.themoep.inventorygui.GuiElementGroup
 import de.themoep.inventorygui.StaticGuiElement
-import org.bukkit.ChatColor.*
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
+
 
 private val FILLED_ITEM = ItemStack(Material.GREEN_STAINED_GLASS_PANE)
 private val EMPTY_ITEM = ItemStack(Material.BLACK_STAINED_GLASS_PANE)
 
-class GuiSlider(char: Char,
-				max: UInt,
-				initial: UInt,
-				valueToDisplayValue: (UInt) -> UInt,
-				canIncrease: (UInt) -> Boolean) : GuiElementGroup(char) {
+class Slider(char: Char,
+			 max: UInt,
+			 initial: UInt,
+			 valueToDisplayValue: (UInt) -> UInt,
+			 canIncrease: (UInt) -> Boolean) : GuiElementGroup(char) {
 	var value = initial
 
 	init {
@@ -35,7 +36,7 @@ class GuiSlider(char: Char,
 							if (value > 0U) value--
 							gui.draw()
 							true
-						}, "$RED$BOLD-")
+						}, "${ChatColor.RED}${ChatColor.BOLD}-")
 					})
 				}
 
@@ -48,7 +49,7 @@ class GuiSlider(char: Char,
 							if (value < max && canIncrease(value)) value++
 							gui.draw()
 							true
-						}, "$GREEN$BOLD+")
+						}, "${ChatColor.GREEN}${ChatColor.BOLD}+")
 					})
 				}
 
