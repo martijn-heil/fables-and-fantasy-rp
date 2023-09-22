@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.characters
 
-import com.fablesfantasyrp.plugin.characters.data.entity.Character
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import net.kyori.adventure.text.Component
 import org.bukkit.command.CommandSender
 

@@ -1,8 +1,8 @@
 package com.fablesfantasyrp.plugin.characters.gui
 
-import com.fablesfantasyrp.plugin.characters.data.CharacterStats
-import com.fablesfantasyrp.plugin.gui.element.Slider
+import com.fablesfantasyrp.plugin.characters.domain.CharacterStats
 import com.fablesfantasyrp.plugin.gui.ResultProducingInventoryGui
+import com.fablesfantasyrp.plugin.gui.element.Slider
 import de.themoep.inventorygui.DynamicGuiElement
 import de.themoep.inventorygui.StaticGuiElement
 import org.bukkit.ChatColor.*

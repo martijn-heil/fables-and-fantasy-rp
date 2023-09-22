@@ -1,38 +1,32 @@
-package com.fablesfantasyrp.plugin.characters.data.persistent
+package com.fablesfantasyrp.plugin.characters.dal.h2
 
-import com.fablesfantasyrp.plugin.characters.data.CharacterStats
-import com.fablesfantasyrp.plugin.characters.data.Gender
-import com.fablesfantasyrp.plugin.characters.data.Race
-import com.fablesfantasyrp.plugin.characters.data.entity.Character
-import com.fablesfantasyrp.plugin.characters.data.entity.CharacterRepository
-import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
-import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
+import com.fablesfantasyrp.plugin.characters.dal.model.CharacterData
+import com.fablesfantasyrp.plugin.characters.dal.repository.CharacterDataRepository
+import com.fablesfantasyrp.plugin.characters.domain.CharacterStats
+import com.fablesfantasyrp.plugin.characters.dal.enums.Gender
+import com.fablesfantasyrp.plugin.characters.dal.enums.Race
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.profile.data.entity.ProfileRepository
 import org.bukkit.OfflinePlayer
-import org.bukkit.Server
 import java.sql.ResultSet
 import java.time.Instant
 import javax.sql.DataSource
 
-class H2CharacterRepository(private val server: Server,
-							private val dataSource: DataSource,
-							private val profiles: ProfileRepository) : CharacterRepository, HasDirtyMarker<Character> {
+class H2CharacterDataRepository(private val dataSource: DataSource,
+								private val profiles: ProfileRepository) : CharacterDataRepository {
 	val TABLE_NAME = "FABLES_CHARACTERS.CHARACTERS"
 
-	override var dirtyMarker: DirtyMarker<Character>? = null
-
-	override fun all(): Collection<Character> {
+	override fun all(): Collection<CharacterData> {
 		return dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME")
 			val result = stmnt.executeQuery()
-			val all = ArrayList<Character>()
+			val all = ArrayList<CharacterData>()
 			while (result.next()) all.add(fromRow(result))
 			all
 		}
 	}
 
-	override fun destroy(v: Character) {
+	override fun destroy(v: CharacterData) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("DELETE FROM $TABLE_NAME WHERE id = ?")
 			stmnt.setInt(1, v.id)
@@ -40,7 +34,7 @@ class H2CharacterRepository(private val server: Server,
 		}
 	}
 
-	override fun create(v: Character): Character {
+	override fun create(v: CharacterData): CharacterData {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME " +
 					"(id, " +
@@ -54,7 +48,7 @@ class H2CharacterRepository(private val server: Server,
 					"last_seen, " +
 					"stat_strength, stat_defense, stat_agility, stat_intelligence) " +
 					"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
-			stmnt.setInt(1, v.profile.id)
+			stmnt.setInt(1, v.id)
 			stmnt.setString(2, v.name)
 			stmnt.setString(3, v.description)
 			stmnt.setInt(4, v.age.toInt())
@@ -68,9 +62,8 @@ class H2CharacterRepository(private val server: Server,
 			stmnt.setInt(12, v.stats.agility.toInt())
 			stmnt.setInt(13, v.stats.intelligence.toInt())
 			stmnt.executeUpdate()
-			v.dirtyMarker = dirtyMarker
-			return Character(
-					id = v.profile.id,
+			return CharacterData(
+					id = v.id,
 					name = v.name,
 					description = v.description,
 					age = v.age,
@@ -79,21 +72,19 @@ class H2CharacterRepository(private val server: Server,
 					createdAt = v.createdAt,
 					lastSeen = v.lastSeen,
 					stats = v.stats,
-					profile = v.profile,
-					dirtyMarker = dirtyMarker
 			)
 		}
 	}
 
-	override fun forOwner(offlinePlayer: OfflinePlayer?): Collection<Character> {
+	override fun forOwner(offlinePlayer: OfflinePlayer?): Collection<CharacterData> {
 		return profiles.allForOwner(offlinePlayer).mapNotNull { this.forId(it.id) }
 	}
 
-	override fun forProfile(profile: Profile): Character? {
+	override fun forProfile(profile: Profile): CharacterData? {
 		return this.forId(profile.id)
 	}
 
-	override fun forName(name: String): Character? {
+	override fun forName(name: String): CharacterData? {
 		return dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE name = ?")
 			stmnt.setString(1, name)
@@ -121,7 +112,7 @@ class H2CharacterRepository(private val server: Server,
 			}
 		}
 
-	override fun forId(id: Int): Character? {
+	override fun forId(id: Int): CharacterData? {
 		return dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE id = ?")
 			stmnt.setInt(1, id)
@@ -141,10 +132,8 @@ class H2CharacterRepository(private val server: Server,
 		}
 	}
 
-	override fun update(v: Character) {
-		server.logger.info("update(Character)")
+	override fun update(v: CharacterData) {
 		dataSource.connection.use { connection ->
-			server.logger.info("update(Character) prepareStatement()")
 			val stmnt = connection.prepareStatement("UPDATE $TABLE_NAME SET " +
 					"name = ?, " +
 					"description = ?, " +
@@ -163,48 +152,28 @@ class H2CharacterRepository(private val server: Server,
 					"stat_agility = ?, " +
 					"stat_intelligence = ? " +
 					"WHERE id = ?")
-			server.logger.info("update(Character) 1")
 			stmnt.setString(1, v.name)
-			server.logger.info("update(Character) 2")
 			stmnt.setString(2, v.description)
-			server.logger.info("update(Character) 3")
 			stmnt.setInt(3, v.age.toInt())
-			server.logger.info("update(Character) 4")
 			stmnt.setString(4, v.race.name)
-			server.logger.info("update(Character) 5")
 			stmnt.setString(5, v.gender.name)
-			server.logger.info("update(Character) 6")
 			stmnt.setObject(6, v.createdAt)
-			server.logger.info("update(Character) 7")
 			stmnt.setObject(7, v.lastSeen)
-			server.logger.info("update(Character) 8")
 			stmnt.setBoolean(8, v.isDead)
-			server.logger.info("update(Character) 9")
 			stmnt.setBoolean(9, v.isShelved)
-			server.logger.info("update(Character) 10")
 			stmnt.setObject(10, v.diedAt)
-			server.logger.info("update(Character) 11")
 			stmnt.setObject(11, v.shelvedAt)
-			server.logger.info("update(Character) 12")
 			stmnt.setObject(12, v.changedStatsAt)
-			server.logger.info("update(Character) 13")
 			stmnt.setInt(13, v.stats.strength.toInt())
-			server.logger.info("update(Character) 14")
 			stmnt.setInt(14, v.stats.defense.toInt())
-			server.logger.info("update(Character) 15")
 			stmnt.setInt(15, v.stats.agility.toInt())
-			server.logger.info("update(Character) 16")
 			stmnt.setInt(16, v.stats.intelligence.toInt())
-			server.logger.info("update(Character) 17")
 			stmnt.setInt(17, v.id)
-			server.logger.info("update(Character) 18")
 			stmnt.executeUpdate()
-			server.logger.info("update(Character) 19")
 		}
-		server.logger.info("update(Character) done!")
 	}
 
-	private fun fromRow(result: ResultSet): Character {
+	private fun fromRow(result: ResultSet): CharacterData {
 		val id = result.getInt("id")
 		val name = result.getString("name")
 		val age = result.getInt("age").toUInt()
@@ -223,7 +192,7 @@ class H2CharacterRepository(private val server: Server,
 		val isDead = result.getBoolean("is_dead")
 		val isShelved = result.getBoolean("is_shelved")
 
-		return Character(
+		return CharacterData(
 				id = id,
 				name = name,
 				race = race,
@@ -238,8 +207,6 @@ class H2CharacterRepository(private val server: Server,
 				shelvedAt = shelvedAt,
 				diedAt = diedAt,
 				changedStatsAt = changedStatsAt,
-				profile = profiles.forId(id)!!,
-				dirtyMarker = dirtyMarker
 		)
 	}
 }

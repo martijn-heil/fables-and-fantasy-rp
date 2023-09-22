@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.charactertraits.dal.h2
 
-import com.fablesfantasyrp.plugin.characters.data.Race
-import com.fablesfantasyrp.plugin.characters.data.entity.Character
+import com.fablesfantasyrp.plugin.characters.dal.enums.Race
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.charactertraits.dal.model.CharacterTraitData
 import com.fablesfantasyrp.plugin.charactertraits.dal.repository.CharacterTraitDataRepository
 import com.fablesfantasyrp.plugin.database.asSequence

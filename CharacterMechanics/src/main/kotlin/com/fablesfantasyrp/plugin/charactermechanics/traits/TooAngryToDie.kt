@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.charactermechanics.traits
 
 import com.fablesfantasyrp.plugin.charactermechanics.traits.base.BaseTraitBehaviour
-import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.charactertraits.domain.KnownCharacterTraits
 import com.fablesfantasyrp.plugin.charactertraits.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.knockout.knockout
@@ -18,7 +18,7 @@ import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.plugin.Plugin
 
 class TooAngryToDie(plugin: Plugin,
-					characters: EntityCharacterRepository,
+					characters: CharacterRepository,
 					profileManager: ProfileManager,
 					traits: CharacterTraitRepository)
 	: BaseTraitBehaviour(KnownCharacterTraits.TOO_ANGRY_TO_DIE, plugin, characters, profileManager, traits) {

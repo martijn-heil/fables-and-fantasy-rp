@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.weights
 
-import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.charactertraits.domain.KnownCharacterTraits
 import com.fablesfantasyrp.plugin.charactertraits.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
@@ -10,7 +10,7 @@ import org.bukkit.plugin.Plugin
 class WeightsChecker(private val plugin: Plugin,
 					 private val config: WeightsConfig,
 					 private val profileManager: ProfileManager,
-					 private val characters: EntityCharacterRepository,
+					 private val characters: CharacterRepository,
 					 private val characterTraits: CharacterTraitRepository) {
 	private val server = plugin.server
 	private var taskId: Int = -1

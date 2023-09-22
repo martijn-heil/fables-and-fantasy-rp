@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.charactermechanics.traits
 
 import com.fablesfantasyrp.plugin.charactermechanics.traits.base.BaseTraitBehaviour
-import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.charactertraits.domain.KnownCharacterTraits
 import com.fablesfantasyrp.plugin.charactertraits.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
@@ -20,7 +20,7 @@ import java.time.Duration
 import java.time.Instant
 
 class NaturallyStealthy(plugin: Plugin,
-						characters: EntityCharacterRepository,
+						characters: CharacterRepository,
 						profileManager: ProfileManager,
 						traits: CharacterTraitRepository)
 	: BaseTraitBehaviour(KnownCharacterTraits.NATURALLY_STEALTHY, plugin, characters, profileManager, traits) {

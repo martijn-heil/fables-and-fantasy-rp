@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.characters.command.provider
 
-import com.fablesfantasyrp.plugin.characters.data.entity.Character
-import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.utils.quoteCommandArgument
 import com.gitlab.martijn_heil.nincommands.common.CommandTarget
@@ -15,7 +15,7 @@ import org.bukkit.entity.Player
 import org.bukkit.permissions.Permissible
 
 class CharacterProvider(private val server: Server,
-						private val characters: EntityCharacterRepository,
+						private val characters: CharacterRepository,
 						private val profileManager: ProfileManager) : Provider<Character> {
 	override fun isProvided(): Boolean = false
 

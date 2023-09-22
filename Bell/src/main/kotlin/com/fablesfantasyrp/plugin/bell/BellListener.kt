@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.bell
 
 import com.fablesfantasyrp.plugin.bell.data.entity.EntityBellRepository
-import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.gui.confirm
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.text.sendError
@@ -18,7 +18,7 @@ import org.bukkit.plugin.Plugin
 class BellListener(private val plugin: Plugin,
 				   private val bells: EntityBellRepository,
 				   private val profileManager: ProfileManager,
-				   private val characters: EntityCharacterRepository) : Listener {
+				   private val characters: CharacterRepository) : Listener {
 	@EventHandler(priority = MONITOR, ignoreCancelled = true)
 	fun onPlayerRightClickBell(e: PlayerInteractEvent) {
 		if (e.hand != EquipmentSlot.HAND) return

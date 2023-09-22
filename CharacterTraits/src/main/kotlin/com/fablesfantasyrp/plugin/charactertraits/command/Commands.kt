@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.charactertraits.command
 
-import com.fablesfantasyrp.plugin.characters.data.entity.Character
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.charactertraits.Permission
 import com.fablesfantasyrp.plugin.charactertraits.SYSPREFIX
 import com.fablesfantasyrp.plugin.charactertraits.domain.entity.CharacterTrait

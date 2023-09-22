@@ -1,8 +1,12 @@
 package com.fablesfantasyrp.plugin.characters
 
-import com.fablesfantasyrp.plugin.characters.data.*
-import com.fablesfantasyrp.plugin.characters.data.entity.Character
-import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.CHARACTER_STATS_FLOOR
+import com.fablesfantasyrp.plugin.characters.domain.CharacterStats
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
+import com.fablesfantasyrp.plugin.characters.dal.enums.CharacterStatKind
+import com.fablesfantasyrp.plugin.characters.dal.enums.Gender
+import com.fablesfantasyrp.plugin.characters.dal.enums.Race
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.characters.gui.CharacterStatsGui
 import com.fablesfantasyrp.plugin.form.promptChat
 import com.fablesfantasyrp.plugin.form.promptGui
@@ -165,7 +169,7 @@ suspend fun promptNewCharacterInfo(player: Player, allowedRaces: Collection<Race
 
 private val blockMovement = HashSet<Player>()
 suspend fun forcePromptNewCharacterInfo(player: Player, allowedRaces: Collection<Race>): NewCharacterData {
-	val characterRepository = GlobalContext.get().get<EntityCharacterRepository>()
+	val characterRepository = GlobalContext.get().get<CharacterRepository>()
 
 	blockMovement.add(player)
 	try {
@@ -188,7 +192,7 @@ suspend fun forcePromptNewCharacterInfo(player: Player, allowedRaces: Collection
 
 suspend fun forceCharacterCreation(player: Player,
 								   profiles: EntityProfileRepository = Services.get(),
-								   characters: EntityCharacterRepository = Services.get(),
+								   characters: CharacterRepository = Services.get(),
 								   profileManager: ProfileManager = Services.get()) {
 	val newCharacterData = forcePromptNewCharacterInfo(player, Race.values().filter { it != Race.HUMAN && it != Race.OTHER && it != Race.SYLVANI})
 

@@ -1,5 +1,6 @@
-package com.fablesfantasyrp.plugin.characters.data.entity
+package com.fablesfantasyrp.plugin.characters.domain.repository
 
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.database.repository.KeyedRepository
 import com.fablesfantasyrp.plugin.database.repository.MutableRepository
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile

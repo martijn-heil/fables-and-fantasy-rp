@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.charactermechanics.traits
 
 import com.fablesfantasyrp.plugin.charactermechanics.traits.base.BaseTraitBehaviour
-import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.charactertraits.domain.KnownCharacterTraits
 import com.fablesfantasyrp.plugin.charactertraits.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
@@ -12,7 +12,7 @@ import org.bukkit.potion.PotionEffectType
 // Players with this trait can move 6+d6 (agility) instead of 4+d6 (agility) -
 // Outside CRP, players with this trait get a permanent speed 1 boost. (Speed 2 on roads)
 class Swift(plugin: Plugin,
-			characters: EntityCharacterRepository,
+			characters: CharacterRepository,
 			profileManager: ProfileManager,
 			traits: CharacterTraitRepository)
 	: BaseTraitBehaviour(KnownCharacterTraits.SWIFT, plugin, characters, profileManager, traits) {

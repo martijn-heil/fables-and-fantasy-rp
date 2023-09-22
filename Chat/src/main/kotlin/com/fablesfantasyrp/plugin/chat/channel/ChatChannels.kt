@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.chat.channel
 
-import com.fablesfantasyrp.plugin.characters.data.entity.CharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.party.PartySpectatorManager
 import com.fablesfantasyrp.plugin.party.data.PartyRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager

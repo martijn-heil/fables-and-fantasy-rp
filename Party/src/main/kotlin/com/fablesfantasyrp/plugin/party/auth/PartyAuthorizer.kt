@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.party.auth
 
-import com.fablesfantasyrp.plugin.characters.data.entity.Character
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.party.data.entity.Party
 import com.fablesfantasyrp.plugin.utils.AuthorizationResult
 import org.bukkit.command.CommandSender

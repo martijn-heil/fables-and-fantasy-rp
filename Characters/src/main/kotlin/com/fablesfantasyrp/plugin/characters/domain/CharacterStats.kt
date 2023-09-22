@@ -1,5 +1,6 @@
-package com.fablesfantasyrp.plugin.characters.data
+package com.fablesfantasyrp.plugin.characters.domain
 
+import com.fablesfantasyrp.plugin.characters.dal.enums.CharacterStatKind
 import kotlin.math.max
 
 val CHARACTER_STATS_FLOOR = CharacterStats(2U, 2U, 2U, 2U)

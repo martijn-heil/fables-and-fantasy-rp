@@ -1,8 +1,8 @@
 package com.fablesfantasyrp.plugin.charactermechanics.traits
 
 import com.fablesfantasyrp.plugin.charactermechanics.traits.base.BaseTraitBehaviour
-import com.fablesfantasyrp.plugin.characters.data.entity.Character
-import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.charactertraits.domain.KnownCharacterTraits
 import com.fablesfantasyrp.plugin.charactertraits.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
@@ -16,7 +16,7 @@ import org.bukkit.plugin.Plugin
 
 // The food bar of players with this trait lowers significantly slower than usual.
 class NomadsStomach(plugin: Plugin,
-					characters: EntityCharacterRepository,
+					characters: CharacterRepository,
 					profileManager: ProfileManager,
 					traits: CharacterTraitRepository)
 	: BaseTraitBehaviour(KnownCharacterTraits.NOMADS_STOMACH, plugin, characters, profileManager, traits) {

@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.party.data
 
-import com.fablesfantasyrp.plugin.characters.data.entity.Character
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.SimpleMapRepository
 import com.fablesfantasyrp.plugin.party.data.entity.Party

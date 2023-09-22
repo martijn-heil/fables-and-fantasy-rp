@@ -1,4 +1,4 @@
-package com.fablesfantasyrp.plugin.characters.data
+package com.fablesfantasyrp.plugin.characters.dal.enums
 
 enum class CreatureSize(val displayName: String) {
 	TINY("Tiny"),

@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.magic.command.provider
 
-import com.fablesfantasyrp.plugin.characters.data.entity.CharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.magic.authorizer.MagicTypeAuthorizer
 import com.fablesfantasyrp.plugin.magic.dal.enums.MagicType
 import com.fablesfantasyrp.plugin.profile.ProfileManager

@@ -1,8 +1,8 @@
 package com.fablesfantasyrp.plugin.magic.domain.entity
 
-import com.fablesfantasyrp.plugin.characters.data.CharacterStatKind
-import com.fablesfantasyrp.plugin.characters.data.entity.Character
-import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
+import com.fablesfantasyrp.plugin.characters.dal.enums.CharacterStatKind
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.chat.awaitEmote
 import com.fablesfantasyrp.plugin.chat.chat
 import com.fablesfantasyrp.plugin.chat.getPlayersWithinRange
@@ -30,7 +30,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 
 
 class Mage : DataEntity<Long, Mage> {
-	private val characters: EntityCharacterRepository get() = Services.get<EntityCharacterRepository>()
+	private val characters: CharacterRepository get() = Services.get<CharacterRepository>()
 	private val mages: MageRepository get() = Services.get<MageRepository>()
 	private val tears: TearRepository get() = Services.get<TearRepository>()
 

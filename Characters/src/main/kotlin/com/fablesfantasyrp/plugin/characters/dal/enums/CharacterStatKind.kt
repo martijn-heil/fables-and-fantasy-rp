@@ -1,4 +1,4 @@
-package com.fablesfantasyrp.plugin.characters.data
+package com.fablesfantasyrp.plugin.characters.dal.enums
 
 enum class CharacterStatKind(val shortName: String) {
 	STRENGTH("str"),

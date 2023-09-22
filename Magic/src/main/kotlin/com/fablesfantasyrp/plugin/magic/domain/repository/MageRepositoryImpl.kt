@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.magic.domain.repository
 
-import com.fablesfantasyrp.plugin.characters.data.entity.Character
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.database.entity.MassivelyCachingEntityRepository
 import com.fablesfantasyrp.plugin.magic.dal.enums.MagicPath
 import com.fablesfantasyrp.plugin.magic.domain.entity.Mage

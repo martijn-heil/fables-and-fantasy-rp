@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.characters.nametags
 
-import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.denizeninterop.dFlags
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.utils.EDEN
@@ -11,7 +11,7 @@ import org.bukkit.entity.Player
 import java.util.*
 
 class NameTagManager(private val profileManager: ProfileManager,
-					 private val characters: EntityCharacterRepository) {
+					 private val characters: CharacterRepository) {
 	private lateinit var tapi: TabAPI
 	private val ROBIN = UUID.fromString("6d147f5e-2509-4f92-82c6-86b57058e916")
 

@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.characters
 
-import com.fablesfantasyrp.plugin.characters.data.Race
-import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
+import com.fablesfantasyrp.plugin.characters.dal.enums.Race
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.form.promptChat
 import com.fablesfantasyrp.plugin.form.promptGui
 import com.fablesfantasyrp.plugin.gui.GuiSingleChoice
@@ -27,7 +27,7 @@ import java.time.Duration
 import java.util.*
 
 class CharactersLiveMigrationListener(private val plugin: Plugin,
-									  private val characters: EntityCharacterRepository) : Listener {
+									  private val characters: CharacterRepository) : Listener {
 	private val server = plugin.server
 	private val blockMovement = HashSet<UUID>()
 

@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.charactertraits.domain.repository
 
-import com.fablesfantasyrp.plugin.characters.data.Race
-import com.fablesfantasyrp.plugin.characters.data.entity.Character
+import com.fablesfantasyrp.plugin.characters.dal.enums.Race
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.charactertraits.domain.entity.CharacterTrait
 import com.fablesfantasyrp.plugin.charactertraits.domain.mapper.CharacterTraitMapper
 import com.fablesfantasyrp.plugin.database.entity.MassivelyCachingEntityRepository

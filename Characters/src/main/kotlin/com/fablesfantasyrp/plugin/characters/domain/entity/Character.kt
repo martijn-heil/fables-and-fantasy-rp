@@ -1,7 +1,11 @@
-package com.fablesfantasyrp.plugin.characters.data.entity
+package com.fablesfantasyrp.plugin.characters.domain.entity
 
 import com.denizenscript.denizencore.objects.core.ElementTag
-import com.fablesfantasyrp.plugin.characters.data.*
+import com.fablesfantasyrp.plugin.characters.domain.CHARACTER_STATS_FLOOR
+import com.fablesfantasyrp.plugin.characters.domain.CharacterStats
+import com.fablesfantasyrp.plugin.characters.dal.enums.CharacterStatKind
+import com.fablesfantasyrp.plugin.characters.dal.enums.Gender
+import com.fablesfantasyrp.plugin.characters.dal.enums.Race
 import com.fablesfantasyrp.plugin.characters.modifiers.health.HealthModifier
 import com.fablesfantasyrp.plugin.characters.modifiers.stats.StatsModifier
 import com.fablesfantasyrp.plugin.database.entity.DataEntity
@@ -16,7 +20,7 @@ import org.koin.core.context.GlobalContext
 import java.time.Instant
 import kotlin.math.max
 
-class Character : DataEntity<Int, Character>, CharacterData {
+class Character : DataEntity<Int, Character> {
 	val profile: Profile
 
 	val createdAt: Instant?
@@ -68,7 +72,7 @@ class Character : DataEntity<Int, Character>, CharacterData {
 			dirtyMarker?.markDirty(this)
 		}
 
-	override var name: String
+	var name: String
 		set(value) {
 			if (field == value) return
 			field = value
@@ -78,14 +82,15 @@ class Character : DataEntity<Int, Character>, CharacterData {
 			player?.dFlags?.setFlag("characters_name", ElementTag(name), null)
 		}
 
-	override var age: UInt 				set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
-	override var description: String 	set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
-	override var gender: Gender 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
-	override var race: Race 			set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
-	val totalStats: CharacterStats get() = stats + CHARACTER_STATS_FLOOR.withModifiers(
+	var age: UInt 				set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
+	var description: String 	set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
+	var gender: Gender set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
+	var race: Race set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
+	val totalStats: CharacterStats
+		get() = stats + CHARACTER_STATS_FLOOR.withModifiers(
 		GlobalContext.get().getAll<StatsModifier>().map { it.calculateModifiers(this) }
 	)
-	override var stats: CharacterStats
+	var stats: CharacterStats
 		set(value) {
 			if (field != value) {
 				require(value.agility < 128U)
@@ -97,7 +102,7 @@ class Character : DataEntity<Int, Character>, CharacterData {
 			}
 		}
 
-	override val maximumHealth: UInt get() =
+	val maximumHealth: UInt get() =
 		max(0, (12 + CharacterStatKind.STRENGTH.getRollModifierFor(totalStats.strength) +
 			GlobalContext.get().getAll<HealthModifier>().sumOf { it.calculateModifier(this) })).toUInt()
 

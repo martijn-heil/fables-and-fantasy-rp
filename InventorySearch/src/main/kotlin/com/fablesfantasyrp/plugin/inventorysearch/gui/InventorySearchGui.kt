@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.inventorysearch.gui
 
-import com.fablesfantasyrp.plugin.characters.data.entity.Character
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.shortName
 import com.fablesfantasyrp.plugin.economy.formatMoney
 import com.fablesfantasyrp.plugin.economy.money

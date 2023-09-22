@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.characters.command.provider
 
-import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.command.annotation.AllowPlayerName
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
@@ -16,7 +16,7 @@ import org.bukkit.entity.Player
 import org.bukkit.permissions.Permissible
 
 class AllowCharacterNameProfileProvider(private val server: Server,
-										private val characterRepository: EntityCharacterRepository,
+										private val characterRepository: CharacterRepository,
 										private val profileProvider: Provider<Profile>,
 										private val profileManager: ProfileManager) : Provider<Profile> {
 

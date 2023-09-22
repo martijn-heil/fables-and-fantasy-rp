@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.characters.web
 
 import com.fablesfantasyrp.plugin.characters.NAME_DISALLOWED_CHARACTERS
-import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.characters.web.model.WebCharacter
 import com.fablesfantasyrp.plugin.web.loaders.BaseRequestValidationLoader
 import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
@@ -9,7 +9,7 @@ import io.ktor.server.plugins.requestvalidation.*
 import kotlinx.coroutines.withContext
 import org.bukkit.plugin.Plugin
 
-class WebRequestValidation(private val plugin: Plugin, private val characters: EntityCharacterRepository) : BaseRequestValidationLoader() {
+class WebRequestValidation(private val plugin: Plugin, private val characters: CharacterRepository) : BaseRequestValidationLoader() {
 	override val validation: RequestValidationConfig.() -> Unit = {
 		validate<WebCharacter> {
 			if (it.description.length > 255) {

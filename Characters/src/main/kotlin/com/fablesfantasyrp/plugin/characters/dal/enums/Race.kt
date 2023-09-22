@@ -1,4 +1,6 @@
-package com.fablesfantasyrp.plugin.characters.data
+package com.fablesfantasyrp.plugin.characters.dal.enums
+
+import com.fablesfantasyrp.plugin.characters.domain.CharacterStatsModifier
 
 enum class Race(private val displayName: String, val boosters: CharacterStatsModifier, val creatureSize: CreatureSize = CreatureSize.MEDIUM) {
 	ATTIAN_HUMAN("Attian Human", CharacterStatsModifier(strength = 1, defense = 1, agility = 1, intelligence = 1)),

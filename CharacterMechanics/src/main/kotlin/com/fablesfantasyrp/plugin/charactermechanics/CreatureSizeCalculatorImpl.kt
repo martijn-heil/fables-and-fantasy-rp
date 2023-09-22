@@ -1,8 +1,8 @@
 package com.fablesfantasyrp.plugin.charactermechanics
 
 import com.fablesfantasyrp.plugin.characters.CreatureSizeCalculator
-import com.fablesfantasyrp.plugin.characters.data.CreatureSize
-import com.fablesfantasyrp.plugin.characters.data.entity.Character
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
+import com.fablesfantasyrp.plugin.characters.dal.enums.CreatureSize
 import com.fablesfantasyrp.plugin.charactertraits.domain.KnownCharacterTraits
 import com.fablesfantasyrp.plugin.charactertraits.domain.repository.CharacterTraitRepository
 

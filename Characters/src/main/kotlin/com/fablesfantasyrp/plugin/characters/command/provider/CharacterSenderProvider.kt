@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.characters.command.provider
 
-import com.fablesfantasyrp.plugin.characters.data.entity.Character
-import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.sk89q.intake.argument.ArgumentException
 import com.sk89q.intake.argument.CommandArgs
@@ -11,7 +11,7 @@ import com.sk89q.intake.parametric.ProvisionException
 import org.bukkit.entity.Player
 
 class CharacterSenderProvider(private val profileManager: ProfileManager,
-							  private val characters: EntityCharacterRepository,
+							  private val characters: CharacterRepository,
 							  private val senderProvider: Provider<Player>) : Provider<Character> {
 	override fun isProvided(): Boolean = true
 

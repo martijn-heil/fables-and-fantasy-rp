@@ -3,10 +3,10 @@ package com.fablesfantasyrp.plugin.characters
 import com.fablesfantasyrp.plugin.characters.command.Commands
 import com.fablesfantasyrp.plugin.characters.command.LegacyCommands
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
-import com.fablesfantasyrp.plugin.characters.data.entity.CharacterRepository
-import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
-import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepositoryImpl
-import com.fablesfantasyrp.plugin.characters.data.persistent.H2CharacterRepository
+import com.fablesfantasyrp.plugin.characters.dal.h2.H2CharacterDataRepository
+import com.fablesfantasyrp.plugin.characters.domain.mapper.CharacterMapper
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepositoryImpl
 import com.fablesfantasyrp.plugin.characters.modifiers.stats.RaceStatsModifier
 import com.fablesfantasyrp.plugin.characters.modifiers.stats.StatsModifier
 import com.fablesfantasyrp.plugin.characters.web.WebHook
@@ -64,9 +64,10 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 		koinModule = module(createdAtStart = true) {
 			single <Plugin> { this@FablesCharacters } binds(arrayOf(JavaPlugin::class, SuspendingJavaPlugin::class))
 
-			single<EntityCharacterRepository> {
-				val h2CharacterRepository = H2CharacterRepository(get(), get(), get())
-				val characterRepositoryImpl = EntityCharacterRepositoryImpl(h2CharacterRepository, get())
+			single {
+				val h2CharacterRepository = H2CharacterDataRepository(get(), get())
+				val mapper = CharacterMapper(h2CharacterRepository, get())
+				val characterRepositoryImpl = CharacterRepositoryImpl(mapper, get())
 				characterRepositoryImpl.init()
 				characterRepositoryImpl
 			} bind CharacterRepository::class
@@ -87,7 +88,7 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 		}
 		loadKoinModules(koinModule)
 
-		server.servicesManager.register(EntityCharacterRepository::class.java, get(), this, ServicePriority.Normal)
+		server.servicesManager.register(CharacterRepository::class.java, get(), this, ServicePriority.Normal)
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())
@@ -130,15 +131,15 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 
 		server.scheduler.scheduleSyncRepeatingTask(this, {
 			logger.info("Saving characters..")
-			get<EntityCharacterRepository>().saveAllDirty()
+			get<CharacterRepositoryImpl<CharacterMapper>>().saveAllDirty()
 		}, 0, 6000)
 	}
 
 	override fun onDisable() {
 		logger.info("Unregistering commands")
 		commands.forEach { unregisterCommand(it) }
-		logger.info("EntityCharacterRepository#saveAllDirty()")
-		get<EntityCharacterRepository>().saveAllDirty()
+		logger.info("CharacterRepository#saveAllDirty()")
+		get<CharacterRepositoryImpl<CharacterMapper>>().saveAllDirty()
 		logger.info("unloadKoinModules()")
 		unloadKoinModules(koinModule)
 	}

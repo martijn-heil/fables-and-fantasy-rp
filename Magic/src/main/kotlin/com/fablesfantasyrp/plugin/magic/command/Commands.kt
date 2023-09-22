@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.magic.command
 
-import com.fablesfantasyrp.plugin.characters.data.entity.Character
-import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.magic.*
 import com.fablesfantasyrp.plugin.magic.ability.MageAbility
 import com.fablesfantasyrp.plugin.magic.command.provider.OwnAbility
@@ -38,7 +38,7 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class Commands(private val plugin: JavaPlugin,
 			   private val profileManager: ProfileManager,
-			   private val characters: EntityCharacterRepository,
+			   private val characters: CharacterRepository,
 			   private val tears: TearRepository,
 			   private val mages: MageRepository,
 			   private val spells: SpellDataRepository) {

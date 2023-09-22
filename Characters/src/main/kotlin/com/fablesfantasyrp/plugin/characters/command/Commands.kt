@@ -2,9 +2,13 @@ package com.fablesfantasyrp.plugin.characters.command
 
 import com.fablesfantasyrp.plugin.characters.*
 import com.fablesfantasyrp.plugin.characters.command.provider.AllowCharacterName
-import com.fablesfantasyrp.plugin.characters.data.*
-import com.fablesfantasyrp.plugin.characters.data.entity.Character
-import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.CHARACTER_STATS_FLOOR
+import com.fablesfantasyrp.plugin.characters.domain.CharacterStats
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
+import com.fablesfantasyrp.plugin.characters.dal.enums.CharacterStatKind
+import com.fablesfantasyrp.plugin.characters.dal.enums.Gender
+import com.fablesfantasyrp.plugin.characters.dal.enums.Race
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.characters.event.CharacterChangeStatsEvent
 import com.fablesfantasyrp.plugin.characters.gui.CharacterStatsGui
 import com.fablesfantasyrp.plugin.form.YesNoChatPrompt
@@ -85,7 +89,7 @@ class LegacyCommands(private val plugin: Plugin, private val characterCommands: 
 }
 
 class Commands(private val plugin: JavaPlugin,
-			   private val characterRepository: EntityCharacterRepository,
+			   private val characterRepository: CharacterRepository,
 			   private val profileRepository: ProfileRepository,
 			   private val profileManager: ProfileManager,
 			   private val profilePrompter: ProfilePrompter,
@@ -245,7 +249,7 @@ class Commands(private val plugin: JavaPlugin,
 		@Command(aliases = ["setrace"], desc = "Set a character's race")
 		@Require(Permission.Command.Characters.SetRace)
 		fun setrace(@Sender sender: CommandSender, race: Race,
-					  @CommandTarget(Permission.Command.Characters.SetRace + ".others") target: Character) {
+					@CommandTarget(Permission.Command.Characters.SetRace + ".others") target: Character) {
 			target.race = race
 			sender.sendMessage("$SYSPREFIX Set ${target.name}'s race to $race")
 		}
@@ -285,7 +289,7 @@ class Commands(private val plugin: JavaPlugin,
 		@Command(aliases = ["unshelf"], desc = "Unshelf a character")
 		@Require(Permission.Command.Characters.Unshelf)
 		fun unshelf(@Sender sender: CommandSender,
-				  @CommandTarget target: Character,
+					@CommandTarget target: Character,
 					@Switch('f') force: Boolean) {
 			if (force && !sender.hasPermission(Permission.Command.Characters.Unshelf + ".force")) {
 				sender.sendError("Permission denied")

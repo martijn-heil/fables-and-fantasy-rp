@@ -1,8 +1,8 @@
 package com.fablesfantasyrp.plugin.magic
 
-import com.fablesfantasyrp.plugin.characters.data.CharacterStatKind
-import com.fablesfantasyrp.plugin.characters.data.entity.Character
-import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
+import com.fablesfantasyrp.plugin.characters.dal.enums.CharacterStatKind
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.chat.awaitEmote
 import com.fablesfantasyrp.plugin.chat.chat
 import com.fablesfantasyrp.plugin.chat.getPlayersWithinRange
@@ -39,7 +39,7 @@ import org.bukkit.GameMode
 
 suspend fun Character.awaitUnbindAttempts(spell: SpellData, castingRoll: Int): Boolean {
 	val profileManager = Services.get<ProfileManager>()
-	val characters = Services.get<EntityCharacterRepository>()
+	val characters = Services.get<CharacterRepository>()
 	val mages = Services.get<MageRepository>()
 	val player = profileManager.getCurrentForProfile(this.profile) ?: throw IllegalStateException()
 	check(player.isOnline)
