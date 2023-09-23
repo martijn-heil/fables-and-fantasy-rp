@@ -6,8 +6,8 @@ import com.fablesfantasyrp.plugin.characters.CreatureSizeCalculator
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.dal.enums.CharacterStatKind
 import com.fablesfantasyrp.plugin.characters.isStaffCharacter
-import com.fablesfantasyrp.plugin.charactertraits.domain.entity.CharacterTrait
-import com.fablesfantasyrp.plugin.charactertraits.domain.repository.CharacterTraitRepository
+import com.fablesfantasyrp.plugin.characters.domain.entity.CharacterTrait
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.text.join
 import com.fablesfantasyrp.plugin.text.miniMessage

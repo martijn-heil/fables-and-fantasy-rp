@@ -1,10 +1,10 @@
-package com.fablesfantasyrp.plugin.charactertraits.command
+package com.fablesfantasyrp.plugin.characters.command
 
+import com.fablesfantasyrp.plugin.characters.Permission
+import com.fablesfantasyrp.plugin.characters.SYSPREFIX
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
-import com.fablesfantasyrp.plugin.charactertraits.Permission
-import com.fablesfantasyrp.plugin.charactertraits.SYSPREFIX
-import com.fablesfantasyrp.plugin.charactertraits.domain.entity.CharacterTrait
-import com.fablesfantasyrp.plugin.charactertraits.domain.repository.CharacterTraitRepository
+import com.fablesfantasyrp.plugin.characters.domain.entity.CharacterTrait
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.gitlab.martijn_heil.nincommands.common.CommandTarget
@@ -16,7 +16,7 @@ import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.command.CommandSender
 
-class Commands(private val traits: CharacterTraitRepository) {
+class CharacterTraitCommand(private val traits: CharacterTraitRepository) {
 	inner class CharacterTraitCommand {
 		@Command(aliases = ["assign"], desc = "Assign a trait to a character")
 		@Require(Permission.Command.CharacterTrait.Assign)

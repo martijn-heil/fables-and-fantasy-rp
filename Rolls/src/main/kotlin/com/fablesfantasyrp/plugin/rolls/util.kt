@@ -2,8 +2,8 @@ package com.fablesfantasyrp.plugin.rolls
 
 import com.fablesfantasyrp.plugin.characters.dal.enums.CharacterStatKind
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
-import com.fablesfantasyrp.plugin.charactertraits.domain.KnownCharacterTraits
-import com.fablesfantasyrp.plugin.charactertraits.domain.repository.CharacterTraitRepository
+import com.fablesfantasyrp.plugin.characters.domain.KnownCharacterTraits
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.location.location
 import com.github.keelar.exprk.Expressions
 import org.koin.core.context.GlobalContext

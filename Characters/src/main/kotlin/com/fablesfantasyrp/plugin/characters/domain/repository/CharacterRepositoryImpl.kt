@@ -1,9 +1,9 @@
 package com.fablesfantasyrp.plugin.characters.domain.repository
 
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
+import com.fablesfantasyrp.plugin.characters.domain.mapper.CharacterMapper
 import com.fablesfantasyrp.plugin.database.entity.EntityRepository
 import com.fablesfantasyrp.plugin.database.entity.SimpleEntityRepository
-import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.profile.data.entity.ProfileRepository
 import com.google.common.collect.BiMap
@@ -11,10 +11,8 @@ import com.google.common.collect.HashBiMap
 import org.bukkit.OfflinePlayer
 import kotlin.concurrent.withLock
 
-class CharacterRepositoryImpl<C>(child: C, private val profiles: ProfileRepository)
-	: SimpleEntityRepository<Int, Character, C>(child), CharacterRepository, EntityRepository<Int, Character>
-		where C: HasDirtyMarker<Character>,
-			  C: CharacterRepository {
+class CharacterRepositoryImpl(child: CharacterMapper, private val profiles: ProfileRepository)
+	: SimpleEntityRepository<Int, Character, CharacterMapper>(child), CharacterRepository, EntityRepository<Int, Character> {
 
 	override lateinit var nameMap: BiMap<String, Int>
 

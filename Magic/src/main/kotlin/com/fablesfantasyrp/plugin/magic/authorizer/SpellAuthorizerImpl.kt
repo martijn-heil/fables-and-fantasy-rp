@@ -1,8 +1,8 @@
 package com.fablesfantasyrp.plugin.magic.authorizer
 
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
-import com.fablesfantasyrp.plugin.charactertraits.domain.KnownCharacterTraits
-import com.fablesfantasyrp.plugin.charactertraits.domain.repository.CharacterTraitRepository
+import com.fablesfantasyrp.plugin.characters.domain.KnownCharacterTraits
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.magic.dal.model.SpellData
 import com.fablesfantasyrp.plugin.magic.dal.repository.SpellDataRepository
 import com.fablesfantasyrp.plugin.magic.domain.KnownSpells

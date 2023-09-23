@@ -1,7 +1,7 @@
-package com.fablesfantasyrp.plugin.charactertraits.command.provider
+package com.fablesfantasyrp.plugin.characters.command.provider
 
-import com.fablesfantasyrp.plugin.charactertraits.domain.entity.CharacterTrait
-import com.fablesfantasyrp.plugin.charactertraits.domain.repository.CharacterTraitRepository
+import com.fablesfantasyrp.plugin.characters.domain.entity.CharacterTrait
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
 import com.sk89q.intake.argument.ArgumentParseException
 import com.sk89q.intake.argument.CommandArgs
 import com.sk89q.intake.argument.Namespace

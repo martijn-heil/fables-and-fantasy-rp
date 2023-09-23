@@ -1,15 +1,22 @@
 package com.fablesfantasyrp.plugin.characters
 
+import com.fablesfantasyrp.plugin.characters.command.CharacterTraitCommand
 import com.fablesfantasyrp.plugin.characters.command.Commands
 import com.fablesfantasyrp.plugin.characters.command.LegacyCommands
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
 import com.fablesfantasyrp.plugin.characters.dal.h2.H2CharacterDataRepository
+import com.fablesfantasyrp.plugin.characters.dal.h2.H2CharacterTraitDataRepository
+import com.fablesfantasyrp.plugin.characters.dal.repository.CharacterTraitDataRepository
 import com.fablesfantasyrp.plugin.characters.domain.mapper.CharacterMapper
+import com.fablesfantasyrp.plugin.characters.domain.mapper.CharacterTraitMapper
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepositoryImpl
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepositoryImpl
 import com.fablesfantasyrp.plugin.characters.modifiers.stats.RaceStatsModifier
 import com.fablesfantasyrp.plugin.characters.modifiers.stats.StatsModifier
 import com.fablesfantasyrp.plugin.characters.web.WebHook
+import com.fablesfantasyrp.plugin.database.FablesDatabase
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
@@ -72,11 +79,14 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 				characterRepositoryImpl
 			} bind CharacterRepository::class
 
-			singleOf(::CharacterAuthorizerImpl) bind CharacterAuthorizer::class
+			single { H2CharacterTraitDataRepository(FablesDatabase.fablesDatabase) } bind CharacterTraitDataRepository::class
+			singleOf(::CharacterTraitMapper)
+			singleOf(::CharacterTraitRepositoryImpl) bind CharacterTraitRepository::class
 
+			singleOf(::CharacterAuthorizerImpl) bind CharacterAuthorizer::class
 			factoryOf(::RaceStatsModifier) bind StatsModifier::class
 
-			factory { CharacterModule(get(), get(), get(), get<Provider<Profile>>(named("Profile"))) }
+			factory { CharacterModule(get(), get(), get(), get(), get<Provider<Profile>>(named("Profile"))) }
 			singleOf(::CharactersListener)
 			singleOf(::CharactersLiveMigrationListener)
 			singleOf(::CharacterCreationListener)
@@ -84,9 +94,11 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 			single { get<Commands>().Characters() }
 			single { get<Commands.Characters>().Change() }
 			single { get<Commands.Characters>().Stats() }
+			singleOf(::CharacterTraitCommand)
 			singleOf(::LegacyCommands)
 		}
 		loadKoinModules(koinModule)
+
 
 		server.servicesManager.register(CharacterRepository::class.java, get(), this, ServicePriority.Normal)
 
@@ -111,6 +123,9 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 		charactersCommand.group("stats").registerMethods(get<Commands.Characters.Stats>())
 		charactersCommand.group("change").registerMethods(get<Commands.Characters.Change>())
 
+		rootDispatcherNode.registerMethods(get<CharacterTraitCommand>())
+		rootDispatcherNode.group("charactertrait").registerMethods(get<CharacterTraitCommand>().CharacterTraitCommand())
+
 		val dispatcher = rootDispatcherNode.dispatcher
 
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
@@ -131,7 +146,12 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 
 		server.scheduler.scheduleSyncRepeatingTask(this, {
 			logger.info("Saving characters..")
-			get<CharacterRepositoryImpl<CharacterMapper>>().saveAllDirty()
+			get<CharacterRepositoryImpl>().saveAllDirty()
+		}, 0, 6000)
+
+		server.scheduler.scheduleSyncRepeatingTask(this, {
+			logger.info("Saving character traits..")
+			get<CharacterTraitRepositoryImpl>().saveAllDirty()
 		}, 0, 6000)
 	}
 
@@ -139,7 +159,7 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 		logger.info("Unregistering commands")
 		commands.forEach { unregisterCommand(it) }
 		logger.info("CharacterRepository#saveAllDirty()")
-		get<CharacterRepositoryImpl<CharacterMapper>>().saveAllDirty()
+		get<CharacterRepositoryImpl>().saveAllDirty()
 		logger.info("unloadKoinModules()")
 		unloadKoinModules(koinModule)
 	}

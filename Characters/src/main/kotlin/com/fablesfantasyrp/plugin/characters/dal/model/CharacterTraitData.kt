@@ -1,4 +1,4 @@
-package com.fablesfantasyrp.plugin.charactertraits.dal.model
+package com.fablesfantasyrp.plugin.characters.dal.model
 
 import com.fablesfantasyrp.plugin.database.repository.Identifiable
 

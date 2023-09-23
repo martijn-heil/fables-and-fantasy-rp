@@ -1,9 +1,9 @@
-package com.fablesfantasyrp.plugin.charactertraits.dal.h2
+package com.fablesfantasyrp.plugin.characters.dal.h2
 
 import com.fablesfantasyrp.plugin.characters.dal.enums.Race
+import com.fablesfantasyrp.plugin.characters.dal.model.CharacterTraitData
+import com.fablesfantasyrp.plugin.characters.dal.repository.CharacterTraitDataRepository
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
-import com.fablesfantasyrp.plugin.charactertraits.dal.model.CharacterTraitData
-import com.fablesfantasyrp.plugin.charactertraits.dal.repository.CharacterTraitDataRepository
 import com.fablesfantasyrp.plugin.database.asSequence
 import com.fablesfantasyrp.plugin.database.repository.BaseH2KeyedRepository
 import java.sql.ResultSet

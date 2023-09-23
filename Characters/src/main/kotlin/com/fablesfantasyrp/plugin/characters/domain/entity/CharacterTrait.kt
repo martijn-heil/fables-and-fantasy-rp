@@ -1,4 +1,4 @@
-package com.fablesfantasyrp.plugin.charactertraits.domain.entity
+package com.fablesfantasyrp.plugin.characters.domain.entity
 
 import com.fablesfantasyrp.plugin.database.entity.DataEntity
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker

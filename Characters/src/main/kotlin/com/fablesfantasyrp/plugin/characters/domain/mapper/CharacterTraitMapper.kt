@@ -1,11 +1,11 @@
-package com.fablesfantasyrp.plugin.charactertraits.domain.mapper
+package com.fablesfantasyrp.plugin.characters.domain.mapper
 
 import com.fablesfantasyrp.plugin.characters.dal.enums.Race
+import com.fablesfantasyrp.plugin.characters.dal.model.CharacterTraitData
+import com.fablesfantasyrp.plugin.characters.dal.repository.CharacterTraitDataRepository
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
-import com.fablesfantasyrp.plugin.charactertraits.dal.model.CharacterTraitData
-import com.fablesfantasyrp.plugin.charactertraits.dal.repository.CharacterTraitDataRepository
-import com.fablesfantasyrp.plugin.charactertraits.domain.entity.CharacterTrait
-import com.fablesfantasyrp.plugin.charactertraits.domain.repository.CharacterTraitRepository
+import com.fablesfantasyrp.plugin.characters.domain.entity.CharacterTrait
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.database.MappingRepository
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker

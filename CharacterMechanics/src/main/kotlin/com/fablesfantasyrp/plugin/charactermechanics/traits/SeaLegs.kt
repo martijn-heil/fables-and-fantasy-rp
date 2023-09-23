@@ -2,8 +2,8 @@ package com.fablesfantasyrp.plugin.charactermechanics.traits
 
 import com.fablesfantasyrp.plugin.charactermechanics.traits.base.BaseTraitBehaviour
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
-import com.fablesfantasyrp.plugin.charactertraits.domain.KnownCharacterTraits
-import com.fablesfantasyrp.plugin.charactertraits.domain.repository.CharacterTraitRepository
+import com.fablesfantasyrp.plugin.characters.domain.KnownCharacterTraits
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.event.PlayerSwitchProfileEvent
 import com.fablesfantasyrp.plugin.utils.TransactionStep

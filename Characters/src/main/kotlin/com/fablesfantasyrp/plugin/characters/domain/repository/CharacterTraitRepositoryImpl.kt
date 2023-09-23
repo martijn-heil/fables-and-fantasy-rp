@@ -1,9 +1,9 @@
-package com.fablesfantasyrp.plugin.charactertraits.domain.repository
+package com.fablesfantasyrp.plugin.characters.domain.repository
 
 import com.fablesfantasyrp.plugin.characters.dal.enums.Race
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
-import com.fablesfantasyrp.plugin.charactertraits.domain.entity.CharacterTrait
-import com.fablesfantasyrp.plugin.charactertraits.domain.mapper.CharacterTraitMapper
+import com.fablesfantasyrp.plugin.characters.domain.entity.CharacterTrait
+import com.fablesfantasyrp.plugin.characters.domain.mapper.CharacterTraitMapper
 import com.fablesfantasyrp.plugin.database.entity.MassivelyCachingEntityRepository
 import com.fablesfantasyrp.plugin.utils.withLock
 import java.util.*

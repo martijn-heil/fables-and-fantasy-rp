@@ -3,8 +3,8 @@ package com.fablesfantasyrp.plugin.charactermechanics
 import com.fablesfantasyrp.plugin.characters.CreatureSizeCalculator
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.dal.enums.CreatureSize
-import com.fablesfantasyrp.plugin.charactertraits.domain.KnownCharacterTraits
-import com.fablesfantasyrp.plugin.charactertraits.domain.repository.CharacterTraitRepository
+import com.fablesfantasyrp.plugin.characters.domain.KnownCharacterTraits
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
 
 class CreatureSizeCalculatorImpl(private val traits: CharacterTraitRepository) : CreatureSizeCalculator {
 	override fun getCreatureSize(character: Character): CreatureSize {

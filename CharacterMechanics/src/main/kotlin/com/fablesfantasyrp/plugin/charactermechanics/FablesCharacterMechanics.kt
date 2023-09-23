@@ -4,9 +4,9 @@ import com.fablesfantasyrp.plugin.charactermechanics.traits.*
 import com.fablesfantasyrp.plugin.charactermechanics.traits.base.TraitBehavior
 import com.fablesfantasyrp.plugin.characters.CharacterCardGenerator
 import com.fablesfantasyrp.plugin.characters.CreatureSizeCalculator
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepositoryImpl
 import com.fablesfantasyrp.plugin.characters.modifiers.health.HealthModifier
 import com.fablesfantasyrp.plugin.characters.modifiers.stats.StatsModifier
-import com.fablesfantasyrp.plugin.charactertraits.domain.repository.CharacterTraitRepositoryImpl
 import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import org.bukkit.plugin.Plugin

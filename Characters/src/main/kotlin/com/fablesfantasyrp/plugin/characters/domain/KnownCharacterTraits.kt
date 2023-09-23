@@ -1,4 +1,4 @@
-package com.fablesfantasyrp.plugin.charactertraits.domain
+package com.fablesfantasyrp.plugin.characters.domain
 
 object KnownCharacterTraits {
 	const val ARCANE_INITIATE = "arcane_initiate"
