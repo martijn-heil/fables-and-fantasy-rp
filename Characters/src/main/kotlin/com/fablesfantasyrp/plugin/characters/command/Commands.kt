@@ -2,13 +2,14 @@ package com.fablesfantasyrp.plugin.characters.command
 
 import com.fablesfantasyrp.plugin.characters.*
 import com.fablesfantasyrp.plugin.characters.command.provider.AllowCharacterName
-import com.fablesfantasyrp.plugin.characters.domain.CHARACTER_STATS_FLOOR
-import com.fablesfantasyrp.plugin.characters.domain.CharacterStats
-import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.dal.enums.CharacterStatKind
 import com.fablesfantasyrp.plugin.characters.dal.enums.Gender
 import com.fablesfantasyrp.plugin.characters.dal.enums.Race
+import com.fablesfantasyrp.plugin.characters.domain.CHARACTER_STATS_FLOOR
+import com.fablesfantasyrp.plugin.characters.domain.CharacterStats
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.characters.event.CharacterChangeStatsEvent
 import com.fablesfantasyrp.plugin.characters.gui.CharacterStatsGui
 import com.fablesfantasyrp.plugin.form.YesNoChatPrompt
@@ -90,6 +91,7 @@ class LegacyCommands(private val plugin: Plugin, private val characterCommands: 
 
 class Commands(private val plugin: JavaPlugin,
 			   private val characterRepository: CharacterRepository,
+			   private val characterTraitRepository: CharacterTraitRepository,
 			   private val profileRepository: ProfileRepository,
 			   private val profileManager: ProfileManager,
 			   private val profilePrompter: ProfilePrompter,
@@ -147,6 +149,8 @@ class Commands(private val plugin: JavaPlugin,
 						stats = info.stats,
 						profile = profile,
 						createdAt = Instant.now()))
+
+				info.traits.forEach { characterTraitRepository.linkToCharacter(character, it) }
 
 				profileManager.setCurrentForPlayer(sender, profile)
 			}

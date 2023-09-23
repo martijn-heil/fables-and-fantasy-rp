@@ -1,10 +1,10 @@
 package com.fablesfantasyrp.plugin.characters.dal.h2
 
+import com.fablesfantasyrp.plugin.characters.dal.enums.Gender
+import com.fablesfantasyrp.plugin.characters.dal.enums.Race
 import com.fablesfantasyrp.plugin.characters.dal.model.CharacterData
 import com.fablesfantasyrp.plugin.characters.dal.repository.CharacterDataRepository
 import com.fablesfantasyrp.plugin.characters.domain.CharacterStats
-import com.fablesfantasyrp.plugin.characters.dal.enums.Gender
-import com.fablesfantasyrp.plugin.characters.dal.enums.Race
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.profile.data.entity.ProfileRepository
 import org.bukkit.OfflinePlayer

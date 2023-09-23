@@ -6,6 +6,6 @@ depend:
   - FablesUtils
   - FablesText
   - FablesGui
-  - FablesCharacterTraits
+  - FablesCharacters
 main: com.fablesfantasyrp.plugin.weights.FablesWeights
 api-version: @bukkit_api_version@

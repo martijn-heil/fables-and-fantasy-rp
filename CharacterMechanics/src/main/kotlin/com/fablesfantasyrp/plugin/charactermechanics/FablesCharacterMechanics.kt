@@ -3,6 +3,7 @@ package com.fablesfantasyrp.plugin.charactermechanics
 import com.fablesfantasyrp.plugin.charactermechanics.traits.*
 import com.fablesfantasyrp.plugin.charactermechanics.traits.base.TraitBehavior
 import com.fablesfantasyrp.plugin.characters.CreatureSizeCalculator
+import com.fablesfantasyrp.plugin.characters.CreatureSizeCalculatorImpl
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepositoryImpl
 import com.fablesfantasyrp.plugin.characters.modifiers.health.HealthModifier
 import com.fablesfantasyrp.plugin.characters.modifiers.stats.StatsModifier

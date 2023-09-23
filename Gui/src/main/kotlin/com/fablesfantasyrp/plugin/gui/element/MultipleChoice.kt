@@ -21,7 +21,7 @@ class MultipleChoice<E>(
 					val isSelected = selected.contains(value)
 					val material = if (isSelected) GREEN_STAINED_GLASS_PANE else BLACK_STAINED_GLASS_PANE
 					val actionText = if (isSelected) {
-						"\n${ChatColor.GRAY}${ChatColor.ITALIC}" +
+						"\n${ChatColor.DARK_PURPLE}${ChatColor.ITALIC}" +
 							"This item is currently selected!\n" +
 							"Click again to deselect."
 					} else if (selected.size >= maxSelectionCount) {
@@ -29,7 +29,7 @@ class MultipleChoice<E>(
 							"You can only select $maxSelectionCount items,\n" +
 							"please deselect another item first."
 					} else {
-						"\n${ChatColor.GRAY}${ChatColor.ITALIC}Click to select."
+						"\n${ChatColor.DARK_PURPLE}${ChatColor.ITALIC}Click to select."
 					}
 					StaticGuiElement(char, ItemStack(material), {
 						if (isSelected) {

@@ -11,7 +11,7 @@ import javax.sql.DataSource
 
 class H2CharacterTraitDataRepository(private val dataSource: DataSource)
 	: CharacterTraitDataRepository, BaseH2KeyedRepository<String, CharacterTraitData>(String::class.java, dataSource) {
-	private val SCHEMA = "FABLES_CHARACTER_TRAITS"
+	private val SCHEMA = "FABLES_CHARACTERS"
 	override val TABLE_NAME = "$SCHEMA.CHARACTER_TRAIT"
 
 	override fun update(v: CharacterTraitData) {

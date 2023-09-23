@@ -86,6 +86,7 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 			singleOf(::CharacterAuthorizerImpl) bind CharacterAuthorizer::class
 			singleOf(::CharacterCardGeneratorImpl) bind CharacterCardGenerator::class
 			factoryOf(::RaceStatsModifier) bind StatsModifier::class
+			factoryOf(::CreatureSizeCalculatorImpl) bind CreatureSizeCalculator::class
 
 			factory { CharacterModule(get(), get(), get(), get(), get<Provider<Profile>>(named("Profile"))) }
 			singleOf(::CharactersListener)
@@ -100,6 +101,7 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 		}
 		loadKoinModules(koinModule)
 
+		get<CharacterTraitRepositoryImpl>().init()
 
 		server.servicesManager.register(CharacterRepository::class.java, get(), this, ServicePriority.Normal)
 
