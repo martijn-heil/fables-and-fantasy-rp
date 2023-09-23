@@ -84,6 +84,7 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 			singleOf(::CharacterTraitRepositoryImpl) bind CharacterTraitRepository::class
 
 			singleOf(::CharacterAuthorizerImpl) bind CharacterAuthorizer::class
+			singleOf(::CharacterCardGeneratorImpl) bind CharacterCardGenerator::class
 			factoryOf(::RaceStatsModifier) bind StatsModifier::class
 
 			factory { CharacterModule(get(), get(), get(), get(), get<Provider<Profile>>(named("Profile"))) }
