@@ -38,7 +38,7 @@ class FablesHacks : JavaPlugin(), KoinComponent {
 
 			singleOf(::FlippedPlayerManager)
 			singleOf(::HackyListener)
-			single { permissionInjector }
+			single<PermissionInjector> { permissionInjector }
 		}
 		loadKoinModules(koinModule)
 

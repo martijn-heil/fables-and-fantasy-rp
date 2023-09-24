@@ -25,7 +25,7 @@ class OwnSpellDataProvider(private val spellProvider: Provider<SpellData>,
 		val character = profileManager.getCurrentForPlayer(sender)?.let { characters.forProfile(it) }
 				?: throw ArgumentParseException("You are not currently in character.")
 		val spell = spellProvider.get(arguments, modifiers) ?: throw ArgumentParseException("Spell not found.")
-		if (spellAuthorizer.hasSpell(character, spell)) throw ArgumentParseException("You don't have access to this spell.")
+		if (!spellAuthorizer.hasSpell(character, spell)) throw ArgumentParseException("You don't have access to this spell.")
 		return spell
 	}
 

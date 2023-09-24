@@ -65,8 +65,8 @@ class Commands(private val plugin: JavaPlugin,
 
 	@Command(aliases = ["closetear"], desc = "Attempt to close a tear.")
 	@Require(Permission.Command.Closetear)
-	fun closetear(@Sender sender: Mage) {
-		val player = profileManager.getCurrentForProfile(sender.character.profile)!!
+	fun closetear(@Sender sender: Character) {
+		val player = profileManager.getCurrentForProfile(sender.profile)!!
 		plugin.launch {
 			val block = player.getTargetBlock(30) ?: run {
 				player.sendError("Block too far away")
@@ -78,7 +78,12 @@ class Commands(private val plugin: JavaPlugin,
 				return@launch
 			}
 
-			sender.tryCloseTear(tear)
+			val mage = mages.forCharacter(sender)
+			if (mage != null) {
+				mage.tryCloseTear(tear)
+			} else if (tear.owner == sender) {
+				tears.destroy(tear)
+			}
 		}
 	}
 
