@@ -6,7 +6,6 @@ import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.ServicePriority
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.unloadKoinModules
 import org.koin.core.module.Module
@@ -25,7 +24,7 @@ class FablesHacks : JavaPlugin(), KoinComponent {
 		val perms = server.servicesManager.getRegistration(Permission::class.java)!!
 		val chat = server.servicesManager.getRegistration(Chat::class.java)!!
 
-		val permissionInjector = PermissionInjectorImpl(get(), perms.provider)
+		val permissionInjector = PermissionInjectorImpl(this, perms.provider)
 
 		server.servicesManager.register(Permission::class.java,
 			permissionInjector, this, ServicePriority.Highest)

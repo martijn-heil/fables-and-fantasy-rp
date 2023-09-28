@@ -4,11 +4,13 @@ import com.fablesfantasyrp.plugin.characters.dal.enums.Race
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.domain.entity.CharacterTrait
 import com.fablesfantasyrp.plugin.characters.domain.mapper.CharacterTraitMapper
+import com.fablesfantasyrp.plugin.characters.event.CharacterChangeTraitsEvent
 import com.fablesfantasyrp.plugin.database.entity.MassivelyCachingEntityRepository
 import com.fablesfantasyrp.plugin.utils.withLock
+import org.bukkit.Server
 import java.util.*
 
-class CharacterTraitRepositoryImpl(child: CharacterTraitMapper)
+class CharacterTraitRepositoryImpl(private val server: Server, child: CharacterTraitMapper)
 	: MassivelyCachingEntityRepository<String, CharacterTrait, CharacterTraitMapper>(child),
 	CharacterTraitRepository {
 
@@ -53,25 +55,34 @@ class CharacterTraitRepositoryImpl(child: CharacterTraitMapper)
 
 	override fun linkToCharacter(character: Character, trait: CharacterTrait) {
 		lock.writeLock().withLock {
-			byCharacterDirty.computeIfAbsent(character) {
+			val traits = byCharacterDirty.computeIfAbsent(character) {
 				byCharacter[character] ?: run {
 					val traits = deduplicate(child.forCharacter(character)).toHashSet()
 					byCharacter[character] = traits
 					traits
 				}
-			}.add(trait)
+			}
+
+			val oldTraits = traits.toSet()
+			traits.add(trait)
+
+			server.pluginManager.callEvent(CharacterChangeTraitsEvent(character, oldTraits, traits))
 		}
 	}
 
 	override fun unlinkFromCharacter(character: Character, trait: CharacterTrait) {
 		lock.writeLock().withLock {
-			byCharacterDirty.computeIfAbsent(character) {
+			val traits = byCharacterDirty.computeIfAbsent(character) {
 				byCharacter[character] ?: run {
 					val traits = deduplicate(child.forCharacter(character)).toHashSet()
 					byCharacter[character] = traits
 					traits
 				}
-			}.remove(trait)
+			}
+
+			val oldTraits = traits.toSet()
+			traits.remove(trait)
+			server.pluginManager.callEvent(CharacterChangeTraitsEvent(character, oldTraits, traits))
 		}
 	}
 
