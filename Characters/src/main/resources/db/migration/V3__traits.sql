@@ -39,7 +39,7 @@ INSERT INTO character_trait (id, display_name, description) VALUES ('night_lords
 	'Players with this trait have a +1 on all their stat rolls during the night');
 
 INSERT INTO character_trait (id, display_name, description) VALUES ('swift', 'Swift',
-	'Players with this trait have +2 movement in CRP. Outside CRP, players with this trait get a permanent speed 1 boost. (Speed 2 on roads)');
+	'Players with this trait have +2 movement in CRP. Outside CRP, players with this trait get a permanent speed 1 boost.');
 
 INSERT INTO character_trait (id, display_name, description) VALUES ('packmule', 'Packmule',
 	'Players with this trait have a maximum weight cap of +20');

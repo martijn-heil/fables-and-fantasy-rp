@@ -34,7 +34,7 @@ class SpellbookGui(plugin: JavaPlugin,
 		for (spellLevel in 1..5) {
 			val slots = HashMap<Int, DynamicSpellSlotElement>()
 			val spellsInLevel = spells[spellLevel] ?: emptyList()
-			for (slot in 1..getMaxSpells(10, spellLevel)) {
+			for (slot in 1..getMaxSpells(10, spellLevel, mage)) {
 				val spell = spellsInLevel.getOrNull(slot-1)
 				slots[slot] = DynamicSpellSlotElement(spellLevel, slot, spell == null, spell)
 			}
@@ -93,13 +93,13 @@ class SpellbookGui(plugin: JavaPlugin,
 												var content: SpellData?)
 		: DynamicGuiElement('e', { who -> StaticGuiElement('e', ItemStack(Material.GRAY_STAINED_GLASS_PANE)) }) {
 		init {
-			check(n <= getMaxSpells(10, spellLevel))
+			check(n <= getMaxSpells(10, spellLevel, mage))
 		}
 
 		private val spellSlots: Map<Int, DynamicSpellSlotElement>
 			get() = (gui as SpellbookGui).spellLevels[spellLevel]!!
 
-		private val requiredMageLevel = getRequiredMageLevel(spellLevel, n)!!
+		private val requiredMageLevel = getRequiredMageLevel(spellLevel, n, mage)!!
 		private val currentMageLevel = mage.magicLevel
 
 		private val chooseSpellAction: GuiElement.Action = GuiElement.Action { click ->

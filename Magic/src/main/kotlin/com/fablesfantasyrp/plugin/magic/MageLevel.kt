@@ -1,5 +1,10 @@
 package com.fablesfantasyrp.plugin.magic
 
+import com.fablesfantasyrp.plugin.characters.domain.KnownCharacterTraits
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
+import com.fablesfantasyrp.plugin.magic.domain.entity.Mage
+import com.fablesfantasyrp.plugin.utils.Services
+
 val MAGE_LEVEL_MAP = mapOf(
 		Pair(1, mapOf( // Level 1
 				Pair(1, 2) // 2 level 1 spells
@@ -53,8 +58,22 @@ val MAGE_LEVEL_MAP = mapOf(
 		))
 )
 
-fun getMaxSpells(mageLevel: Int, spellLevel: Int) = MAGE_LEVEL_MAP[mageLevel]?.get(spellLevel) ?: 0
+fun getMaxSpells(mageLevel: Int, spellLevel: Int, mage: Mage?): Int {
+	val characterTraits = Services.get<CharacterTraitRepository>()
 
-fun getRequiredMageLevel(spellLevel: Int, nthSpell: Int): Int? = MAGE_LEVEL_MAP.entries
+	var n = MAGE_LEVEL_MAP[mageLevel]?.get(spellLevel) ?: 0
+
+	if (mage != null && characterTraits.hasTrait(mage.character, KnownCharacterTraits.KNOWLEDGEABLE)) {
+		n += when (spellLevel) {
+			1 -> 2
+			2 -> 1
+			else -> 0
+		}
+	}
+
+	return n
+}
+
+fun getRequiredMageLevel(spellLevel: Int, nthSpell: Int, mage: Mage?): Int? = MAGE_LEVEL_MAP.entries
 			.sortedBy { mageLevel -> mageLevel.key }
-			.find { mageLevel -> getMaxSpells(mageLevel.key, spellLevel) >= nthSpell }?.key
+			.find { mageLevel -> getMaxSpells(mageLevel.key, spellLevel, mage) >= nthSpell }?.key
