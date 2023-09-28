@@ -22,6 +22,5 @@ object KnownCharacterTraits {
 	const val SPIDAH_RIDAH = "spidah_ridah"
 	const val HINTISH_HERITAGE = "hintish_heritage"
 	const val HULKING_BRUTE = "hulking_brute"
-	const val COMPANION = "companion"
 	const val KNOWLEDGEABLE = "knowledgeable"
 }

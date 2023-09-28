@@ -29,9 +29,6 @@ INSERT INTO character_trait (id, display_name, description) VALUES ('nightseer',
 INSERT INTO character_trait (id, display_name, description) VALUES ('strong', 'Strong',
 	'Players with this trait get two extra points in the strength stat.');
 
-INSERT INTO character_trait (id, display_name, description) VALUES ('companion', 'Companion',
-	'Players with this trait get to choose a companion pet. It can be used in CRP and events.');
-
 INSERT INTO character_trait (id, display_name, description) VALUES ('knowledgeable', 'Knowledgeable',
 	'Players with this trait get two extra lvl 1 spell slots and one extra lvl 2 spell slot.');
 
@@ -207,7 +204,6 @@ INSERT INTO character_trait (id, display_name, description) VALUES ('abnormally_
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('DARK_ELF', 'arcane_initiate');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('DARK_ELF', 'nightseer');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('DARK_ELF', 'strong');
-INSERT INTO race_character_trait (race, character_trait_id) VALUES ('DARK_ELF', 'companion');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('DARK_ELF', 'knowledgeable');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('DARK_ELF', 'swift');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('DARK_ELF', 'attuned_to_ignos');
@@ -217,7 +213,6 @@ INSERT INTO race_character_trait (race, character_trait_id) VALUES ('WOOD_ELF', 
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('WOOD_ELF', 'heightened_senses');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('WOOD_ELF', 'nightseer');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('WOOD_ELF', 'strong');
-INSERT INTO race_character_trait (race, character_trait_id) VALUES ('WOOD_ELF', 'companion');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('WOOD_ELF', 'aspect_of_liliths_veil');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('WOOD_ELF', 'aspect_of_the_emerald_dusk');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('WOOD_ELF', 'aspect_of_edens_shine');
@@ -227,14 +222,12 @@ INSERT INTO race_character_trait (race, character_trait_id) VALUES ('HIGH_ELF', 
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('HIGH_ELF', 'arcane_initiate');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('HIGH_ELF', 'intelligent');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('HIGH_ELF', 'nightseer');
-INSERT INTO race_character_trait (race, character_trait_id) VALUES ('HIGH_ELF', 'companion');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('HIGH_ELF', 'dragon_blooded');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('HIGH_ELF', 'phalanx');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('HIGH_ELF', 'swift_learner');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('HIGH_ELF', 'knowledgeable');
 
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('ATTIAN_HUMAN', 'strong');
-INSERT INTO race_character_trait (race, character_trait_id) VALUES ('ATTIAN_HUMAN', 'companion');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('ATTIAN_HUMAN', 'painfully_average');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('ATTIAN_HUMAN', 'attian_heritage');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('ATTIAN_HUMAN', 'witch_hunter');
@@ -243,7 +236,6 @@ INSERT INTO race_character_trait (race, character_trait_id) VALUES ('ATTIAN_HUMA
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('ATTIAN_HUMAN', 'warden');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('ATTIAN_HUMAN', 'voidal_resilience');
 
-INSERT INTO race_character_trait (race, character_trait_id) VALUES ('HINTERLANDER_HUMAN', 'companion');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('HINTERLANDER_HUMAN', 'adaptive');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('HINTERLANDER_HUMAN', 'abnormally_tall');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('HINTERLANDER_HUMAN', 'sea_legs');
@@ -254,7 +246,6 @@ INSERT INTO race_character_trait (race, character_trait_id) VALUES ('HINTERLANDE
 
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('KHADAN_HUMAN', 'arcane_initiate');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('KHADAN_HUMAN', 'strong');
-INSERT INTO race_character_trait (race, character_trait_id) VALUES ('KHADAN_HUMAN', 'companion');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('KHADAN_HUMAN', 'limb_carver');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('KHADAN_HUMAN', 'nomads_stomach');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('KHADAN_HUMAN', 'follower_of_akhmat');
@@ -266,13 +257,11 @@ INSERT INTO race_character_trait (race, character_trait_id) VALUES ('DWARF', 'ni
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('DWARF', 'sturdy');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('DWARF', 'enduring_as_rock');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('DWARF', 'too_angry_to_die');
-INSERT INTO race_character_trait (race, character_trait_id) VALUES ('DWARF', 'companion');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('DWARF', 'magical_resilience');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('DWARF', 'natural_sprinter');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('DWARF', 'warden');
 
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('HALFLING', 'naturally_stealthy');
-INSERT INTO race_character_trait (race, character_trait_id) VALUES ('HALFLING', 'companion');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('HALFLING', 'bodily_resilience');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('HALFLING', 'impossible_to_finish');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('HALFLING', 'mulemaster');
@@ -281,7 +270,6 @@ INSERT INTO race_character_trait (race, character_trait_id) VALUES ('HALFLING', 
 
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('ORC', 'strong');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('ORC', 'too_angry_to_die');
-INSERT INTO race_character_trait (race, character_trait_id) VALUES ('ORC', 'companion');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('ORC', 'savage_blows');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('ORC', 'frenzy');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('ORC', 'spidah_ridah');
@@ -289,7 +277,6 @@ INSERT INTO race_character_trait (race, character_trait_id) VALUES ('ORC', 'prop
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('ORC', 'boss_skewer');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('ORC', 'great_hunter');
 
-INSERT INTO race_character_trait (race, character_trait_id) VALUES ('GOBLIN', 'companion');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('GOBLIN', 'naturally_stealthy');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('GOBLIN', 'knowledgeable');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('GOBLIN', 'sneaky_stabba');
@@ -301,7 +288,6 @@ INSERT INTO race_character_trait (race, character_trait_id) VALUES ('GOBLIN', 's
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('TIEFLING', 'swift');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('TIEFLING', 'arcane_initiate');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('TIEFLING', 'nightseer');
-INSERT INTO race_character_trait (race, character_trait_id) VALUES ('TIEFLING', 'companion');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('TIEFLING', 'voidal_origins');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('TIEFLING', 'knowledgeable');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('TIEFLING', 'piercing_gaze');
