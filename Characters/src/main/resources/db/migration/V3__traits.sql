@@ -44,9 +44,6 @@ INSERT INTO character_trait (id, display_name, description) VALUES ('swift', 'Sw
 INSERT INTO character_trait (id, display_name, description) VALUES ('packmule', 'Packmule',
 	'Players with this trait have a maximum weight cap of +20');
 
-INSERT INTO character_trait (id, display_name, description) VALUES ('heightened_senses', 'Heightened Senses',
-	'Players can use this ability once per IC day. When using it, every entity in a radius of 20 blocks gets highlighted for a few seconds (glow minecraft effect)');
-
 INSERT INTO character_trait (id, display_name, description) VALUES ('intelligent', 'Intelligent',
 	'Players with this trait get two extra points in intelligence.');
 
@@ -77,14 +74,8 @@ INSERT INTO character_trait (id, display_name, description) VALUES ('spidah_rida
 INSERT INTO character_trait (id, display_name, description) VALUES ('hulking_brute', 'Hulking Brute',
 	'Players with this trait are considered LARGE creatures instead of MEDIUM.');
 
-INSERT INTO character_trait (id, display_name, description) VALUES ('they_wont_even_notice', 'They Won''t Even Notice',
-	'Players with this trait have an additional 10% success bonus when using the lockpick item.');
-
 INSERT INTO character_trait (id, display_name, description) VALUES ('prophet_of_the_green_flame', 'Prophet of the Green Flame',
 	'Players with this trait know the "fireball" spell without needing to be a spellcaster. Additionally, this flame is green and POISONS and BURNS any player it hits for D3 turns.');
-
-INSERT INTO character_trait (id, display_name, description) VALUES ('big_thinka', 'Big Thinka',
-	'Players with this trait can once per battle cast a spell that they have seen another mage cast. Even if they do not have that spell in their spellbook. This only works when the character is a spellcaster.');
 
 INSERT INTO character_trait (id, display_name, description) VALUES ('hintish_heritage', 'Hintish Heritage',
 	'Players with this trait harvest double the meat and crops from their farms/animals due to their farmer''s background.');
@@ -221,7 +212,6 @@ INSERT INTO race_character_trait (race, character_trait_id) VALUES ('DARK_ELF', 
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('DARK_ELF', 'swift');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('DARK_ELF', 'attuned_to_ignos');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('DARK_ELF', 'deathspeaker');
-INSERT INTO race_character_trait (race, character_trait_id) VALUES ('DARK_ELF', 'heightened_senses');
 
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('WOOD_ELF', 'swift');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('WOOD_ELF', 'heightened_senses');
@@ -286,7 +276,6 @@ INSERT INTO race_character_trait (race, character_trait_id) VALUES ('HALFLING', 
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('HALFLING', 'bodily_resilience');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('HALFLING', 'impossible_to_finish');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('HALFLING', 'mulemaster');
-INSERT INTO race_character_trait (race, character_trait_id) VALUES ('HALFLING', 'they_wont_even_notice');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('HALFLING', 'kick_em_in_the_shins');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('HALFLING', 'small_stomach');
 
@@ -305,7 +294,6 @@ INSERT INTO race_character_trait (race, character_trait_id) VALUES ('GOBLIN', 'n
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('GOBLIN', 'knowledgeable');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('GOBLIN', 'sneaky_stabba');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('GOBLIN', 'mushroom_addict');
-INSERT INTO race_character_trait (race, character_trait_id) VALUES ('GOBLIN', 'big_thinka');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('GOBLIN', 'impossible_to_finish');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('GOBLIN', 'acid_spitta');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('GOBLIN', 'spidah_ridah');

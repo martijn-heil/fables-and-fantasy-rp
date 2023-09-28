@@ -19,12 +19,9 @@ object KnownCharacterTraits {
 	const val SEA_LEGS = "sea_legs"
 	const val DRAGON_BLOODED = "dragon_blooded"
 	const val ABNORMALLY_TALL = "abnormally_tall"
-	const val HEIGHTENED_SENSES = "heightened_senses"
 	const val SPIDAH_RIDAH = "spidah_ridah"
-	const val BIG_THINKA = "big_thinka"
 	const val HINTISH_HERITAGE = "hintish_heritage"
 	const val HULKING_BRUTE = "hulking_brute"
-	const val THEY_WONT_EVEN_NOTICE = "they_wont_even_notice"
 	const val COMPANION = "companion"
 	const val KNOWLEDGEABLE = "knowledgeable"
 }
