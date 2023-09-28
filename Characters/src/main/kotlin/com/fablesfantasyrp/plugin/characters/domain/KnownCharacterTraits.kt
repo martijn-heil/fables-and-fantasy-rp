@@ -1,0 +1,26 @@
+package com.fablesfantasyrp.plugin.characters.domain
+
+object KnownCharacterTraits {
+	const val ARCANE_INITIATE = "arcane_initiate"
+	const val NIGHTSEER = "nightseer"
+	const val STRONG = "strong"
+	const val NIGHT_LORDS = "night_lords"
+	const val SWIFT = "swift"
+	const val ASPECT_OF_LILITHS_VEIL = "aspect_of_liliths_veil"
+	const val INTELLIGENT = "intelligent"
+	const val ATTIAN_HERITAGE = "attian_heritage"
+	const val STURDY = "sturdy"
+	const val ENDURING_AS_ROCK = "enduring_as_rock"
+	const val TOO_ANGRY_TO_DIE = "too_angry_to_die"
+	const val NATURALLY_STEALTHY = "naturally_stealthy"
+	const val PROPHET_OF_THE_GREEN_FLAME = "prophet_of_the_green_flame"
+	const val PACK_MULE = "packmule"
+	const val NOMADS_STOMACH = "nomads_stomach"
+	const val SEA_LEGS = "sea_legs"
+	const val DRAGON_BLOODED = "dragon_blooded"
+	const val ABNORMALLY_TALL = "abnormally_tall"
+	const val SPIDAH_RIDAH = "spidah_ridah"
+	const val HINTISH_HERITAGE = "hintish_heritage"
+	const val HULKING_BRUTE = "hulking_brute"
+	const val KNOWLEDGEABLE = "knowledgeable"
+}

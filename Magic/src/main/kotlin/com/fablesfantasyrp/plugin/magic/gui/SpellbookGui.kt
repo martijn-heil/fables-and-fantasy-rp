@@ -1,12 +1,11 @@
 package com.fablesfantasyrp.plugin.magic.gui
 
 import com.fablesfantasyrp.plugin.form.promptGui
-import com.fablesfantasyrp.plugin.magic.PLUGIN
-import com.fablesfantasyrp.plugin.magic.data.SpellData
-import com.fablesfantasyrp.plugin.magic.data.entity.Mage
+import com.fablesfantasyrp.plugin.magic.dal.model.SpellData
+import com.fablesfantasyrp.plugin.magic.dal.repository.SpellDataRepository
+import com.fablesfantasyrp.plugin.magic.domain.entity.Mage
 import com.fablesfantasyrp.plugin.magic.getMaxSpells
 import com.fablesfantasyrp.plugin.magic.getRequiredMageLevel
-import com.fablesfantasyrp.plugin.magic.spellRepository
 import com.github.shynixn.mccoroutine.bukkit.launch
 import de.themoep.inventorygui.*
 import org.bukkit.ChatColor
@@ -17,7 +16,10 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.function.Function
 
-class SpellbookGui(plugin: JavaPlugin, private val mage: Mage, private val readOnly: Boolean = false)
+class SpellbookGui(plugin: JavaPlugin,
+				   private val spells: SpellDataRepository,
+				   private val mage: Mage,
+				   private val readOnly: Boolean = false)
 	: InventoryGui(plugin, "${mage.character.name}'s grimoire",
 		arrayOf("agggggggg",
 				"bhhhhhhhh",
@@ -32,9 +34,9 @@ class SpellbookGui(plugin: JavaPlugin, private val mage: Mage, private val readO
 		for (spellLevel in 1..5) {
 			val slots = HashMap<Int, DynamicSpellSlotElement>()
 			val spellsInLevel = spells[spellLevel] ?: emptyList()
-			for (slot in 1..getMaxSpells(10, spellLevel)) {
+			for (slot in 1..getMaxSpells(10, spellLevel, mage)) {
 				val spell = spellsInLevel.getOrNull(slot-1)
-				slots[slot] = DynamicSpellSlotElement(spellLevel, slot, spell == null, spell, mage, readOnly)
+				slots[slot] = DynamicSpellSlotElement(spellLevel, slot, spell == null, spell)
 			}
 
 			spellLevels[spellLevel] = slots
@@ -85,28 +87,26 @@ class SpellbookGui(plugin: JavaPlugin, private val mage: Mage, private val readO
 	private class SpellLevelTitleElement(spellLevel: Int, character: Char)
 		: StaticGuiElement(character, ItemStack(Material.ENDER_EYE), "${ChatColor.GOLD}Level $spellLevel spells")
 
-	private class DynamicSpellSlotElement(val spellLevel: Int,
-										  val n: Int,
-										  val isMutable: Boolean,
-										  var content: SpellData?,
-										  private val mage: Mage,
-										  private val readOnly: Boolean = false)
+	private inner class DynamicSpellSlotElement(val spellLevel: Int,
+												val n: Int,
+												val isMutable: Boolean,
+												var content: SpellData?)
 		: DynamicGuiElement('e', { who -> StaticGuiElement('e', ItemStack(Material.GRAY_STAINED_GLASS_PANE)) }) {
 		init {
-			check(n <= getMaxSpells(10, spellLevel))
+			check(n <= getMaxSpells(10, spellLevel, mage))
 		}
 
 		private val spellSlots: Map<Int, DynamicSpellSlotElement>
 			get() = (gui as SpellbookGui).spellLevels[spellLevel]!!
 
-		private val requiredMageLevel = getRequiredMageLevel(spellLevel, n)!!
+		private val requiredMageLevel = getRequiredMageLevel(spellLevel, n, mage)!!
 		private val currentMageLevel = mage.magicLevel
 
 		private val chooseSpellAction: GuiElement.Action = GuiElement.Action { click ->
 			val player = click.whoClicked as? Player ?: return@Action true
-			PLUGIN.launch {
+			plugin.launch {
 				val mappedSpellSlots = spellSlots.values.map { it.content }
-				val gui = SpellSelectorGui(PLUGIN, spellRepository.forLevelAndPath(spellLevel, mage.magicPath)
+				val gui = SpellSelectorGui(plugin, spells.forLevelAndPath(spellLevel, mage.magicPath)
 						.filter { !mage.spells.contains(it) }
 						.filter { !mappedSpellSlots.contains(it) })
 				val spell = player.promptGui(gui)

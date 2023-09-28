@@ -1,8 +1,8 @@
 package com.fablesfantasyrp.plugin.magic.ability.geomancy
 
-import com.fablesfantasyrp.plugin.magic.MagicPath
+import com.fablesfantasyrp.plugin.magic.dal.enums.MagicPath
 import com.fablesfantasyrp.plugin.magic.ability.MageAbility
-import com.fablesfantasyrp.plugin.magic.data.entity.Mage
+import com.fablesfantasyrp.plugin.magic.domain.entity.Mage
 
 object EarthlyAwareness : MageAbility {
 	override val id = "earthly_awareness"

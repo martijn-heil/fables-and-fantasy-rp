@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.halt
 
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
-import com.fablesfantasyrp.plugin.characters.data.entity.Character
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.fablesfantasyrp.plugin.utils.enforceDependencies

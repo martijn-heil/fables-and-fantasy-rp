@@ -9,6 +9,7 @@ dependencies {
     implementation(project(":Chat"))
     implementation(project(":Characters"))
     implementation(project(":Profile"))
+    implementation(project(":Location"))
     implementation(project(":Database"))
     implementation("com.github.Keelar:ExprK:master-SNAPSHOT")
 }

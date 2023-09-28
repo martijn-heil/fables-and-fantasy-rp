@@ -1,14 +1,19 @@
 package com.fablesfantasyrp.plugin.magic.command
 
-import com.fablesfantasyrp.plugin.characters.data.CharacterData
-import com.fablesfantasyrp.plugin.characters.data.entity.CharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.magic.*
 import com.fablesfantasyrp.plugin.magic.ability.MageAbility
-import com.fablesfantasyrp.plugin.magic.animations.NecromancyBlightAnimation
 import com.fablesfantasyrp.plugin.magic.command.provider.OwnAbility
+import com.fablesfantasyrp.plugin.magic.command.provider.OwnMagicType
 import com.fablesfantasyrp.plugin.magic.command.provider.OwnSpell
-import com.fablesfantasyrp.plugin.magic.data.SimpleSpellData
-import com.fablesfantasyrp.plugin.magic.data.entity.Mage
+import com.fablesfantasyrp.plugin.magic.dal.enums.MagicPath
+import com.fablesfantasyrp.plugin.magic.dal.enums.MagicType
+import com.fablesfantasyrp.plugin.magic.dal.model.SpellData
+import com.fablesfantasyrp.plugin.magic.dal.repository.SpellDataRepository
+import com.fablesfantasyrp.plugin.magic.domain.entity.Mage
+import com.fablesfantasyrp.plugin.magic.domain.repository.MageRepository
+import com.fablesfantasyrp.plugin.magic.domain.repository.TearRepository
 import com.fablesfantasyrp.plugin.magic.exception.OpenTearException
 import com.fablesfantasyrp.plugin.magic.gui.SpellbookGui
 import com.fablesfantasyrp.plugin.math.*
@@ -27,59 +32,30 @@ import com.sk89q.intake.parametric.annotation.Range
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
-import org.bukkit.Color
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.bukkit.util.Vector
+import org.bukkit.plugin.java.JavaPlugin
 
-class Commands(private val profileManager: ProfileManager,
-			   private val characters: CharacterRepository) {
-
-	@Command(aliases = ["magicdebug", "mdbg"], desc = "Test various things in Magic.")
-	@Require("fables.magic.command.magicdebug")
-	fun magicDebug(@Sender player: Player, testName: String) {
-		when (testName.lowercase()) {
-			"drawline" -> {
-				val A = player.location + Vector(0, 1, 0)
-				val B = A + player.eyeLocation.direction * 64.0 + Vector(0, 1, 0)
-				drawLine(Color.FUCHSIA, A, B, 0.25)
-			}
-			"drawlinecos" -> {
-				val A = player.location + Vector(0, 1, 0)
-				val B = A + player.eyeLocation.direction * 64.0 + Vector(0, 1, 0)
-				drawLineUsingFunction(Color.FUCHSIA, A, B, 0.25, wave())
-			}
-			"drawlinehelix" -> {
-				val A = player.location + Vector(0, 1, 0)
-				val B = A + player.eyeLocation.direction * 64.0 + Vector(0, 1, 0)
-				drawLineUsingFunction(Color.FUCHSIA, A, B, 0.25, helix())
-			}
-			"necroblight" -> {
-				val animation = NecromancyBlightAnimation()
-				FablesMagic.instance.launch {
-					animation.execute(player, player.location)
-				}
-			}
-			else -> {
-				player.sendMessage("Not a valid test option: $testName")
-			}
-		}
-	}
-
+class Commands(private val plugin: JavaPlugin,
+			   private val profileManager: ProfileManager,
+			   private val characters: CharacterRepository,
+			   private val tears: TearRepository,
+			   private val mages: MageRepository,
+			   private val spells: SpellDataRepository) {
 	@Command(aliases = ["castspell", "cast"], desc = "Cast a magic spell.")
 	@Require(Permission.Command.Castspell)
-	fun castspell(@Sender sender: Mage, @OwnSpell spell: SimpleSpellData) {
-		PLUGIN.launch { sender.tryCastSpell(spell) }
+	fun castspell(@Sender sender: Character, @OwnSpell spell: SpellData) {
+		plugin.launch { sender.tryCastSpell(spell) }
 	}
 
 	@Command(aliases = ["opentear"], desc = "Open a tear.")
 	@Require(Permission.Command.Opentear)
-	fun opentear(@Sender sender: Mage) {
-		PLUGIN.launch {
+	fun opentear(@Sender sender: Character, @OwnMagicType element: MagicType) {
+		plugin.launch {
 			try {
-				sender.openTear()
+				sender.openTear(element)
 			} catch (ex: OpenTearException) {
-				val player = profileManager.getCurrentForProfile(sender.character.profile)
+				val player = profileManager.getCurrentForProfile(sender.profile)
 				player?.sendError(ex.message ?: "Unknown error (${ex.javaClass.simpleName})")
 			} catch (ex: Exception) {
 				ex.printStackTrace()
@@ -89,20 +65,25 @@ class Commands(private val profileManager: ProfileManager,
 
 	@Command(aliases = ["closetear"], desc = "Attempt to close a tear.")
 	@Require(Permission.Command.Closetear)
-	fun closetear(@Sender sender: Mage) {
-		val player = profileManager.getCurrentForProfile(sender.character.profile)!!
-		PLUGIN.launch {
+	fun closetear(@Sender sender: Character) {
+		val player = profileManager.getCurrentForProfile(sender.profile)!!
+		plugin.launch {
 			val block = player.getTargetBlock(30) ?: run {
 				player.sendError("Block too far away")
 				return@launch
 			}
 
-			val tear = tearRepository.forLocation(block.location) ?: run {
+			val tear = tears.forLocation(block.location) ?: run {
 				player.sendError("Targeted block is not a tear")
 				return@launch
 			}
 
-			sender.tryCloseTear(tear)
+			val mage = mages.forCharacter(sender)
+			if (mage != null) {
+				mage.tryCloseTear(tear)
+			} else if (tear.owner == sender) {
+				tears.destroy(tear)
+			}
 		}
 	}
 
@@ -110,7 +91,7 @@ class Commands(private val profileManager: ProfileManager,
 	@Require(Permission.Command.Spellbook)
 	fun spellbook(@Sender sender: Player, @CommandTarget(Permission.Command.Spellbook + ".others") mage: Mage) {
 		val senderCharacter = profileManager.getCurrentForPlayer(sender)?.let { characters.forProfile(it) }
-		SpellbookGui(PLUGIN, mage, readOnly = senderCharacter != mage.character).show(sender)
+		SpellbookGui(plugin, spells, mage, readOnly = senderCharacter != mage.character).show(sender)
 	}
 
 	@Command(aliases = ["resetspellbook", "resetgrimoire"], desc = "Reset a mage's grimoire.")
@@ -124,10 +105,10 @@ class Commands(private val profileManager: ProfileManager,
 	@Require(Permission.Command.Tears)
 	fun tears(@Sender sender: CommandSender) {
 		val message = Component.text().append(
-			tearRepository.all().asSequence().map {
+			tears.all().asSequence().map {
 				Component.text()
 						.append(Component.text("[${it.location.humanReadable()}]"))
-						.append(Component.text(" ${it.magicType} tear by ${it.owner.character.name}"))
+						.append(Component.text(" ${it.magicType} tear by ${it.owner.name}"))
 						.color(NamedTextColor.GRAY)
 		}.join(Component.newline()).toList())
 
@@ -136,8 +117,8 @@ class Commands(private val profileManager: ProfileManager,
 
 	@Command(aliases = ["setmagicpath"], desc = "Set a character's magic path.")
 	@Require(Permission.Command.Setmagicpath)
-	fun setmagicpath(@Sender sender: CommandSender, magicPath: MagicPath, target: CharacterData) {
-		val mage = mageRepository.forPlayerCharacterOrCreate(target)
+	fun setmagicpath(@Sender sender: CommandSender, magicPath: MagicPath, target: Character) {
+		val mage = mages.forCharacterOrCreate(target)
 		mage.magicPath = magicPath
 		sender.sendMessage("$SYSPREFIX set ${target.name}'s magic path to $magicPath")
 	}
@@ -149,7 +130,7 @@ class Commands(private val profileManager: ProfileManager,
 			target.magicLevel = magicLevel
 			sender.sendMessage("$SYSPREFIX set ${target.character.name}'s magic level to $magicLevel")
 		} else {
-			mageRepository.destroy(target)
+			mages.destroy(target)
 			sender.sendMessage("$SYSPREFIX removed magic from ${target.character.name}")
 		}
 	}
@@ -206,7 +187,7 @@ class Commands(private val profileManager: ProfileManager,
 		@Command(aliases = ["deactivate"], desc = "Deactivate an ability.")
 		@Require(Permission.Command.Ability.Deactiviate)
 		fun deactivate(@Sender sender: Mage,
-					 @OwnAbility ability: MageAbility) {
+					   @OwnAbility ability: MageAbility) {
 			sender.activeAbilities = sender.activeAbilities.minus(ability)
 		}
 	}

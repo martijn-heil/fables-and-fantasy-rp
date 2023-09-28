@@ -1,8 +1,8 @@
 package com.fablesfantasyrp.plugin.magic.ability.necromancy.souldestined
 
-import com.fablesfantasyrp.plugin.magic.MagicPath
+import com.fablesfantasyrp.plugin.magic.dal.enums.MagicPath
 import com.fablesfantasyrp.plugin.magic.ability.MageAbility
-import com.fablesfantasyrp.plugin.magic.data.entity.Mage
+import com.fablesfantasyrp.plugin.magic.domain.entity.Mage
 
 object Fragmentation : MageAbility {
 	override val id = "fragmentation"

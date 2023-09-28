@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.economy
 
 import com.fablesfantasyrp.plugin.characters.command.provider.AllowCharacterName
-import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.economy.data.entity.EntityProfileEconomyRepository
 import com.fablesfantasyrp.plugin.economy.gui.bank.BankGuiMainMenu
 import com.fablesfantasyrp.plugin.profile.ProfileManager
@@ -18,7 +18,7 @@ import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 
 class Commands(private val plugin: JavaPlugin,
-			   private val characters: EntityCharacterRepository,
+			   private val characters: CharacterRepository,
 			   private val profileManager: ProfileManager,
 			   private val profiles: EntityProfileRepository,
 			   private val economyRepository: EntityProfileEconomyRepository) {

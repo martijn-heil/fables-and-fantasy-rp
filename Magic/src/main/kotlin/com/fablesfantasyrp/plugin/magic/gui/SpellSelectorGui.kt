@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.magic.gui
 
 import com.fablesfantasyrp.plugin.gui.GuiSingleChoice
-import com.fablesfantasyrp.plugin.magic.data.SpellData
+import com.fablesfantasyrp.plugin.magic.dal.model.SpellData
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin

@@ -1,10 +1,12 @@
 package com.fablesfantasyrp.plugin.characters.command.provider
 
-import com.fablesfantasyrp.plugin.characters.data.CharacterData
-import com.fablesfantasyrp.plugin.characters.data.CharacterStatKind
-import com.fablesfantasyrp.plugin.characters.data.Race
-import com.fablesfantasyrp.plugin.characters.data.entity.Character
-import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
+import com.fablesfantasyrp.plugin.characters.dal.enums.CharacterStatKind
+import com.fablesfantasyrp.plugin.characters.dal.enums.Race
+import com.fablesfantasyrp.plugin.characters.dal.model.CharacterData
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
+import com.fablesfantasyrp.plugin.characters.domain.entity.CharacterTrait
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.gitlab.martijn_heil.nincommands.common.Sender
@@ -18,7 +20,8 @@ import org.bukkit.Server
 import org.bukkit.entity.Player
 
 class CharacterModule(private val server: Server,
-					  private val characters: EntityCharacterRepository,
+					  private val characters: CharacterRepository,
+					  private val traits: CharacterTraitRepository,
 					  private val profileManager: ProfileManager,
 					  private val profileProvider: Provider<Profile>) : AbstractModule() {
 	override fun configure() {
@@ -29,5 +32,6 @@ class CharacterModule(private val server: Server,
 		bind(Player::class.java).annotatedWith(AllowCharacterName::class.java).toProvider(AllowCharacterNamePlayerProvider(server, PlayerProvider(server, OfflinePlayerProvider(server)), profileManager, characters))
 		bind(Profile::class.java).annotatedWith(AllowCharacterName::class.java).toProvider(AllowCharacterNameProfileProvider(server, characters, profileProvider, profileManager))
 		bind(Character::class.java).annotatedWith(Sender::class.java).toProvider(CharacterSenderProvider(profileManager, characters, BukkitSenderProvider(Player::class.java)))
+		bind(CharacterTrait::class.java).toProvider(CharacterTraitProvider(traits))
 	}
 }

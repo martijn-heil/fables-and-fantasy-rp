@@ -24,14 +24,20 @@ class FablesHacks : JavaPlugin(), KoinComponent {
 		val perms = server.servicesManager.getRegistration(Permission::class.java)!!
 		val chat = server.servicesManager.getRegistration(Chat::class.java)!!
 
+		val permissionInjector = PermissionInjectorImpl(this, perms.provider)
+
+		server.servicesManager.register(Permission::class.java,
+			permissionInjector, this, ServicePriority.Highest)
+
 		server.servicesManager.register(Chat::class.java,
-				HackyVaultChat(chat.provider, perms.provider), this, ServicePriority.Highest)
+			HackyVaultChat(chat.provider, permissionInjector), this, ServicePriority.Highest)
 
 		koinModule = module(createdAtStart = false) {
 			single<Plugin> { this@FablesHacks } binds(arrayOf(JavaPlugin::class))
 
 			singleOf(::FlippedPlayerManager)
 			singleOf(::HackyListener)
+			single<PermissionInjector> { permissionInjector }
 		}
 		loadKoinModules(koinModule)
 

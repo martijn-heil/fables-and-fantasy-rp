@@ -1,14 +1,18 @@
 package com.fablesfantasyrp.plugin.characters
 
-import com.fablesfantasyrp.plugin.characters.data.CharacterStatKind
-import com.fablesfantasyrp.plugin.characters.data.CharacterStats
-import com.fablesfantasyrp.plugin.characters.data.Gender
-import com.fablesfantasyrp.plugin.characters.data.Race
-import com.fablesfantasyrp.plugin.characters.data.entity.Character
-import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
+import com.fablesfantasyrp.plugin.characters.dal.enums.CharacterStatKind
+import com.fablesfantasyrp.plugin.characters.dal.enums.Gender
+import com.fablesfantasyrp.plugin.characters.dal.enums.Race
+import com.fablesfantasyrp.plugin.characters.domain.CHARACTER_STATS_FLOOR
+import com.fablesfantasyrp.plugin.characters.domain.CharacterStats
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
+import com.fablesfantasyrp.plugin.characters.domain.entity.CharacterTrait
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.characters.gui.CharacterStatsGui
 import com.fablesfantasyrp.plugin.form.promptChat
 import com.fablesfantasyrp.plugin.form.promptGui
+import com.fablesfantasyrp.plugin.gui.GuiMultipleChoice
 import com.fablesfantasyrp.plugin.gui.GuiSingleChoice
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.data.entity.EntityProfileRepository
@@ -23,6 +27,7 @@ import kotlinx.coroutines.flow.single
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import org.apache.commons.lang.WordUtils
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -35,8 +40,13 @@ import org.koin.core.context.GlobalContext
 import java.time.Instant
 import kotlin.coroutines.cancellation.CancellationException
 
-data class NewCharacterData(val name: String, val age: UInt, val gender: Gender, val race: Race,
-							val description: String, val stats: CharacterStats)
+data class NewCharacterData(val name: String,
+							val age: UInt,
+							val gender: Gender,
+							val race: Race,
+							val description: String,
+							val traits: Set<CharacterTrait>,
+							val stats: CharacterStats)
 
 fun getAllowedRaces(isStaffCharacter: Boolean): Collection<Race> = Race.values().asSequence()
 				.filter { it != Race.HUMAN }
@@ -63,18 +73,13 @@ val Race.itemStackRepresentation: ItemStack get() = ItemStack(when (this) {
 			Race.OTHER -> Material.CARVED_PUMPKIN
 		})
 
-suspend fun promptNewCharacterInfo(player: Player, allowedRaces: Collection<Race>): NewCharacterData {
-	player.sendMessage(miniMessage.deserialize("<gray>Welcome, <yellow><player_name></yellow>!</gray>",
-			Placeholder.unparsed("player_name", player.name)))
-
-	player.sendMessage(miniMessage.deserialize("<gray>Let's create your brand new character!</gray>"))
-
+private suspend fun promptName(player: Player): String {
 	var name: String
 	while (true) {
 		name = player.promptChat(miniMessage.deserialize("<gray>What is the name of your character?</gray> " +
-				"<dark_gray>(max 32 characters)</dark_gray>"))
-				.replace("#", "")
-				.replace("&", "")
+			"<dark_gray>(max 32 characters)</dark_gray>"))
+			.replace("#", "")
+			.replace("&", "")
 
 		if (name.length > 32) {
 			player.sendError("Your character name must not be longer than 32 characters.")
@@ -94,10 +99,38 @@ suspend fun promptNewCharacterInfo(player: Player, allowedRaces: Collection<Race
 		break
 	}
 
-	val age: UInt = flow {
+	return name
+}
+
+private suspend fun promptRace(player: Player, allowedRaces: Collection<Race>): Race {
+	return player.promptGui(GuiSingleChoice<Race>(FablesCharacters.instance,
+		"Please choose a race",
+		allowedRaces.asSequence(),
+		{ it.itemStackRepresentation },
+		{ "${ChatColor.GOLD}$it" }
+	))
+}
+
+private suspend fun promptGender(player: Player): Gender {
+	return player.promptGui(GuiSingleChoice<Gender>(FablesCharacters.instance,
+		"Please choose a gender",
+		Gender.values().asSequence(),
+		{
+			ItemStack(when (it) {
+				Gender.MALE -> Material.CYAN_WOOL
+				Gender.FEMALE -> Material.PINK_WOOL
+				Gender.OTHER -> Material.WHITE_WOOL
+			})
+		},
+		{ "${ChatColor.GOLD}" + it.toString().replaceFirstChar { firstChar -> firstChar.uppercase() } }
+	))
+}
+
+private suspend fun promptAge(player: Player, characterName: String): UInt {
+	return flow {
 		val message = miniMessage.deserialize("<gray>What is the age of <yellow><character_name></yellow>?</gray> " +
-				"<dark_gray>(between 13 and 1000)</dark_gray>",
-				Placeholder.unparsed("character_name", name))
+			"<dark_gray>(between 13 and 1000)</dark_gray>",
+			Placeholder.unparsed("character_name", characterName))
 
 		val num = player.promptChat(message).toUIntOrNull()
 		if (num == null) throw IllegalArgumentException("Could not parse integer")
@@ -109,28 +142,41 @@ suspend fun promptNewCharacterInfo(player: Player, allowedRaces: Collection<Race
 			player.sendError(it.message ?: "unknown"); true
 		} else false
 	}.single()
+}
 
-	val gender = player.promptGui(GuiSingleChoice<Gender>(FablesCharacters.instance,
-			"Please choose a gender",
-			Gender.values().asSequence(),
-			{
-				ItemStack(when (it) {
-					Gender.MALE -> Material.CYAN_WOOL
-					Gender.FEMALE -> Material.PINK_WOOL
-					Gender.OTHER -> Material.WHITE_WOOL
-				})
-			},
-			{ "${ChatColor.GOLD}" + it.toString().replaceFirstChar { firstChar -> firstChar.uppercase() } }
-	))
+private fun formatTrait(trait: CharacterTrait): String {
+	val traitDescription = WordUtils.wrap(trait.description, 40)
+		.lines().joinToString("\n") { "${ChatColor.GRAY}$it" }
+
+	return "${ChatColor.GOLD}${trait.displayName}\n${ChatColor.GRAY}${traitDescription}"
+}
+
+private suspend fun promptTraits(player: Player, race: Race): Set<CharacterTrait> {
+	if (!player.hasPermission("fables.characters.feature.traits")) return emptySet()
+
+	val traitRepository = Services.get<CharacterTraitRepository>()
+
+	val title = "Please select your traits"
+	val traits = traitRepository.forRace(race).toSet()
+
+	return GuiMultipleChoice<CharacterTrait>(PLUGIN, title, 2, 2, traits) { formatTrait(it) }.execute(player)
+}
+
+suspend fun promptNewCharacterInfo(player: Player, allowedRaces: Collection<Race>): NewCharacterData {
+
+	player.sendMessage(miniMessage.deserialize("<gray>Welcome, <yellow><player_name></yellow>!</gray>",
+			Placeholder.unparsed("player_name", player.name)))
+
+	player.sendMessage(miniMessage.deserialize("<gray>Let's create your brand new character!</gray>"))
+
+	val name = promptName(player)
+	val age = promptAge(player, name)
+	val gender = promptGender(player)
+
 	player.sendMessage(miniMessage.deserialize("<gray>Your character's gender is <yellow><gender></yellow>!</gray>",
 			Placeholder.unparsed("gender", gender.toString())))
 
-	val race = player.promptGui(GuiSingleChoice<Race>(FablesCharacters.instance,
-			"Please choose a race",
-			allowedRaces.asSequence(),
-			{ it.itemStackRepresentation },
-			{ "${ChatColor.GOLD}$it" }
-	))
+	val race = promptRace(player, allowedRaces)
 
 	val description = player.promptChat(miniMessage.deserialize("<gray>What is the description of <yellow><name></yellow>?</gray>",
 			Placeholder.unparsed("name", name)))
@@ -138,7 +184,7 @@ suspend fun promptNewCharacterInfo(player: Player, allowedRaces: Collection<Race
 	player.sendMessage(miniMessage.deserialize("<gray>Your character's description is <yellow><description></yellow></gray>",
 			Placeholder.unparsed("description", description)))
 
-	val baseStats = CharacterStats(2U, 2U, 2U, 2U) + race.boosters
+	val baseStats = CHARACTER_STATS_FLOOR.withModifiers(listOf(race.boosters))
 	val stats = player.promptGui(CharacterStatsGui(FablesCharacters.instance, baseStats, "Please choose $name's stats"))
 	Component.text().color(NamedTextColor.GRAY)
 			.append(Component.text("Your character's stats are "))
@@ -163,12 +209,14 @@ suspend fun promptNewCharacterInfo(player: Player, allowedRaces: Collection<Race
 			Placeholder.unparsed("agility", stats.agility.toString()),
 			Placeholder.unparsed("intelligence", stats.intelligence.toString())))
 
-	return NewCharacterData(name, age, gender, race, description, stats)
+	val traits = promptTraits(player, race)
+
+	return NewCharacterData(name, age, gender, race, description, traits, stats)
 }
 
 private val blockMovement = HashSet<Player>()
 suspend fun forcePromptNewCharacterInfo(player: Player, allowedRaces: Collection<Race>): NewCharacterData {
-	val characterRepository = GlobalContext.get().get<EntityCharacterRepository>()
+	val characterRepository = GlobalContext.get().get<CharacterRepository>()
 
 	blockMovement.add(player)
 	try {
@@ -191,8 +239,9 @@ suspend fun forcePromptNewCharacterInfo(player: Player, allowedRaces: Collection
 
 suspend fun forceCharacterCreation(player: Player,
 								   profiles: EntityProfileRepository = Services.get(),
-								   characters: EntityCharacterRepository = Services.get(),
-								   profileManager: ProfileManager = Services.get()) {
+								   characters: CharacterRepository = Services.get(),
+								   profileManager: ProfileManager = Services.get(),
+								   characterTraitRepository: CharacterTraitRepository = Services.get()) {
 	val newCharacterData = forcePromptNewCharacterInfo(player, Race.values().filter { it != Race.HUMAN && it != Race.OTHER && it != Race.SYLVANI})
 
 	val profile = profiles.create(Profile(
@@ -213,6 +262,8 @@ suspend fun forceCharacterCreation(player: Player,
 			lastSeen = Instant.now(),
 			createdAt = Instant.now()
 	))
+
+	newCharacterData.traits.forEach { characterTraitRepository.linkToCharacter(character, it) }
 
 	profileManager.setCurrentForPlayer(player, profile)
 }

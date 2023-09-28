@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.party.command
 
-import com.fablesfantasyrp.plugin.characters.data.entity.Character
-import com.fablesfantasyrp.plugin.characters.data.entity.CharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.characters.shortName
 import com.fablesfantasyrp.plugin.glowing.GlowingManager
 import com.fablesfantasyrp.plugin.party.*

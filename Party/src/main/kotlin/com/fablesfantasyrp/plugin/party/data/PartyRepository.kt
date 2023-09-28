@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.party.data
 
-import com.fablesfantasyrp.plugin.characters.data.entity.Character
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.database.repository.KeyedRepository
 import com.fablesfantasyrp.plugin.database.repository.MutableRepository
 import com.fablesfantasyrp.plugin.party.data.entity.Party

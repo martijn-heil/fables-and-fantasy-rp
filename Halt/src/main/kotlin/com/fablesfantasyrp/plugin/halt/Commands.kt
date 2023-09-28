@@ -1,8 +1,8 @@
 package com.fablesfantasyrp.plugin.halt
 
 import com.fablesfantasyrp.plugin.characters.command.provider.AllowCharacterName
-import com.fablesfantasyrp.plugin.characters.data.entity.Character
-import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.location.location
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.utils.isVanished
@@ -14,7 +14,7 @@ import org.bukkit.ChatColor.RED
 import org.bukkit.GameMode.SPECTATOR
 import org.bukkit.entity.Player
 
-class Commands(private val characters: EntityCharacterRepository,
+class Commands(private val characters: CharacterRepository,
 			   private val profileManager: ProfileManager) {
 	@Command(aliases = ["halt", "h"], desc = "Formally halt nearby players")
 	@Require("fables.halt.command.halt")

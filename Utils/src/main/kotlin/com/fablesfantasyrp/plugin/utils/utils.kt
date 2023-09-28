@@ -2,27 +2,23 @@ package com.fablesfantasyrp.plugin.utils
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
+import net.minecraft.network.protocol.game.ClientboundGameEventPacket
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.ChatColor.*
 import org.bukkit.Location
 import org.bukkit.Server
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 import java.util.*
 import java.util.concurrent.locks.Lock
 import kotlin.math.roundToLong
 
+
 // This code is supported by SuperVanish, PremiumVanish, VanishNoPacket and a few more vanish plugins.
 val Player.isVanished: Boolean
 	get() = getMetadata("vanished").find { it.asBoolean() } != null
-
-
-
-const val DISTANCE_WHISPER = 2U
-const val DISTANCE_QUIET = 8u
-const val DISTANCE_TALK = 15U
-const val DISTANCE_SHOUT = 30U
 
 fun enforceDependencies(plugin: Plugin) {
 	for (dependencyName in plugin.description.depend) {
@@ -114,4 +110,10 @@ fun ChatColor.toNamedTextColor(): NamedTextColor? = when (this) {
 	UNDERLINE -> null
 	ITALIC -> null
 	RESET -> null
+}
+
+fun Player.showEndCredits() {
+	if (this !is CraftPlayer) return
+	this.handle.wonGame = true
+	this.handle.connection.send(ClientboundGameEventPacket(ClientboundGameEventPacket.WIN_GAME, 1f))
 }

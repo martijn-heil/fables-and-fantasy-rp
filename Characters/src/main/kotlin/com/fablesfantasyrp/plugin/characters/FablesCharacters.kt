@@ -1,13 +1,22 @@
 package com.fablesfantasyrp.plugin.characters
 
+import com.fablesfantasyrp.plugin.characters.command.CharacterTraitCommand
 import com.fablesfantasyrp.plugin.characters.command.Commands
 import com.fablesfantasyrp.plugin.characters.command.LegacyCommands
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
-import com.fablesfantasyrp.plugin.characters.data.entity.CharacterRepository
-import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
-import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepositoryImpl
-import com.fablesfantasyrp.plugin.characters.data.persistent.H2CharacterRepository
+import com.fablesfantasyrp.plugin.characters.dal.h2.H2CharacterDataRepository
+import com.fablesfantasyrp.plugin.characters.dal.h2.H2CharacterTraitDataRepository
+import com.fablesfantasyrp.plugin.characters.dal.repository.CharacterTraitDataRepository
+import com.fablesfantasyrp.plugin.characters.domain.mapper.CharacterMapper
+import com.fablesfantasyrp.plugin.characters.domain.mapper.CharacterTraitMapper
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepositoryImpl
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepositoryImpl
+import com.fablesfantasyrp.plugin.characters.modifiers.stats.RaceStatsModifier
+import com.fablesfantasyrp.plugin.characters.modifiers.stats.StatsModifier
 import com.fablesfantasyrp.plugin.characters.web.WebHook
+import com.fablesfantasyrp.plugin.database.FablesDatabase
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
@@ -33,6 +42,7 @@ import org.koin.core.component.get
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.unloadKoinModules
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind
@@ -61,16 +71,24 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 		koinModule = module(createdAtStart = true) {
 			single <Plugin> { this@FablesCharacters } binds(arrayOf(JavaPlugin::class, SuspendingJavaPlugin::class))
 
-			single<EntityCharacterRepository> {
-				val h2CharacterRepository = H2CharacterRepository(get(), get(), get())
-				val characterRepositoryImpl = EntityCharacterRepositoryImpl(h2CharacterRepository, get())
+			single {
+				val h2CharacterRepository = H2CharacterDataRepository(get(), get())
+				val mapper = CharacterMapper(h2CharacterRepository, get())
+				val characterRepositoryImpl = CharacterRepositoryImpl(mapper, get())
 				characterRepositoryImpl.init()
 				characterRepositoryImpl
 			} bind CharacterRepository::class
 
-			singleOf(::CharacterAuthorizerImpl) bind CharacterAuthorizer::class
+			single { H2CharacterTraitDataRepository(FablesDatabase.fablesDatabase) } bind CharacterTraitDataRepository::class
+			singleOf(::CharacterTraitMapper)
+			singleOf(::CharacterTraitRepositoryImpl) bind CharacterTraitRepository::class
 
-			factory { CharacterModule(get(), get(), get(), get<Provider<Profile>>(named("Profile"))) }
+			singleOf(::CharacterAuthorizerImpl) bind CharacterAuthorizer::class
+			singleOf(::CharacterCardGeneratorImpl) bind CharacterCardGenerator::class
+			factoryOf(::RaceStatsModifier) bind StatsModifier::class
+			factoryOf(::CreatureSizeCalculatorImpl) bind CreatureSizeCalculator::class
+
+			factory { CharacterModule(get(), get(), get(), get(), get<Provider<Profile>>(named("Profile"))) }
 			singleOf(::CharactersListener)
 			singleOf(::CharactersLiveMigrationListener)
 			singleOf(::CharacterCreationListener)
@@ -78,11 +96,14 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 			single { get<Commands>().Characters() }
 			single { get<Commands.Characters>().Change() }
 			single { get<Commands.Characters>().Stats() }
+			singleOf(::CharacterTraitCommand)
 			singleOf(::LegacyCommands)
 		}
 		loadKoinModules(koinModule)
 
-		server.servicesManager.register(EntityCharacterRepository::class.java, get(), this, ServicePriority.Normal)
+		get<CharacterTraitRepositoryImpl>().init()
+
+		server.servicesManager.register(CharacterRepository::class.java, get(), this, ServicePriority.Normal)
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())
@@ -105,6 +126,9 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 		charactersCommand.group("stats").registerMethods(get<Commands.Characters.Stats>())
 		charactersCommand.group("change").registerMethods(get<Commands.Characters.Change>())
 
+		rootDispatcherNode.registerMethods(get<CharacterTraitCommand>())
+		rootDispatcherNode.group("charactertrait").registerMethods(get<CharacterTraitCommand>().CharacterTraitCommand())
+
 		val dispatcher = rootDispatcherNode.dispatcher
 
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
@@ -125,15 +149,20 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 
 		server.scheduler.scheduleSyncRepeatingTask(this, {
 			logger.info("Saving characters..")
-			get<EntityCharacterRepository>().saveAllDirty()
+			get<CharacterRepositoryImpl>().saveAllDirty()
+		}, 0, 6000)
+
+		server.scheduler.scheduleSyncRepeatingTask(this, {
+			logger.info("Saving character traits..")
+			get<CharacterTraitRepositoryImpl>().saveAllDirty()
 		}, 0, 6000)
 	}
 
 	override fun onDisable() {
 		logger.info("Unregistering commands")
 		commands.forEach { unregisterCommand(it) }
-		logger.info("EntityCharacterRepository#saveAllDirty()")
-		get<EntityCharacterRepository>().saveAllDirty()
+		logger.info("CharacterRepository#saveAllDirty()")
+		get<CharacterRepositoryImpl>().saveAllDirty()
 		logger.info("unloadKoinModules()")
 		unloadKoinModules(koinModule)
 	}

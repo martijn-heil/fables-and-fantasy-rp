@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.characters.web
 
-import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.characters.web.model.WebCharacter
 import com.fablesfantasyrp.plugin.characters.web.model.transform
 import com.fablesfantasyrp.plugin.web.loaders.BaseWebRoutingLoader
@@ -22,7 +22,7 @@ private class Characters() {
     class Id(val parent: Characters= Characters(), val id: Int)
 }
 
-class WebRouting(private val plugin: Plugin, private val characters: EntityCharacterRepository) : BaseWebRoutingLoader() {
+class WebRouting(private val plugin: Plugin, private val characters: CharacterRepository) : BaseWebRoutingLoader() {
 	private val logger = plugin.logger
 
 	override val routes: Route.() -> Unit = {

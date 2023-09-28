@@ -1,9 +1,9 @@
 package com.fablesfantasyrp.plugin.hacks
 
-import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import org.bukkit.event.Listener
 
-class HackyListener(private val characters: EntityCharacterRepository,
+class HackyListener(private val characters: CharacterRepository,
 					private val flippedPlayerManager: FlippedPlayerManager) : Listener {
 	/*@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	fun onPlayerProfileChange(e: PrePlayerSwitchProfileEvent) {

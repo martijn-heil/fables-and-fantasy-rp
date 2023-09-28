@@ -38,5 +38,12 @@ object Permission {
 				const val Edit = "${prefix}.edit"
 			}
 		}
+
+		object CharacterTrait {
+			const val prefix = Permission.Command.prefix + ".charactertrait"
+			const val List = "${prefix}.list"
+			const val Assign = "${prefix}.assign"
+			const val Revoke = "${prefix}.revoke"
+		}
 	}
 }

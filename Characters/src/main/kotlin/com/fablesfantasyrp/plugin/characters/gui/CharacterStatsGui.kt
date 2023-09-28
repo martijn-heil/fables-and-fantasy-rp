@@ -1,8 +1,8 @@
 package com.fablesfantasyrp.plugin.characters.gui
 
-import com.fablesfantasyrp.plugin.characters.data.CharacterStats
-import com.fablesfantasyrp.plugin.gui.GuiSlider
+import com.fablesfantasyrp.plugin.characters.domain.CharacterStats
 import com.fablesfantasyrp.plugin.gui.ResultProducingInventoryGui
+import com.fablesfantasyrp.plugin.gui.element.Slider
 import de.themoep.inventorygui.DynamicGuiElement
 import de.themoep.inventorygui.StaticGuiElement
 import org.bukkit.ChatColor.*
@@ -24,10 +24,10 @@ class CharacterStatsGui(plugin: JavaPlugin, minimums: CharacterStats, title: Str
 		)
 ) {
 	private val absoluteMax = 12U
-	private val strengthSlider 		= GuiSlider('z', min(8U, absoluteMax - minimums.strength), initial.strength, { it + minimums.strength }, { canIncrease(it) })
-	private val defenseSlider 		= GuiSlider('y', min(8U, absoluteMax - minimums.defense), initial.defense, { it + minimums.defense }, { canIncrease(it) })
-	private val agilitySlider 		= GuiSlider('x', min(8U, absoluteMax - minimums.agility), initial.agility, { it + minimums.agility }, { canIncrease(it) })
-	private val intelligenceSlider 	= GuiSlider('w', min(8U, absoluteMax - minimums.intelligence), initial.intelligence, { it + minimums.intelligence }, { canIncrease(it) })
+	private val strengthSlider 		= Slider('z', min(8U, absoluteMax - minimums.strength), initial.strength, { it + minimums.strength }, { canIncrease(it) })
+	private val defenseSlider 		= Slider('y', min(8U, absoluteMax - minimums.defense), initial.defense, { it + minimums.defense }, { canIncrease(it) })
+	private val agilitySlider 		= Slider('x', min(8U, absoluteMax - minimums.agility), initial.agility, { it + minimums.agility }, { canIncrease(it) })
+	private val intelligenceSlider 	= Slider('w', min(8U, absoluteMax - minimums.intelligence), initial.intelligence, { it + minimums.intelligence }, { canIncrease(it) })
 
 	private val statSliders = arrayOf(strengthSlider, defenseSlider, agilitySlider, intelligenceSlider)
 

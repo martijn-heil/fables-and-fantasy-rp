@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.characters.web.model
 
-import com.fablesfantasyrp.plugin.characters.data.CharacterStats
+import com.fablesfantasyrp.plugin.characters.domain.CharacterStats
 import kotlinx.serialization.Serializable
 
 @Serializable

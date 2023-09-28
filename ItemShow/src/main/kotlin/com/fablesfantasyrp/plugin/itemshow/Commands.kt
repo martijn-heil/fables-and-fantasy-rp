@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.itemshow
 
-import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
@@ -18,7 +18,7 @@ import org.bukkit.Server
 import org.bukkit.entity.Player
 
 class Commands(private val server: Server,
-			   private val characters: EntityCharacterRepository,
+			   private val characters: CharacterRepository,
 			   private val profileManager: ProfileManager) {
 	@Command(aliases = ["itemshow", "showitem"], desc = "")
 	@Require("fables.itemshow.command.itemshow")

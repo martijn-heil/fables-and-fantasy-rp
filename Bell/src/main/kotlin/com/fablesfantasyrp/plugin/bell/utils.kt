@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.bell
 
 import com.fablesfantasyrp.plugin.bell.data.entity.Bell
-import com.fablesfantasyrp.plugin.characters.data.entity.Character
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.chat.awaitEmote
 import com.fablesfantasyrp.plugin.chat.channel.ChatInCharacterShout
 import com.fablesfantasyrp.plugin.discord.FablesDiscordBot

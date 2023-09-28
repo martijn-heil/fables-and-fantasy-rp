@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.inventorysearch.command
 
-import com.fablesfantasyrp.plugin.characters.data.entity.Character
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.form.YesNoChatPrompt
 import com.fablesfantasyrp.plugin.inventorysearch.Permission
 import com.fablesfantasyrp.plugin.inventorysearch.SYSPREFIX

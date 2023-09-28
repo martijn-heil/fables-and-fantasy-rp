@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.characters.command.provider
 
-import com.fablesfantasyrp.plugin.characters.data.entity.CharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.utils.quoteCommandArgument
 import com.sk89q.intake.argument.ArgumentParseException

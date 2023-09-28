@@ -3,14 +3,18 @@ package com.fablesfantasyrp.plugin.magic
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
 import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
 import com.fablesfantasyrp.plugin.database.applyMigrations
+import com.fablesfantasyrp.plugin.magic.authorizer.MagicTypeAuthorizer
+import com.fablesfantasyrp.plugin.magic.authorizer.MagicTypeAuthorizerImpl
+import com.fablesfantasyrp.plugin.magic.authorizer.SpellAuthorizer
+import com.fablesfantasyrp.plugin.magic.authorizer.SpellAuthorizerImpl
 import com.fablesfantasyrp.plugin.magic.command.Commands
 import com.fablesfantasyrp.plugin.magic.command.provider.MagicModule
-import com.fablesfantasyrp.plugin.magic.data.MapTearRepository
-import com.fablesfantasyrp.plugin.magic.data.SimpleSpellDataRepository
-import com.fablesfantasyrp.plugin.magic.data.entity.EntityMageRepository
-import com.fablesfantasyrp.plugin.magic.data.entity.EntityTearRepository
-import com.fablesfantasyrp.plugin.magic.data.persistent.H2MageRepository
-import com.fablesfantasyrp.plugin.magic.data.persistent.YamlSimpleSpellDataRepository
+import com.fablesfantasyrp.plugin.magic.dal.repository.MageDataRepository
+import com.fablesfantasyrp.plugin.magic.dal.repository.SpellDataRepository
+import com.fablesfantasyrp.plugin.magic.dal.repository.h2.H2MageDataRepository
+import com.fablesfantasyrp.plugin.magic.dal.repository.yaml.YamlSpellDataRepository
+import com.fablesfantasyrp.plugin.magic.domain.mapper.MageMapper
+import com.fablesfantasyrp.plugin.magic.domain.repository.*
 import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
@@ -33,6 +37,7 @@ import org.koin.core.context.unloadKoinModules
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
 import org.koin.dsl.binds
 import org.koin.dsl.module
 
@@ -40,10 +45,6 @@ val SYSPREFIX = GLOBAL_SYSPREFIX
 val MAX_TEARS_PER_MAGE = 3
 
 val PLUGIN: FablesMagic get() = FablesMagic.instance
-
-lateinit var tearRepository: EntityTearRepository<*>
-lateinit var spellRepository: SimpleSpellDataRepository
-lateinit var mageRepository: EntityMageRepository<*>
 
 
 class FablesMagic : JavaPlugin(), KoinComponent {
@@ -64,26 +65,28 @@ class FablesMagic : JavaPlugin(), KoinComponent {
 		val spellsDirectory = this.dataFolder.resolve("spells")
 		spellsDirectory.mkdirs()
 
-		spellRepository = YamlSimpleSpellDataRepository(this, spellsDirectory)
-		mageRepository = EntityMageRepository(this, H2MageRepository(server, fablesDatabase))
-		mageRepository.init()
-		tearRepository = EntityTearRepository(MapTearRepository())
-		tearRepository.all().forEach { it.spawn() }
-
 		koinModule = module(createdAtStart = true) {
 			single<Plugin> { this@FablesMagic } binds(arrayOf(JavaPlugin::class))
 
-			single { spellRepository }
-			single { mageRepository }
-			single { tearRepository }
+			single { YamlSpellDataRepository(get(), spellsDirectory) } bind SpellDataRepository::class
+			single { H2MageDataRepository(fablesDatabase, get()) } bind MageDataRepository::class
+			singleOf(::MageMapper)
+			single { MageRepositoryImpl(get()).apply { init() } } bind MageRepository::class
+			singleOf(::EntityTearRepository)
 
+			singleOf(::TearRepositoryImpl) bind TearRepository::class
 			singleOf(::TearClosureManager)
+			singleOf(::CastingTracker)
+
+			singleOf(::SpellAuthorizerImpl) bind SpellAuthorizer::class
+			singleOf(::MagicTypeAuthorizerImpl) bind MagicTypeAuthorizer::class
 
 			factoryOf(::Commands)
 			factory { get<Commands>().Ability() }
 			factoryOf(::MagicModule)
 		}
 		loadKoinModules(koinModule)
+		get<TearRepository>().all().forEach { it.spawn() }
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())
@@ -105,17 +108,13 @@ class FablesMagic : JavaPlugin(), KoinComponent {
 
 		server.scheduler.scheduleSyncRepeatingTask(this, {
 			logger.info("Saving mages..")
-			mageRepository.saveAllDirty()
-
-			logger.info("Saving tears..")
-			tearRepository.saveAllDirty()
+			get<MageRepositoryImpl>().saveAllDirty()
 		}, 0, 6000)
 	}
 
 	override fun onDisable() {
-		mageRepository.saveAllDirty()
-		tearRepository.saveAllDirty()
-		tearRepository.all().forEach { it.despawn() }
+		get<MageRepositoryImpl>().saveAllDirty()
+		get<TearRepository>().all().forEach { it.despawn() }
 		commands.forEach { unregisterCommand(it) }
 		unloadKoinModules(koinModule)
 	}

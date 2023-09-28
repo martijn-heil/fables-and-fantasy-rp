@@ -2,7 +2,7 @@ package com.fablesfantasyrp.plugin.characters
 
 import com.denizenscript.denizen.objects.PlayerTag
 import com.denizenscript.denizencore.objects.core.ElementTag
-import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.denizeninterop.dFlags
 import com.fablesfantasyrp.plugin.denizeninterop.denizenRun
 import com.fablesfantasyrp.plugin.profile.ProfileManager
@@ -19,14 +19,16 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.plugin.Plugin
+import org.koin.core.context.GlobalContext
 import java.time.Instant
 
 class CharactersListener(private val plugin: Plugin,
-						 private val characters: EntityCharacterRepository,
+						 private val characters: CharacterRepository,
 						 private val profiles: EntityProfileRepository,
 						 private val profileManager: ProfileManager,
 						 private val staffProfiles: StaffProfileRepository) : Listener {
 	private val server = plugin.server
+	private val characterCardGenerator by lazy { GlobalContext.get().get<CharacterCardGenerator>() }
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	fun onPlayerSwitchProfile(e: PostPlayerSwitchProfileEvent) {
@@ -72,6 +74,6 @@ class CharactersListener(private val plugin: Plugin,
 			e.player.sendMessage("$SYSPREFIX ${e.rightClicked.name} is currently not in-character")
 			return
 		}
-		e.player.sendMessage(characterCard(character, e.player))
+		e.player.sendMessage(characterCardGenerator.card(character, e.player))
 	}
 }

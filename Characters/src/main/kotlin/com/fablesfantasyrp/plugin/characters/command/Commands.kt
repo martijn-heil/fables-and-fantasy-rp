@@ -2,9 +2,14 @@ package com.fablesfantasyrp.plugin.characters.command
 
 import com.fablesfantasyrp.plugin.characters.*
 import com.fablesfantasyrp.plugin.characters.command.provider.AllowCharacterName
-import com.fablesfantasyrp.plugin.characters.data.*
-import com.fablesfantasyrp.plugin.characters.data.entity.Character
-import com.fablesfantasyrp.plugin.characters.data.entity.EntityCharacterRepository
+import com.fablesfantasyrp.plugin.characters.dal.enums.CharacterStatKind
+import com.fablesfantasyrp.plugin.characters.dal.enums.Gender
+import com.fablesfantasyrp.plugin.characters.dal.enums.Race
+import com.fablesfantasyrp.plugin.characters.domain.CHARACTER_STATS_FLOOR
+import com.fablesfantasyrp.plugin.characters.domain.CharacterStats
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.characters.event.CharacterChangeStatsEvent
 import com.fablesfantasyrp.plugin.characters.gui.CharacterStatsGui
 import com.fablesfantasyrp.plugin.form.YesNoChatPrompt
@@ -45,6 +50,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
+import org.koin.core.context.GlobalContext
 import java.time.Duration
 import java.time.Instant
 import kotlin.math.max
@@ -84,12 +90,14 @@ class LegacyCommands(private val plugin: Plugin, private val characterCommands: 
 }
 
 class Commands(private val plugin: JavaPlugin,
-			   private val characterRepository: EntityCharacterRepository,
+			   private val characterRepository: CharacterRepository,
+			   private val characterTraitRepository: CharacterTraitRepository,
 			   private val profileRepository: ProfileRepository,
 			   private val profileManager: ProfileManager,
 			   private val profilePrompter: ProfilePrompter,
 			   private val authorizer: CharacterAuthorizer) {
 	private val server = plugin.server
+	private val characterCardGenerator by lazy { GlobalContext.get().get<CharacterCardGenerator>() }
 
 	inner class Characters {
 		@Command(aliases = ["new"], desc = "Create a new character!")
@@ -142,6 +150,8 @@ class Commands(private val plugin: JavaPlugin,
 						profile = profile,
 						createdAt = Instant.now()))
 
+				info.traits.forEach { characterTraitRepository.linkToCharacter(character, it) }
+
 				profileManager.setCurrentForPlayer(sender, profile)
 			}
 		}
@@ -164,18 +174,18 @@ class Commands(private val plugin: JavaPlugin,
 		@Command(aliases = ["listunowned"], desc = "List characters without an owner")
 		@Require(Permission.Command.Characters.Listunowned)
 		fun listunowned(@Sender sender: CommandSender) {
-			legacyText("$SYSPREFIX The following characters have no owner:").append(
+			sender.sendMessage(legacyText("$SYSPREFIX The following characters have no owner:").append(
 			Component.join(JoinConfiguration.newlines(), characterRepository.forOwner(null).map {
 				val dead = if (it.isDead) " ${ChatColor.RED}(dead)" else ""
 				val shelved = if (it.isShelved) " ${ChatColor.YELLOW}(shelved)" else ""
 				legacyText("${ChatColor.GRAY}#${it.id} ${it.name}${dead}${shelved}")
-			}))
+			})))
 		}
 
 		@Command(aliases = ["card"], desc = "Display a character's card in chat.")
 		@Require(Permission.Command.Characters.Card)
 		fun card(@Sender sender: CommandSender, @CommandTarget target: Character) {
-			sender.sendMessage(characterCard(target, sender))
+			sender.sendMessage(characterCardGenerator.card(target, sender))
 		}
 
 		@Command(aliases = ["kill"], desc = "Kill a character")
@@ -243,7 +253,7 @@ class Commands(private val plugin: JavaPlugin,
 		@Command(aliases = ["setrace"], desc = "Set a character's race")
 		@Require(Permission.Command.Characters.SetRace)
 		fun setrace(@Sender sender: CommandSender, race: Race,
-					  @CommandTarget(Permission.Command.Characters.SetRace + ".others") target: Character) {
+					@CommandTarget(Permission.Command.Characters.SetRace + ".others") target: Character) {
 			target.race = race
 			sender.sendMessage("$SYSPREFIX Set ${target.name}'s race to $race")
 		}
@@ -283,7 +293,7 @@ class Commands(private val plugin: JavaPlugin,
 		@Command(aliases = ["unshelf"], desc = "Unshelf a character")
 		@Require(Permission.Command.Characters.Unshelf)
 		fun unshelf(@Sender sender: CommandSender,
-				  @CommandTarget target: Character,
+					@CommandTarget target: Character,
 					@Switch('f') force: Boolean) {
 			if (force && !sender.hasPermission(Permission.Command.Characters.Unshelf + ".force")) {
 				sender.sendError("Permission denied")
@@ -323,7 +333,7 @@ class Commands(private val plugin: JavaPlugin,
 			@Command(aliases = ["edit"], desc = "Edit character stats")
 			@Require(Permission.Command.Characters.Stats.Edit)
 			fun edit(@Sender sender: Player, target: Character) {
-				val minimums = target.race.boosters + CHARACTER_STATS_FLOOR
+				val minimums = CHARACTER_STATS_FLOOR.withModifiers(listOf(target.race.boosters))
 				var initialSliderValues = target.stats
 				if (initialSliderValues.strength > 8U ||
 						initialSliderValues.defense > 8U ||
@@ -420,7 +430,7 @@ class Commands(private val plugin: JavaPlugin,
 					}
 				}
 
-				val minimums = target.race.boosters + CHARACTER_STATS_FLOOR
+				val minimums = CHARACTER_STATS_FLOOR.withModifiers(listOf(target.race.boosters))
 				var initialSliderValues = target.stats
 				if (initialSliderValues.strength > 8U ||
 						initialSliderValues.defense > 8U ||

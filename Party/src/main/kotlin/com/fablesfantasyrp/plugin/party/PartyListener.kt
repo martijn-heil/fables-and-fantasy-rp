@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.party
 
-import com.fablesfantasyrp.plugin.characters.data.entity.CharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.glowing.GlowingManager
 import com.fablesfantasyrp.plugin.party.data.PartyRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
