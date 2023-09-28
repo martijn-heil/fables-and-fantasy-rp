@@ -152,6 +152,8 @@ private fun formatTrait(trait: CharacterTrait): String {
 }
 
 private suspend fun promptTraits(player: Player, race: Race): Set<CharacterTrait> {
+	if (!player.hasPermission("fables.characters.feature.traits")) return emptySet()
+
 	val traitRepository = Services.get<CharacterTraitRepository>()
 
 	val title = "Please select your traits"
