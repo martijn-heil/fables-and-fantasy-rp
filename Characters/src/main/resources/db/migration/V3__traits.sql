@@ -210,7 +210,6 @@ INSERT INTO race_character_trait (race, character_trait_id) VALUES ('DARK_ELF', 
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('DARK_ELF', 'deathspeaker');
 
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('WOOD_ELF', 'swift');
-INSERT INTO race_character_trait (race, character_trait_id) VALUES ('WOOD_ELF', 'heightened_senses');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('WOOD_ELF', 'nightseer');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('WOOD_ELF', 'strong');
 INSERT INTO race_character_trait (race, character_trait_id) VALUES ('WOOD_ELF', 'aspect_of_liliths_veil');
