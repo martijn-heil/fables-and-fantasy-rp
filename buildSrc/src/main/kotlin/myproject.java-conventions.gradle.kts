@@ -90,6 +90,10 @@ tasks.withType<JavaCompile>().configureEach {
 	options.compilerArgs.add("-Xlint:deprecation")
 }
 
+tasks.test {
+	useJUnitPlatform()
+}
+
 fun downloadFile(url: URL, outputFileName: String) {
 	url.openStream().use {
 		Channels.newChannel(it).use { rbc ->
@@ -126,4 +130,8 @@ dependencies {
 	implementation(urlFile(URL("https://github.com/Gecolay/GSit/releases/download/1.2.4/GSit-1.2.4.jar"), "GSit.jar"))
 	implementation("com.gitlab.martijn-heil:NinCommands:master-SNAPSHOT") { isChanging = true }
 	implementation(fileTree("${project.projectDir.parent}/lib") { include("*.jar") })
+
+	testImplementation(kotlin("test"))
+	testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+	testImplementation("io.mockk:mockk:1.13.7")
 }

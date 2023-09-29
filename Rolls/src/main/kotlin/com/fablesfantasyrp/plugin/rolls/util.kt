@@ -1,22 +1,26 @@
 package com.fablesfantasyrp.plugin.rolls
 
 import com.fablesfantasyrp.plugin.characters.dal.enums.CharacterStatKind
-import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.domain.KnownCharacterTraits
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.location.location
+import com.fablesfantasyrp.plugin.utils.Services
 import com.github.keelar.exprk.Expressions
-import org.koin.core.context.GlobalContext
 import kotlin.random.Random
 import kotlin.random.nextInt
 
 fun roll(dice: UInt, character: Character?, kind: CharacterStatKind?): Pair<UInt, Int> {
-	val traits = GlobalContext.get().get<CharacterTraitRepository>()
+	return roll(Random.Default, dice, character, kind)
+}
+
+fun roll(randomSource: Random, dice: UInt, character: Character?, kind: CharacterStatKind?): Pair<UInt, Int> {
+	val traits = Services.get<CharacterTraitRepository>()
 	val trait = traits.forId(KnownCharacterTraits.NIGHT_LORDS)
 	val world = character?.profile?.location?.world
 
 	val stats = character?.totalStats
-	val random: UInt = Random.nextInt(1..dice.toInt()).toUInt()
+	val random: UInt = randomSource.nextInt(1..dice.toInt()).toUInt()
 
 	var result = random.toInt()
 
