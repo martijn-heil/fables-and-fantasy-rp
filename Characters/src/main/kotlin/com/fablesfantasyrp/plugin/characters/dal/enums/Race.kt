@@ -14,7 +14,7 @@ enum class Race(private val displayName: String, val boosters: CharacterStatsMod
 	ORC("Orc", CharacterStatsModifier(strength = 3, defense = 1), CreatureSize.LARGE),
 	GOBLIN("Goblin", CharacterStatsModifier(defense = 1, intelligence = 1, agility = 2), CreatureSize.SMALL),
 	HALFLING("Halfling", CharacterStatsModifier(defense = 1, agility = 3), CreatureSize.SMALL),
-	SYLVANI("Sylvani", CharacterStatsModifier( agility = 2, intelligence = 3)),
+	SYLVANI("Sylvani", CharacterStatsModifier( agility = 2, intelligence = 4)),
 	OTHER("Other", CharacterStatsModifier(defense = 0, agility = 0, intelligence = 0)),
 
 	@Deprecated("legacy race")

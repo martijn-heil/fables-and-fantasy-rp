@@ -1,7 +1,10 @@
 package com.fablesfantasyrp.plugin.charactermechanics
 
 import com.fablesfantasyrp.plugin.charactermechanics.racial.base.RaceBehavior
-import com.fablesfantasyrp.plugin.charactermechanics.racial.sylvani.*
+import com.fablesfantasyrp.plugin.charactermechanics.racial.sylvani.SylvaniAntlers
+import com.fablesfantasyrp.plugin.charactermechanics.racial.sylvani.SylvaniBerries
+import com.fablesfantasyrp.plugin.charactermechanics.racial.sylvani.SylvaniNaturalHabitat
+import com.fablesfantasyrp.plugin.charactermechanics.racial.sylvani.SylvaniSkogPet
 import com.fablesfantasyrp.plugin.charactermechanics.traits.*
 import com.fablesfantasyrp.plugin.charactermechanics.traits.base.TraitBehavior
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepositoryImpl
@@ -52,7 +55,6 @@ class FablesCharacterMechanics : JavaPlugin(), KoinComponent {
 			singleOf(::SylvaniSkogPet) bind RaceBehavior::class
 			singleOf(::SylvaniAntlers) bind RaceBehavior::class
 			singleOf(::SylvaniBerries) bind RaceBehavior::class
-			singleOf(::SylvaniHunger) bind RaceBehavior::class
 			singleOf(::SylvaniNaturalHabitat) binds arrayOf(RaceBehavior::class, StatsModifier::class)
 		}
 		loadKoinModules(koinModule)

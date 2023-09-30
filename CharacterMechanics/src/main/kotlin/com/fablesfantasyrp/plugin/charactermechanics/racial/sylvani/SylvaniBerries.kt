@@ -55,11 +55,11 @@ class SylvaniBerries(plugin: Plugin,
 			val isEpicDrop = Random.nextInt(1, 101) > 98
 
 			if (isEpicDrop) {
-				val leftOver = harvester.inventory.addItem(ItemStack(Material.GLOW_BERRIES, 2))
+				val leftOver = harvester.inventory.addItem(ItemStack(Material.GLOW_BERRIES, 8))
 				leftOver.values.forEach { world.dropItem(location, it) }
 				world.playSound(location, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f)
 			} else {
-				val leftOver = harvester.inventory.addItem(ItemStack(Material.SWEET_BERRIES, 2))
+				val leftOver = harvester.inventory.addItem(ItemStack(Material.SWEET_BERRIES, 8))
 				leftOver.values.forEach { world.dropItem(location, it) }
 				world.playSound(location, Sound.BLOCK_SWEET_BERRY_BUSH_PICK_BERRIES, 1.0f, 1.0f)
 			}
