@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.charactermechanics.traits
 
-import com.fablesfantasyrp.plugin.charactermechanics.traits.base.BaseTraitBehaviour
+import com.fablesfantasyrp.plugin.charactermechanics.traits.base.BaseTraitBehavior
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.characters.domain.KnownCharacterTraits
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
@@ -18,7 +18,7 @@ class SeaLegs(plugin: Plugin,
 			  characters: CharacterRepository,
 			  profileManager: ProfileManager,
 			  traits: CharacterTraitRepository)
-	: BaseTraitBehaviour(KnownCharacterTraits.SEA_LEGS, plugin, characters, profileManager, traits) {
+	: BaseTraitBehavior(KnownCharacterTraits.SEA_LEGS, plugin, characters, profileManager, traits) {
 	private val effect = PotionEffect(PotionEffectType.DOLPHINS_GRACE, 200, 0, false, false, true)
 
 	override fun init() {

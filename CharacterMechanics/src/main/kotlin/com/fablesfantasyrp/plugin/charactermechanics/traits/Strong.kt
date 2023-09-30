@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.charactermechanics.traits
 
-import com.fablesfantasyrp.plugin.charactermechanics.traits.base.BaseTraitBehaviour
+import com.fablesfantasyrp.plugin.charactermechanics.traits.base.BaseTraitBehavior
 import com.fablesfantasyrp.plugin.characters.domain.CharacterStatsModifier
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
@@ -15,7 +15,7 @@ class Strong(plugin: Plugin,
 			 characters: CharacterRepository,
 			 profileManager: ProfileManager,
 			 traits: CharacterTraitRepository)
-	: BaseTraitBehaviour(KnownCharacterTraits.STRONG, plugin, characters, profileManager, traits), StatsModifier {
+	: BaseTraitBehavior(KnownCharacterTraits.STRONG, plugin, characters, profileManager, traits), StatsModifier {
 
 	override fun calculateModifiers(who: Character): CharacterStatsModifier
 		= if (traits.hasTrait(who, trait)) CharacterStatsModifier(strength = 2) else CharacterStatsModifier()

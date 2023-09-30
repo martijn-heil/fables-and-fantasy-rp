@@ -9,4 +9,7 @@ dependencies {
     implementation(project(":Characters"))
     implementation(project(":Knockout"))
     implementation(project(":Hacks"))
+    implementation(project(":WorldGuardInterop"))
+    implementation(project(":Location"))
+    implementation(project(":Inventory"))
 }

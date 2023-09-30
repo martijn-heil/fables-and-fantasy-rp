@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.charactermechanics.traits
 
-import com.fablesfantasyrp.plugin.charactermechanics.traits.base.BaseTraitBehaviour
+import com.fablesfantasyrp.plugin.charactermechanics.traits.base.BaseTraitBehavior
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.characters.domain.KnownCharacterTraits
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
@@ -21,7 +21,7 @@ class TooAngryToDie(plugin: Plugin,
 					characters: CharacterRepository,
 					profileManager: ProfileManager,
 					traits: CharacterTraitRepository)
-	: BaseTraitBehaviour(KnownCharacterTraits.TOO_ANGRY_TO_DIE, plugin, characters, profileManager, traits) {
+	: BaseTraitBehavior(KnownCharacterTraits.TOO_ANGRY_TO_DIE, plugin, characters, profileManager, traits) {
 
 	override fun init() {
 		super.init()

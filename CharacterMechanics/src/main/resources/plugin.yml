@@ -9,6 +9,9 @@ depend:
   - FablesText
   - FablesDatabase
   - FablesHacks
+  - FablesWorldGuardInterop
+  - FablesLocation
+  - FablesInventory
   - NinCommands
 main: com.fablesfantasyrp.plugin.charactermechanics.FablesCharacterMechanics
 api-version: @bukkit_api_version@

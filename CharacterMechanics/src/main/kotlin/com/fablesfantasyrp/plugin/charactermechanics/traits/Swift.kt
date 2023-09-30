@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.charactermechanics.traits
 
-import com.fablesfantasyrp.plugin.charactermechanics.traits.base.BaseTraitBehaviour
+import com.fablesfantasyrp.plugin.charactermechanics.traits.base.BaseTraitBehavior
 import com.fablesfantasyrp.plugin.characters.domain.KnownCharacterTraits
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
@@ -15,7 +15,7 @@ class Swift(plugin: Plugin,
 			characters: CharacterRepository,
 			profileManager: ProfileManager,
 			traits: CharacterTraitRepository)
-	: BaseTraitBehaviour(KnownCharacterTraits.SWIFT, plugin, characters, profileManager, traits) {
+	: BaseTraitBehavior(KnownCharacterTraits.SWIFT, plugin, characters, profileManager, traits) {
 	private val effect = PotionEffect(PotionEffectType.SPEED, 30, 0, false, false, true)
 
 	override fun init() {

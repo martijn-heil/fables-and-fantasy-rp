@@ -1,7 +1,7 @@
-package com.fablesfantasyrp.plugin.charactermechanics.traits.base
+package com.fablesfantasyrp.plugin.charactermechanics.racial.base
 
+import com.fablesfantasyrp.plugin.characters.dal.enums.Race
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
-import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.characters.event.CharacterChangeTraitsEvent
 import com.fablesfantasyrp.plugin.hacks.PermissionInjector
 import com.fablesfantasyrp.plugin.profile.ProfileManager
@@ -12,29 +12,28 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.plugin.Plugin
 
-abstract class BasePermissionProvidingTrait(traitId: String,
-											plugin: Plugin,
-											characters: CharacterRepository,
-											profileManager: ProfileManager,
-											traits: CharacterTraitRepository,
-											private val permissionInjector: PermissionInjector)
-	: BaseTraitBehavior(traitId, plugin, characters, profileManager, traits) {
+abstract class BasePermissionProvidingRaceBehavior(race: Race,
+												   plugin: Plugin,
+												   characters: CharacterRepository,
+												   profileManager: ProfileManager,
+												   private val permissionInjector: PermissionInjector)
+	: BaseRaceBehavior(race, plugin, characters, profileManager) {
 
 	abstract val permission: String
 
 	override fun init() {
 		super.init()
-		server.pluginManager.registerEvents(BasePermissionProvidingTraitListener(), plugin)
+		server.pluginManager.registerEvents(BasePermissionProvidingRaceBehaviorListener(), plugin)
 	}
 
-	inner class BasePermissionProvidingTraitListener : Listener {
+	inner class BasePermissionProvidingRaceBehaviorListener : Listener {
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 		fun onPlayerProfileChange(e: PlayerSwitchProfileEvent) {
 			val oldCharacter = e.old?.let { characters.forProfile(it) }
 			val newCharacter = e.new?.let { characters.forProfile(it) }
 
-			val oldValue = if (oldCharacter != null && traits.hasTrait(oldCharacter, trait)) true else null
-			val value = if (newCharacter != null && traits.hasTrait(newCharacter, trait)) true else null
+			val oldValue = if (oldCharacter != null && oldCharacter.race == race) true else null
+			val value = if (newCharacter != null && newCharacter.race == race) true else null
 
 			e.transaction.steps.add(TransactionStep(
 				{ permissionInjector.inject(e.player, permission, value) },
@@ -45,7 +44,7 @@ abstract class BasePermissionProvidingTrait(traitId: String,
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 		fun onCharacterChangeTraits(e: CharacterChangeTraitsEvent) {
 			val player = profileManager.getCurrentForProfile(e.character.profile) ?: return
-			val value = if (traits.hasTrait(e.character, trait)) true else null
+			val value = if (e.character.race == race) true else null
 			permissionInjector.inject(player, permission, value)
 		}
 	}

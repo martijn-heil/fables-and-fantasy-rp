@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.charactermechanics.traits
 
-import com.fablesfantasyrp.plugin.charactermechanics.traits.base.BaseTraitBehaviour
+import com.fablesfantasyrp.plugin.charactermechanics.traits.base.BaseTraitBehavior
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.characters.domain.KnownCharacterTraits
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
@@ -14,7 +14,7 @@ class EnduringAsRock(plugin: Plugin,
 					 characters: CharacterRepository,
 					 profileManager: ProfileManager,
 					 traits: CharacterTraitRepository)
-	: BaseTraitBehaviour(KnownCharacterTraits.ENDURING_AS_ROCK, plugin, characters, profileManager, traits) {
+	: BaseTraitBehavior(KnownCharacterTraits.ENDURING_AS_ROCK, plugin, characters, profileManager, traits) {
 	private val effect = PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 30, 0, false, false, true)
 
 	override fun init() {

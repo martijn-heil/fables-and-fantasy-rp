@@ -1,9 +1,9 @@
 package com.fablesfantasyrp.plugin.charactermechanics
 
+import com.fablesfantasyrp.plugin.charactermechanics.racial.base.RaceBehavior
+import com.fablesfantasyrp.plugin.charactermechanics.racial.sylvani.*
 import com.fablesfantasyrp.plugin.charactermechanics.traits.*
 import com.fablesfantasyrp.plugin.charactermechanics.traits.base.TraitBehavior
-import com.fablesfantasyrp.plugin.characters.CreatureSizeCalculator
-import com.fablesfantasyrp.plugin.characters.CreatureSizeCalculatorImpl
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepositoryImpl
 import com.fablesfantasyrp.plugin.characters.modifiers.health.HealthModifier
 import com.fablesfantasyrp.plugin.characters.modifiers.stats.StatsModifier
@@ -49,11 +49,16 @@ class FablesCharacterMechanics : JavaPlugin(), KoinComponent {
 			singleOf(::Intelligent) binds arrayOf(TraitBehavior::class, StatsModifier::class)
 			singleOf(::AttianHeritage) binds arrayOf(TraitBehavior::class, HealthModifier::class)
 
-			singleOf(::CreatureSizeCalculatorImpl) bind CreatureSizeCalculator::class
+			singleOf(::SylvaniSkogPet) bind RaceBehavior::class
+			singleOf(::SylvaniAntlers) bind RaceBehavior::class
+			singleOf(::SylvaniBerries) bind RaceBehavior::class
+			singleOf(::SylvaniHunger) bind RaceBehavior::class
+			singleOf(::SylvaniNaturalHabitat) binds arrayOf(RaceBehavior::class, StatsModifier::class)
 		}
 		loadKoinModules(koinModule)
 
 		GlobalContext.get().getAll<TraitBehavior>().forEach { it.init() }
+		GlobalContext.get().getAll<RaceBehavior>().forEach { it.init() }
 	}
 
 	override fun onDisable() {
