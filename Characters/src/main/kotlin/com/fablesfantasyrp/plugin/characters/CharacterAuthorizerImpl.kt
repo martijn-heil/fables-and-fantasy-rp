@@ -70,8 +70,8 @@ class CharacterAuthorizerImpl(private val characters: CharacterRepository) : Cha
 	override fun mayEditGender(who: Permissible, what: Character, allowShelved: Boolean): AuthorizationResult
 		= mayEditProperty(who, what, allowShelved, Permission.Change.Gender)
 
-	override fun mayEditAge(who: Permissible, what: Character, allowShelved: Boolean): AuthorizationResult
-		= mayEditProperty(who, what, allowShelved, Permission.Change.Age)
+	override fun mayEditDateOfBirth(who: Permissible, what: Character, allowShelved: Boolean): AuthorizationResult
+		= mayEditProperty(who, what, allowShelved, Permission.Change.DateOfBirth)
 
 	override fun mayEditName(who: Permissible, what: Character, allowShelved: Boolean): AuthorizationResult
 		= mayEditProperty(who, what, allowShelved, Permission.Change.Name)

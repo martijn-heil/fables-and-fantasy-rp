@@ -7,9 +7,11 @@ import com.fablesfantasyrp.plugin.characters.dal.repository.CharacterDataReposit
 import com.fablesfantasyrp.plugin.characters.domain.CharacterStats
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.profile.data.entity.ProfileRepository
+import com.fablesfantasyrp.plugin.time.javatime.FablesLocalDate
 import org.bukkit.OfflinePlayer
 import java.sql.ResultSet
 import java.time.Instant
+import java.time.temporal.ChronoField
 import javax.sql.DataSource
 
 class H2CharacterDataRepository(private val dataSource: DataSource,
@@ -40,7 +42,7 @@ class H2CharacterDataRepository(private val dataSource: DataSource,
 					"(id, " +
 					"name, " +
 					"description, " +
-					"age, " +
+					"date_of_birth_epoch_day, " +
 					"race, " +
 					"gender, " +
 					"created_at, " +
@@ -51,7 +53,7 @@ class H2CharacterDataRepository(private val dataSource: DataSource,
 			stmnt.setInt(1, v.id)
 			stmnt.setString(2, v.name)
 			stmnt.setString(3, v.description)
-			stmnt.setInt(4, v.age.toInt())
+			if (v.dateOfBirth != null) stmnt.setLong(4, v.dateOfBirth.getLong(ChronoField.EPOCH_DAY))
 			stmnt.setString(5, v.race.name)
 			stmnt.setString(6, v.gender.name)
 			stmnt.setObject(7, v.createdAt)
@@ -66,7 +68,7 @@ class H2CharacterDataRepository(private val dataSource: DataSource,
 					id = v.id,
 					name = v.name,
 					description = v.description,
-					age = v.age,
+					dateOfBirth = v.dateOfBirth,
 					race = v.race,
 					gender = v.gender,
 					createdAt = v.createdAt,
@@ -137,7 +139,7 @@ class H2CharacterDataRepository(private val dataSource: DataSource,
 			val stmnt = connection.prepareStatement("UPDATE $TABLE_NAME SET " +
 					"name = ?, " +
 					"description = ?, " +
-					"age = ?, " +
+					"date_of_birth_epoch_day = ?, " +
 					"race = ?, " +
 					"gender = ?, " +
 					"created_at = ?, " +
@@ -154,7 +156,7 @@ class H2CharacterDataRepository(private val dataSource: DataSource,
 					"WHERE id = ?")
 			stmnt.setString(1, v.name)
 			stmnt.setString(2, v.description)
-			stmnt.setInt(3, v.age.toInt())
+			if (v.dateOfBirth != null) stmnt.setLong(3, v.dateOfBirth.getLong(ChronoField.EPOCH_DAY))
 			stmnt.setString(4, v.race.name)
 			stmnt.setString(5, v.gender.name)
 			stmnt.setObject(6, v.createdAt)
@@ -176,7 +178,7 @@ class H2CharacterDataRepository(private val dataSource: DataSource,
 	private fun fromRow(result: ResultSet): CharacterData {
 		val id = result.getInt("id")
 		val name = result.getString("name")
-		val age = result.getInt("age").toUInt()
+		val dateOfBirth = FablesLocalDate.ofEpochDay(result.getLong("date_of_birth_epoch_day"))
 		val description = result.getString("description")
 		val gender = Gender.valueOf(result.getString("gender"))
 		val race = Race.valueOf(result.getString("race"))
@@ -197,7 +199,7 @@ class H2CharacterDataRepository(private val dataSource: DataSource,
 				name = name,
 				race = race,
 				gender = gender,
-				age = age,
+				dateOfBirth = dateOfBirth,
 				description = description,
 				createdAt = createdAt,
 				lastSeen = lastSeen,

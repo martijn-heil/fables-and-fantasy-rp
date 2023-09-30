@@ -1,11 +1,11 @@
 package com.fablesfantasyrp.plugin.characters.domain.entity
 
 import com.denizenscript.denizencore.objects.core.ElementTag
-import com.fablesfantasyrp.plugin.characters.domain.CHARACTER_STATS_FLOOR
-import com.fablesfantasyrp.plugin.characters.domain.CharacterStats
 import com.fablesfantasyrp.plugin.characters.dal.enums.CharacterStatKind
 import com.fablesfantasyrp.plugin.characters.dal.enums.Gender
 import com.fablesfantasyrp.plugin.characters.dal.enums.Race
+import com.fablesfantasyrp.plugin.characters.domain.CHARACTER_STATS_FLOOR
+import com.fablesfantasyrp.plugin.characters.domain.CharacterStats
 import com.fablesfantasyrp.plugin.characters.modifiers.health.HealthModifier
 import com.fablesfantasyrp.plugin.characters.modifiers.stats.StatsModifier
 import com.fablesfantasyrp.plugin.database.entity.DataEntity
@@ -14,10 +14,12 @@ import com.fablesfantasyrp.plugin.denizeninterop.dFlags
 import com.fablesfantasyrp.plugin.inventory.inventory
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
+import com.fablesfantasyrp.plugin.time.javatime.FablesLocalDate
 import com.fablesfantasyrp.plugin.utils.Services
 import com.fablesfantasyrp.plugin.utils.showEndCredits
 import org.koin.core.context.GlobalContext
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 import kotlin.math.max
 
 class Character : DataEntity<Int, Character> {
@@ -28,9 +30,10 @@ class Character : DataEntity<Int, Character> {
 		get() = if (Services.get<ProfileManager>().getCurrentForProfile(profile) != null) Instant.now() else field
 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 
-	var diedAt: Instant? 			set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
-	var shelvedAt: Instant? 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
-	var changedStatsAt: Instant? 	set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
+	var dateOfBirth: FablesLocalDate?	set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
+	var diedAt: Instant? 				set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
+	var shelvedAt: Instant? 			set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
+	var changedStatsAt: Instant? 		set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 
 	var isDead: Boolean
 		set(value) {
@@ -82,7 +85,7 @@ class Character : DataEntity<Int, Character> {
 			player?.dFlags?.setFlag("characters_name", ElementTag(name), null)
 		}
 
-	var age: UInt 				set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
+	val age: UInt? get() = dateOfBirth?.until(FablesLocalDate.now(), ChronoUnit.YEARS)?.toUInt()
 	var description: String 	set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 	var gender: Gender set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 	var race: Race set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
@@ -115,11 +118,11 @@ class Character : DataEntity<Int, Character> {
 				race: Race,
 				gender: Gender,
 				stats: CharacterStats,
-				age: UInt,
 				description: String,
 				lastSeen: Instant? = null,
 				createdAt: Instant? = Instant.now(),
 				isDead: Boolean = false,
+				dateOfBirth: FablesLocalDate?,
 				diedAt: Instant? = null,
 				isShelved: Boolean = false,
 				shelvedAt: Instant? = null,
@@ -131,10 +134,10 @@ class Character : DataEntity<Int, Character> {
 		this.race = race
 		this.gender = gender
 		this.stats = stats
-		this.age = age
 		this.description = description
 		this.lastSeen = lastSeen
 		this.createdAt = createdAt
+		this.dateOfBirth = dateOfBirth
 		this.isDead = isDead
 		this.isShelved = isShelved
 		this.diedAt = diedAt

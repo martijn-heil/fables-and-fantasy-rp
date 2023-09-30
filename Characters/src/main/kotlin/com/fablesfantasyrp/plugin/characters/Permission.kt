@@ -8,7 +8,7 @@ object Permission {
 	object Change {
 		private const val prefix = Permission.Command.Characters.prefix + ".change"
 		const val Description = "${prefix}.description"
-		const val Age = "${prefix}.age"
+		const val DateOfBirth = "${prefix}.dateofbirth"
 		const val Name = "${prefix}.name"
 		const val Stats = "${prefix}.stats"
 		const val Race = "${prefix}.race"

@@ -8,17 +8,20 @@ import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.text.join
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.parseLinks
+import com.fablesfantasyrp.plugin.time.javatime.FablesLocalDate
 import com.fablesfantasyrp.plugin.utils.Services
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.milkbowl.vault.chat.Chat
 import org.apache.commons.lang.WordUtils
 import org.bukkit.command.CommandSender
 import org.ocpsoft.prettytime.PrettyTime
+import java.time.format.TextStyle
 
 class CharacterCardGeneratorImpl(private val creatureSizeCalculator: CreatureSizeCalculator) : CharacterCardGenerator {
 	override fun card(character: Character, observer: CommandSender?): Component {
@@ -56,7 +59,7 @@ class CharacterCardGeneratorImpl(private val creatureSizeCalculator: CreatureSiz
 				"<metagamer_warning>" +
 				"<green>" +
 				"<change_name> Name: <white><name></white><newline>" +
-				"<change_age> Age: <white><age></white><newline>" +
+				"<change_dateofbirth> Age: <white><age></white><newline>" +
 				"<change_gender> Gender: <white><gender></white><newline>" +
 				"<change_race> Race: <white><race></white><newline>" +
 				"<black>[E]</black> Creature size: <white><creature_size></white><newline>" +
@@ -79,7 +82,12 @@ class CharacterCardGeneratorImpl(private val creatureSizeCalculator: CreatureSiz
 				else Component.empty()
 			),
 			Placeholder.component("name", Component.text(character.name)),
-			Placeholder.component("age", Component.text(character.age.toString())),
+			Placeholder.component("age", character.age?.let { age ->
+				Component.text(age.toString()).hoverEvent(
+				HoverEvent.showText(Component.text("Date of birth: " + formatDateFancy(character.dateOfBirth!!))
+					.color(NamedTextColor.GRAY)
+					.decoration(TextDecoration.ITALIC, false)))
+			} ?: Component.text("Unknown")),
 			Placeholder.unparsed("gender", character.gender.toString().replaceFirstChar { it.uppercaseChar() }),
 			Placeholder.unparsed("race", character.race.toString()),
 			Placeholder.unparsed("creature_size", creatureSize.displayName),
@@ -89,7 +97,7 @@ class CharacterCardGeneratorImpl(private val creatureSizeCalculator: CreatureSiz
 			Placeholder.component("stats", statsMessage),
 			Placeholder.unparsed("last_seen", character.lastSeen?.let { PrettyTime().format(it) } ?: "unknown"),
 			Placeholder.component("change_name", editButton(observer == null || authorizer.mayEditName(observer, character).result, "name")),
-			Placeholder.component("change_age", editButton(observer == null || authorizer.mayEditAge(observer, character).result, "age")),
+			Placeholder.component("change_dateofbirth", editButton(observer == null || authorizer.mayEditDateOfBirth(observer, character).result, "dateofbirth")),
 			Placeholder.component("change_description", editButton(observer == null || authorizer.mayEditDescription(observer, character).result, "description")),
 			Placeholder.component("change_race", editButton(observer == null || authorizer.mayEditRace(observer, character).result, "race")),
 			Placeholder.component("change_gender", editButton(observer == null || authorizer.mayEditGender(observer, character).result, "gender")),
@@ -119,5 +127,12 @@ class CharacterCardGeneratorImpl(private val creatureSizeCalculator: CreatureSiz
 				Component.text(it.displayName).hoverEvent(HoverEvent.showText(description))
 			}
 		)
+	}
+
+	private fun formatDateFancy(date: FablesLocalDate): String {
+		val dayOfWeekName = date.dayOfWeek.getDisplayName(TextStyle.FULL)
+		val monthName = date.getMonth().getDisplayName(TextStyle.FULL)
+
+		return "$dayOfWeekName ${date.dayOfMonth}, $monthName, ${date.year}"
 	}
 }

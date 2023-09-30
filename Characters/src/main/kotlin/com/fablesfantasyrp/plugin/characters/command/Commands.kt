@@ -142,7 +142,7 @@ class Commands(private val plugin: JavaPlugin,
 				val character = characterRepository.create(Character(
 						id = profile.id,
 						name = info.name,
-						age = info.age,
+						dateOfBirth = info.dateOfBirth,
 						description = info.description,
 						gender = info.gender,
 						race = info.race,
@@ -351,26 +351,14 @@ class Commands(private val plugin: JavaPlugin,
 		}
 
 		inner class Change {
-			@Command(aliases = ["age"], desc = "Set a character's age")
-			fun age(@Sender sender: Player, @CommandTarget target: Character) {
-				authorizer.mayEditAge(sender, target).orElse { throw AuthorizationException(it) }
+			@Command(aliases = ["dateofbirth"], desc = "Set a character's date of birth")
+			fun dateofbirth(@Sender sender: Player, @CommandTarget target: Character) {
+				authorizer.mayEditDateOfBirth(sender, target).orElse { throw AuthorizationException(it) }
 
 				plugin.launch {
-					val age = sender.promptChat("$SYSPREFIX Please enter ${target.name}'s new age")
-							.let {
-								it.toUIntOrNull() ?: run {
-									sender.sendError("Invalid number '$it'")
-									return@launch
-								}
-							}
-
-					if (age < 13U || age > 1000U) {
-						sender.sendError("Your age must be at least 13 and at most 1000")
-						return@launch
-					}
-
-					target.age = age
-					sender.sendMessage("$SYSPREFIX Changed ${target.name}'s age to $age")
+					val newDate = promptDateOfBirth(sender)
+					target.dateOfBirth = newDate
+					sender.sendMessage("$SYSPREFIX Date of birth changed!")
 				}
 			}
 

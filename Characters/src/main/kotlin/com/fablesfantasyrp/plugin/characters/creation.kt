@@ -20,6 +20,8 @@ import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.text.join
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.sendError
+import com.fablesfantasyrp.plugin.time.gui.DatePicker
+import com.fablesfantasyrp.plugin.time.javatime.FablesLocalDate
 import com.fablesfantasyrp.plugin.utils.Services
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.retry
@@ -38,10 +40,11 @@ import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.inventory.ItemStack
 import org.koin.core.context.GlobalContext
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 import kotlin.coroutines.cancellation.CancellationException
 
 data class NewCharacterData(val name: String,
-							val age: UInt,
+							val dateOfBirth: FablesLocalDate?,
 							val gender: Gender,
 							val race: Race,
 							val description: String,
@@ -112,7 +115,7 @@ private suspend fun promptRace(player: Player, allowedRaces: Collection<Race>): 
 }
 
 private suspend fun promptGender(player: Player): Gender {
-	return player.promptGui(GuiSingleChoice<Gender>(FablesCharacters.instance,
+	return player.promptGui(GuiSingleChoice<Gender>(PLUGIN,
 		"Please choose a gender",
 		Gender.values().asSequence(),
 		{
@@ -126,17 +129,13 @@ private suspend fun promptGender(player: Player): Gender {
 	))
 }
 
-private suspend fun promptAge(player: Player, characterName: String): UInt {
+suspend fun promptDateOfBirth(player: Player): FablesLocalDate {
 	return flow {
-		val message = miniMessage.deserialize("<gray>What is the age of <yellow><character_name></yellow>?</gray> " +
-			"<dark_gray>(between 13 and 1000)</dark_gray>",
-			Placeholder.unparsed("character_name", characterName))
-
-		val num = player.promptChat(message).toUIntOrNull()
-		if (num == null) throw IllegalArgumentException("Could not parse integer")
-		if (num < 13U) throw IllegalArgumentException("Age must be at least 13")
-		if (num > 1000U) throw IllegalArgumentException("Age may not be greater than 1000")
-		emit(num)
+		val dateOfBirth = DatePicker(PLUGIN, "Please pick date of birth").execute(player)
+		val age = dateOfBirth.until(FablesLocalDate.now(), ChronoUnit.YEARS)
+		if (age < 13) throw IllegalArgumentException("Age must be at least 13")
+		if (age> 1000) throw IllegalArgumentException("Age may not be greater than 1000")
+		emit(dateOfBirth)
 	}.retry {
 		if (it is IllegalArgumentException) {
 			player.sendError(it.message ?: "unknown"); true
@@ -170,13 +169,13 @@ suspend fun promptNewCharacterInfo(player: Player, allowedRaces: Collection<Race
 	player.sendMessage(miniMessage.deserialize("<gray>Let's create your brand new character!</gray>"))
 
 	val name = promptName(player)
-	val age = promptAge(player, name)
 	val gender = promptGender(player)
 
 	player.sendMessage(miniMessage.deserialize("<gray>Your character's gender is <yellow><gender></yellow>!</gray>",
 			Placeholder.unparsed("gender", gender.toString())))
 
 	val race = promptRace(player, allowedRaces)
+	val dateOfBirth = if (race != Race.OTHER) promptDateOfBirth(player) else null
 
 	val description = player.promptChat(miniMessage.deserialize("<gray>What is the description of <yellow><name></yellow>?</gray>",
 			Placeholder.unparsed("name", name)))
@@ -211,7 +210,7 @@ suspend fun promptNewCharacterInfo(player: Player, allowedRaces: Collection<Race
 
 	val traits = promptTraits(player, race)
 
-	return NewCharacterData(name, age, gender, race, description, traits, stats)
+	return NewCharacterData(name, dateOfBirth, gender, race, description, traits, stats)
 }
 
 private val blockMovement = HashSet<Player>()
@@ -257,10 +256,10 @@ suspend fun forceCharacterCreation(player: Player,
 			race = newCharacterData.race,
 			gender = newCharacterData.gender,
 			stats = newCharacterData.stats,
-			age = newCharacterData.age,
 			description = newCharacterData.description,
+			dateOfBirth = newCharacterData.dateOfBirth,
 			lastSeen = Instant.now(),
-			createdAt = Instant.now()
+			createdAt = Instant.now(),
 	))
 
 	newCharacterData.traits.forEach { characterTraitRepository.linkToCharacter(character, it) }
