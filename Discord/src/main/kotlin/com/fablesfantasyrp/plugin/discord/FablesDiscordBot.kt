@@ -39,7 +39,7 @@ class FablesDiscordBot(private val plugin: JavaPlugin, private val config: Fable
 	private val token = config.token
 
 	private val COMMAND_PREFIX = "?"
-	private val IGNORE_COMMANDS = setOf("character", "whitelist", "parse")
+	private val IGNORE_COMMANDS = setOf("character", "parse")
 
 	suspend fun getMainDiscord() = kord.getGuildOrThrow(MAIN_DISCORD_ID)
 	suspend fun getSupportDiscord() = kord.getGuildOrThrow(SUPPORT_DISCORD_ID)
@@ -85,13 +85,15 @@ class FablesDiscordBot(private val plugin: JavaPlugin, private val config: Fable
 			if (command.isEmpty() || IGNORE_COMMANDS.contains(command.split(" ")[0])) return@on
 
 			val channel = message.channel
-			val sender = DiscordCommandSender(this.member!!.asUser()) {
+			val sender = DiscordCommandSender.build(this.member!!.asUser()) {
 				plugin.launch {
 					channel.createMessage(it)
 				}
 			}
 
-			if (message.getAuthorAsMemberOrNull()?.roleIds?.contains(WANDERER_ROLE_ID) != true) {
+			val mainDiscordMember = message.author?.asMemberOrNull(MAIN_DISCORD_ID)
+
+			if (mainDiscordMember?.roleIds?.contains(WANDERER_ROLE_ID) != true) {
 				sender.sendError("You must be a Wanderer to execute commands.")
 				return@on
 			}

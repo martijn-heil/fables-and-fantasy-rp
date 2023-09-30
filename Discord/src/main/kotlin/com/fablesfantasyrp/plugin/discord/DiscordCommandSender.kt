@@ -2,6 +2,7 @@ package com.fablesfantasyrp.plugin.discord
 
 import com.fablesfantasyrp.plugin.utils.EDEN
 import com.fablesfantasyrp.plugin.utils.Services
+import dev.kord.common.entity.Snowflake
 import dev.kord.core.entity.User
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
@@ -14,7 +15,8 @@ import org.bukkit.permissions.PermissionAttachmentInfo
 import org.bukkit.plugin.Plugin
 import java.util.*
 
-class DiscordCommandSender(val user: User,
+class DiscordCommandSender private constructor(val user: User,
+											   val roles: HashSet<Snowflake>,
 						   private val sendMessageCallback: (message: String) -> Unit) : CommandSender {
 	private val vaultPermission = Services.get<net.milkbowl.vault.permission.Permission>()
 
@@ -31,7 +33,10 @@ class DiscordCommandSender(val user: User,
 	override fun isPermissionSet(name: String): Boolean = true
 	override fun isPermissionSet(perm: Permission): Boolean = true
 
-	override fun hasPermission(name: String): Boolean = vaultPermission.groupHas(EDEN, "discord", name)
+	override fun hasPermission(name: String): Boolean
+		= vaultPermission.groupHas(EDEN, "discord", name) ||
+		(roles.contains(COMMUNITY_TEAM_ROLE_ID) && vaultPermission.groupHas(EDEN, "log-whitelist", name))
+
 	override fun hasPermission(perm: Permission): Boolean = hasPermission(perm.name)
 
 	override fun recalculatePermissions() {}
@@ -48,4 +53,15 @@ class DiscordCommandSender(val user: User,
 	override fun addAttachment(plugin: Plugin, ticks: Int): PermissionAttachment? { throw NotImplementedError() }
 	override fun removeAttachment(attachment: PermissionAttachment) { throw NotImplementedError() }
 	override fun getEffectivePermissions(): MutableSet<PermissionAttachmentInfo> { throw NotImplementedError() }
+
+	companion object {
+		suspend fun build(user: User, sendMessageCallback: (message: String) -> Unit): DiscordCommandSender {
+			val roles = HashSet<Snowflake>()
+
+			val member = user.asMemberOrNull(MAIN_DISCORD_ID)
+			member?.roles?.collect { roles.add(it.id) }
+
+			return DiscordCommandSender(user, roles, sendMessageCallback)
+		}
+	}
 }
