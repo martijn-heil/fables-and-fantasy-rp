@@ -144,7 +144,7 @@ class Character : DataEntity<Int, Character> {
 
 	fun checkNaturalDeath() {
 		val today = FablesLocalDate.now()
-		if (dateOfNaturalDeath != null && today.isAfter(dateOfNaturalDeath!!)) {
+		if (dateOfNaturalDeath != null && (today == dateOfNaturalDeath || today.isAfter(dateOfNaturalDeath!!))) {
 			this.isDead = true
 			Services.get<ProfileManager>().getCurrentForProfile(profile)
 				?.sendMessage(miniMessage.deserialize("<prefix> <red>" +
