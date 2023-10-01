@@ -18,6 +18,7 @@ data class CharacterData(
 	val lastSeen: Instant? = null,
 	val createdAt: Instant? = Instant.now(),
 	val dateOfBirth: FablesLocalDate?,
+	val dateOfNaturalDeath: FablesLocalDate?,
 	val isDead: Boolean = false,
 	val diedAt: Instant? = null,
 	val isShelved: Boolean = false,

@@ -13,9 +13,9 @@ import java.time.format.TextStyle
 
 class DatePicker(plugin: JavaPlugin, title: String)
 	: ResultProducingInventoryGui<FablesLocalDate>(plugin, title, arrayOf(
-		"   123   ",
+		"   321   ",
 		"   dmy   ",
-		"   456   ",
+		"   654   ",
 		"    v    ")) {
 	private var date = FablesLocalDate.now()
 		set(value) {

@@ -18,4 +18,5 @@ interface ProfileManager {
 	fun getCurrentForPlayer(player: Player): Profile?
 	fun stopTracking(player: Player)
 	fun getCurrentForProfile(profile: Profile): Player?
+	fun getActive(): Map<Player, Profile>
 }

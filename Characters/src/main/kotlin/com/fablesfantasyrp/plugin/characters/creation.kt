@@ -258,6 +258,7 @@ suspend fun forceCharacterCreation(player: Player,
 			stats = newCharacterData.stats,
 			description = newCharacterData.description,
 			dateOfBirth = newCharacterData.dateOfBirth,
+			dateOfNaturalDeath = null,
 			lastSeen = Instant.now(),
 			createdAt = Instant.now(),
 	))

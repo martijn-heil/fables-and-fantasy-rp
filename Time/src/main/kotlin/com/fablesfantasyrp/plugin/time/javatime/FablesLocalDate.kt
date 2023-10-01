@@ -123,20 +123,20 @@ class FablesLocalDate private constructor(val year: Int, private val month: Int,
 	override fun with(field: TemporalField, newValue: Long): FablesLocalDate {
 		return if (field is ChronoField) {
 			field.checkValidValue(newValue)
-			when (field.ordinal) {
-				1 -> withDayOfMonth(newValue.toInt())
-				2 -> withDayOfYear(newValue.toInt())
-				3 -> plusWeeks(newValue - getLong(ChronoField.ALIGNED_WEEK_OF_MONTH))
-				4 -> withYear((if (year >= 1) newValue else 1L - newValue).toInt())
-				5 -> plusDays(newValue - dayOfWeek.value.toLong())
-				6 -> plusDays(newValue - getLong(ChronoField.ALIGNED_DAY_OF_WEEK_IN_MONTH))
-				7 -> plusDays(newValue - getLong(ChronoField.ALIGNED_DAY_OF_WEEK_IN_YEAR))
-				8 -> ofEpochDay(newValue)
-				9 -> plusWeeks(newValue - getLong(ChronoField.ALIGNED_WEEK_OF_YEAR))
-				10 -> withMonth(newValue.toInt())
-				11 -> plusMonths(newValue - prolepticMonth)
-				12 -> withYear(newValue.toInt())
-				13 -> if (getLong(ChronoField.ERA) == newValue) this else withYear(1 - year)
+			when (field) {
+				ChronoField.DAY_OF_MONTH -> withDayOfMonth(newValue.toInt())
+				ChronoField.DAY_OF_YEAR -> withDayOfYear(newValue.toInt())
+				ChronoField.ALIGNED_WEEK_OF_MONTH -> plusWeeks(newValue - getLong(ChronoField.ALIGNED_WEEK_OF_MONTH))
+				ChronoField.YEAR_OF_ERA -> withYear((if (year >= 1) newValue else 1L - newValue).toInt())
+				ChronoField.DAY_OF_WEEK -> plusDays(newValue - dayOfWeek.value.toLong())
+				ChronoField.ALIGNED_DAY_OF_WEEK_IN_MONTH -> plusDays(newValue - getLong(ChronoField.ALIGNED_DAY_OF_WEEK_IN_MONTH))
+				ChronoField.ALIGNED_DAY_OF_WEEK_IN_YEAR -> plusDays(newValue - getLong(ChronoField.ALIGNED_DAY_OF_WEEK_IN_YEAR))
+				ChronoField.EPOCH_DAY -> ofEpochDay(newValue)
+				ChronoField.ALIGNED_WEEK_OF_YEAR -> plusWeeks(newValue - getLong(ChronoField.ALIGNED_WEEK_OF_YEAR))
+				ChronoField.MONTH_OF_YEAR -> withMonth(newValue.toInt())
+				ChronoField.PROLEPTIC_MONTH -> plusMonths(newValue - prolepticMonth)
+				ChronoField.YEAR -> withYear(newValue.toInt())
+				ChronoField.ERA -> if (getLong(ChronoField.ERA) == newValue) this else withYear(1 - year)
 				else -> throw UnsupportedTemporalTypeException("Unsupported field: $field")
 			}
 		} else {
@@ -181,15 +181,15 @@ class FablesLocalDate private constructor(val year: Int, private val month: Int,
 
 	override fun plus(amountToAdd: Long, unit: TemporalUnit): FablesLocalDate {
 		return if (unit is ChronoUnit) {
-			when (unit.ordinal) {
-				1 -> plusDays(amountToAdd)
-				2 -> plusWeeks(amountToAdd)
-				3 -> plusMonths(amountToAdd)
-				4 -> plusYears(amountToAdd)
-				5 -> plusYears(Math.multiplyExact(amountToAdd, 10))
-				6 -> plusYears(Math.multiplyExact(amountToAdd, 100))
-				7 -> plusYears(Math.multiplyExact(amountToAdd, 1000))
-				8 -> this.with(ChronoField.ERA, Math.addExact(getLong(ChronoField.ERA), amountToAdd))
+			when (unit) {
+				ChronoUnit.DAYS -> plusDays(amountToAdd)
+				ChronoUnit.WEEKS -> plusWeeks(amountToAdd)
+				ChronoUnit.MONTHS -> plusMonths(amountToAdd)
+				ChronoUnit.YEARS -> plusYears(amountToAdd)
+				ChronoUnit.DECADES -> plusYears(Math.multiplyExact(amountToAdd, 10))
+				ChronoUnit.CENTURIES -> plusYears(Math.multiplyExact(amountToAdd, 100))
+				ChronoUnit.MILLENNIA -> plusYears(Math.multiplyExact(amountToAdd, 1000))
+				ChronoUnit.ERAS -> this.with(ChronoField.ERA, Math.addExact(getLong(ChronoField.ERA), amountToAdd))
 				else -> throw UnsupportedTemporalTypeException("Unsupported unit: $unit")
 			}
 		} else {
@@ -287,15 +287,15 @@ class FablesLocalDate private constructor(val year: Int, private val month: Int,
 	override fun until(endExclusive: Temporal, unit: TemporalUnit): Long {
 		val end = from(endExclusive)
 		return if (unit is ChronoUnit) {
-			when (unit.ordinal) {
-				1 -> daysUntil(end)
-				2 -> daysUntil(end) / DAYS_IN_WEEK
-				3 -> monthsUntil(end)
-				4 -> monthsUntil(end) / 12L
-				5 -> monthsUntil(end) / 120L
-				6 -> monthsUntil(end) / 1200L
-				7 -> monthsUntil(end) / 12000L
-				8 -> end.getLong(ChronoField.ERA) - getLong(ChronoField.ERA)
+			when (unit) {
+				ChronoUnit.DAYS -> daysUntil(end)
+				ChronoUnit.WEEKS -> daysUntil(end) / DAYS_IN_WEEK
+				ChronoUnit.MONTHS -> monthsUntil(end)
+				ChronoUnit.YEARS -> monthsUntil(end) / 12L
+				ChronoUnit.DECADES -> monthsUntil(end) / 120L
+				ChronoUnit.CENTURIES -> monthsUntil(end) / 1200L
+				ChronoUnit.MILLENNIA -> monthsUntil(end) / 12000L
+				ChronoUnit.ERAS -> end.getLong(ChronoField.ERA) - getLong(ChronoField.ERA)
 				else -> throw UnsupportedTemporalTypeException("Unsupported unit: $unit")
 			}
 		} else {

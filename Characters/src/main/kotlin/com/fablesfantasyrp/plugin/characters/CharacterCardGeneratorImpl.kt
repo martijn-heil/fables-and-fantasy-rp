@@ -8,20 +8,18 @@ import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.text.join
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.parseLinks
-import com.fablesfantasyrp.plugin.time.javatime.FablesLocalDate
+import com.fablesfantasyrp.plugin.time.formatDateLong
 import com.fablesfantasyrp.plugin.utils.Services
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.NamedTextColor
-import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.milkbowl.vault.chat.Chat
 import org.apache.commons.lang.WordUtils
 import org.bukkit.command.CommandSender
 import org.ocpsoft.prettytime.PrettyTime
-import java.time.format.TextStyle
 
 class CharacterCardGeneratorImpl(private val creatureSizeCalculator: CreatureSizeCalculator) : CharacterCardGenerator {
 	override fun card(character: Character, observer: CommandSender?): Component {
@@ -57,6 +55,7 @@ class CharacterCardGeneratorImpl(private val creatureSizeCalculator: CreatureSiz
 				"<gray><owner_info>, last seen: <last_seen></gray><newline>" +
 				"<red>Please do not metagame this information.</red><newline>" +
 				"<metagamer_warning>" +
+				"<dying_warning>" +
 				"<green>" +
 				"<change_name> Name: <white><name></white><newline>" +
 				"<change_dateofbirth> Age: <white><age></white><newline>" +
@@ -81,12 +80,17 @@ class CharacterCardGeneratorImpl(private val creatureSizeCalculator: CreatureSiz
 				if (isMetaGamer) miniMessage.deserialize("<dark_red>WARNING: This user is a registered metagamer.</dark_red><newline>")
 				else Component.empty()
 			),
+			Placeholder.component("dying_warning",
+				if (character.isDying) miniMessage.deserialize("<dark_red>WARNING: This character is dying of old age soon.</dark_red><newline>")
+				else Component.empty()
+			),
 			Placeholder.component("name", Component.text(character.name)),
 			Placeholder.component("age", character.age?.let { age ->
 				Component.text(age.toString()).hoverEvent(
-				HoverEvent.showText(Component.text("Date of birth: " + formatDateFancy(character.dateOfBirth!!))
-					.color(NamedTextColor.GRAY)
-					.decoration(TextDecoration.ITALIC, false)))
+				HoverEvent.showText(miniMessage.deserialize(
+					"<gray>Date of birth: <date_of_birth></gray>" +
+					Placeholder.unparsed("date_of_birth", formatDateLong(character.dateOfBirth!!))
+				)))
 			} ?: Component.text("Unknown")),
 			Placeholder.unparsed("gender", character.gender.toString().replaceFirstChar { it.uppercaseChar() }),
 			Placeholder.unparsed("race", character.race.toString()),
@@ -127,12 +131,5 @@ class CharacterCardGeneratorImpl(private val creatureSizeCalculator: CreatureSiz
 				Component.text(it.displayName).hoverEvent(HoverEvent.showText(description))
 			}
 		)
-	}
-
-	private fun formatDateFancy(date: FablesLocalDate): String {
-		val dayOfWeekName = date.dayOfWeek.getDisplayName(TextStyle.FULL)
-		val monthName = date.getMonth().getDisplayName(TextStyle.FULL)
-
-		return "$dayOfWeekName ${date.dayOfMonth}, $monthName, ${date.year}"
 	}
 }
