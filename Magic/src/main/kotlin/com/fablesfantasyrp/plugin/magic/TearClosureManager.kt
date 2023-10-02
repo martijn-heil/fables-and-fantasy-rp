@@ -2,13 +2,13 @@ package com.fablesfantasyrp.plugin.magic
 
 import com.fablesfantasyrp.plugin.location.location
 import com.fablesfantasyrp.plugin.magic.domain.entity.Tear
-import com.fablesfantasyrp.plugin.magic.domain.repository.EntityTearRepository
+import com.fablesfantasyrp.plugin.magic.domain.repository.TearRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.utils.distanceSafe
 import org.bukkit.plugin.Plugin
 
 class TearClosureManager(private val plugin: Plugin,
-						 private val tearRepository: EntityTearRepository<*>,
+						 private val tearRepository: TearRepository,
 						 private val profileManager: ProfileManager) {
 	private val server = plugin.server
 	private val tearsScheduledForRemoval = HashMap<Tear, Long>()

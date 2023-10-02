@@ -26,6 +26,6 @@ class TearRepositoryImpl : SimpleMapRepository<Long, Tear>(), TearRepository, Ha
 	}
 
 	override fun forLocation(location: Location): Tear? {
-		return this.all().find { it.location == location }
+		return this.all().find { it.location.distance(location) < 0.1 }
 	}
 }

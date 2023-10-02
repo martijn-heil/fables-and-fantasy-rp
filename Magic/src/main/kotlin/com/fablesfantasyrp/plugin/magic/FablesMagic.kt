@@ -14,7 +14,10 @@ import com.fablesfantasyrp.plugin.magic.dal.repository.SpellDataRepository
 import com.fablesfantasyrp.plugin.magic.dal.repository.h2.H2MageDataRepository
 import com.fablesfantasyrp.plugin.magic.dal.repository.yaml.YamlSpellDataRepository
 import com.fablesfantasyrp.plugin.magic.domain.mapper.MageMapper
-import com.fablesfantasyrp.plugin.magic.domain.repository.*
+import com.fablesfantasyrp.plugin.magic.domain.repository.MageRepository
+import com.fablesfantasyrp.plugin.magic.domain.repository.MageRepositoryImpl
+import com.fablesfantasyrp.plugin.magic.domain.repository.TearRepository
+import com.fablesfantasyrp.plugin.magic.domain.repository.TearRepositoryImpl
 import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
@@ -72,7 +75,6 @@ class FablesMagic : JavaPlugin(), KoinComponent {
 			single { H2MageDataRepository(fablesDatabase, get()) } bind MageDataRepository::class
 			singleOf(::MageMapper)
 			single { MageRepositoryImpl(get()).apply { init() } } bind MageRepository::class
-			singleOf(::EntityTearRepository)
 
 			singleOf(::TearRepositoryImpl) bind TearRepository::class
 			singleOf(::TearClosureManager)
