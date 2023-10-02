@@ -81,7 +81,7 @@ class Character : DataEntity<Int, Character> {
 		}
 
 	val isDying: Boolean
-		get() = !isDead && dateOfNaturalDeath != null && FablesLocalDate.now().until(dateOfNaturalDeath!!).toTotalMonths() <= 6
+		get() = !isDead && dateOfNaturalDeath != null && FablesLocalDate.now().until(dateOfNaturalDeath!!).toTotalMonths() < 6
 
 	var isShelved: Boolean
 		set(value) {

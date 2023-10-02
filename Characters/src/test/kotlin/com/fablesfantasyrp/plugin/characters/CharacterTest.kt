@@ -20,8 +20,10 @@ import org.bukkit.Bukkit
 import org.bukkit.plugin.SimpleServicesManager
 import org.junit.jupiter.api.Test
 import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 import java.time.Instant
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class CharacterTest {
@@ -44,6 +46,7 @@ internal class CharacterTest {
 		mockkStatic(Bukkit::class)
 		every { Bukkit.getServicesManager() } returns servicesManager
 
+		stopKoin()
 		startKoin {
 			modules(module {
 				single<ProfileManager> { profileManager }
@@ -55,26 +58,6 @@ internal class CharacterTest {
 
 	@Test
 	fun testIsDead() {
-		val profile = Profile(id = 0, null, null, true)
-
-		fun makeCharacter(dateOfNaturalDeath: FablesLocalDate)
-			= Character(
-				id = 0,
-				profile = profile,
-				name = "Character 1",
-				description = "Character 1 description",
-				stats = CharacterStats(),
-				race = Race.ATTIAN_HUMAN,
-				gender = Gender.MALE,
-				dateOfBirth = FablesLocalDate.of(1450, 1, 1),
-				dateOfNaturalDeath = dateOfNaturalDeath,
-				lastSeen = null,
-				createdAt = null,
-				diedAt = null,
-				shelvedAt = null,
-				changedStatsAt = null,
-			)
-
 		val character1 = makeCharacter(FablesLocalDate.of(1550, 2, 1))
 		val character2 = makeCharacter(FablesLocalDate.of(1550, 2, 2))
 		val character3 = makeCharacter(FablesLocalDate.of(1550, 2, 3))
@@ -97,22 +80,51 @@ internal class CharacterTest {
 
 		assertTrue { character1.isDead }
 		assertTrue { character2.isDead }
-		assertTrue { !character3.isDead }
+		assertFalse { character3.isDead }
 
 		assertTrue { character4.isDead }
 		assertTrue { character5.isDead }
 		assertTrue { character6.isDead }
 
-		assertTrue { !character7.isDead }
-		assertTrue { !character8.isDead }
-		assertTrue { !character9.isDead }
+		assertFalse { character7.isDead }
+		assertFalse { character8.isDead }
+		assertFalse { character9.isDead }
 
 		assertTrue { character10.isDead }
 		assertTrue { character11.isDead }
 		assertTrue { character12.isDead }
 
-		assertTrue { !character13.isDead }
-		assertTrue { !character14.isDead }
-		assertTrue { !character15.isDead }
+		assertFalse { character13.isDead }
+		assertFalse { character14.isDead }
+		assertFalse { character15.isDead }
 	}
+
+	@Test
+	fun testIsDying() {
+		val character1 = makeCharacter(FablesLocalDate.of(1550, 8, 1))
+		val character2 = makeCharacter(FablesLocalDate.of(1550, 8, 2))
+		val character3 = makeCharacter(FablesLocalDate.of(1550, 8, 3))
+
+		assertTrue { character1.isDying }
+		assertFalse { character2.isDying }
+		assertFalse { character3.isDying }
+	}
+
+	private fun makeCharacter(dateOfNaturalDeath: FablesLocalDate)
+		= Character(
+		id = 0,
+		profile = Profile(id = 0, null, null, true),
+		name = "Character 1",
+		description = "Character 1 description",
+		stats = CharacterStats(),
+		race = Race.ATTIAN_HUMAN,
+		gender = Gender.MALE,
+		dateOfBirth = FablesLocalDate.of(1450, 1, 1),
+		dateOfNaturalDeath = dateOfNaturalDeath,
+		lastSeen = null,
+		createdAt = null,
+		diedAt = null,
+		shelvedAt = null,
+		changedStatsAt = null,
+	)
 }
