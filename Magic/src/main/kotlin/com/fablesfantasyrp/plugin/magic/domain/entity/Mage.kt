@@ -73,11 +73,13 @@ class Mage : DataEntity<Long, Mage> {
 
 	private var isCasting = false
 
-	constructor(id: Long, magicPath: MagicPath, magicLevel: Int, spells: List<SpellData>) : super() {
+	constructor(id: Long, magicPath: MagicPath, magicLevel: Int, spells: List<SpellData>, dirtyMarker: DirtyMarker<Mage>? = null) : super() {
 		this.id = id
 		this.magicPath = magicPath
 		this.magicLevel = magicLevel
 		this.spells = spells
+
+		this.dirtyMarker = dirtyMarker
 	}
 
 	suspend fun tryCloseTear(tear: Tear): Boolean {

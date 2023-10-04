@@ -19,7 +19,8 @@ class MageMapper(private val child: MageDataRepository)
 		id = v.id,
 		magicLevel = v.magicLevel,
 		magicPath = v.magicPath,
-		spells = v.spells
+		spells = v.spells,
+		dirtyMarker = dirtyMarker
 	)
 
 	override fun convertToChild(v: Mage) = MageData(
