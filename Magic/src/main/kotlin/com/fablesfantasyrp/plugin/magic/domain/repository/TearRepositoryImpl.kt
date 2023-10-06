@@ -28,4 +28,10 @@ class TearRepositoryImpl : SimpleMapRepository<Long, Tear>(), TearRepository, Ha
 	override fun forLocation(location: Location): Tear? {
 		return this.all().find { it.location.distance(location) < 0.1 }
 	}
+
+	override fun destroy(v: Tear) {
+		super.destroy(v)
+		v.isDeleted = true
+		v.dirtyMarker = null
+	}
 }
