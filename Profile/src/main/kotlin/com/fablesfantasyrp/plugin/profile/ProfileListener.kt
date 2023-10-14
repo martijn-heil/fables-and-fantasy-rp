@@ -40,8 +40,8 @@ class ProfileListener(private val plugin: JavaPlugin,
 				val newProfile = selector.promptSelect(player, ownedProfiles)
 				profileManager.setCurrentForPlayer(player, newProfile)
 				player.sendMessage("$SYSPREFIX You are now profile #${newProfile.id}")
-			} catch (ex: ProfileOccupiedException) {
-				player.sendError("This profile is currently occupied.")
+			} catch (ex: ProfileSwitchException) {
+				player.sendError(ex.message ?: "An unexpected error occurred during profile switch. Please try another.")
 			} catch (_: CancellationException) {}
 		} while (profileManager.getCurrentForPlayer(player) == null)
 		require(profileManager.getCurrentForPlayer(player) != null)
