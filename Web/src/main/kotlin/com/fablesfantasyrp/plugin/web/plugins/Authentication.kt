@@ -17,7 +17,10 @@ import kotlinx.serialization.json.jsonPrimitive
 
 internal val ALLOWED_USERS = setOf("325953613924925452", "181845465829081088")
 
-fun Application.configureAuth(httpClient: HttpClient, discordClientId: String, discordClientSecret: String) {
+fun Application.configureAuth(httpClient: HttpClient,
+							  callbackUrl: String,
+							  discordClientId: String,
+							  discordClientSecret: String) {
 	install(Sessions) {
 		cookie<UserSession>("user_session", SessionStorageMemory())
 	}
@@ -33,7 +36,7 @@ fun Application.configureAuth(httpClient: HttpClient, discordClientId: String, d
 		}
 
 		oauth("auth-oauth-discord") {
-			urlProvider = { "http://localhost:7009/callback" }
+			urlProvider = { callbackUrl }
 			providerLookup = {
 				OAuthServerSettings.OAuth2ServerSettings(
 						name = "discord",

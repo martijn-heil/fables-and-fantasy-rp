@@ -4,6 +4,7 @@ bind:
 discord:
   client_id: ''
   client_secret: ''
+  oauth2_callback: 'https://api.game.fablesfantasyrp.com/callback'
 allowHosts:
   - 'localhost'
   - 'localhost:7009'

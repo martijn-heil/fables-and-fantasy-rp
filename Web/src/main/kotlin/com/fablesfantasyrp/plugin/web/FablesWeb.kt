@@ -56,6 +56,7 @@ class FablesWeb : JavaPlugin(), KoinComponent {
 
 		val discordClientId = config.getString("discord.client_id")!!
 		val discordClientSecret = config.getString("discord.client_secret")!!
+		val oAuth2Callback = config.getString("discord.oauth2_callback")!!
 		val port = config.getInt("bind.port")
 		val host = config.getString("bind.host")!!
 		val allowHosts = config.getStringList("allowHosts")
@@ -78,7 +79,7 @@ class FablesWeb : JavaPlugin(), KoinComponent {
 					}
 				}
 
-				configureAuth(get(), discordClientId, discordClientSecret)
+				configureAuth(get(), oAuth2Callback, discordClientId, discordClientSecret)
 				configureRequestValidation()
 				configureRouting(get())
 				configureSerialization()
