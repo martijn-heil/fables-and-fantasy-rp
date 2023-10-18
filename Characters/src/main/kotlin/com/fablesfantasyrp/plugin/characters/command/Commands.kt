@@ -328,6 +328,13 @@ class Commands(private val plugin: JavaPlugin,
 
 				target.profile.owner = to
 				sender.sendMessage("$SYSPREFIX Transferred ownership of ${target.name} to ${to.name}")
+
+				if (sender is Player) {
+					if (!authorizer.mayBecome(sender, target).result &&
+						profileManager.getCurrentForPlayer(sender) == target.profile) {
+						profileManager.stopTracking(sender)
+					}
+				}
 			}
 		}
 
