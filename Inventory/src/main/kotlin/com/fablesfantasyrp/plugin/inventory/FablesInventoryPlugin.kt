@@ -62,10 +62,10 @@ class FablesInventoryPlugin : JavaPlugin(), KoinComponent {
 		profileManager = get()
 		server.pluginManager.registerEvents(get<ProfileInventoryListener>(), this)
 
-		server.scheduler.scheduleSyncRepeatingTask(this, {
+		/*server.scheduler.scheduleSyncRepeatingTask(this, {
 			logger.info("Saving inventories..")
 			inventories.saveAll()
-		}, 0, 6000)
+		}, 0, 6000)*/
 	}
 
 	override fun onDisable() {

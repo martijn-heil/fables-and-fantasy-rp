@@ -147,7 +147,7 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 			WebHook().start()
 		}
 
-		server.scheduler.scheduleSyncRepeatingTask(this, {
+		/*server.scheduler.scheduleSyncRepeatingTask(this, {
 			logger.info("Saving characters..")
 			get<CharacterRepositoryImpl>().saveAllDirty()
 		}, 0, 6000)
@@ -155,14 +155,14 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 		server.scheduler.scheduleSyncRepeatingTask(this, {
 			logger.info("Saving character traits..")
 			get<CharacterTraitRepositoryImpl>().saveAllDirty()
-		}, 0, 6000)
+		}, 0, 6000)*/
 	}
 
 	override fun onDisable() {
 		logger.info("Unregistering commands")
 		commands.forEach { unregisterCommand(it) }
-		logger.info("CharacterRepository#saveAllDirty()")
 		get<CharacterRepositoryImpl>().saveAllDirty()
+		get<CharacterTraitRepositoryImpl>().saveAllDirty()
 		logger.info("unloadKoinModules()")
 		unloadKoinModules(koinModule)
 	}
