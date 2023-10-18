@@ -22,7 +22,9 @@ fun Application.configureAuth(httpClient: HttpClient,
 							  discordClientId: String,
 							  discordClientSecret: String) {
 	install(Sessions) {
-		cookie<UserSession>("user_session", SessionStorageMemory())
+		cookie<UserSession>("user_session", SessionStorageMemory()) {
+			cookie.secure = true
+		}
 	}
 
 	install(Authentication) {

@@ -36,6 +36,7 @@ val redirects = mutableMapOf<String, String>()
 
 class FablesWeb : JavaPlugin(), KoinComponent {
 	lateinit var koinModule: Module
+	private lateinit var nettyApplicationEngine: NettyApplicationEngine
 
 	override fun onEnable() {
 		instance = this
@@ -61,16 +62,19 @@ class FablesWeb : JavaPlugin(), KoinComponent {
 		val host = config.getString("bind.host")!!
 		val allowHosts = config.getStringList("allowHosts")
 
-		server.scheduler.scheduleSyncDelayedTask(this, {
-			embeddedServer(Netty, port = port, host = host) {
+		server.scheduler.scheduleAsyncDelayedTask(this, {
+			nettyApplicationEngine = embeddedServer(Netty, port = port, host = host) {
 				install(Resources)
 
 				install(CORS) {
-					allowHosts.forEach { allowHost(it) }
-					methods.addAll(HttpMethod.DefaultMethods)
 					allowCredentials = true
+
+					allowHosts.forEach { allowHost(it) }
+					HttpMethod.DefaultMethods.forEach { allowMethod(it) }
+
 					allowHeader(HttpHeaders.AccessControlAllowOrigin)
 					allowHeader(HttpHeaders.ContentType)
+					allowHeader("X-TRIGGER-CORS")
 				}
 
 				install(StatusPages) {
@@ -88,6 +92,7 @@ class FablesWeb : JavaPlugin(), KoinComponent {
 	}
 
 	override fun onDisable() {
+		nettyApplicationEngine.stop()
 		unloadKoinModules(koinModule)
 	}
 
