@@ -321,6 +321,8 @@ class Commands(private val plugin: JavaPlugin,
 		@Command(aliases = ["transfer"], desc = "Transfer a character to another player")
 		@Require(Permission.Command.Characters.Transfer)
 		fun transfer(@Sender sender: CommandSender, to: Player, @CommandTarget target: Character) {
+			authorizer.mayTransfer(sender, target).orElse { throw AuthorizationException(it) }
+
 			plugin.launch {
 				if (sender is Player) {
 					if (!sender.confirm("Transfer ${target.shortName} to ${to.name}?")) return@launch
@@ -516,6 +518,8 @@ class Commands(private val plugin: JavaPlugin,
 
 			@Command(aliases = ["owner"], desc = "Change a character's owner")
 			fun owner(@Sender sender: Player, @CommandTarget target: Character) {
+				authorizer.mayTransfer(sender, target).orElse { throw AuthorizationException(it) }
+
 				plugin.launch {
 					val playerName = sender.promptChat(
 						Component.text("Please enter the name of the player to transfer ${target.name} to:")
