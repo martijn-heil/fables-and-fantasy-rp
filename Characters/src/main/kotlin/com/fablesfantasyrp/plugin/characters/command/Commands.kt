@@ -38,6 +38,7 @@ import com.sk89q.intake.parametric.annotation.Optional
 import com.sk89q.intake.parametric.annotation.Range
 import com.sk89q.intake.parametric.annotation.Switch
 import com.sk89q.intake.util.auth.AuthorizationException
+import kotlinx.coroutines.async
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.format.NamedTextColor
@@ -317,6 +318,19 @@ class Commands(private val plugin: JavaPlugin,
 			sender.sendMessage("$SYSPREFIX Unshelved ${target.name}")
 		}
 
+		@Command(aliases = ["transfer"], desc = "Transfer a character to another player")
+		@Require(Permission.Command.Characters.Transfer)
+		fun transfer(@Sender sender: CommandSender, to: Player, @CommandTarget target: Character) {
+			plugin.launch {
+				if (sender is Player) {
+					if (!sender.confirm("Transfer ${target.shortName} to ${to.name}?")) return@launch
+				}
+
+				target.profile.owner = to
+				sender.sendMessage("$SYSPREFIX Transferred ownership of ${target.name} to ${to.name}")
+			}
+		}
+
 		inner class Stats {
 			@Command(aliases = ["set"], desc = "Set character stats")
 			@Require(Permission.Command.Characters.Stats.Set)
@@ -490,6 +504,32 @@ class Commands(private val plugin: JavaPlugin,
 					))
 					target.gender = gender
 					sender.sendMessage("$SYSPREFIX Changed ${target.name}'s gender to $gender")
+				}
+			}
+
+			@Command(aliases = ["owner"], desc = "Change a character's owner")
+			fun owner(@Sender sender: Player, @CommandTarget target: Character) {
+				plugin.launch {
+					val playerName = sender.promptChat(
+						Component.text("Please enter the name of the player to transfer ${target.name} to:")
+							.color(NamedTextColor.GRAY)
+					)
+					val player = async { server.getOfflinePlayer(playerName) }.await()
+
+					if (!player.isOnline && !player.hasPlayedBefore()) {
+						sender.sendError("Player not found.")
+						return@launch
+					}
+
+					if (!sender.confirm("Transfer ${target.shortName} to ${player.name}?")) return@launch
+
+					target.profile.owner = player
+					sender.sendMessage("$SYSPREFIX Transferred ownership of ${target.name} to ${player.name}")
+
+					if (!authorizer.mayBecome(sender, target).result &&
+						profileManager.getCurrentForPlayer(sender) == target.profile) {
+						profileManager.stopTracking(sender)
+					}
 				}
 			}
 		}

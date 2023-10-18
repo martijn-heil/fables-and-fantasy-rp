@@ -82,6 +82,10 @@ class CharacterAuthorizerImpl(private val characters: CharacterRepository) : Cha
 	override fun mayEditStats(who: Permissible, what: Character, allowShelved: Boolean): AuthorizationResult
 		= mayEditProperty(who, what, allowShelved, Permission.Change.Stats)
 
+	override fun mayTransfer(who: Permissible, what: Character): AuthorizationResult {
+		return mayEdit(who, what, false)
+	}
+
 	private fun mayEditProperty(who: Permissible, what: Character, allowShelved: Boolean, permission: String): AuthorizationResult {
 		mayEdit(who, what, allowShelved).orElse { return AuthorizationResult(false, it) }
 		if (!what.isStaffCharacter && !who.hasPermission(permission)) {

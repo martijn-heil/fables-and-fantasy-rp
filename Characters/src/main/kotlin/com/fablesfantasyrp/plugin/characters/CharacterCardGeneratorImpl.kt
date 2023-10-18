@@ -18,6 +18,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.milkbowl.vault.chat.Chat
 import org.apache.commons.lang.WordUtils
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 import org.ocpsoft.prettytime.PrettyTime
 
 class CharacterCardGeneratorImpl(private val creatureSizeCalculator: CreatureSizeCalculator) : CharacterCardGenerator {
@@ -35,11 +36,11 @@ class CharacterCardGeneratorImpl(private val creatureSizeCalculator: CreatureSiz
 			)
 		}.join(Component.newline()).asIterable()).build()
 
-		fun editButton(canEdit: Boolean, property: String)
+		fun editButton(canEdit: Boolean, property: String, tooltip: String? = null)
 			= if (canEdit)
 			Component.text("[E]")
 				.color(NamedTextColor.GOLD)
-				.hoverEvent(HoverEvent.showText(Component.text("Click to change!")))
+				.hoverEvent(HoverEvent.showText(Component.text(tooltip ?: "Click to change!")))
 				.clickEvent(ClickEvent.runCommand("/char change $property #${character.id}"))
 		else Component.text("[E]").color(NamedTextColor.DARK_GRAY)
 
@@ -48,10 +49,12 @@ class CharacterCardGeneratorImpl(private val creatureSizeCalculator: CreatureSiz
 
 		val creatureSize = creatureSizeCalculator.getCreatureSize(character)
 
+		val mayTransfer = observer != null && observer is Player && authorizer.mayTransfer(observer, character).result
+
 		return miniMessage.deserialize(
 			"<newline>" +
 				"<gray>═════ <white><player_name></white> <dark_gray>Character #<id></dark_gray> <status>═════</gray><newline>" +
-				"<gray><owner_info>, last seen: <last_seen></gray><newline>" +
+				"<change_owner> <gray><owner_info>, last seen: <last_seen></gray><newline>" +
 				"<red>Please do not metagame this information.</red><newline>" +
 				"<metagamer_warning>" +
 				"<green>" +
@@ -94,6 +97,7 @@ class CharacterCardGeneratorImpl(private val creatureSizeCalculator: CreatureSiz
 			Placeholder.component("change_race", editButton(observer == null || authorizer.mayEditRace(observer, character).result, "race")),
 			Placeholder.component("change_gender", editButton(observer == null || authorizer.mayEditGender(observer, character).result, "gender")),
 			Placeholder.component("change_stats", editButton(observer == null || authorizer.mayEditStats(observer, character).result, "stats")),
+			Placeholder.component("change_owner", editButton(mayTransfer, "owner", "Click to transfer this character to another player.")),
 			Placeholder.component("status", if (character.isDead) Component.text("(dead) ").color(NamedTextColor.RED)
 			else if (character.isShelved) Component.text("(shelved) ").color(NamedTextColor.YELLOW)
 			else Component.empty())

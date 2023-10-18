@@ -31,6 +31,7 @@ object Permission {
 			const val SetRace = "${prefix}.setrace"
 			const val SetAge = "${prefix}.setage"
 			const val Become = "${prefix}.become"
+			const val Transfer = "${prefix}.transfer"
 
 			object Stats {
 				private const val prefix = Permission.Command.Characters.prefix + ".stats"
