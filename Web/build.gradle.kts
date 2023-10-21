@@ -27,4 +27,5 @@ dependencies {
     api("io.ktor:ktor-server-cors:$ktor_version")
     api("io.ktor:ktor-server-request-validation:$ktor_version")
     api("io.ktor:ktor-server-status-pages:$ktor_version")
+    api("io.ktor:ktor-server-forwarded-header:$ktor_version")
 }

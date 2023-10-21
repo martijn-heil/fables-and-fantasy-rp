@@ -14,6 +14,7 @@ import io.ktor.server.auth.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.cors.routing.*
+import io.ktor.server.plugins.forwardedheaders.*
 import io.ktor.server.plugins.requestvalidation.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.resources.*
@@ -65,6 +66,8 @@ class FablesWeb : JavaPlugin(), KoinComponent {
 		server.scheduler.scheduleAsyncDelayedTask(this, {
 			nettyApplicationEngine = embeddedServer(Netty, port = port, host = host) {
 				install(Resources)
+				install(ForwardedHeaders)
+				install(XForwardedHeaders)
 
 				install(CORS) {
 					allowCredentials = true
