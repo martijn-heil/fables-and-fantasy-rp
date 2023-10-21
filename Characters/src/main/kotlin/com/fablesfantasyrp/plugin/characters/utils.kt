@@ -49,7 +49,7 @@ val Profile.shortName: String
 	}
 
 fun calculateDateOfNaturalDeath(dateOfBirth: FablesLocalDate, medianAge: Int): FablesLocalDate {
-	return dateOfBirth.plusYears(Random().nextGaussian(medianAge.toDouble(), 5.0).roundToLong())
+	return dateOfBirth.plusYears(Random().nextGaussian(medianAge.toDouble(), 0.075 * medianAge).roundToLong())
 }
 
 fun sendDyingNotification(player: Player, character: Character) {
