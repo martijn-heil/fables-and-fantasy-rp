@@ -5,7 +5,6 @@ import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.sk89q.worldguard.WorldGuard
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin
-import org.bukkit.ChatColor.*
 import org.bukkit.Server
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
@@ -45,6 +44,7 @@ class FablesAlternateMechanics : JavaPlugin(), KoinComponent {
 			singleOf(::NoLeashingWhileInVehicle) bind Mechanic::class
 			singleOf(::NoTotemOfUndying) bind Mechanic::class
 			singleOf(::FarmReplant) bind Mechanic::class
+			singleOf(::InvisibleItemFrames) bind Mechanic::class
 		}
 		loadKoinModules(koinModule)
 
