@@ -10,7 +10,6 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
-import io.ktor.server.auth.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.cors.routing.*
@@ -19,11 +18,9 @@ import io.ktor.server.plugins.requestvalidation.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.resources.*
 import io.ktor.server.response.*
-import kotlinx.serialization.Serializable
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.unloadKoinModules
 import org.koin.core.module.Module
@@ -56,9 +53,7 @@ class FablesWeb : JavaPlugin(), KoinComponent {
 		}
 		loadKoinModules(koinModule)
 
-		val discordClientId = config.getString("discord.client_id")!!
-		val discordClientSecret = config.getString("discord.client_secret")!!
-		val oAuth2Callback = config.getString("discord.oauth2_callback")!!
+		val token = config.getString("auth.token")!!
 		val port = config.getInt("bind.port")
 		val host = config.getString("bind.host")!!
 		val allowHosts = config.getStringList("allowHosts")
@@ -77,7 +72,6 @@ class FablesWeb : JavaPlugin(), KoinComponent {
 
 					allowHeader(HttpHeaders.AccessControlAllowOrigin)
 					allowHeader(HttpHeaders.ContentType)
-					allowHeader("X-TRIGGER-CORS")
 				}
 
 				install(StatusPages) {
@@ -86,9 +80,9 @@ class FablesWeb : JavaPlugin(), KoinComponent {
 					}
 				}
 
-				configureAuth(get(), oAuth2Callback, discordClientId, discordClientSecret)
+				configureAuth(token)
 				configureRequestValidation()
-				configureRouting(get())
+				configureRouting()
 				configureSerialization()
 			}.start(wait = false)
 		}, 1)
@@ -103,10 +97,3 @@ class FablesWeb : JavaPlugin(), KoinComponent {
 		lateinit var instance: FablesWeb
 	}
 }
-
-data class UserSession(val state: String, val token: String) : Principal
-@Serializable
-data class UserInfo(
-		val id: String,
-		val name: String,
-)
