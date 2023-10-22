@@ -56,7 +56,6 @@ class FablesWeb : JavaPlugin(), KoinComponent {
 		val token = config.getString("auth.token")!!
 		val port = config.getInt("bind.port")
 		val host = config.getString("bind.host")!!
-		val allowHosts = config.getStringList("allowHosts")
 
 		server.scheduler.scheduleAsyncDelayedTask(this, {
 			nettyApplicationEngine = embeddedServer(Netty, port = port, host = host) {
@@ -65,13 +64,10 @@ class FablesWeb : JavaPlugin(), KoinComponent {
 				install(XForwardedHeaders)
 
 				install(CORS) {
-					allowCredentials = true
-
-					allowHosts.forEach { allowHost(it) }
+					anyHost()
 					HttpMethod.DefaultMethods.forEach { allowMethod(it) }
 
-					allowHeader(HttpHeaders.AccessControlAllowOrigin)
-					allowHeader(HttpHeaders.ContentType)
+					this.allowHeaders { true }
 				}
 
 				install(StatusPages) {
