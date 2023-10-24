@@ -18,4 +18,5 @@ dependencies {
     implementation(project(":Text"))
     implementation(project(":Gui"))
     implementation(project(":Targeting"))
+    implementation(project(":Web"))
 }

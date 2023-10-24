@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.magic
 
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
+import com.fablesfantasyrp.plugin.characters.web.WebHook
 import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.magic.authorizer.MagicTypeAuthorizer
@@ -107,6 +108,11 @@ class FablesMagic : JavaPlugin(), KoinComponent {
 		val dispatcher = rootDispatcherNode.dispatcher
 
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
+
+		if (server.pluginManager.isPluginEnabled("FablesWeb")) {
+			logger.info("Enabling FablesWeb integration")
+			WebHook().start()
+		}
 
 		/*server.scheduler.scheduleSyncRepeatingTask(this, {
 			logger.info("Saving mages..")

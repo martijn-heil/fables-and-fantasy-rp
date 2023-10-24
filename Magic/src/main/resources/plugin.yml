@@ -17,5 +17,7 @@ depend:
   - FablesProfile
   - FablesLocation
   - NinCommands
+softdepend:
+  - FablesWeb
 main: com.fablesfantasyrp.plugin.magic.FablesMagic
 api-version: @bukkit_api_version@
