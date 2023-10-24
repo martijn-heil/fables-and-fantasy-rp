@@ -9,8 +9,6 @@ import org.koin.core.context.GlobalContext
 
 fun Application.configureRouting() {
 	routing {
-		options("/{...}") {  }
-
 		authenticate("auth-bearer") {
 			get("/me") {
 				call.respond("{\"username\":\"admin\"}")

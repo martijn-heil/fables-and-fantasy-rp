@@ -65,8 +65,22 @@ class FablesWeb : JavaPlugin(), KoinComponent {
 
 				install(CORS) {
 					anyHost()
+					allowCredentials = true
+
+					allowMethod(HttpMethod.Options)
+					allowMethod(HttpMethod.Put)
+					allowMethod(HttpMethod.Patch)
+					allowMethod(HttpMethod.Delete)
 					HttpMethod.DefaultMethods.forEach { allowMethod(it) }
 
+					allowHeader(HttpHeaders.Authorization)
+					allowHeader(HttpHeaders.ContentType)
+					allowHeader(HttpHeaders.AccessControlAllowOrigin)
+					allowHeader(HttpHeaders.Origin)
+					allowHeader(HttpHeaders.Host)
+					allowHeader(HttpHeaders.XForwardedFor)
+					allowHeader(HttpHeaders.XForwardedProto)
+					allowHeader("X-Real-IP")
 					this.allowHeaders { true }
 				}
 
