@@ -8,6 +8,7 @@ import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.text.join
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.parseLinks
+import com.fablesfantasyrp.plugin.time.formatDateLong
 import com.fablesfantasyrp.plugin.utils.Services
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
@@ -57,9 +58,10 @@ class CharacterCardGeneratorImpl(private val creatureSizeCalculator: CreatureSiz
 				"<change_owner> <gray><owner_info>, last seen: <last_seen></gray><newline>" +
 				"<red>Please do not metagame this information.</red><newline>" +
 				"<metagamer_warning>" +
+				"<dying_warning>" +
 				"<green>" +
 				"<change_name> Name: <white><name></white><newline>" +
-				"<change_age> Age: <white><age></white><newline>" +
+				"<change_dateofbirth> Age: <white><age></white><newline>" +
 				"<change_gender> Gender: <white><gender></white><newline>" +
 				"<change_race> Race: <white><race></white><newline>" +
 				"<black>[E]</black> Creature size: <white><creature_size></white><newline>" +
@@ -81,8 +83,18 @@ class CharacterCardGeneratorImpl(private val creatureSizeCalculator: CreatureSiz
 				if (isMetaGamer) miniMessage.deserialize("<dark_red>WARNING: This user is a registered metagamer.</dark_red><newline>")
 				else Component.empty()
 			),
+			Placeholder.component("dying_warning",
+				if (character.isDying) miniMessage.deserialize("<dark_red>WARNING: This character is dying of old age soon.</dark_red><newline>")
+				else Component.empty()
+			),
 			Placeholder.component("name", Component.text(character.name)),
-			Placeholder.component("age", Component.text(character.age.toString())),
+			Placeholder.component("age", character.age?.let { age ->
+				Component.text(age.toString()).hoverEvent(
+				HoverEvent.showText(miniMessage.deserialize(
+					"<gray>Date of birth: <date_of_birth></gray>" +
+					Placeholder.unparsed("date_of_birth", formatDateLong(character.dateOfBirth!!))
+				)))
+			} ?: Component.text("Unknown")),
 			Placeholder.unparsed("gender", character.gender.toString().replaceFirstChar { it.uppercaseChar() }),
 			Placeholder.unparsed("race", character.race.toString()),
 			Placeholder.unparsed("creature_size", creatureSize.displayName),
@@ -92,7 +104,7 @@ class CharacterCardGeneratorImpl(private val creatureSizeCalculator: CreatureSiz
 			Placeholder.component("stats", statsMessage),
 			Placeholder.unparsed("last_seen", character.lastSeen?.let { PrettyTime().format(it) } ?: "unknown"),
 			Placeholder.component("change_name", editButton(observer == null || authorizer.mayEditName(observer, character).result, "name")),
-			Placeholder.component("change_age", editButton(observer == null || authorizer.mayEditAge(observer, character).result, "age")),
+			Placeholder.component("change_dateofbirth", editButton(observer == null || authorizer.mayEditDateOfBirth(observer, character).result, "dateofbirth")),
 			Placeholder.component("change_description", editButton(observer == null || authorizer.mayEditDescription(observer, character).result, "description")),
 			Placeholder.component("change_race", editButton(observer == null || authorizer.mayEditRace(observer, character).result, "race")),
 			Placeholder.component("change_gender", editButton(observer == null || authorizer.mayEditGender(observer, character).result, "gender")),

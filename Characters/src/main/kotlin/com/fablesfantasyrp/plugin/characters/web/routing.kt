@@ -50,7 +50,6 @@ class WebRouting(private val plugin: Plugin, private val characters: CharacterRe
 				existingCharacter.name = webCharacter.name
 				existingCharacter.race = webCharacter.race
 				existingCharacter.description = webCharacter.description
-				existingCharacter.age = webCharacter.age
 				existingCharacter.gender = webCharacter.gender
 				existingCharacter.isDead = webCharacter.isDead
 				existingCharacter.isShelved = webCharacter.isShelved

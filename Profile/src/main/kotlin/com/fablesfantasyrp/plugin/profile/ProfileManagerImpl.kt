@@ -65,4 +65,7 @@ internal class ProfileManagerImpl(private val server: Server) : ProfileManager {
 	override fun getCurrentForProfile(profile: Profile): Player? {
 		return currentProfilesTwo[profile]?.let { server.getPlayer(it) }
 	}
+
+	override fun getActive(): Map<Player, Profile>
+		= currentProfiles.mapKeys { server.getPlayer(it.key) }.filterKeys { it != null } as Map<Player, Profile>
 }

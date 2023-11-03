@@ -3,12 +3,13 @@ package com.fablesfantasyrp.plugin.characters
 object Permission {
 	const val prefix = "fables.characters"
 	const val Staff = "${prefix}.staff"
+	const val Admin = "${prefix}.admin"
 	const val Any = "${prefix}.any"
 
 	object Change {
 		private const val prefix = Permission.Command.Characters.prefix + ".change"
 		const val Description = "${prefix}.description"
-		const val Age = "${prefix}.age"
+		const val DateOfBirth = "${prefix}.dateofbirth"
 		const val Name = "${prefix}.name"
 		const val Stats = "${prefix}.stats"
 		const val Race = "${prefix}.race"

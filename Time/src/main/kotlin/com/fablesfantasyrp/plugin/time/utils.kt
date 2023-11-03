@@ -2,6 +2,7 @@ package com.fablesfantasyrp.plugin.time
 
 import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
+import com.fablesfantasyrp.plugin.time.javatime.FablesLocalDate
 import com.fablesfantasyrp.plugin.time.javatime.FablesLocalDateTime
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
@@ -19,6 +20,18 @@ data class DateCardWeatherInfo(val isClearWeather: Boolean,
 			location.block.temperature
 		)
 	}
+}
+
+fun formatDateLong(date: FablesLocalDate): String {
+	val dayOfWeekName = date.dayOfWeek.getDisplayName(TextStyle.FULL)
+	val monthName = date.getMonth().getDisplayName(TextStyle.FULL)
+	return "$dayOfWeekName ${date.dayOfMonth}, $monthName, ${date.year}"
+}
+
+fun formatDateShort(date: FablesLocalDate): String {
+	return String.format("%02d", date.dayOfMonth) + "." +
+			String.format("%02d", date.monthValue) + "." +
+			String.format("%04d", date.year)
 }
 
 fun dateCard(dateTime: FablesLocalDateTime, weather: DateCardWeatherInfo? = null): Component {

@@ -10,7 +10,7 @@ interface CharacterAuthorizer {
 	fun mayEdit(who: Permissible, what: Character, allowShelved: Boolean = false): AuthorizationResult
 	fun mayEditRace(who: Permissible, what: Character, allowShelved: Boolean = false): AuthorizationResult
 	fun mayEditGender(who: Permissible, what: Character, allowShelved: Boolean = false): AuthorizationResult
-	fun mayEditAge(who: Permissible, what: Character, allowShelved: Boolean = false): AuthorizationResult
+	fun mayEditDateOfBirth(who: Permissible, what: Character, allowShelved: Boolean = false): AuthorizationResult
 	fun mayEditName(who: Permissible, what: Character, allowShelved: Boolean = false): AuthorizationResult
 	fun mayEditDescription(who: Permissible, what: Character, allowShelved: Boolean = false): AuthorizationResult
 	fun mayEditStats(who: Permissible, what: Character, allowShelved: Boolean = false): AuthorizationResult

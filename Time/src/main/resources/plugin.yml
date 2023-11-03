@@ -4,6 +4,7 @@ authors: [@authors@]
 depend:
   - FablesKotlinRuntime
   - FablesUtils
+  - FablesGui
   - FablesText
 main: com.fablesfantasyrp.plugin.time.FablesTime
 api-version: @bukkit_api_version@

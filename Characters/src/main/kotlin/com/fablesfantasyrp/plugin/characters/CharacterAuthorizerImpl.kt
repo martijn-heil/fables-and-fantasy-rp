@@ -4,7 +4,6 @@ import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.utils.AuthorizationResult
-import com.fablesfantasyrp.plugin.utils.FABLES_ADMIN
 import org.bukkit.entity.Player
 import org.bukkit.permissions.Permissible
 
@@ -45,7 +44,7 @@ class CharacterAuthorizerImpl(private val characters: CharacterRepository) : Cha
 			return AuthorizationResult(false, "Permission denied")
 		}
 
-		if (what.owner == FABLES_ADMIN) {
+		if (what.isStaffCharacter) {
 			if (!who.hasPermission(Permission.Staff)) {
 				return AuthorizationResult(false, "You do not have permission to become a staff character.")
 			}
@@ -64,14 +63,21 @@ class CharacterAuthorizerImpl(private val characters: CharacterRepository) : Cha
 		return AuthorizationResult(true)
 	}
 
+	override fun mayEditDateOfBirth(who: Permissible, what: Character, allowShelved: Boolean): AuthorizationResult {
+		mayEditProperty(who, what, allowShelved, Permission.Change.DateOfBirth).orElse { return AuthorizationResult(false, it) }
+
+		if (what.dateOfBirth != null && !what.isStaffCharacter && !who.hasPermission(Permission.Admin)) {
+			return AuthorizationResult(false, "You can only set your date of birth once.")
+		}
+
+		return AuthorizationResult(true)
+	}
+
 	override fun mayEditRace(who: Permissible, what: Character, allowShelved: Boolean): AuthorizationResult
 		= mayEditProperty(who, what, allowShelved, Permission.Change.Race)
 
 	override fun mayEditGender(who: Permissible, what: Character, allowShelved: Boolean): AuthorizationResult
 		= mayEditProperty(who, what, allowShelved, Permission.Change.Gender)
-
-	override fun mayEditAge(who: Permissible, what: Character, allowShelved: Boolean): AuthorizationResult
-		= mayEditProperty(who, what, allowShelved, Permission.Change.Age)
 
 	override fun mayEditName(who: Permissible, what: Character, allowShelved: Boolean): AuthorizationResult
 		= mayEditProperty(who, what, allowShelved, Permission.Change.Name)

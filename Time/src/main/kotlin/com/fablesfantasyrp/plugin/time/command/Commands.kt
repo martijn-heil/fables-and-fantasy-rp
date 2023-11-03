@@ -3,8 +3,10 @@ package com.fablesfantasyrp.plugin.time.command
 import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.time.*
+import com.fablesfantasyrp.plugin.time.gui.DatePicker
 import com.fablesfantasyrp.plugin.time.javatime.FablesLocalDateTime
 import com.fablesfantasyrp.plugin.utils.EDEN
+import com.github.shynixn.mccoroutine.bukkit.launch
 import com.gitlab.martijn_heil.nincommands.common.Sender
 import com.sk89q.intake.Command
 import com.sk89q.intake.Require
@@ -20,6 +22,12 @@ class Commands(private val gameClock: GameClock) {
 		val dateTime = FablesLocalDateTime.ofInstant(now)
 		val weather = if (sender is Player) DateCardWeatherInfo.ofLocation(sender.location) else null
 		sender.sendMessage(dateCard(dateTime, weather))
+	}
+
+	@Command(aliases = ["pickdate"], desc = "Pick the date and time.")
+	@Require(Permission.Command.Date)
+	fun pickdate(@Sender sender: Player) {
+		PLUGIN.launch { DatePicker(PLUGIN, "Pick a date").execute(sender) }
 	}
 
 	inner class DateTime {

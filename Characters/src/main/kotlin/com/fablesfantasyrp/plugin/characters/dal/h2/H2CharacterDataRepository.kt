@@ -7,9 +7,11 @@ import com.fablesfantasyrp.plugin.characters.dal.repository.CharacterDataReposit
 import com.fablesfantasyrp.plugin.characters.domain.CharacterStats
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.profile.data.entity.ProfileRepository
+import com.fablesfantasyrp.plugin.time.javatime.FablesLocalDate
 import org.bukkit.OfflinePlayer
 import java.sql.ResultSet
 import java.time.Instant
+import java.time.temporal.ChronoField
 import javax.sql.DataSource
 
 class H2CharacterDataRepository(private val dataSource: DataSource,
@@ -40,38 +42,41 @@ class H2CharacterDataRepository(private val dataSource: DataSource,
 					"(id, " +
 					"name, " +
 					"description, " +
-					"age, " +
+					"date_of_birth_epoch_day, " +
+					"date_of_natural_death_epoch_day, " +
 					"race, " +
 					"gender, " +
 					"created_at, " +
 					"changed_stats_at, " +
 					"last_seen, " +
 					"stat_strength, stat_defense, stat_agility, stat_intelligence) " +
-					"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+					"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
 			stmnt.setInt(1, v.id)
 			stmnt.setString(2, v.name)
 			stmnt.setString(3, v.description)
-			stmnt.setInt(4, v.age.toInt())
-			stmnt.setString(5, v.race.name)
-			stmnt.setString(6, v.gender.name)
-			stmnt.setObject(7, v.createdAt)
-			stmnt.setObject(8, v.changedStatsAt)
-			stmnt.setObject(9, v.lastSeen)
-			stmnt.setInt(10, v.stats.strength.toInt())
-			stmnt.setInt(11, v.stats.defense.toInt())
-			stmnt.setInt(12, v.stats.agility.toInt())
-			stmnt.setInt(13, v.stats.intelligence.toInt())
+			if (v.dateOfBirth != null) stmnt.setLong(4, v.dateOfBirth.getLong(ChronoField.EPOCH_DAY)) else stmnt.setObject(4, null)
+			if (v.dateOfNaturalDeath != null) stmnt.setLong(5, v.dateOfNaturalDeath.getLong(ChronoField.EPOCH_DAY)) else stmnt.setObject(5, null)
+			stmnt.setString(6, v.race.name)
+			stmnt.setString(7, v.gender.name)
+			stmnt.setObject(8, v.createdAt)
+			stmnt.setObject(9, v.changedStatsAt)
+			stmnt.setObject(10, v.lastSeen)
+			stmnt.setInt(11, v.stats.strength.toInt())
+			stmnt.setInt(12, v.stats.defense.toInt())
+			stmnt.setInt(13, v.stats.agility.toInt())
+			stmnt.setInt(14, v.stats.intelligence.toInt())
 			stmnt.executeUpdate()
 			return CharacterData(
-					id = v.id,
-					name = v.name,
-					description = v.description,
-					age = v.age,
-					race = v.race,
-					gender = v.gender,
-					createdAt = v.createdAt,
-					lastSeen = v.lastSeen,
-					stats = v.stats,
+				id = v.id,
+				name = v.name,
+				description = v.description,
+				dateOfBirth = v.dateOfBirth,
+				dateOfNaturalDeath = v.dateOfNaturalDeath,
+				race = v.race,
+				gender = v.gender,
+				createdAt = v.createdAt,
+				lastSeen = v.lastSeen,
+				stats = v.stats,
 			)
 		}
 	}
@@ -137,7 +142,8 @@ class H2CharacterDataRepository(private val dataSource: DataSource,
 			val stmnt = connection.prepareStatement("UPDATE $TABLE_NAME SET " +
 					"name = ?, " +
 					"description = ?, " +
-					"age = ?, " +
+					"date_of_birth_epoch_day = ?, " +
+					"date_of_natural_death_epoch_day = ?, " +
 					"race = ?, " +
 					"gender = ?, " +
 					"created_at = ?, " +
@@ -154,21 +160,22 @@ class H2CharacterDataRepository(private val dataSource: DataSource,
 					"WHERE id = ?")
 			stmnt.setString(1, v.name)
 			stmnt.setString(2, v.description)
-			stmnt.setInt(3, v.age.toInt())
-			stmnt.setString(4, v.race.name)
-			stmnt.setString(5, v.gender.name)
-			stmnt.setObject(6, v.createdAt)
-			stmnt.setObject(7, v.lastSeen)
-			stmnt.setBoolean(8, v.isDead)
-			stmnt.setBoolean(9, v.isShelved)
-			stmnt.setObject(10, v.diedAt)
-			stmnt.setObject(11, v.shelvedAt)
-			stmnt.setObject(12, v.changedStatsAt)
-			stmnt.setInt(13, v.stats.strength.toInt())
-			stmnt.setInt(14, v.stats.defense.toInt())
-			stmnt.setInt(15, v.stats.agility.toInt())
-			stmnt.setInt(16, v.stats.intelligence.toInt())
-			stmnt.setInt(17, v.id)
+			if (v.dateOfBirth != null) stmnt.setLong(3, v.dateOfBirth.getLong(ChronoField.EPOCH_DAY)) else stmnt.setObject(3, null)
+			if (v.dateOfNaturalDeath!= null) stmnt.setLong(4, v.dateOfNaturalDeath.getLong(ChronoField.EPOCH_DAY)) else stmnt.setObject(4, null)
+			stmnt.setString(5, v.race.name)
+			stmnt.setString(6, v.gender.name)
+			stmnt.setObject(7, v.createdAt)
+			stmnt.setObject(8, v.lastSeen)
+			stmnt.setBoolean(9, v.isDead)
+			stmnt.setBoolean(10, v.isShelved)
+			stmnt.setObject(11, v.diedAt)
+			stmnt.setObject(12, v.shelvedAt)
+			stmnt.setObject(13, v.changedStatsAt)
+			stmnt.setInt(14, v.stats.strength.toInt())
+			stmnt.setInt(15, v.stats.defense.toInt())
+			stmnt.setInt(16, v.stats.agility.toInt())
+			stmnt.setInt(17, v.stats.intelligence.toInt())
+			stmnt.setInt(18, v.id)
 			stmnt.executeUpdate()
 		}
 	}
@@ -176,7 +183,10 @@ class H2CharacterDataRepository(private val dataSource: DataSource,
 	private fun fromRow(result: ResultSet): CharacterData {
 		val id = result.getInt("id")
 		val name = result.getString("name")
-		val age = result.getInt("age").toUInt()
+		val dateOfBirth = result.getLong("date_of_birth_epoch_day")
+			.let { if (it != 0L) FablesLocalDate.ofEpochDay(it) else null }
+		val dateOfNaturalDeath = result.getLong("date_of_natural_death_epoch_day")
+			.let { if (it != 0L) FablesLocalDate.ofEpochDay(it) else null }
 		val description = result.getString("description")
 		val gender = Gender.valueOf(result.getString("gender"))
 		val race = Race.valueOf(result.getString("race"))
@@ -193,20 +203,21 @@ class H2CharacterDataRepository(private val dataSource: DataSource,
 		val isShelved = result.getBoolean("is_shelved")
 
 		return CharacterData(
-				id = id,
-				name = name,
-				race = race,
-				gender = gender,
-				age = age,
-				description = description,
-				createdAt = createdAt,
-				lastSeen = lastSeen,
-				stats = CharacterStats(statStrength, statDefense, statAgility, statIntelligence),
-				isDead = isDead,
-				isShelved = isShelved,
-				shelvedAt = shelvedAt,
-				diedAt = diedAt,
-				changedStatsAt = changedStatsAt,
+			id = id,
+			name = name,
+			race = race,
+			gender = gender,
+			dateOfBirth = dateOfBirth,
+			dateOfNaturalDeath = dateOfNaturalDeath,
+			description = description,
+			createdAt = createdAt,
+			lastSeen = lastSeen,
+			stats = CharacterStats(statStrength, statDefense, statAgility, statIntelligence),
+			isDead = isDead,
+			isShelved = isShelved,
+			shelvedAt = shelvedAt,
+			diedAt = diedAt,
+			changedStatsAt = changedStatsAt,
 		)
 	}
 }

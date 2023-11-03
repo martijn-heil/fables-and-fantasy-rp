@@ -10,6 +10,8 @@ import com.fablesfantasyrp.plugin.profile.data.entity.EntityProfileRepository
 import com.fablesfantasyrp.plugin.profile.event.PlayerForceProfileSelectionEvent
 import com.fablesfantasyrp.plugin.profile.event.PostPlayerSwitchProfileEvent
 import com.fablesfantasyrp.plugin.staffprofiles.data.StaffProfileRepository
+import com.fablesfantasyrp.plugin.time.event.NewDayEvent
+import com.fablesfantasyrp.plugin.time.javatime.FablesLocalDate
 import com.fablesfantasyrp.plugin.utils.isRealPlayer
 import com.github.shynixn.mccoroutine.bukkit.launch
 import org.bukkit.entity.Player
@@ -46,6 +48,33 @@ class CharactersListener(private val plugin: Plugin,
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	fun onPlayerSwitchProfile3(e: PostPlayerSwitchProfileEvent) {
 		denizenRun("warpcrystal_ensure_presence", mapOf("player" to PlayerTag(e.player)))
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	fun onPlayerSwitchProfile4(e: PostPlayerSwitchProfileEvent) {
+		val newCharacter = e.new?.let { characters.forProfile(it) } ?: return
+		val dateOfDeath = newCharacter.dateOfNaturalDeath ?: return
+		val today = FablesLocalDate.now()
+		if (today.isAfter(dateOfDeath)) {
+			newCharacter.isDead = true
+		} else if (newCharacter.isDying) {
+			sendDyingNotification(e.player, newCharacter)
+		}
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	fun onNewDay(e: NewDayEvent) {
+		profileManager.getActive()
+			.mapValues { characters.forProfile(it.value) }
+			.filter { it.value != null }
+			.forEach {
+				val player = it.key
+				val character = it.value!!
+				character.checkNaturalDeath()
+				if (character.isDying) {
+					sendDyingNotification(player, character)
+				}
+			}
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)

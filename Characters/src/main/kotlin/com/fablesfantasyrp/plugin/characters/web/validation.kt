@@ -28,14 +28,6 @@ class WebRequestValidation(private val plugin: Plugin, private val characters: C
 				return@validate ValidationResult.Invalid("Character name must not contain illegal characters.")
 			}
 
-			if (it.age < 13U) {
-				return@validate ValidationResult.Invalid("Character age must be at least 13 years old.")
-			}
-
-			if (it.age > 1000U) {
-				return@validate ValidationResult.Invalid("Character age must not be greater than 1000 years old.")
-			}
-
 			val isNameConflict = withContext(plugin.minecraftDispatcher) {
 				val otherCharacter = characters.forName(it.name)
 				otherCharacter != null && otherCharacter.id != it.id
