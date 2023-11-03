@@ -43,8 +43,12 @@ class FablesAlternateMechanics : JavaPlugin(), KoinComponent {
 			singleOf(::NoHorseAi) bind Mechanic::class
 			singleOf(::NoLeashingWhileInVehicle) bind Mechanic::class
 			singleOf(::NoTotemOfUndying) bind Mechanic::class
+			singleOf(::NoEnchanting) bind Mechanic::class
 			singleOf(::FarmReplant) bind Mechanic::class
 			singleOf(::InvisibleItemFrames) bind Mechanic::class
+			singleOf(::RestrictedDualWielding) bind Mechanic::class
+			singleOf(::EverythingIronLevel) bind Mechanic::class
+			singleOf(::DisableCraftingRecipes) bind Mechanic::class
 		}
 		loadKoinModules(koinModule)
 
