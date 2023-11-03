@@ -9,7 +9,7 @@ import com.fablesfantasyrp.plugin.database.repository.BaseH2KeyedRepository
 import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
 import com.fablesfantasyrp.plugin.database.setCollection
 import com.fablesfantasyrp.plugin.database.setUuid
-import com.fablesfantasyrp.plugin.utils.BlockCoordinates
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.BlockCoordinates
 import org.bukkit.Server
 import org.h2.api.H2Type
 import java.sql.ResultSet

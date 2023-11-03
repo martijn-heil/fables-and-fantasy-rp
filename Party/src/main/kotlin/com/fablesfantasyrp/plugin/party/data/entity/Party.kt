@@ -10,7 +10,7 @@ import com.fablesfantasyrp.plugin.party.SYSPREFIX
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
-import com.fablesfantasyrp.plugin.utils.humanReadable
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.humanReadable
 import com.fablesfantasyrp.plugin.utils.quoteCommandArgument
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent

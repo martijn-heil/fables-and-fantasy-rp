@@ -5,7 +5,7 @@ import com.fablesfantasyrp.plugin.chat.chat
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.parseLinks
 import com.fablesfantasyrp.plugin.text.playerNameStyle
-import com.fablesfantasyrp.plugin.utils.isVanished
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.isVanished
 import de.myzelyam.api.vanish.VanishAPI
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor

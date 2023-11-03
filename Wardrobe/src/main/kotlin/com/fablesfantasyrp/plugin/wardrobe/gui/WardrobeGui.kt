@@ -5,9 +5,9 @@ import com.fablesfantasyrp.plugin.gui.GuiSingleChoice
 import com.fablesfantasyrp.plugin.gui.Icon
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.text.sendError
-import com.fablesfantasyrp.plugin.utils.itemStack
-import com.fablesfantasyrp.plugin.utils.meta
-import com.fablesfantasyrp.plugin.utils.name
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.itemStack
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.meta
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.name
 import com.fablesfantasyrp.plugin.wardrobe.OriginalPlayerProfileService
 import com.fablesfantasyrp.plugin.wardrobe.SkinService
 import com.fablesfantasyrp.plugin.wardrobe.data.ProfileSkin

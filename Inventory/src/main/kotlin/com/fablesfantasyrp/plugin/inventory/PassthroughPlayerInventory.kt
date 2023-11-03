@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.inventory
 
-import com.fablesfantasyrp.plugin.utils.SerializableItemStack
-import com.fablesfantasyrp.plugin.utils.getInventorySlotIndex
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.SerializableItemStack
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.getInventorySlotIndex
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack

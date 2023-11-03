@@ -8,9 +8,9 @@ import com.fablesfantasyrp.plugin.location.data.entity.ProfileLocationRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.event.PlayerSwitchProfileEvent
 import com.fablesfantasyrp.plugin.utils.TransactionStep
-import com.fablesfantasyrp.plugin.utils.customModel
-import com.fablesfantasyrp.plugin.utils.itemStack
-import com.fablesfantasyrp.plugin.utils.meta
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.customModel
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.itemStack
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.meta
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Material

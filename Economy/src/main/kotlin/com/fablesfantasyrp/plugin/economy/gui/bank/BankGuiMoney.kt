@@ -4,9 +4,9 @@ import com.fablesfantasyrp.plugin.economy.CURRENCY_SYMBOL
 import com.fablesfantasyrp.plugin.economy.SYSPREFIX
 import com.fablesfantasyrp.plugin.economy.data.ProfileEconomyData
 import com.fablesfantasyrp.plugin.economy.formatMoney
-import com.fablesfantasyrp.plugin.utils.itemStack
-import com.fablesfantasyrp.plugin.utils.meta
-import com.fablesfantasyrp.plugin.utils.name
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.itemStack
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.meta
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.name
 import com.github.shynixn.mccoroutine.bukkit.launch
 import de.themoep.inventorygui.DynamicGuiElement
 import de.themoep.inventorygui.InventoryGui

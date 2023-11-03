@@ -21,7 +21,7 @@ import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.time.formatDateLong
 import com.fablesfantasyrp.plugin.time.javatime.FablesLocalDate
 import com.fablesfantasyrp.plugin.utils.Services
-import com.fablesfantasyrp.plugin.utils.showEndCredits
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.showEndCredits
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.koin.core.context.GlobalContext
 import java.time.Instant

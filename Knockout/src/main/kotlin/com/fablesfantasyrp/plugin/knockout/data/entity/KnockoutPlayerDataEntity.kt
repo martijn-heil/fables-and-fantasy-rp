@@ -8,7 +8,7 @@ import com.fablesfantasyrp.plugin.knockout.data.KnockoutState
 import com.fablesfantasyrp.plugin.knockout.getFirstBlockBelowLocation
 import com.fablesfantasyrp.plugin.knockout.sendPrefixedMessage
 import com.fablesfantasyrp.plugin.morelogging.MODERATION_LOGGER
-import com.fablesfantasyrp.plugin.utils.humanReadable
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.humanReadable
 import com.github.shynixn.mccoroutine.bukkit.launch
 import dev.geco.gsit.api.GSitAPI
 import dev.geco.gsit.objects.GetUpReason

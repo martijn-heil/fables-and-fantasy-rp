@@ -4,7 +4,7 @@ import com.fablesfantasyrp.plugin.glowing.GlowingManager
 import com.fablesfantasyrp.plugin.party.data.PartyRepository
 import com.fablesfantasyrp.plugin.party.data.entity.Party
 import com.fablesfantasyrp.plugin.text.miniMessage
-import com.fablesfantasyrp.plugin.utils.humanReadable
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.humanReadable
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 

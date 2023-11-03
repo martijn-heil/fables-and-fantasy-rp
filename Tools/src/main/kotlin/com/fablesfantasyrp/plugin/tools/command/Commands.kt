@@ -17,8 +17,8 @@ import com.fablesfantasyrp.plugin.tools.*
 import com.fablesfantasyrp.plugin.tools.command.provider.MinecraftTime
 import com.fablesfantasyrp.plugin.utils.SPAWN
 import com.fablesfantasyrp.plugin.utils.asEnabledDisabledComponent
-import com.fablesfantasyrp.plugin.utils.humanReadable
-import com.fablesfantasyrp.plugin.utils.isVanished
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.humanReadable
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.isVanished
 import com.gitlab.martijn_heil.nincommands.common.CommandTarget
 import com.gitlab.martijn_heil.nincommands.common.Sender
 import com.gitlab.martijn_heil.nincommands.common.Toggle

@@ -1,12 +1,12 @@
 package com.fablesfantasyrp.plugin.charactermechanics.traits
 
 import com.fablesfantasyrp.plugin.charactermechanics.traits.base.BaseTraitBehavior
-import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.characters.domain.KnownCharacterTraits
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.knockout.knockout
 import com.fablesfantasyrp.plugin.profile.ProfileManager
-import com.fablesfantasyrp.plugin.utils.isRealPlayer
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.isRealPlayer
 import org.bukkit.EntityEffect
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler

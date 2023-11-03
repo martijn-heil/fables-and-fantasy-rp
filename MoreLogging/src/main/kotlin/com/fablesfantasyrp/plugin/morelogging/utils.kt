@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.morelogging
 
-import com.fablesfantasyrp.plugin.utils.humanReadable
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.humanReadable
 import org.bukkit.OfflinePlayer
 import java.util.logging.Level
 import java.util.logging.Logger

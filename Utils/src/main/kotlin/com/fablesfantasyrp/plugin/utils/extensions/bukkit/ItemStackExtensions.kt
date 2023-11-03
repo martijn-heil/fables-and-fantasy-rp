@@ -1,4 +1,4 @@
-package com.fablesfantasyrp.plugin.utils
+package com.fablesfantasyrp.plugin.utils.extensions.bukkit
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.Component.text
@@ -212,3 +212,52 @@ var ItemMeta.customModel: Int?
 var ItemMeta.localName: TranslatableComponent
 	get() = if (hasDisplayName()) displayName() as TranslatableComponent else translatable("")
 	set(value) = displayName(value)
+
+val ItemStack.fancyName: String get() {
+	var id = this.type.name.lowercase().replace('_', ' ')
+	if (id == "air") {
+		return "nothing"
+	}
+	if (id == "ice" || id == "dirt" || id.endsWith("copper") || id.endsWith("cream")) {
+		return id
+	}
+	return if (this.amount > 1) {
+		if (id == "cactus") {
+			return "cacti"
+		}
+		if (id.endsWith(" off")) {
+			id = id.substring(0, id.length - 4)
+		}
+		if (id.endsWith(" on")) {
+			id = id.substring(0, id.length - 3)
+		}
+		if (id == "rotten flesh" || id == "cooked fish" || id == "raw fish" || id.endsWith("s")) {
+			return id
+		}
+		if (id.endsWith("y")) {
+			return id.substring(0, id.length - 1) + "ies" // ex: lily -> lilies
+		}
+		if (id.endsWith("sh") || id.endsWith("ch")) {
+			id + "es"
+		} else id + "s"
+		// iron sword -> iron swords
+	} else {
+		if (id == "cactus") {
+			return "a cactus"
+		}
+		if (id.endsWith("s")) {
+			return id
+		}
+		if (id.endsWith(" off")) {
+			return "a " + id.substring(0, id.length - 4)
+		}
+		if (id.endsWith(" on")) {
+			return "a " + id.substring(0, id.length - 3)
+		}
+		if (id.startsWith("a") || id.startsWith("e") || id.startsWith("i")
+			|| id.startsWith("o") || id.startsWith("u")) {
+			"an $id" // ex: emerald -> an emerald
+		} else "a $id"
+		// ex: diamond -> a diamond
+	}
+}

@@ -22,7 +22,7 @@ import com.fablesfantasyrp.plugin.text.join
 import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.sendError
-import com.fablesfantasyrp.plugin.utils.humanReadable
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.humanReadable
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.gitlab.martijn_heil.nincommands.common.CommandTarget
 import com.gitlab.martijn_heil.nincommands.common.Sender

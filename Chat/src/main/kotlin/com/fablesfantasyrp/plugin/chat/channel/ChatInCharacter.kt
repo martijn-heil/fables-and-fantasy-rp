@@ -8,7 +8,11 @@ import com.fablesfantasyrp.plugin.text.Permission
 import com.fablesfantasyrp.plugin.text.formatChat
 import com.fablesfantasyrp.plugin.text.join
 import com.fablesfantasyrp.plugin.text.miniMessage
-import com.fablesfantasyrp.plugin.utils.*
+import com.fablesfantasyrp.plugin.utils.DISTANCE_QUIET
+import com.fablesfantasyrp.plugin.utils.DISTANCE_SHOUT
+import com.fablesfantasyrp.plugin.utils.DISTANCE_TALK
+import com.fablesfantasyrp.plugin.utils.DISTANCE_WHISPER
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.humanReadable
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.NamedTextColor

@@ -5,7 +5,7 @@ import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterReposito
 import com.fablesfantasyrp.plugin.gui.confirm
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.text.sendError
-import com.fablesfantasyrp.plugin.utils.toBlockIdentifier
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.toBlockIdentifier
 import com.github.shynixn.mccoroutine.bukkit.launch
 import org.bukkit.Material
 import org.bukkit.event.EventHandler

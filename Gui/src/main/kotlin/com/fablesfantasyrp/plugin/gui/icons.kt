@@ -1,9 +1,9 @@
 package com.fablesfantasyrp.plugin.gui
 
-import com.fablesfantasyrp.plugin.utils.customModel
-import com.fablesfantasyrp.plugin.utils.itemStack
-import com.fablesfantasyrp.plugin.utils.meta
-import com.fablesfantasyrp.plugin.utils.name
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.customModel
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.itemStack
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.meta
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.name
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
 

@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.morelogging
 
 import com.fablesfantasyrp.plugin.utils.ToggleableState
-import com.fablesfantasyrp.plugin.utils.humanReadable
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.humanReadable
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority.MONITOR
@@ -57,7 +57,7 @@ class BukkitListener(private val logger: Logger, private val plugin: Plugin) : L
 
 	@EventHandler(priority = MONITOR, ignoreCancelled = true)
 	fun onPlayerCommand(e: PlayerCommandPreprocessEvent) {
-		
+
 		logger.finer("[${e.player.location.humanReadable()}] " +
 				"${e.player.name} issued server command: ${e.message}")
 	}

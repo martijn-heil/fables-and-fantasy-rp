@@ -5,7 +5,7 @@ import com.fablesfantasyrp.plugin.charactermechanics.racial.base.BaseRaceBehavio
 import com.fablesfantasyrp.plugin.characters.dal.enums.Race
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
-import com.fablesfantasyrp.plugin.utils.isRealPlayer
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.isRealPlayer
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player

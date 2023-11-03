@@ -4,7 +4,7 @@ import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterReposito
 import com.fablesfantasyrp.plugin.denizeninterop.dFlags
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.utils.EDEN
-import com.fablesfantasyrp.plugin.utils.isVanished
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.isVanished
 import me.neznamy.tab.api.TabAPI
 import org.bukkit.GameMode
 import org.bukkit.entity.Player

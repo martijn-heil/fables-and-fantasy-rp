@@ -5,7 +5,7 @@ import com.fablesfantasyrp.plugin.party.data.entity.Party
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.utils.Services
-import com.fablesfantasyrp.plugin.utils.toNamedTextColor
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.toNamedTextColor
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.Style

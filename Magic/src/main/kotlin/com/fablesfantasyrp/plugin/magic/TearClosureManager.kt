@@ -4,7 +4,7 @@ import com.fablesfantasyrp.plugin.location.location
 import com.fablesfantasyrp.plugin.magic.domain.entity.Tear
 import com.fablesfantasyrp.plugin.magic.domain.repository.TearRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
-import com.fablesfantasyrp.plugin.utils.distanceSafe
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.distanceSafe
 import org.bukkit.plugin.Plugin
 
 class TearClosureManager(private val plugin: Plugin,

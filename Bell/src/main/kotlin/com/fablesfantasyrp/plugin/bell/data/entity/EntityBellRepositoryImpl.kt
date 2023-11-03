@@ -4,7 +4,7 @@ import com.fablesfantasyrp.plugin.database.entity.MassivelyCachingNamedEntityRep
 import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.KeyedRepository
 import com.fablesfantasyrp.plugin.database.repository.MutableRepository
-import com.fablesfantasyrp.plugin.utils.BlockIdentifier
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.BlockIdentifier
 
 class EntityBellRepositoryImpl<C>(child: C) : MassivelyCachingNamedEntityRepository<Int, Bell, C>(child), EntityBellRepository
 		where C: KeyedRepository<Int, Bell>,

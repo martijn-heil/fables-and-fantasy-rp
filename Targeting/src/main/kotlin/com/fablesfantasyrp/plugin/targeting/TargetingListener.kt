@@ -2,7 +2,7 @@ package com.fablesfantasyrp.plugin.targeting
 
 import com.fablesfantasyrp.plugin.targeting.data.SimpleTargetingPlayerData
 import com.fablesfantasyrp.plugin.text.sendError
-import com.fablesfantasyrp.plugin.utils.isRealPlayer
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.isRealPlayer
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority

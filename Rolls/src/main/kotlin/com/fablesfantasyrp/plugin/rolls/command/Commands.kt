@@ -10,7 +10,7 @@ import com.fablesfantasyrp.plugin.rolls.rollExpression
 import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
-import com.fablesfantasyrp.plugin.utils.broadcast
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.broadcast
 import com.gitlab.martijn_heil.nincommands.common.FixedSuggestions
 import com.gitlab.martijn_heil.nincommands.common.Sender
 import com.gitlab.martijn_heil.nincommands.common.Suggestions

@@ -8,7 +8,7 @@ import com.fablesfantasyrp.plugin.discord.FablesDiscordBot
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.text.sendError
 import com.fablesfantasyrp.plugin.utils.Services
-import com.fablesfantasyrp.plugin.utils.distanceSafe
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.distanceSafe
 import com.github.shynixn.mccoroutine.bukkit.launch
 import dev.kord.core.entity.channel.TextChannel
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer

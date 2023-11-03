@@ -5,7 +5,8 @@ import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.sendError
-import com.fablesfantasyrp.plugin.utils.broadcast
+import com.fablesfantasyrp.plugin.utils.DISTANCE_TALK
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.broadcast
 import com.gitlab.martijn_heil.nincommands.common.Sender
 import com.sk89q.intake.Command
 import com.sk89q.intake.Require
@@ -35,7 +36,7 @@ class Commands(private val server: Server,
 		val itemDisplay = Component.text("[ HOVER OVER ME ]").color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD)
 			.hoverEvent(item.asHoverEvent())
 
-		server.broadcast(sender.location, 15,
+		server.broadcast(sender.location, DISTANCE_TALK.toInt(),
 			miniMessage.deserialize("<gray><prefix> <display_name> is displaying the item in their hand.<newline>" +
 				"<item></gray>",
 				Placeholder.component("prefix", legacyText(SYSPREFIX)),

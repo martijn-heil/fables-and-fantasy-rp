@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.magic
 
-import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.dal.enums.CharacterStatKind
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.chat.awaitEmote
 import com.fablesfantasyrp.plugin.chat.chat
@@ -27,7 +27,7 @@ import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.sendError
 import com.fablesfantasyrp.plugin.utils.DISTANCE_TALK
 import com.fablesfantasyrp.plugin.utils.Services
-import com.fablesfantasyrp.plugin.utils.isVanished
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.isVanished
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.selects.select
 import kotlinx.coroutines.withTimeout

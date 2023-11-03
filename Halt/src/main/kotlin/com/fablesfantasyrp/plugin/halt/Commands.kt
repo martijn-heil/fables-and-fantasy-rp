@@ -5,7 +5,8 @@ import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.location.location
 import com.fablesfantasyrp.plugin.profile.ProfileManager
-import com.fablesfantasyrp.plugin.utils.isVanished
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.distanceSafe
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.isVanished
 import com.gitlab.martijn_heil.nincommands.common.Sender
 import com.sk89q.intake.Command
 import com.sk89q.intake.Require
@@ -41,7 +42,7 @@ class Commands(private val characters: CharacterRepository,
 				continue
 			}
 
-			if (it.location.distance(sender.profile.location) > 15) {
+			if (it.location.distanceSafe(sender.profile.location) > 15) {
 				senderPlayer.sendMessage("$SYSPREFIX ${RED}Failed to halt ${GRAY}${character.name}${RED} " +
 						"because this player is too far away!")
 				continue

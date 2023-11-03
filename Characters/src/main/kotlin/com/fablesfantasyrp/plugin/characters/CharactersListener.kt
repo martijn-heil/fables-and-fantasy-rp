@@ -12,7 +12,7 @@ import com.fablesfantasyrp.plugin.profile.event.PostPlayerSwitchProfileEvent
 import com.fablesfantasyrp.plugin.staffprofiles.data.StaffProfileRepository
 import com.fablesfantasyrp.plugin.time.event.NewDayEvent
 import com.fablesfantasyrp.plugin.time.javatime.FablesLocalDate
-import com.fablesfantasyrp.plugin.utils.isRealPlayer
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.isRealPlayer
 import com.github.shynixn.mccoroutine.bukkit.launch
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler

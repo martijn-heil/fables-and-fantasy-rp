@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.knockout
 
 import com.fablesfantasyrp.plugin.knockout.data.entity.KnockoutPlayerDataEntity
-import com.fablesfantasyrp.plugin.utils.isRealPlayer
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.isRealPlayer
 import dev.geco.gsit.api.event.PreEntityGetUpSitEvent
 import org.bukkit.Server
 import org.bukkit.entity.Player
