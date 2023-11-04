@@ -1,16 +1,11 @@
-package com.fablesfantasyrp.plugin.bell.data.entity
+package com.fablesfantasyrp.plugin.bell.domain.repository
 
+import com.fablesfantasyrp.plugin.bell.domain.entity.Bell
+import com.fablesfantasyrp.plugin.bell.domain.mapper.BellMapper
 import com.fablesfantasyrp.plugin.database.entity.MassivelyCachingNamedEntityRepository
-import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
-import com.fablesfantasyrp.plugin.database.repository.KeyedRepository
-import com.fablesfantasyrp.plugin.database.repository.MutableRepository
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.BlockIdentifier
 
-class EntityBellRepositoryImpl<C>(child: C) : MassivelyCachingNamedEntityRepository<Int, Bell, C>(child), EntityBellRepository
-		where C: KeyedRepository<Int, Bell>,
-			  C: MutableRepository<Bell>,
-			  C: HasDirtyMarker<Bell>,
-			  C: BellRepository {
+class BellRepositoryImpl(child: BellMapper) : MassivelyCachingNamedEntityRepository<Int, Bell, BellMapper>(child), BellRepository {
     private val byLocation = HashMap<BlockIdentifier, Bell>()
 
 	override fun init() {

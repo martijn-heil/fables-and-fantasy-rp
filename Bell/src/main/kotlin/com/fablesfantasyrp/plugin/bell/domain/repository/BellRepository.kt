@@ -1,5 +1,6 @@
-package com.fablesfantasyrp.plugin.bell.data.entity
+package com.fablesfantasyrp.plugin.bell.domain.repository
 
+import com.fablesfantasyrp.plugin.bell.domain.entity.Bell
 import com.fablesfantasyrp.plugin.database.repository.KeyedRepository
 import com.fablesfantasyrp.plugin.database.repository.MutableRepository
 import com.fablesfantasyrp.plugin.database.repository.NamedRepository

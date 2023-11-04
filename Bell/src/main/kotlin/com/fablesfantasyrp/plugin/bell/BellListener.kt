@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.bell
 
-import com.fablesfantasyrp.plugin.bell.data.entity.EntityBellRepository
+import com.fablesfantasyrp.plugin.bell.domain.repository.BellRepository
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.gui.confirm
 import com.fablesfantasyrp.plugin.profile.ProfileManager
@@ -16,7 +16,7 @@ import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.plugin.Plugin
 
 class BellListener(private val plugin: Plugin,
-				   private val bells: EntityBellRepository,
+				   private val bells: BellRepository,
 				   private val profileManager: ProfileManager,
 				   private val characters: CharacterRepository) : Listener {
 	@EventHandler(priority = MONITOR, ignoreCancelled = true)

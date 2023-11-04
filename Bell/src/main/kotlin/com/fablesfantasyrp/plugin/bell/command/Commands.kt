@@ -2,8 +2,8 @@ package com.fablesfantasyrp.plugin.bell.command
 
 import com.fablesfantasyrp.plugin.bell.Permission
 import com.fablesfantasyrp.plugin.bell.SYSPREFIX
-import com.fablesfantasyrp.plugin.bell.data.entity.Bell
-import com.fablesfantasyrp.plugin.bell.data.entity.EntityBellRepository
+import com.fablesfantasyrp.plugin.bell.domain.entity.Bell
+import com.fablesfantasyrp.plugin.bell.domain.repository.BellRepository
 import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.sendError
@@ -20,7 +20,7 @@ import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class Commands(private val bells: EntityBellRepository) {
+class Commands(private val bells: BellRepository) {
 	inner class BellCommand {
 		@Command(aliases = ["list"], desc = "List bells")
 		@Require(Permission.Command.Bell.List)

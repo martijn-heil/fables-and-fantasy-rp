@@ -1,4 +1,4 @@
-package com.fablesfantasyrp.plugin.bell.data.entity
+package com.fablesfantasyrp.plugin.bell.domain.entity
 
 import com.fablesfantasyrp.plugin.bell.PLUGIN
 import com.fablesfantasyrp.plugin.database.entity.DataEntity

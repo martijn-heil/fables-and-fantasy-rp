@@ -2,12 +2,11 @@ package com.fablesfantasyrp.plugin.bell
 
 import com.fablesfantasyrp.plugin.bell.command.Commands
 import com.fablesfantasyrp.plugin.bell.command.provider.BellModule
-import com.fablesfantasyrp.plugin.bell.data.entity.BellRepository
-import com.fablesfantasyrp.plugin.bell.data.entity.EntityBellRepository
-import com.fablesfantasyrp.plugin.bell.data.entity.EntityBellRepositoryImpl
-import com.fablesfantasyrp.plugin.bell.data.persistent.H2BellRepository
+import com.fablesfantasyrp.plugin.bell.dal.h2.H2BellDataRepository
+import com.fablesfantasyrp.plugin.bell.domain.mapper.BellMapper
+import com.fablesfantasyrp.plugin.bell.domain.repository.BellRepository
+import com.fablesfantasyrp.plugin.bell.domain.repository.BellRepositoryImpl
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
-import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
@@ -31,6 +30,7 @@ import org.koin.core.context.unloadKoinModules
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
 import org.koin.dsl.binds
 import org.koin.dsl.module
 
@@ -58,10 +58,12 @@ class FablesBell : JavaPlugin(), KoinComponent {
 			singleOf(::BellListener)
 
 			single {
-				val repo = EntityBellRepositoryImpl(H2BellRepository(fablesDatabase))
-				repo.init()
-				repo
-			} binds arrayOf(EntityBellRepository::class, BellRepository::class)
+				val h2Repository = H2BellDataRepository(get())
+				val mapper = BellMapper(h2Repository)
+				val characterRepositoryImpl = BellRepositoryImpl(mapper)
+				characterRepositoryImpl.init()
+				characterRepositoryImpl
+			} bind BellRepository::class
 
 			factoryOf(::BellModule)
 			factoryOf(::Commands)
@@ -91,7 +93,7 @@ class FablesBell : JavaPlugin(), KoinComponent {
 
 	override fun onDisable() {
 		commands.forEach { unregisterCommand(it) }
-		get<EntityBellRepository>().saveAllDirty()
+		get<BellRepositoryImpl>().saveAllDirty()
 		unloadKoinModules(koinModule)
 	}
 
