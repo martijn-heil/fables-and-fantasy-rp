@@ -4,6 +4,8 @@ import com.fablesfantasyrp.plugin.database.entity.MassivelyCachingEntityReposito
 import com.fablesfantasyrp.plugin.lodestones.domain.entity.LodestoneBanner
 import com.fablesfantasyrp.plugin.lodestones.domain.mapper.LodestoneBannerMapper
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.BlockIdentifier
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.distanceSafe
+import org.bukkit.Location
 
 class LodestoneBannerRepositoryImpl(child: LodestoneBannerMapper, private val lodestones: LodestoneRepository)
 	: MassivelyCachingEntityRepository<Int, LodestoneBanner, LodestoneBannerMapper>(child), LodestoneBannerRepository {
@@ -21,6 +23,15 @@ class LodestoneBannerRepositoryImpl(child: LodestoneBannerMapper, private val lo
 
 	override fun forLocation(location: BlockIdentifier): LodestoneBanner? {
 		return byLocation[location]
+	}
+
+	override fun near(location: Location): LodestoneBanner? {
+		return all()
+			.asSequence()
+			.map { Pair(it, it.location.toLocation().distanceSafe(location)) }
+			.filter { it.second < 3 }
+			.sortedBy { it.second }
+			.firstOrNull()?.first
 	}
 
 	override fun create(v: LodestoneBanner): LodestoneBanner {

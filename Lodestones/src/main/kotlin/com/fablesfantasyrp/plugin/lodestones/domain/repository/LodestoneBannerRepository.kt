@@ -5,10 +5,12 @@ import com.fablesfantasyrp.plugin.database.repository.KeyedRepository
 import com.fablesfantasyrp.plugin.database.repository.MutableRepository
 import com.fablesfantasyrp.plugin.lodestones.domain.entity.LodestoneBanner
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.BlockIdentifier
+import org.bukkit.Location
 
 interface LodestoneBannerRepository :
 		HasDestroyHandler<LodestoneBanner>,
 		MutableRepository<LodestoneBanner>,
 		KeyedRepository<Int, LodestoneBanner> {
 			fun forLocation(location: BlockIdentifier): LodestoneBanner?
+			fun near(location: Location): LodestoneBanner?
 }

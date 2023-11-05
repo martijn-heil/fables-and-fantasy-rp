@@ -9,6 +9,7 @@ import com.fablesfantasyrp.plugin.lodestones.domain.entity.LodestoneBanner
 import com.fablesfantasyrp.plugin.lodestones.domain.repository.LodestoneBannerRepository
 import com.fablesfantasyrp.plugin.lodestones.domain.repository.LodestoneRepository
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.BlockIdentifier
+import org.bukkit.Location
 
 class LodestoneBannerMapper(private val child: LodestoneBannerDataRepository, private val lodestones: LodestoneRepository)
 	: MappingRepository<Int, LodestoneBannerData, LodestoneBanner, LodestoneBannerDataRepository>(child), LodestoneBannerRepository, HasDirtyMarker<LodestoneBanner> {
@@ -29,4 +30,5 @@ class LodestoneBannerMapper(private val child: LodestoneBannerDataRepository, pr
 	)
 
 	override fun forLocation(location: BlockIdentifier): LodestoneBanner? { throw NotImplementedError() }
+	override fun near(location: Location): LodestoneBanner? { throw NotImplementedError() }
 }
