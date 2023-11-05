@@ -1,0 +1,12 @@
+name: FablesLodestones
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+  - FablesDatabase
+  - FablesForm
+  - FablesChat
+  - NinCommands
+main: com.fablesfantasyrp.plugin.lodestones.FablesLodestones
+api-version: @bukkit_api_version@

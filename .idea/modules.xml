@@ -3,6 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Characters/fables-and-fantasy-rp-kotlin.Characters.test.iml" filepath="$PROJECT_DIR$/.idea/modules/Characters/fables-and-fantasy-rp-kotlin.Characters.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/InvisItemFrames/fables-and-fantasy-rp-kotlin.InvisItemFrames.iml" filepath="$PROJECT_DIR$/.idea/modules/InvisItemFrames/fables-and-fantasy-rp-kotlin.InvisItemFrames.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/InvisItemFrames/fables-and-fantasy-rp-kotlin.InvisItemFrames.main.iml" filepath="$PROJECT_DIR$/.idea/modules/InvisItemFrames/fables-and-fantasy-rp-kotlin.InvisItemFrames.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/InvisItemFrames/fables-and-fantasy-rp-kotlin.InvisItemFrames.test.iml" filepath="$PROJECT_DIR$/.idea/modules/InvisItemFrames/fables-and-fantasy-rp-kotlin.InvisItemFrames.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Profile/fables-and-fantasy-rp-kotlin.Profile.test.iml" filepath="$PROJECT_DIR$/.idea/modules/Profile/fables-and-fantasy-rp-kotlin.Profile.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Rolls/fables-and-fantasy-rp-kotlin.Rolls.test.iml" filepath="$PROJECT_DIR$/.idea/modules/Rolls/fables-and-fantasy-rp-kotlin.Rolls.test.iml" />
     </modules>

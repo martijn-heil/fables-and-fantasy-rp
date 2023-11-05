@@ -56,4 +56,5 @@ include("examples:BlankSystem",
 		"InventorySearch",
 		"Item",
 		"CharacterTraits",
-		"CharacterMechanics")
+		"CharacterMechanics",
+		"Lodestones")

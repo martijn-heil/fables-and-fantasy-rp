@@ -14,7 +14,7 @@ import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
-import java.io.*
+import java.io.ByteArrayOutputStream
 import net.minecraft.world.item.ItemStack as NMSItemStack
 
 
@@ -41,26 +41,6 @@ fun ItemStackCompanion.fromBytes(data: ByteArray): ItemStack {
 }
 
 val PLAYER_HOTBAR_SLOTS = 36..44
-
-class SerializableItemStack() : Externalizable {
-	lateinit var itemStack: ItemStack
-		private set
-
-	constructor(itemStack: ItemStack) : this() {
-		this.itemStack = itemStack
-	}
-
-	@Throws(IOException::class)
-	override fun writeExternal(objectOutput: ObjectOutput) {
-		objectOutput.writeObject(itemStack.toBytes())
-	}
-
-	@Throws(IOException::class)
-	override fun readExternal(objectInput: ObjectInput) {
-		val data = objectInput.readObject() as ByteArray
-		itemStack = ItemStackCompanion.fromBytes(data)
-	}
-}
 
 fun EquipmentSlot.getInventorySlotIndex(heldItemSlot: Int): Int {
 	return when (this) {

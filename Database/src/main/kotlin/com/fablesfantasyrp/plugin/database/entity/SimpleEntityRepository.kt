@@ -10,7 +10,7 @@ import java.util.concurrent.locks.ReadWriteLock
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.withLock
 
-open class SimpleEntityRepository<K, T: Identifiable<K>, C>(protected var child: C) : EntityRepository<K, T>
+open class SimpleEntityRepository<K, T: Identifiable<K>, C>(protected var child: C) : EntityRepository<K, T>, HasDestroyHandler<T>
 		where C : KeyedRepository<K, T>,
 			  C : MutableRepository<T>,
 			  C: HasDirtyMarker<T> {
@@ -18,6 +18,7 @@ open class SimpleEntityRepository<K, T: Identifiable<K>, C>(protected var child:
 	protected val strongCache = HashSet<T>()
 	protected val dirty = LinkedHashSet<T>()
 	protected val lock: ReadWriteLock = ReentrantReadWriteLock()
+	protected val destroyHandlers: MutableCollection<(T) -> Unit> = ArrayList()
 
 	open fun init() {
 		child.dirtyMarker = this
@@ -73,6 +74,7 @@ open class SimpleEntityRepository<K, T: Identifiable<K>, C>(protected var child:
 
 	override fun destroy(v: T) {
 		lock.writeLock().withLock {
+			destroyHandlers.forEach { it(v) }
 			cache.remove(v.id)
 			strongCache.remove(v)
 			child.destroy(v)
@@ -101,5 +103,9 @@ open class SimpleEntityRepository<K, T: Identifiable<K>, C>(protected var child:
 		return lock.writeLock().withLock {
 			entities.map { cache.merge(it.id, SoftReference(it)) { a, b -> if (a.get() != null) a else b }!!.get()!! }
 		}
+	}
+
+	override fun onDestroy(callback: (T) -> Unit) {
+		destroyHandlers.add(callback)
 	}
 }

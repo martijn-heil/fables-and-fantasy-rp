@@ -1,0 +1,8 @@
+map_boxes:
+  mapledale:
+    region: 'mapbox_mapledale'
+    location:
+      x: -100
+      y: 102
+      z: -1395
+      world: 'flatroom'

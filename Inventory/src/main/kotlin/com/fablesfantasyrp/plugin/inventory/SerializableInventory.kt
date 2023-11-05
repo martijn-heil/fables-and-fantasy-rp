@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.inventory
 
-import com.fablesfantasyrp.plugin.utils.extensions.bukkit.SerializableItemStack
+import com.fablesfantasyrp.plugin.utils.SerializableItemStack
 import org.bukkit.entity.HumanEntity
 import org.bukkit.inventory.ItemStack
 import java.io.Serializable

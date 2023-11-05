@@ -1,10 +1,18 @@
 package com.fablesfantasyrp.plugin.utils
 
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.ItemStackCompanion
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.fromBytes
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.toBytes
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.Plugin
+import java.io.Externalizable
+import java.io.IOException
+import java.io.ObjectInput
+import java.io.ObjectOutput
 import java.util.concurrent.locks.Lock
 import kotlin.math.roundToLong
 
@@ -43,4 +51,24 @@ fun<T> Lock.withLock(f: () -> T): T {
 
 fun quoteCommandArgument(s: String): String {
 	return if (s.contains(" ") || s.contains("'")) "\"$s\"" else s
+}
+
+class SerializableItemStack() : Externalizable {
+	lateinit var itemStack: ItemStack
+		private set
+
+	constructor(itemStack: ItemStack) : this() {
+		this.itemStack = itemStack
+	}
+
+	@Throws(IOException::class)
+	override fun writeExternal(objectOutput: ObjectOutput) {
+		objectOutput.writeObject(itemStack.toBytes())
+	}
+
+	@Throws(IOException::class)
+	override fun readExternal(objectInput: ObjectInput) {
+		val data = objectInput.readObject() as ByteArray
+		itemStack = ItemStackCompanion.fromBytes(data)
+	}
 }

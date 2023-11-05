@@ -4,6 +4,7 @@ import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.unloadKoinModules
 import org.koin.core.module.Module
@@ -25,8 +26,12 @@ class FablesItem : JavaPlugin(), KoinComponent {
 		koinModule = module(createdAtStart = true) {
 			single<Plugin> { this@FablesItem } binds (arrayOf(JavaPlugin::class))
 			singleOf(::ItemTraitServiceImpl) bind ItemTraitService::class
+			singleOf(::CursorItemOriginTracker) bind CursorItemOriginService::class
+			singleOf(::SpaghettiListener)
 		}
 		loadKoinModules(koinModule)
+
+		server.pluginManager.registerEvents(get<SpaghettiListener>(), this)
 	}
 
 	override fun onDisable() {
