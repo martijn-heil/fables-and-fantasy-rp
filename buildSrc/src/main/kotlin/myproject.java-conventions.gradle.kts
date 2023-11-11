@@ -72,9 +72,8 @@ repositories {
 	maven { url = URI("https://oss.sonatype.org/content/repositories/snapshots/") }
 	maven { url = URI("https://repo.codemc.org/repository/maven-releases/") }
 	mavenLocal()
-	maven { url = URI("https://jitpack.io") }
-
 	mavenCentral()
+	maven { url = URI("https://jitpack.io") }
 	maven { url = URI("https://repo.minebench.de/") }
 }
 

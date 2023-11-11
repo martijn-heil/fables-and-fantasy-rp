@@ -11,5 +11,5 @@ dependencies {
     implementation(project(":Profile"))
     implementation(project(":Location"))
     implementation(project(":Database"))
-    implementation("com.github.Keelar:ExprK:master-SNAPSHOT")
+    implementation("com.github.Keelar:ExprK:91fdabf")
 }
