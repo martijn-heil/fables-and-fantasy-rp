@@ -5,6 +5,7 @@ import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
+import org.bukkit.event.block.Action
 import org.bukkit.event.entity.EntityPickupItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.plugin.Plugin
@@ -19,6 +20,7 @@ class NoEnchanting(private val plugin: Plugin) : Mechanic {
 	inner class NoEnchantingListener : Listener {
 		@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 		fun onPlayerInteract(e: PlayerInteractEvent) {
+			if (e.action != Action.RIGHT_CLICK_BLOCK) return
 			val clickedBlock = e.clickedBlock ?: return
 			if (clickedBlock.type == Material.ENCHANTING_TABLE) {
 				e.isCancelled = true
