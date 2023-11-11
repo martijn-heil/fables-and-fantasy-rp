@@ -10,11 +10,21 @@ import org.bukkit.event.EventPriority.MONITOR
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.player.PlayerDropItemEvent
+import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.Plugin
+import java.util.*
 
 class EverythingIronLevel(private val plugin: Plugin): Mechanic {
 	private val server = plugin.server
+
+	// These UUID's are just randomly generated but will help us in the future
+	// if we ever need to do a migration on these attributes.
+	private val UUID_GENERIC_ATTACK_DAMAGE = UUID.fromString("fb706102-9a2b-4305-962d-268ef0ffe2d9")
+	private val UUID_GENERIC_ATTACK_SPEED = UUID.fromString("6cb7bcbe-2ac2-4f66-ba92-f1dabc3d59d8")
+	private val UUID_GENERIC_ARMOR = UUID.fromString("7ba3e90e-f199-4b57-98bf-a09ef05d499e")
+	private val UUID_GENERIC_ARMOR_TOUGHNESS = UUID.fromString("34b6fe8c-89e3-417d-a062-e3955ea1e07a")
+	private val UUID_GENERIC_KNOCKBACK_RESISTANCE = UUID.fromString("aebdf880-812b-4366-941e-71655c43029e")
 
 	private val materials = hashSetOf(
 		Material.DIAMOND_SWORD,
@@ -43,18 +53,46 @@ class EverythingIronLevel(private val plugin: Plugin): Mechanic {
 		when (itemStack.type) {
 			Material.DIAMOND_SWORD, Material.NETHERITE_SWORD -> {
 				meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE,
-					AttributeModifier("generic.attack_damage", -5.0, AttributeModifier.Operation.ADD_NUMBER))
+					AttributeModifier(
+						UUID_GENERIC_ATTACK_DAMAGE,
+						"generic.attack_damage",
+						-5.0,
+						AttributeModifier.Operation.ADD_NUMBER,
+						EquipmentSlot.HAND
+					)
+				)
 
 				meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED,
-					AttributeModifier("generic.attack_speed", -2.5, AttributeModifier.Operation.ADD_NUMBER))
+					AttributeModifier(
+						UUID_GENERIC_ATTACK_SPEED,
+						"generic.attack_speed",
+						-2.5,
+						AttributeModifier.Operation.ADD_NUMBER,
+						EquipmentSlot.HAND
+					)
+				)
 			}
 
 			Material.DIAMOND_AXE, Material.NETHERITE_AXE-> {
 				meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE,
-					AttributeModifier("generic.attack_damage", 8.0, AttributeModifier.Operation.ADD_NUMBER))
+					AttributeModifier(
+						UUID_GENERIC_ATTACK_DAMAGE,
+						"generic.attack_damage",
+						8.0,
+						AttributeModifier.Operation.ADD_NUMBER,
+						EquipmentSlot.HAND
+					)
+				)
 
 				meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED,
-					AttributeModifier("generic.attack_speed", -3.0, AttributeModifier.Operation.ADD_NUMBER))
+					AttributeModifier(
+						UUID_GENERIC_ATTACK_SPEED,
+						"generic.attack_speed",
+						-3.0,
+						AttributeModifier.Operation.ADD_NUMBER,
+						EquipmentSlot.HAND
+					)
+				)
 			}
 
 			Material.DIAMOND_HELMET, Material.DIAMOND_CHESTPLATE, Material.DIAMOND_LEGGINGS, Material.DIAMOND_BOOTS,
@@ -67,14 +105,37 @@ class EverythingIronLevel(private val plugin: Plugin): Mechanic {
 					else -> 0.0
 				}
 
+				val slot = itemStack.type.equipmentSlot
+
 				meta.addAttributeModifier(Attribute.GENERIC_ARMOR,
-					AttributeModifier("generic.armor", genericArmorAdd, AttributeModifier.Operation.ADD_NUMBER))
+					AttributeModifier(
+						UUID_GENERIC_ARMOR,
+						"generic.armor",
+						genericArmorAdd,
+						AttributeModifier.Operation.ADD_NUMBER,
+						slot
+					)
+				)
 
 				meta.addAttributeModifier(Attribute.GENERIC_ARMOR_TOUGHNESS,
-					AttributeModifier("generic.armor_toughness", 0.00, AttributeModifier.Operation.ADD_NUMBER))
+					AttributeModifier(
+						UUID_GENERIC_ARMOR_TOUGHNESS,
+						"generic.armor_toughness",
+						0.00,
+						AttributeModifier.Operation.ADD_NUMBER,
+						slot
+					)
+				)
 
 				meta.addAttributeModifier(Attribute.GENERIC_KNOCKBACK_RESISTANCE,
-					AttributeModifier("generic.knockback_resistance", 0.00, AttributeModifier.Operation.ADD_NUMBER))
+					AttributeModifier(
+						UUID_GENERIC_KNOCKBACK_RESISTANCE,
+						"generic.knockback_resistance",
+						0.00,
+						AttributeModifier.Operation.ADD_NUMBER,
+						slot
+					)
+				)
 			}
 			else -> {}
 		}
