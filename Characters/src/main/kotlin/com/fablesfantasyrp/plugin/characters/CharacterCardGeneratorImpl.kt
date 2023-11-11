@@ -91,7 +91,7 @@ class CharacterCardGeneratorImpl(private val creatureSizeCalculator: CreatureSiz
 			Placeholder.component("age", character.age?.let { age ->
 				Component.text(age.toString()).hoverEvent(
 				HoverEvent.showText(miniMessage.deserialize(
-					"<gray>Date of birth: <date_of_birth></gray>" +
+					"<gray>Date of birth: <date_of_birth></gray>",
 					Placeholder.unparsed("date_of_birth", formatDateLong(character.dateOfBirth!!))
 				)))
 			} ?: Component.text("Unknown")),
