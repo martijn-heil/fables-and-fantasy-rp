@@ -21,7 +21,6 @@ import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.time.formatDateLong
 import com.fablesfantasyrp.plugin.time.javatime.FablesLocalDate
 import com.fablesfantasyrp.plugin.utils.Services
-import com.fablesfantasyrp.plugin.utils.extensions.bukkit.showEndCredits
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.koin.core.context.GlobalContext
 import java.time.Instant
@@ -46,6 +45,7 @@ class Character : DataEntity<Int, Character> {
 				field = value
 				dirtyMarker?.markDirty(this)
 				dateOfNaturalDeath = value?.let { if (race.medianAge != null) calculateDateOfNaturalDeath(it, race.medianAge!!) else null }
+				checkNaturalDeath()
 			}
 		}
 
@@ -60,8 +60,7 @@ class Character : DataEntity<Int, Character> {
 				if (player != null) {
 					player.health = 0.0
 					player.spigot().respawn()
-					profile.isActive = !(isShelved || isDead)
-					player.showEndCredits()
+					//player.showEndCredits()
 				}
 				val inventory = profile.inventory
 				inventory.inventory.clear()
@@ -72,7 +71,7 @@ class Character : DataEntity<Int, Character> {
 
 			field = value
 			if (field) this.isShelved = false
-			profile.isActive = !(isShelved || isDead)
+			profile.isActive = !(isShelved || field)
 			dirtyMarker?.markDirty(this)
 		}
 		get() {
@@ -145,14 +144,14 @@ class Character : DataEntity<Int, Character> {
 	fun checkNaturalDeath() {
 		val today = FablesLocalDate.now()
 		if (dateOfNaturalDeath != null && (today == dateOfNaturalDeath || today.isAfter(dateOfNaturalDeath!!))) {
-			this.isDead = true
 			Services.get<ProfileManager>().getCurrentForProfile(profile)
 				?.sendMessage(miniMessage.deserialize("<prefix> <red>" +
-					"<bold><name> has died of old age on <underlined><date></underlined>.</red>",
+					"<bold><name> has died of old age on <underlined><date></underlined>.</bold></red>",
 					Placeholder.component("prefix", legacyText(SYSPREFIX)),
 					Placeholder.unparsed("date", formatDateLong(dateOfNaturalDeath!!)),
 					Placeholder.unparsed("name", name)
 				))
+			this.isDead = true
 		}
 	}
 
