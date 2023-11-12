@@ -129,11 +129,11 @@ private suspend fun promptGender(player: Player): Gender {
 	))
 }
 
-suspend fun promptDateOfBirth(player: Player): FablesLocalDate {
+suspend fun promptDateOfBirth(player: Player, race: Race): FablesLocalDate {
 	return flow {
 		val dateOfBirth = DatePicker(PLUGIN, "Please pick date of birth").execute(player)
 		val age = dateOfBirth.until(FablesLocalDate.now(), ChronoUnit.YEARS)
-		if (age < 13) throw IllegalArgumentException("Age must be at least 13")
+		if (age < race.minimumAge) throw IllegalArgumentException("Age must be at least ${race.minimumAge}")
 		if (age> 1000) throw IllegalArgumentException("Age may not be greater than 1000")
 		emit(dateOfBirth)
 	}.retry {
@@ -175,7 +175,7 @@ suspend fun promptNewCharacterInfo(player: Player, allowedRaces: Collection<Race
 			Placeholder.unparsed("gender", gender.toString())))
 
 	val race = promptRace(player, allowedRaces)
-	val dateOfBirth = if (race != Race.OTHER) promptDateOfBirth(player) else null
+	val dateOfBirth = if (race != Race.OTHER) promptDateOfBirth(player, race) else null
 
 	val description = player.promptChat(miniMessage.deserialize("<gray>What is the description of <yellow><name></yellow>?</gray>",
 			Placeholder.unparsed("name", name)))

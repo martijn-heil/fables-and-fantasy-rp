@@ -2,23 +2,97 @@ package com.fablesfantasyrp.plugin.characters.dal.enums
 
 import com.fablesfantasyrp.plugin.characters.domain.CharacterStatsModifier
 
+private const val BASE_MINIMUM_AGE = 8
+
 enum class Race(private val displayName: String,
 				val boosters: CharacterStatsModifier,
-				val medianAge: Int?,
+				val medianAge: Int? = null,
+				val minimumAge: Int = BASE_MINIMUM_AGE,
 				val creatureSize: CreatureSize = CreatureSize.MEDIUM) {
-	ATTIAN_HUMAN("Attian Human", CharacterStatsModifier(strength = 1, defense = 1, agility = 1, intelligence = 1), 80),
-	HINTERLANDER_HUMAN("Hinterlander Human", CharacterStatsModifier(strength = 1, defense = 2, intelligence = 1), 80),
-	KHADAN_HUMAN("Khadan Human", CharacterStatsModifier(strength = 2, agility = 2), 80),
-	HIGH_ELF("High Elf", CharacterStatsModifier(intelligence = 4), 450),
-	DARK_ELF("Dark Elf", CharacterStatsModifier(strength = 2, intelligence = 2), 450),
-	WOOD_ELF("Wood Elf", CharacterStatsModifier(strength = 1, agility = 3), 350),
-	DWARF("Dwarf", CharacterStatsModifier(defense = 4), 200, CreatureSize.SMALL),
-	TIEFLING("Tiefling", CharacterStatsModifier(strength = 1, intelligence = 3), 120),
-	ORC("Orc", CharacterStatsModifier(strength = 3, defense = 1), 150, CreatureSize.LARGE),
-	GOBLIN("Goblin", CharacterStatsModifier(defense = 1, intelligence = 1, agility = 2), 130, CreatureSize.SMALL),
-	HALFLING("Halfling", CharacterStatsModifier(defense = 1, agility = 3), 80, CreatureSize.SMALL),
-	SYLVANI("Sylvani", CharacterStatsModifier( agility = 2, intelligence = 4), null),
-	OTHER("Other", CharacterStatsModifier(defense = 0, agility = 0, intelligence = 0), null),
+
+	ATTIAN_HUMAN(
+		displayName = "Attian Human",
+		boosters = CharacterStatsModifier(strength = 1, defense = 1, agility = 1, intelligence = 1),
+		medianAge = 80,
+		minimumAge = BASE_MINIMUM_AGE
+	),
+
+	HINTERLANDER_HUMAN(
+		displayName = "Hinterlander Human",
+		boosters = CharacterStatsModifier(strength = 1, defense = 2, intelligence = 1),
+		medianAge = 80,
+	),
+
+	KHADAN_HUMAN(
+		displayName = "Khadan Human",
+		boosters = CharacterStatsModifier(strength = 2, agility = 2),
+		medianAge = 80,
+	),
+
+	HIGH_ELF(
+		displayName = "High Elf",
+		boosters = CharacterStatsModifier(intelligence = 4),
+		medianAge = 450,
+		minimumAge = BASE_MINIMUM_AGE*4
+	),
+
+	DARK_ELF(
+		displayName = "Dark Elf",
+		boosters = CharacterStatsModifier(strength = 2, intelligence = 2),
+		medianAge = 450,
+		minimumAge = BASE_MINIMUM_AGE*4
+	),
+
+	WOOD_ELF(
+		displayName = "Wood Elf",
+		boosters = CharacterStatsModifier(strength = 1, agility = 3),
+		medianAge = 350,
+		minimumAge = BASE_MINIMUM_AGE*4
+	),
+
+	DWARF(
+		displayName = "Dwarf",
+		boosters = CharacterStatsModifier(defense = 4),
+		medianAge = 200,
+		creatureSize = CreatureSize.SMALL
+	),
+
+	TIEFLING(
+		displayName = "Tiefling",
+		boosters = CharacterStatsModifier(strength = 1, intelligence = 3),
+		medianAge = 120,
+	),
+
+	ORC(
+		displayName = "Orc",
+		boosters = CharacterStatsModifier(strength = 3, defense = 1),
+		medianAge = 150,
+		creatureSize = CreatureSize.LARGE),
+
+	GOBLIN(
+		displayName = "Goblin",
+		boosters = CharacterStatsModifier(defense = 1, intelligence = 1, agility = 2),
+		medianAge = 130,
+		creatureSize = CreatureSize.SMALL
+	),
+
+	HALFLING(
+		displayName = "Halfling",
+		boosters = CharacterStatsModifier(defense = 1, agility = 3),
+		medianAge = 80,
+		creatureSize = CreatureSize.SMALL
+	),
+
+	SYLVANI(
+		displayName = "Sylvani",
+		boosters = CharacterStatsModifier( agility = 2, intelligence = 4),
+		minimumAge = BASE_MINIMUM_AGE*4
+	),
+
+	OTHER(
+		displayName = "Other",
+		boosters = CharacterStatsModifier(defense = 0, agility = 0, intelligence = 0),
+	),
 
 	@Deprecated("legacy race")
 	HUMAN("Human", CharacterStatsModifier(strength = 1, defense = 1, agility = 1), 65);

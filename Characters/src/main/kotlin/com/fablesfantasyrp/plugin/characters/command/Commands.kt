@@ -380,7 +380,7 @@ class Commands(private val plugin: JavaPlugin,
 				authorizer.mayEditDateOfBirth(sender, target).orElse { throw AuthorizationException(it) }
 
 				plugin.launch {
-					val newDate = promptDateOfBirth(sender)
+					val newDate = promptDateOfBirth(sender, target.race)
 					target.dateOfBirth = newDate
 					sender.sendMessage("$SYSPREFIX Date of birth changed!")
 				}
