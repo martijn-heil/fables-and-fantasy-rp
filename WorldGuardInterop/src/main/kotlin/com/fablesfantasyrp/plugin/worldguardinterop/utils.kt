@@ -1,4 +1,4 @@
-package com.fablesfantasyrp.plugin.fasttravel
+package com.fablesfantasyrp.plugin.worldguardinterop
 
 import com.sk89q.worldedit.math.BlockVector3
 import org.bukkit.Location

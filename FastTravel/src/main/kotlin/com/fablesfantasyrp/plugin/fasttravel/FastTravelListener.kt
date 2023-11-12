@@ -2,6 +2,7 @@ package com.fablesfantasyrp.plugin.fasttravel
 
 import com.fablesfantasyrp.plugin.fasttravel.data.entity.FastTravelLinkRepository
 import com.fablesfantasyrp.plugin.timers.CountdownCancelledEvent
+import com.fablesfantasyrp.plugin.worldguardinterop.toBlockVector3
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority.MONITOR
 import org.bukkit.event.Listener
