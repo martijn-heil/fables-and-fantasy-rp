@@ -49,6 +49,7 @@ class FablesAlternateMechanics : JavaPlugin(), KoinComponent {
 			singleOf(::RestrictedDualWielding) bind Mechanic::class
 			singleOf(::EverythingIronLevel) bind Mechanic::class
 			singleOf(::DisableCraftingRecipes) bind Mechanic::class
+			singleOf(::NoCropTrample) bind Mechanic::class
 		}
 		loadKoinModules(koinModule)
 
