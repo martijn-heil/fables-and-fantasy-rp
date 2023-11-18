@@ -4,4 +4,6 @@ plugins {
 
 dependencies {
     implementation(project(":plugin:technical:Utils"))
+    implementation(project(":plugin:technical:DenizenInterop"))
+    implementation(project(":plugin:core:Profile"))
 }

@@ -9,4 +9,7 @@ dependencies {
     implementation(project(":plugin:technical:Timers"))
     implementation(project(":plugin:technical:Text"))
     implementation(project(":plugin:technical:WorldGuardInterop"))
+    implementation(project(":plugin:technical:Gui"))
+    implementation(project(":plugin:technical:Form"))
+    implementation(project(":plugin:core:Characters"))
 }

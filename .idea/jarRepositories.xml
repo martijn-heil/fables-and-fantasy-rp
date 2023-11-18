@@ -22,11 +22,6 @@
       <option name="url" value="https://repo.papermc.io/repository/maven-public/" />
     </remote-repository>
     <remote-repository>
-      <option name="id" value="maven6" />
-      <option name="name" value="maven6" />
-      <option name="url" value="https://repo.essentialsx.net/releases/" />
-    </remote-repository>
-    <remote-repository>
       <option name="id" value="maven3" />
       <option name="name" value="maven3" />
       <option name="url" value="https://ci.citizensnpcs.co/job/Denizen/1765/maven-repository/repository/" />
@@ -40,6 +35,11 @@
       <option name="id" value="maven2" />
       <option name="name" value="maven2" />
       <option name="url" value="https://repo.extendedclip.com/content/repositories/placeholderapi" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven9" />
+      <option name="name" value="maven9" />
+      <option name="url" value="https://repo.codemc.org/repository/maven-releases/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="maven5" />
@@ -62,8 +62,8 @@
       <option name="url" value="https://jitpack.io" />
     </remote-repository>
     <remote-repository>
-      <option name="id" value="maven7" />
-      <option name="name" value="maven7" />
+      <option name="id" value="maven6" />
+      <option name="name" value="maven6" />
       <option name="url" value="https://repo.codemc.io/repository/maven-public/" />
     </remote-repository>
     <remote-repository>
@@ -72,8 +72,8 @@
       <option name="url" value="https://repo.kryptonmc.org/releases" />
     </remote-repository>
     <remote-repository>
-      <option name="id" value="maven8" />
-      <option name="name" value="maven8" />
+      <option name="id" value="maven7" />
+      <option name="name" value="maven7" />
       <option name="url" value="https://maven.enginehub.org/repo/" />
     </remote-repository>
     <remote-repository>
@@ -82,8 +82,8 @@
       <option name="url" value="file:$MAVEN_REPOSITORY$/" />
     </remote-repository>
     <remote-repository>
-      <option name="id" value="maven9" />
-      <option name="name" value="maven9" />
+      <option name="id" value="maven8" />
+      <option name="name" value="maven8" />
       <option name="url" value="https://oss.sonatype.org/content/repositories/snapshots/" />
     </remote-repository>
     <remote-repository>
@@ -95,16 +95,6 @@
       <option name="id" value="Gradle Central Plugin Repository" />
       <option name="name" value="Gradle Central Plugin Repository" />
       <option name="url" value="https://plugins.gradle.org/m2" />
-    </remote-repository>
-    <remote-repository>
-      <option name="id" value="MavenLocal" />
-      <option name="name" value="MavenLocal" />
-      <option name="url" value="file:/$MAVEN_REPOSITORY$/" />
-    </remote-repository>
-    <remote-repository>
-      <option name="id" value="maven10" />
-      <option name="name" value="maven10" />
-      <option name="url" value="https://repo.codemc.org/repository/maven-releases/" />
     </remote-repository>
   </component>
 </project>

@@ -8,5 +8,10 @@ dependencies {
     implementation(project(":plugin:technical:Database"))
     implementation(project(":plugin:technical:Timers"))
     implementation(project(":plugin:technical:Text"))
+    implementation(project(":plugin:technical:Form"))
+    implementation(project(":plugin:technical:Gui"))
     implementation(project(":plugin:technical:WorldGuardInterop"))
+    implementation(project(":plugin:technical:Discord"))
+    implementation(project(":plugin:core:Chat"))
+    implementation(project(":plugin:core:Characters"))
 }

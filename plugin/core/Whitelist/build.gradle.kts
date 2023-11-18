@@ -4,9 +4,9 @@ plugins {
 
 dependencies {
     // internal module dependencies
+    implementation(project(":plugin:technical:KotlinRuntime"))
     implementation(project(":plugin:technical:Utils"))
-    implementation(project(":plugin:technical:Database"))
-    implementation(project(":plugin:technical:Timers"))
+    implementation(project(":plugin:technical:UtilsOffline"))
     implementation(project(":plugin:technical:Text"))
-    implementation(project(":plugin:technical:WorldGuardInterop"))
+    implementation(project(":plugin:core:Chat"))
 }
