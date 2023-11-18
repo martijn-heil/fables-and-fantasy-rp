@@ -15,8 +15,9 @@ class YamlMapBoxRepository(private val plugin: Plugin,
 	private val server = plugin.server
 
 	fun init() {
-		config.getKeys(false)
-			.mapNotNull { config.getConfigurationSection(it) }
+		val mapBoxes = config.getConfigurationSection("map_boxes")!!
+			mapBoxes.getKeys(false)
+			.map { mapBoxes.getConfigurationSection(it)!! }
 			.map { mapBoxConfig ->
 				val locationX = mapBoxConfig.getDouble("location.x")
 				val locationY = mapBoxConfig.getDouble("location.y")

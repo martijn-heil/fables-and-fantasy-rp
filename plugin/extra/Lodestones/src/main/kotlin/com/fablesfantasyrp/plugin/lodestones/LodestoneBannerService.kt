@@ -77,19 +77,19 @@ class LodestoneBannerService(private val plugin: Plugin,
 
 	private fun getTargetedBanner(player: Player): LodestoneBanner? {
 		val block = player.getTargetBlock(transparentMaterials, 50)
-		if (!Tag.BANNERS.isTagged(block.type)) return null
 		return lodestoneBanners.near(block.location)
 	}
 
 	inner class LodestoneBannerServiceListener : Listener {
-		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-		fun onPlayerRightClick(e: PlayerInteractEvent) {
+		@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
+		fun onPlayerLeftClick(e: PlayerInteractEvent) {
 			if (e.hand != EquipmentSlot.HAND) return
 			if (e.action != Action.LEFT_CLICK_AIR && e.action != Action.LEFT_CLICK_BLOCK) return
 			if (!isInMapBox(e.player.location, mapBoxes.all())) return
 
 			val banner = getTargetedBanner(e.player) ?: return
 
+			e.isCancelled = true
 			e.player.teleport(banner.lodestone.location.toLocation())
 		}
 

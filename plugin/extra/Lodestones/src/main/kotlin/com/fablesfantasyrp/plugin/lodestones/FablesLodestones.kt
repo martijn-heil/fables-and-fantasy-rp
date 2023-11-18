@@ -87,7 +87,11 @@ class FablesLodestones : JavaPlugin(), KoinComponent {
 				domainRepository
 			} bind CharacterLodestoneRepository::class
 
-			single { YamlMapBoxRepository(get(), config, get()) } bind MapBoxRepository::class
+			single {
+				val repo = YamlMapBoxRepository(get(), config, get())
+				repo .init()
+				repo
+			} bind MapBoxRepository::class
 
 			singleOf(::LodestoneBannerService)
 
