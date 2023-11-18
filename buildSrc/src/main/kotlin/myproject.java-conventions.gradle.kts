@@ -126,9 +126,8 @@ dependencies {
 	implementation("org.ocpsoft.prettytime:prettytime:5.0.6.Final")
 	implementation("com.google.guava:guava:31.1-jre")
 	implementation("io.insert-koin:koin-core:3.3.2")
-	implementation(urlFile(URL("https://github.com/Gecolay/GSit/releases/download/1.2.4/GSit-1.2.4.jar"), "GSit.jar"))
 	implementation("com.gitlab.martijn-heil:NinCommands:master-SNAPSHOT") { isChanging = true }
-	implementation(fileTree("${project.projectDir.parent}/lib") { include("*.jar") })
+	implementation(fileTree("${project.rootDir}/lib") { include("*.jar") })
 
 	testImplementation(kotlin("test"))
 	testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
