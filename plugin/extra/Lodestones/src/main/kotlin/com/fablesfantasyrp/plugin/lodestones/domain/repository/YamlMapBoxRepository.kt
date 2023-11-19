@@ -6,6 +6,7 @@ import com.fablesfantasyrp.plugin.worldguardinterop.WorldGuardRegion
 import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldguard.protection.regions.RegionContainer
 import org.bukkit.Location
+import org.bukkit.World
 import org.bukkit.configuration.Configuration
 import org.bukkit.plugin.Plugin
 
@@ -29,5 +30,9 @@ class YamlMapBoxRepository(private val plugin: Plugin,
 
 				MapBox(0, WorldGuardRegion(locationWorld, region), location)
 			}.forEach { this.create(it) }
+	}
+
+	override fun forWorld(world: World): MapBox? {
+		return this.all().firstOrNull()
 	}
 }
