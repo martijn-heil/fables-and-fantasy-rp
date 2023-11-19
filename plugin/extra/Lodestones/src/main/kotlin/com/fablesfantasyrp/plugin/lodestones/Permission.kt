@@ -10,6 +10,7 @@ object Permission {
 			private const val prefix = Command.prefix + ".lodestone"
 			const val Create = "$prefix.create"
 			const val Move = "$prefix.move"
+			const val Rename = "$prefix.rename"
 			const val List = "$prefix.list"
 			const val Destroy = "$prefix.destroy"
 		}

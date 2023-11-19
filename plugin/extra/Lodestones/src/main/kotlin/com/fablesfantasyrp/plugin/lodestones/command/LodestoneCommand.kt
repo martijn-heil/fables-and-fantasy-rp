@@ -75,4 +75,17 @@ class LodestoneCommand(private val lodestones: LodestoneRepository) {
 		lodestone.location = block.location.toBlockIdentifier()
 		sender.sendMessage("$SYSPREFIX Relocated lodestone #${lodestone.id}")
 	}
+
+	@Command(aliases = ["rename"], desc = "Rename a lodestone")
+	@Require(Permission.Command.Lodestone.Rename)
+	fun rename(@Sender sender: Player, lodestone: Lodestone, name: String) {
+		val block = sender.getTargetBlock(10)
+		if (block == null || block.type != Material.LODESTONE) {
+			sender.sendError("Please aim at a lodestone block.")
+			return
+		}
+
+		lodestone.name = name
+		sender.sendMessage("$SYSPREFIX Renamed lodestone #${lodestone.id}")
+	}
 }
