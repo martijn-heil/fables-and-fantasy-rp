@@ -3,6 +3,7 @@ package com.fablesfantasyrp.plugin.lodestones.domain.repository
 import com.fablesfantasyrp.plugin.database.repository.SimpleMapRepository
 import com.fablesfantasyrp.plugin.lodestones.domain.entity.MapBox
 import com.fablesfantasyrp.plugin.worldguardinterop.WorldGuardRegion
+import com.fablesfantasyrp.plugin.worldguardinterop.toBlockVector3
 import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldguard.protection.regions.RegionContainer
 import org.bukkit.Location
@@ -34,5 +35,9 @@ class YamlMapBoxRepository(private val plugin: Plugin,
 
 	override fun forWorld(world: World): MapBox? {
 		return this.all().firstOrNull()
+	}
+
+	override fun anyContains(location: Location): Boolean {
+		return all().any { box -> box.region.region.contains(location.toBlockVector3()) }
 	}
 }

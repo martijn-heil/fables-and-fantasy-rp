@@ -33,13 +33,14 @@ class LodestoneGui(private val plugin: JavaPlugin,
 
 	init {
 		this.addElement(DynamicGuiElement('g') { viewer ->
-			val lodestones = characterLodestoneRepository.forCharacter(character)
+			val lodestones = characterLodestoneRepository.forCharacter(character).sortedBy { it.name }
 			val group = GuiElementGroup('g')
 
 			group.addElements(lodestones.map { lodestone ->
 				StaticGuiElement('g', getItem(lodestone), {
 					characterLodestoneRepository.remove(character, lodestone)
 					characterLodestoneRepository.add(character, clickedLodestone)
+					draw()
 					true
 				}, "${ChatColor.GOLD}${lodestone.name}", "${ChatColor.GRAY}Click to replace this lodestone.")
 			})
@@ -47,6 +48,7 @@ class LodestoneGui(private val plugin: JavaPlugin,
 			group.addElements((min(lodestones.size, slotCount) until slotCount).map {
 				StaticGuiElement('g', ItemStack(Material.SKELETON_SKULL), {
 					characterLodestoneRepository.add(character, clickedLodestone)
+					draw()
 					true
 				},
 					"${ChatColor.DARK_AQUA}Click to add!",
@@ -66,7 +68,7 @@ class LodestoneGui(private val plugin: JavaPlugin,
 		this.addElement(StaticGuiElement('d', Icon.TRASH_BIN, {
 			unlinkLodestone()
 			true
-		}, "${ChatColor.RED}Delete a skin",
+		}, "${ChatColor.RED}Delete a lodestone",
 			"${ChatColor.GRAY}Click here to select a lodestone to unlink.", ))
 	}
 

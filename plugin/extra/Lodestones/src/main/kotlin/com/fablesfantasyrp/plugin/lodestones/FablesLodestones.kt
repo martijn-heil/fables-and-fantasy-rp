@@ -98,6 +98,7 @@ class FablesLodestones : JavaPlugin(), KoinComponent {
 			factoryOf(::LodestoneModule)
 			factoryOf(::LodestoneCommand)
 			factoryOf(::LodestoneBannerCommand)
+			factoryOf(::LodestoneAuthorizerImpl) bind LodestoneAuthorizer::class
 		}
 		loadKoinModules(koinModule)
 
@@ -126,6 +127,7 @@ class FablesLodestones : JavaPlugin(), KoinComponent {
 
 	override fun onDisable() {
 		commands.forEach { unregisterCommand(it) }
+		get<LodestoneBannerService>().stop()
 		get<LodestoneRepositoryImpl>().saveAllDirty()
 		get<LodestoneBannerRepositoryImpl>().saveAllDirty()
 		get<CharacterLodestoneRepositoryImpl>().saveAllDirty()

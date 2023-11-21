@@ -11,6 +11,5 @@ dependencies {
     implementation(project(":plugin:technical:Form"))
     implementation(project(":plugin:technical:Gui"))
     implementation(project(":plugin:technical:WorldGuardInterop"))
-    implementation(project(":plugin:core:Chat"))
     implementation(project(":plugin:core:Characters"))
 }
