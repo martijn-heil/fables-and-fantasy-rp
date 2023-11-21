@@ -62,6 +62,7 @@ class FablesLodestones : JavaPlugin(), KoinComponent {
 			single<Plugin> { this@FablesLodestones } binds(arrayOf(JavaPlugin::class))
 
 			singleOf(::LodestoneListener)
+			singleOf(::TeleportParticlesListener)
 
 			single {
 				val h2Repository = H2LodestoneDataRepository(get())
@@ -123,6 +124,7 @@ class FablesLodestones : JavaPlugin(), KoinComponent {
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
 
 		server.pluginManager.registerEvents(get<LodestoneListener>(), this)
+		server.pluginManager.registerEvents(get<TeleportParticlesListener>(), this)
 	}
 
 	override fun onDisable() {

@@ -58,8 +58,11 @@ class LodestoneListener(private val plugin: JavaPlugin,
 		e.isCancelled = true
 		plugin.launch {
 			try {
-				e.player.countdown(10U, emptyList(), listOf(CancelReason.MOVEMENT, CancelReason.HURT))
-				val location = mapBox.location.clone()
+				val isInCharacter = profileManager.getCurrentForPlayer(e.player)?.let { characters.forProfile(it) } != null
+
+				e.player.countdown(if (isInCharacter) 10U else 3U, emptyList(), listOf(CancelReason.MOVEMENT, CancelReason.HURT))
+
+				val location = mapBox.location.toCenterLocation()
 				location.yaw = 180f // Face north instead of south
 				e.player.teleport(location)
 			} catch (_: CountdownBusyException) {

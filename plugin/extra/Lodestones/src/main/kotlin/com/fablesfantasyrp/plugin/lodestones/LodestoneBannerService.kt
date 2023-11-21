@@ -105,7 +105,7 @@ class LodestoneBannerService(private val plugin: Plugin,
 
 			e.isCancelled = true
 			if (authorizer.mayWarpTo(profile, banner.lodestone)) {
-				e.player.teleport(banner.lodestone.location.toLocation())
+				banner.lodestone.warpHere(e.player)
 			} else {
 				e.player.sendError(
 					"You do not have access to warp to ${banner.lodestone.name}. " +
