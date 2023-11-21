@@ -110,9 +110,11 @@ suspend fun Player.countdown(duration: UInt,
 internal class CountdownListener : Listener {
 	@EventHandler(priority = NORMAL, ignoreCancelled = true)
 	fun onPlayerMove(e: PlayerMoveEvent) {
-		val job = e.player.currentCountdown ?: return
-		job.maybeCancel(CancelReason.MOVEMENT)
-		if (job.countdownPreventions.contains(CountdownPrevention.MOVEMENT)) e.isCancelled = true
+		if (e.hasChangedBlock()) {
+			val job = e.player.currentCountdown ?: return
+			job.maybeCancel(CancelReason.MOVEMENT)
+			if (job.countdownPreventions.contains(CountdownPrevention.MOVEMENT)) e.isCancelled = true
+		}
 	}
 
 	@EventHandler(priority = NORMAL, ignoreCancelled = true)
