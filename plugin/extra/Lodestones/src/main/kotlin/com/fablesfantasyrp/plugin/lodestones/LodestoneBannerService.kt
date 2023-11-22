@@ -8,6 +8,7 @@ import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.sendError
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.ColumnIdentifier
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.groundLevel
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -154,14 +155,7 @@ class LodestoneBannerService(private val plugin: Plugin,
 				}
 			} else if (profile == null || characters.forProfile(profile) == null) {
 				e.isCancelled = true
-				val destinationColumn = translateTargetLocation(mapBox, targetedLocation)
-				val destinationWorld = server.getWorld(destinationColumn.world)!!
-				val destination = Location(
-					destinationWorld,
-					destinationColumn.x.toDouble(),
-					130.0,
-					destinationColumn.z.toDouble()
-				)
+				val destination = translateTargetLocation(mapBox, targetedLocation).groundLevel()
 				e.player.teleport(destination)
 			}
 		}

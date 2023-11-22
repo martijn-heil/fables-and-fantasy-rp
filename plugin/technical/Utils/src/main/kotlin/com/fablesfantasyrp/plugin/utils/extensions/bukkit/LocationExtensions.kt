@@ -4,7 +4,11 @@ import org.bukkit.Bukkit
 import org.bukkit.Location
 import java.util.*
 
-data class ColumnIdentifier(val world: UUID, val x: Int, val z: Int)
+data class ChunkCoordinates(val x: Int, val z: Int)
+
+data class ColumnIdentifier(val world: UUID, val x: Int, val z: Int) {
+	fun getChunkCoordinates() = ChunkCoordinates(x shr 4, z shr 4)
+}
 
 data class BlockCoordinates(val x: Int, val y: Int, val z: Int) {
 	fun withWorld(world: UUID) = BlockIdentifier(world, x, y, z)
@@ -21,4 +25,9 @@ fun Location.toBlockIdentifier() = BlockIdentifier(this.world.uid, this.blockX, 
 fun Location.distanceSafe(to: Location): Double {
 	if (this.world != to.world) return Double.MAX_VALUE
 	return this.distance(to)
+}
+
+fun ColumnIdentifier.groundLevel(): Location {
+	val world = Bukkit.getServer().getWorld(world)!!
+	return world.getHighestBlockAt(x, z).location.add(0.0, 1.0, 0.0)
 }
