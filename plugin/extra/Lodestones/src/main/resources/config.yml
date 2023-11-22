@@ -2,7 +2,22 @@ map_boxes:
   mapledale:
     region: 'mapbox_mapledale'
     location:
-      x: -100
-      y: 102
-      z: -1395
-      world: 'flatroom'
+      x: 404
+      y: -32
+      z: -1408
+      yaw: 180
+      pitch: 60
+      world: 'Eden'
+    plane:
+      left_top:
+        x: 328
+        z: -1505.99
+      width: 127
+      height: 172
+    anchor_plane:
+      world: 'Eden'
+      left_top:
+        x: -2943
+        z: -3968
+      width: 5888
+      height: 7936

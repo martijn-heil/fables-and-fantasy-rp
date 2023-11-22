@@ -4,6 +4,8 @@ import org.bukkit.Bukkit
 import org.bukkit.Location
 import java.util.*
 
+data class ColumnIdentifier(val world: UUID, val x: Int, val z: Int)
+
 data class BlockCoordinates(val x: Int, val y: Int, val z: Int) {
 	fun withWorld(world: UUID) = BlockIdentifier(world, x, y, z)
 }

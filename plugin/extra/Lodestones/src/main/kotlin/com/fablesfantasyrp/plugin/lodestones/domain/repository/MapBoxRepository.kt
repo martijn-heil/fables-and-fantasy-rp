@@ -9,4 +9,5 @@ import org.bukkit.World
 interface MapBoxRepository : Repository<MapBox>, KeyedRepository<Int, MapBox> {
 	fun forWorld(world: World): MapBox?
 	fun anyContains(location: Location): Boolean
+	fun forLocation(location: Location): MapBox?
 }
