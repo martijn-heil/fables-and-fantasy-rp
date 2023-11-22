@@ -143,8 +143,13 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 		}
 
 		if (server.pluginManager.isPluginEnabled("FablesWeb")) {
-			logger.info("Enabling FablesWeb integration")
-			WebHook().start()
+			try {
+				logger.info("Enabling FablesWeb integration")
+				WebHook().start()
+			} catch (ex: Exception) {
+				ex.printStackTrace()
+				logger.warning("An error occurred during setup of FablesWeb integration.")
+			}
 		}
 
 		/*server.scheduler.scheduleSyncRepeatingTask(this, {

@@ -29,7 +29,7 @@ private class Players() {
 	class Id(val parent: Players = Players(), val id: String)
 }
 
-class WebRouting(private val plugin: Plugin, private val profiles: EntityProfileRepository) : BaseWebRoutingLoader() {
+internal class WebRouting(private val plugin: Plugin, private val profiles: EntityProfileRepository) : BaseWebRoutingLoader() {
 	private val logger = plugin.logger
 	private val server = plugin.server
 

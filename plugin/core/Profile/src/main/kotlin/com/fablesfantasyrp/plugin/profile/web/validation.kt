@@ -5,7 +5,7 @@ import com.fablesfantasyrp.plugin.web.loaders.BaseRequestValidationLoader
 import io.ktor.server.plugins.requestvalidation.*
 import java.util.*
 
-class WebRequestValidation : BaseRequestValidationLoader() {
+internal class WebRequestValidation : BaseRequestValidationLoader() {
 	override val validation: RequestValidationConfig.() -> Unit = {
 		validate<WebProfile> {
 			if (it.description != null && it.description.length > 255) {

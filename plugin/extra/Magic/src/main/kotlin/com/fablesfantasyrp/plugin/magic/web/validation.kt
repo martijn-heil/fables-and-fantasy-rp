@@ -7,7 +7,7 @@ import com.fablesfantasyrp.plugin.web.loaders.BaseRequestValidationLoader
 import io.ktor.server.plugins.requestvalidation.*
 import org.bukkit.plugin.Plugin
 
-class WebRequestValidation(private val plugin: Plugin,
+internal class WebRequestValidation(private val plugin: Plugin,
 						   private val mages: MageRepository,
 						   private val spells: SpellDataRepository) : BaseRequestValidationLoader() {
 	override val validation: RequestValidationConfig.() -> Unit = {

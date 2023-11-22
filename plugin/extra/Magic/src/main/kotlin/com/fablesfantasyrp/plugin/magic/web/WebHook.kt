@@ -8,7 +8,7 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-class WebHook {
+internal class WebHook {
 	private lateinit var koinModule: Module
 
 	fun start() {

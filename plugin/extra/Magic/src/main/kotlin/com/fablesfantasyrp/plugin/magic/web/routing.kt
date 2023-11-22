@@ -25,7 +25,7 @@ private class Mages() {
     class Id(val parent: Mages = Mages(), val id: Int)
 }
 
-class WebRouting(private val plugin: Plugin,
+internal class WebRouting(private val plugin: Plugin,
 				 private val mages: MageRepository,
 				 private val spells: SpellDataRepository) : BaseWebRoutingLoader() {
 	private val logger = plugin.logger

@@ -22,7 +22,7 @@ private class Characters() {
     class Id(val parent: Characters= Characters(), val id: Int)
 }
 
-class WebRouting(private val plugin: Plugin, private val characters: CharacterRepository) : BaseWebRoutingLoader() {
+internal class WebRouting(private val plugin: Plugin, private val characters: CharacterRepository) : BaseWebRoutingLoader() {
 	private val logger = plugin.logger
 
 	override val routes: Route.() -> Unit = {

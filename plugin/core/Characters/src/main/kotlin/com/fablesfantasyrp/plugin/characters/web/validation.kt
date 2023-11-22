@@ -9,7 +9,7 @@ import io.ktor.server.plugins.requestvalidation.*
 import kotlinx.coroutines.withContext
 import org.bukkit.plugin.Plugin
 
-class WebRequestValidation(private val plugin: Plugin, private val characters: CharacterRepository) : BaseRequestValidationLoader() {
+internal class WebRequestValidation(private val plugin: Plugin, private val characters: CharacterRepository) : BaseRequestValidationLoader() {
 	override val validation: RequestValidationConfig.() -> Unit = {
 		validate<WebCharacter> {
 			if (it.description.length > 255) {
