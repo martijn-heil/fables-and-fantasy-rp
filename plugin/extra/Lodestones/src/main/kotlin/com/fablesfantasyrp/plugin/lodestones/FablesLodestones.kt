@@ -100,6 +100,7 @@ class FablesLodestones : JavaPlugin(), KoinComponent {
 			factoryOf(::LodestoneCommand)
 			factoryOf(::LodestoneBannerCommand)
 			factoryOf(::LodestoneAuthorizerImpl) bind LodestoneAuthorizer::class
+			factoryOf(::LodestoneSlotCountCalculatorImpl) bind LodestoneSlotCountCalculator::class
 		}
 		loadKoinModules(koinModule)
 

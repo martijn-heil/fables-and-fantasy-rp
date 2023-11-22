@@ -27,7 +27,8 @@ class LodestoneListener(private val plugin: JavaPlugin,
 						private val profileManager: ProfileManager,
 						private val characters: CharacterRepository,
 						private val mapBoxes: MapBoxRepository,
-						private val characterLodestoneRepository: CharacterLodestoneRepository) : Listener {
+						private val characterLodestoneRepository: CharacterLodestoneRepository,
+						private val slotCountCalculator: LodestoneSlotCountCalculator) : Listener {
 	@EventHandler(priority = NORMAL, ignoreCancelled = true)
 	fun onPlayerRightClickLodestone(e: PlayerInteractEvent) {
 		if (e.hand != EquipmentSlot.HAND) return
@@ -43,7 +44,8 @@ class LodestoneListener(private val plugin: JavaPlugin,
 			return
 		}
 
-		LodestoneGui(plugin, e.player, character, 3, lodestone, characterLodestoneRepository).show(e.player)
+		val slots = slotCountCalculator.getLodestoneSlots(e.player)
+		LodestoneGui(plugin, e.player, character, slots, lodestone, characterLodestoneRepository).show(e.player)
 	}
 
 	@EventHandler(priority = NORMAL, ignoreCancelled = false)
