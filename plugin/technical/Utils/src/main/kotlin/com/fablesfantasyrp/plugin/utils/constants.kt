@@ -8,7 +8,7 @@ import java.util.*
 
 
 val FABLES_ADMIN = Bukkit.getOfflinePlayer(UUID.fromString("bcdb5a59-269e-43df-914b-eed888597272"))
-val SPAWN: Location get() = EDEN!!.spawnLocation
+val SPAWN: Location get() = EDEN!!.spawnLocation.toCenterLocation()
 val FLATROOM: World? get() = Bukkit.getWorld("flatroom")
 val PLOTS: World? get() = Bukkit.getWorld("plots")
 val EDEN: World? get() = Bukkit.getWorld("Eden")
