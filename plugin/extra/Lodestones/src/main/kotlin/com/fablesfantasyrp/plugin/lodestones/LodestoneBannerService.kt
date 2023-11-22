@@ -53,7 +53,10 @@ class LodestoneBannerService(private val plugin: Plugin,
 
 	fun init() {
 		server.scheduler.scheduleSyncRepeatingTask(plugin, {
-			val players = server.onlinePlayers.filter { mapBoxes.anyContains(it.location) }
+			val players = server.onlinePlayers.asSequence()
+				.filter { it.gameMode != GameMode.CREATIVE }
+				.filter { mapBoxes.anyContains(it.location) }
+				.toList()
 
 			for (player in players) {
 				val mapBox = mapBoxes.forLocation(player.location)!!
@@ -131,6 +134,7 @@ class LodestoneBannerService(private val plugin: Plugin,
 		fun onPlayerLeftClick(e: PlayerInteractEvent) {
 			if (e.hand != EquipmentSlot.HAND) return
 			if (e.action != Action.LEFT_CLICK_AIR && e.action != Action.LEFT_CLICK_BLOCK) return
+			if (e.player.gameMode == GameMode.CREATIVE) return
 
 			val mapBox = mapBoxes.forLocation(e.player.location) ?: return
 
