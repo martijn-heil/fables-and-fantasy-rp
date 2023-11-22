@@ -156,6 +156,7 @@ class LodestoneBannerService(private val plugin: Plugin,
 			} else if (profile == null || characters.forProfile(profile) == null) {
 				e.isCancelled = true
 				val destination = translateTargetLocation(mapBox, targetedLocation).groundLevel()
+				destination.yaw = 180f // face north
 				e.player.teleport(destination)
 			}
 		}
