@@ -6,6 +6,7 @@ object Permission {
 
 	object Command {
 		private const val prefix = Permission.prefix + ".command"
+		const val Warp = "$prefix.warp"
 
 		object Lodestone {
 			private const val prefix = Command.prefix + ".lodestone"

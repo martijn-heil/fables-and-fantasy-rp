@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.lodestones
 
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
+import com.fablesfantasyrp.plugin.lodestones.domain.entity.MapBox
 import com.fablesfantasyrp.plugin.lodestones.domain.repository.CharacterLodestoneRepository
 import com.fablesfantasyrp.plugin.lodestones.domain.repository.LodestoneRepository
 import com.fablesfantasyrp.plugin.lodestones.domain.repository.MapBoxRepository
@@ -14,10 +15,13 @@ import com.fablesfantasyrp.plugin.timers.countdown
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.toBlockIdentifier
 import com.github.shynixn.mccoroutine.bukkit.launch
 import org.bukkit.Material
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority.NORMAL
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
+import org.bukkit.event.player.PlayerCommandPreprocessEvent
+import org.bukkit.event.player.PlayerCommandSendEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.plugin.java.JavaPlugin
@@ -58,18 +62,29 @@ class LodestoneListener(private val plugin: JavaPlugin,
 		val mapBox = mapBoxes.forWorld(e.player.location.world) ?: return
 
 		e.isCancelled = true
-		plugin.launch {
-			try {
-				val isInCharacter = profileManager.getCurrentForPlayer(e.player)?.let { characters.forProfile(it) } != null
+		plugin.launch { warpToMapBox(e.player, mapBox) }
+	}
 
-				e.player.countdown(if (isInCharacter) 10U else 3U, emptyList(), listOf(CancelReason.MOVEMENT, CancelReason.HURT))
+	private suspend fun warpToMapBox(player: Player, mapBox: MapBox) {
+		try {
+			val isInCharacter = profileManager.getCurrentForPlayer(player)?.let { characters.forProfile(it) } != null
 
-				val location = mapBox.location.toCenterLocation()
-				location.yaw = 180f // Face north instead of south
-				e.player.teleport(location)
-			} catch (_: CountdownBusyException) {
-				e.player.sendError("You are already waiting on a countdown.")
-			}
+			player.countdown(if (isInCharacter) 10U else 3U, emptyList(), listOf(CancelReason.MOVEMENT, CancelReason.HURT))
+
+			val location = mapBox.location.toCenterLocation()
+			location.yaw = 180f // Face north instead of south
+			player.teleport(location)
+		} catch (_: CountdownBusyException) {
+			player.sendError("You are already waiting on a countdown.")
+		}
+	}
+
+	@EventHandler(priority = NORMAL, ignoreCancelled = true)
+	fun onPlayerExecuteCommand(e: PlayerCommandPreprocessEvent) {
+		if (e.message == "/warp" && e.player.hasPermission(Permission.Command.Warp)) {
+			e.isCancelled = true
+			val mapBox = mapBoxes.forWorld(e.player.world) ?: return
+			e.player.teleport(mapBox.location)
 		}
 	}
 }
