@@ -79,15 +79,15 @@ class LodestoneBannerService(private val plugin: Plugin,
 					}
 
 					val titleColor = if (canWarp) NamedTextColor.YELLOW else NamedTextColor.GRAY
-					server.showTitle(Title.title(
+					player.showTitle(Title.title(
 						Component.text(banner.lodestone.name).color(titleColor),
 						Component.empty(),
 						Title.Times.times(Duration.ZERO, Duration.ofMillis(100), Duration.ZERO)))
-					server.sendActionBar(message)
+					player.sendActionBar(message)
 				} else if (profile == null || characters.forProfile(profile) == null) {
 					val destination = translateTargetLocation(mapBox, targetedLocation.toCenterLocation())
 
-					server.sendActionBar(miniMessage.deserialize("<gray>Left click to warp to <location></gray>",
+					player.sendActionBar(miniMessage.deserialize("<gray>Left click to warp to <location></gray>",
 						Placeholder.unparsed("location", "${destination.x}, ${destination.z}")))
 				}
 			}
