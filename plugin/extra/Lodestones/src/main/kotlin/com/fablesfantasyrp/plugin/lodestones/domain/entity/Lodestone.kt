@@ -14,6 +14,7 @@ class Lodestone : DataEntity<Int, Lodestone>, Named {
 
 	var location: BlockIdentifier	set(value) { if (field != value) { val oldValue = field; field = value; dirtyMarker?.markDirty(this, "location", oldValue, value) } }
 	override var name: String 		set(value) { if (field != value) { val oldValue = field; field = value; dirtyMarker?.markDirty(this, "name", oldValue, value) } }
+	var isPublic: Boolean			set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 
 	fun warpHere(player: Player) {
 		val loc = location.toLocation().toCenterLocation()
@@ -24,10 +25,12 @@ class Lodestone : DataEntity<Int, Lodestone>, Named {
 	constructor(id: Int,
 				location: BlockIdentifier,
 				name: String,
+				isPublic: Boolean,
 				dirtyMarker: DirtyMarker<Lodestone>? = null) {
 		this.id = id
 		this.location = location
 		this.name = name
+		this.isPublic = isPublic
 
 		this.dirtyMarker = dirtyMarker // Must be last
 	}

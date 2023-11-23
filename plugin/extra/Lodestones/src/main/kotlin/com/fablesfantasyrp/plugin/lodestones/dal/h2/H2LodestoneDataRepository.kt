@@ -24,14 +24,16 @@ class H2LodestoneDataRepository(private val dataSource: DataSource)
 				"location_y, " +
 				"location_z, " +
 				"world, " +
-				"name" +
+				"name, " +
+				"is_public" +
 				") " +
-				"VALUES (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)
+				"VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)
 			stmnt.setInt(1, v.location.x)
 			stmnt.setInt(2, v.location.y)
 			stmnt.setInt(3, v.location.z)
 			stmnt.setUuid(4, v.location.world)
 			stmnt.setString(5, v.name)
+			stmnt.setBoolean(6, v.isPublic)
 
 			stmnt.executeUpdate()
 			val rs = stmnt.generatedKeys
@@ -47,20 +49,22 @@ class H2LodestoneDataRepository(private val dataSource: DataSource)
 
 	override fun update(v: LodestoneData) {
 		dataSource.connection.use { connection ->
-			val stmnt = connection.prepareStatement("UPDATE $TABLE_NAME SET" +
+			val stmnt = connection.prepareStatement("UPDATE $TABLE_NAME SET " +
 				"location_x = ?, " +
 				"location_y = ?, " +
 				"location_z = ?, " +
 				"world = ?, " +
 				"name = ?, " +
+				"is_public = ? " +
 				"WHERE id = ?")
 			stmnt.setInt(1, v.location.x)
 			stmnt.setInt(2, v.location.y)
 			stmnt.setInt(3, v.location.z)
 			stmnt.setUuid(4, v.location.world)
 			stmnt.setString(5, v.name)
+			stmnt.setBoolean(6, v.isPublic)
 
-			stmnt.setInt(6, v.id)
+			stmnt.setInt(7, v.id)
 			stmnt.executeUpdate()
 		}
 	}
@@ -95,6 +99,7 @@ class H2LodestoneDataRepository(private val dataSource: DataSource)
 
 	override fun fromRow(row: ResultSet): LodestoneData {
 		val id = row.getInt("id")
+		val isPublic = row.getBoolean("is_public")
 		val locationX = row.getInt("location_x")
 		val locationY = row.getInt("location_y")
 		val locationZ = row.getInt("location_z")
@@ -106,6 +111,7 @@ class H2LodestoneDataRepository(private val dataSource: DataSource)
 			id = id,
 			location = location,
 			name = locationName,
+			isPublic = isPublic,
 		)
 	}
 }

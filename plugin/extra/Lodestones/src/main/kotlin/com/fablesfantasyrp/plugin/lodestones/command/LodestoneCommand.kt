@@ -14,6 +14,7 @@ import com.sk89q.intake.Command
 import com.sk89q.intake.Require
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
+import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
@@ -27,7 +28,16 @@ class LodestoneCommand(private val lodestones: LodestoneRepository) {
 			Placeholder.component("prefix", legacyText(SYSPREFIX)),
 			Placeholder.component("lodestones",
 				Component.join(JoinConfiguration.newlines(),
-					lodestones.all().map { Component.text("#${it.id} ${it.name} ${it.location.toLocation().humanReadable()}" ) }
+					lodestones.all()
+						.sortedWith(compareBy({ !it.isPublic }, { it.name }))
+						.map {
+							miniMessage.deserialize("#<id> <name> <dark_gray><location></dark_gray> <public>",
+								Placeholder.unparsed("id", it.id.toString()),
+								Placeholder.unparsed("name", it.name),
+								Placeholder.unparsed("location", it.location.toLocation().humanReadable()),
+								Placeholder.unparsed("public", if (it.isPublic) "(public)" else ""))
+								.color(if (it.isPublic) NamedTextColor.GOLD else NamedTextColor.GRAY)
+						}
 				)
 			)
 		))
@@ -58,6 +68,7 @@ class LodestoneCommand(private val lodestones: LodestoneRepository) {
 			id = 0,
 			location = block.location.toBlockIdentifier(),
 			name,
+			isPublic = false
 		))
 
 		sender.sendMessage("$SYSPREFIX Created lodestone #${lodestone.id}")
@@ -78,14 +89,19 @@ class LodestoneCommand(private val lodestones: LodestoneRepository) {
 
 	@Command(aliases = ["rename"], desc = "Rename a lodestone")
 	@Require(Permission.Command.Lodestone.Rename)
-	fun rename(@Sender sender: Player, lodestone: Lodestone, name: String) {
-		val block = sender.getTargetBlock(10)
-		if (block == null || block.type != Material.LODESTONE) {
-			sender.sendError("Please aim at a lodestone block.")
-			return
-		}
-
+	fun rename(@Sender sender: CommandSender, lodestone: Lodestone, name: String) {
 		lodestone.name = name
 		sender.sendMessage("$SYSPREFIX Renamed lodestone #${lodestone.id}")
+	}
+
+	@Command(aliases = ["setpublic"], desc = "Set whether a lodestone is public or private")
+	@Require(Permission.Command.Lodestone.Rename)
+	fun setpublic(@Sender sender: CommandSender, lodestone: Lodestone, value: Boolean) {
+		lodestone.isPublic = value
+		if (value) {
+			sender.sendMessage("$SYSPREFIX lodestone #${lodestone.id} is now public")
+		} else {
+			sender.sendMessage("$SYSPREFIX lodestone #${lodestone.id} is now private")
+		}
 	}
 }

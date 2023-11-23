@@ -18,12 +18,14 @@ class LodestoneMapper(private val child: LodestoneDataRepository)
 		id = v.id,
 		location = v.location,
 		name = v.name,
+		isPublic = v.isPublic,
 		dirtyMarker = dirtyMarker
 	)
 
 	override fun convertToChild(v: Lodestone) = LodestoneData(
 		id = v.id,
 		name = v.name,
+		isPublic = v.isPublic,
 		location = v.location,
 	)
 

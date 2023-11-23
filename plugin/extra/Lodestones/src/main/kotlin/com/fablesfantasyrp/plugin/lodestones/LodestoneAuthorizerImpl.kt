@@ -9,6 +9,6 @@ class LodestoneAuthorizerImpl(private val characters: CharacterRepository,
 							  private val characterLodestones: CharacterLodestoneRepository) : LodestoneAuthorizer {
 	override fun mayWarpTo(who: Profile?, lodestone: Lodestone): Boolean {
 		val character = who?.let { characters.forProfile(who) } ?: return true
-		return characterLodestones.forCharacter(character).contains(lodestone)
+		return lodestone.isPublic || characterLodestones.forCharacter(character).contains(lodestone)
 	}
 }
