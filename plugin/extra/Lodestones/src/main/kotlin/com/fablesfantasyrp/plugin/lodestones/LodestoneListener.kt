@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.lodestones
 
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
+import com.fablesfantasyrp.plugin.characters.isStaffCharacter
 import com.fablesfantasyrp.plugin.lodestones.domain.entity.MapBox
 import com.fablesfantasyrp.plugin.lodestones.domain.repository.CharacterLodestoneRepository
 import com.fablesfantasyrp.plugin.lodestones.domain.repository.LodestoneRepository
@@ -25,6 +26,11 @@ import org.bukkit.event.player.PlayerCommandSendEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.plugin.java.JavaPlugin
+import org.ocpsoft.prettytime.PrettyTime
+import java.time.Duration
+import java.time.Instant
+import java.time.temporal.ChronoUnit
+import java.util.UUID
 
 class LodestoneListener(private val plugin: JavaPlugin,
 						private val lodestones: LodestoneRepository,
@@ -52,6 +58,8 @@ class LodestoneListener(private val plugin: JavaPlugin,
 		LodestoneGui(plugin, e.player, character, slots, lodestone, characterLodestoneRepository).show(e.player)
 	}
 
+	private val lastWarpedAt = HashMap<UUID, Instant>()
+
 	@EventHandler(priority = NORMAL, ignoreCancelled = false)
 	fun onPlayerRightClick(e: PlayerInteractEvent) {
 		if (e.hand != EquipmentSlot.HAND) return
@@ -60,23 +68,16 @@ class LodestoneListener(private val plugin: JavaPlugin,
 		if (!WarpCrystal.matches(e.item!!)) return
 		if (e.clickedBlock?.type == Material.LODESTONE) return
 		val mapBox = mapBoxes.forWorld(e.player.location.world) ?: return
+		val character = profileManager.getCurrentForPlayer(e.player)?.let { characters.forProfile(it) }
+
+		val canWarpAgainAt = lastWarpedAt[e.player.uniqueId]?.plus(10, ChronoUnit.MINUTES)
+		if (character != null && !character.isStaffCharacter && canWarpAgainAt != null && canWarpAgainAt.isBefore(Instant.now())) {
+			e.player.sendError("Your warpcrystal is on cooldown! You can warp again ${PrettyTime().format(canWarpAgainAt)}")
+			return
+		}
 
 		e.isCancelled = true
 		plugin.launch { warpToMapBox(e.player, mapBox) }
-	}
-
-	private suspend fun warpToMapBox(player: Player, mapBox: MapBox) {
-		try {
-			val isInCharacter = profileManager.getCurrentForPlayer(player)?.let { characters.forProfile(it) } != null
-
-			player.countdown(if (isInCharacter) 10U else 3U, emptyList(), listOf(CancelReason.MOVEMENT, CancelReason.HURT))
-
-			val location = mapBox.location.toCenterLocation()
-			location.yaw = 180f // Face north instead of south
-			player.teleport(location)
-		} catch (_: CountdownBusyException) {
-			player.sendError("You are already waiting on a countdown.")
-		}
 	}
 
 	@EventHandler(priority = NORMAL, ignoreCancelled = true)
@@ -85,6 +86,21 @@ class LodestoneListener(private val plugin: JavaPlugin,
 			e.isCancelled = true
 			val mapBox = mapBoxes.forWorld(e.player.world) ?: return
 			e.player.teleport(mapBox.location)
+		}
+	}
+
+	private suspend fun warpToMapBox(player: Player, mapBox: MapBox) {
+		try {
+			val isInCharacter = profileManager.getCurrentForPlayer(player)?.let { characters.forProfile(it) } != null
+
+			player.countdown(if (isInCharacter) 10U else 3U, emptyList(), listOf(CancelReason.MOVEMENT, CancelReason.HURT))
+
+			lastWarpedAt[player.uniqueId] = Instant.now()
+			val location = mapBox.location.toCenterLocation()
+			location.yaw = 180f // Face north instead of south
+			player.teleport(location)
+		} catch (_: CountdownBusyException) {
+			player.sendError("You are already waiting on a countdown.")
 		}
 	}
 }
