@@ -105,7 +105,12 @@ class LodestoneBannerService(private val plugin: Plugin,
 	}
 
 	private fun getTargetedLocation(player: Player): Location? {
-		val block = player.getTargetBlock(transparentMaterials, 100)
+		val block = try {
+			player.getTargetBlock(transparentMaterials, 100)
+		} catch (ex: IllegalStateException) {
+			// ignore java.lang.IllegalStateException: Start block missed in BlockIterator
+			return null
+		}
 		return if (block.type == Material.AIR) null else block.location.toCenterLocation()
 	}
 
