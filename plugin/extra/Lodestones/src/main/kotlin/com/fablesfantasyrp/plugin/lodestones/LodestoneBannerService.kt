@@ -30,11 +30,12 @@ import java.time.Duration
 import java.util.*
 import kotlin.math.roundToInt
 
-private data class PlayerState(val gameMode: GameMode, val walkSpeed: Float)
+private data class PlayerState(val gameMode: GameMode, val walkSpeed: Float, val allowFlight: Boolean)
 
 private val SPECIAL_PLAYER_STATE = PlayerState(
 	gameMode = GameMode.ADVENTURE,
 	walkSpeed = 0.5f,
+	allowFlight = false
 )
 
 class LodestoneBannerService(private val plugin: Plugin,
@@ -117,6 +118,7 @@ class LodestoneBannerService(private val plugin: Plugin,
 	private fun applyPlayerState(player: Player, state: PlayerState) {
 		player.gameMode = state.gameMode
 		player.walkSpeed = state.walkSpeed
+		player.allowFlight = state.allowFlight
 	}
 
 	private fun translateTargetLocation(mapBox: MapBox, targetedLocation: Location): ColumnIdentifier {
@@ -174,7 +176,8 @@ class LodestoneBannerService(private val plugin: Plugin,
 			if (toMapBox && !fromMapBox) {
 				previousState[e.player.uniqueId] = PlayerState(
 					gameMode = e.player.gameMode,
-					walkSpeed = e.player.walkSpeed
+					walkSpeed = e.player.walkSpeed,
+					allowFlight = e.player.allowFlight
 				)
 				applyPlayerState(e.player, SPECIAL_PLAYER_STATE)
 			} else if (fromMapBox && !toMapBox) {
