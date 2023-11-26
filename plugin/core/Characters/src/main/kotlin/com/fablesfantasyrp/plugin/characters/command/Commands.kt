@@ -386,6 +386,23 @@ class Commands(private val plugin: JavaPlugin,
 				}
 			}
 
+			@Command(aliases = ["traits"], desc = "Set a character's traits")
+			fun traits(@Sender sender: Player, @CommandTarget target: Character) {
+				authorizer.mayEditTraits(sender, target).orElse { throw AuthorizationException(it) }
+
+				plugin.launch {
+					val selected = promptTraits(sender, target.race)
+					val existing = characterTraitRepository.forCharacter(target).toHashSet()
+					val added = selected.subtract(existing)
+					val removed = existing.subtract(selected)
+
+					removed.forEach { characterTraitRepository.unlinkFromCharacter(target, it) }
+					added.forEach { characterTraitRepository.linkToCharacter(target, it) }
+
+					sender.sendMessage("$SYSPREFIX Traits changed!")
+				}
+			}
+
 			@Command(aliases = ["description"], desc = "Change a character's description")
 			fun description(@Sender sender: Player, @CommandTarget target: Character) {
 				authorizer.mayEditDescription(sender, target).orElse { throw AuthorizationException(it) }

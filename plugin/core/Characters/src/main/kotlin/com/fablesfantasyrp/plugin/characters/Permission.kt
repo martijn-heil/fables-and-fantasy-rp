@@ -14,6 +14,7 @@ object Permission {
 		const val Stats = "${prefix}.stats"
 		const val Race = "${prefix}.race"
 		const val Gender = "${prefix}.gender"
+		const val Traits = "${prefix}.traits"
 	}
 
 	object Command {

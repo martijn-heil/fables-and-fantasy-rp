@@ -150,13 +150,15 @@ private fun formatTrait(trait: CharacterTrait): String {
 	return "${ChatColor.GOLD}${trait.displayName}\n${ChatColor.GRAY}${traitDescription}"
 }
 
-private suspend fun promptTraits(player: Player, race: Race): Set<CharacterTrait> {
+suspend fun promptTraits(player: Player, race: Race): Set<CharacterTrait> {
 	if (!player.hasPermission("fables.characters.feature.traits")) return emptySet()
 
 	val traitRepository = Services.get<CharacterTraitRepository>()
 
 	val title = "Please select your traits"
 	val traits = traitRepository.forRace(race).toSet()
+
+	if (traits.size < 2) return emptySet()
 
 	return GuiMultipleChoice<CharacterTrait>(PLUGIN, title, 2, 2, traits) { formatTrait(it) }.execute(player)
 }

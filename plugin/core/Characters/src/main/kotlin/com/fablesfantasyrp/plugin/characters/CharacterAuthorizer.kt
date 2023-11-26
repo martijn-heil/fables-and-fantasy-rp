@@ -11,6 +11,7 @@ interface CharacterAuthorizer {
 	fun mayEditRace(who: Permissible, what: Character, allowShelved: Boolean = false): AuthorizationResult
 	fun mayEditGender(who: Permissible, what: Character, allowShelved: Boolean = false): AuthorizationResult
 	fun mayEditDateOfBirth(who: Permissible, what: Character, allowShelved: Boolean = true): AuthorizationResult
+	fun mayEditTraits(who: Permissible, what: Character, allowShelved: Boolean = true): AuthorizationResult
 	fun mayEditName(who: Permissible, what: Character, allowShelved: Boolean = false): AuthorizationResult
 	fun mayEditDescription(who: Permissible, what: Character, allowShelved: Boolean = false): AuthorizationResult
 	fun mayEditStats(who: Permissible, what: Character, allowShelved: Boolean = false): AuthorizationResult
