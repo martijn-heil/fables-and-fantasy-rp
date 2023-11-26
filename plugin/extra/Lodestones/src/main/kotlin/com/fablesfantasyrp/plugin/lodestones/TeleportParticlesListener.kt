@@ -4,6 +4,7 @@ import com.fablesfantasyrp.plugin.utils.extensions.bukkit.distanceSafe
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.isVanished
 import com.github.shynixn.mccoroutine.bukkit.launch
 import org.bukkit.Effect
+import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.Sound
 import org.bukkit.event.EventHandler
@@ -17,6 +18,7 @@ import kotlin.random.Random
 class TeleportParticlesListener(private val plugin: Plugin) : Listener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	fun onPlayerTeleport(e: PlayerTeleportEvent) {
+		if (e.player.gameMode == GameMode.SPECTATOR) return
 		if (e.player.isVanished) return
 
 		playSound(e.from, e.to)
