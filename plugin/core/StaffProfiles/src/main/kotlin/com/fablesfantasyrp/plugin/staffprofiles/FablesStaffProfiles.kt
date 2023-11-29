@@ -40,7 +40,7 @@ class FablesStaffProfiles : JavaPlugin(), KoinComponent {
 			single<Plugin> { this@FablesStaffProfiles } binds(arrayOf(JavaPlugin::class))
 
 			singleOf(::H2StaffProfileRepository) bind StaffProfileRepository::class
-			single { StaffProfilesListener(get(), get(), get(), getOrNull()) }
+			single { StaffProfilesListener(get(), get(), get(), get(), getOrNull()) }
 
 			single {
 				var worldBoundProfilesHook: WorldBoundProfilesHook? = null
@@ -66,11 +66,7 @@ class FablesStaffProfiles : JavaPlugin(), KoinComponent {
 			staffProfiles.all().forEach { worldBoundProfilesHook.allowToFlatroom(it) }
 		}
 
-		server.pluginManager.registerEvents(StaffProfilesListener(
-				this,
-				profiles,
-				staffProfiles,
-				worldBoundProfilesHook), this)
+		server.pluginManager.registerEvents(get<StaffProfilesListener>(), this)
 	}
 
 	override fun onDisable() {
