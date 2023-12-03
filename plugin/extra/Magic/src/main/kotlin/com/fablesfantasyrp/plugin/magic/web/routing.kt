@@ -47,16 +47,15 @@ internal class WebRouting(private val plugin: Plugin,
 		post<Mages.Id> {
 			val webMage = call.receive<WebMage>()
 			withContext(plugin.minecraftDispatcher) {
-
 				mages.create(Mage(
 					id = webMage.id,
 					magicPath = webMage.magicPath,
 					magicLevel = webMage.magicLevel,
 					spells = spells.forIds(webMage.spells.asSequence()).toList()
 				))
-
-				call.respond(HttpStatusCode.OK)
 			}
+
+			call.respond(HttpStatusCode.Created)
 		}
 
 		put<Mages.Id> {
@@ -70,9 +69,9 @@ internal class WebRouting(private val plugin: Plugin,
 				existingMage.magicLevel = webMage.magicLevel
 				existingMage.magicPath = webMage.magicPath
 				existingMage.spells = webMage.spells.mapNotNull { spells.forId(it) }
-
-				call.respond(HttpStatusCode.OK)
 			}
+
+			call.respond(HttpStatusCode.OK)
 		}
 	}
 }
