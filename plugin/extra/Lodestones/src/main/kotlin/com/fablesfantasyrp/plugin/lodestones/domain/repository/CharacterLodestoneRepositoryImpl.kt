@@ -40,7 +40,7 @@ class CharacterLodestoneRepositoryImpl(private val mapper: CharacterLodestoneMap
 			val persistedLodestones = mapper.forCharacter(character)
 
 			val added = lodestones.subtract(persistedLodestones)
-			val removed = persistedLodestones.subtract(added)
+			val removed = persistedLodestones.subtract(lodestones)
 
 			added.forEach { mapper.add(character, it) }
 			removed.forEach { mapper.remove(character, it) }
