@@ -2,10 +2,7 @@ package com.fablesfantasyrp.plugin.rolls
 
 import com.fablesfantasyrp.plugin.characters.dal.enums.CharacterStatKind
 import com.fablesfantasyrp.plugin.characters.domain.CharacterStats
-import com.fablesfantasyrp.plugin.characters.domain.KnownCharacterTraits
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
-import com.fablesfantasyrp.plugin.characters.domain.entity.CharacterTrait
-import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.location.data.entity.ProfileLocation
 import com.fablesfantasyrp.plugin.location.data.entity.ProfileLocationRepository
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
@@ -53,8 +50,6 @@ internal class RollTest {
 
 	private val always1 = mockk<Random>()
 
-	private val nightLordsTrait = CharacterTrait("night_lords", "Night Lords", null)
-
 	init {
 		every { always1.nextInt(any(), any()) } returns 1
 
@@ -65,17 +60,12 @@ internal class RollTest {
 		mockkStatic(Bukkit::class)
 		every { Bukkit.getServicesManager() } returns servicesManager
 
-		val characterTraitRepositoryMock = mockk<CharacterTraitRepository>()
-		every { characterTraitRepositoryMock.forCharacter(any()) } returns emptySet()
-		every { characterTraitRepositoryMock.forId(KnownCharacterTraits.NIGHT_LORDS) } returns nightLordsTrait
-
 		val profileLocationRepositoryMock = mockk<ProfileLocationRepository>()
 		val location = Location(world, 0.00, 0.00, 0.00)
 		every { profileLocationRepositoryMock.forOwner(any()) } returns ProfileLocation(0, location)
 
 		startKoin {
 			modules(module {
-				single { characterTraitRepositoryMock }
 				single { profileLocationRepositoryMock }
 			})
 		}

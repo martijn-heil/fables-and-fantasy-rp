@@ -9,7 +9,6 @@ import com.fablesfantasyrp.plugin.characters.domain.CHARACTER_STATS_FLOOR
 import com.fablesfantasyrp.plugin.characters.domain.CharacterStats
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
-import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.characters.event.CharacterChangeStatsEvent
 import com.fablesfantasyrp.plugin.characters.gui.CharacterStatsGui
 import com.fablesfantasyrp.plugin.form.YesNoChatPrompt
@@ -92,7 +91,6 @@ class LegacyCommands(private val plugin: Plugin, private val characterCommands: 
 
 class Commands(private val plugin: JavaPlugin,
 			   private val characterRepository: CharacterRepository,
-			   private val characterTraitRepository: CharacterTraitRepository,
 			   private val profileRepository: ProfileRepository,
 			   private val profileManager: ProfileManager,
 			   private val profilePrompter: ProfilePrompter,
@@ -149,10 +147,9 @@ class Commands(private val plugin: JavaPlugin,
 						gender = info.gender,
 						race = info.race,
 						stats = info.stats,
+						traits = info.traits,
 						profile = profile,
 						createdAt = Instant.now()))
-
-				info.traits.forEach { characterTraitRepository.linkToCharacter(character, it) }
 
 				profileManager.setCurrentForPlayer(sender, profile)
 			}
@@ -391,14 +388,7 @@ class Commands(private val plugin: JavaPlugin,
 				authorizer.mayEditTraits(sender, target).orElse { throw AuthorizationException(it) }
 
 				plugin.launch {
-					val selected = promptTraits(sender, target.race)
-					val existing = characterTraitRepository.forCharacter(target).toHashSet()
-					val added = selected.subtract(existing)
-					val removed = existing.subtract(selected)
-
-					removed.forEach { characterTraitRepository.unlinkFromCharacter(target, it) }
-					added.forEach { characterTraitRepository.linkToCharacter(target, it) }
-
+					target.traits = promptTraits(sender, target.race)
 					sender.sendMessage("$SYSPREFIX Traits changed!")
 				}
 			}

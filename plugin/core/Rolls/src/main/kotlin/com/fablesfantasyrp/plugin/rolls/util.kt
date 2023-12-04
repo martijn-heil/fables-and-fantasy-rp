@@ -1,11 +1,9 @@
 package com.fablesfantasyrp.plugin.rolls
 
 import com.fablesfantasyrp.plugin.characters.dal.enums.CharacterStatKind
-import com.fablesfantasyrp.plugin.characters.domain.KnownCharacterTraits
+import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
-import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.location.location
-import com.fablesfantasyrp.plugin.utils.Services
 import com.github.keelar.exprk.Expressions
 import kotlin.random.Random
 import kotlin.random.nextInt
@@ -15,8 +13,6 @@ fun roll(dice: UInt, character: Character?, kind: CharacterStatKind?): Pair<UInt
 }
 
 fun roll(randomSource: Random, dice: UInt, character: Character?, kind: CharacterStatKind?): Pair<UInt, Int> {
-	val traits = Services.get<CharacterTraitRepository>()
-	val trait = traits.forId(KnownCharacterTraits.NIGHT_LORDS)
 	val world = character?.profile?.location?.world
 
 	val stats = character?.totalStats
@@ -32,8 +28,7 @@ fun roll(randomSource: Random, dice: UInt, character: Character?, kind: Characte
 	if (character != null &&
 		kind != null &&
 		!world!!.isDayTime &&
-		trait != null &&
-		traits.hasTrait(character, trait)) result++
+		character.traits.contains(CharacterTrait.NIGHT_LORDS)) result++
 
 	return Pair(random, result)
 }

@@ -6,9 +6,9 @@ import com.fablesfantasyrp.plugin.characters.dal.enums.Race
 import com.fablesfantasyrp.plugin.characters.domain.CHARACTER_STATS_FLOOR
 import com.fablesfantasyrp.plugin.characters.domain.CharacterStats
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
-import com.fablesfantasyrp.plugin.characters.domain.entity.CharacterTrait
+import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
+import com.fablesfantasyrp.plugin.characters.domain.CharacterTraitRaces
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
-import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.characters.gui.CharacterStatsGui
 import com.fablesfantasyrp.plugin.form.promptChat
 import com.fablesfantasyrp.plugin.form.promptGui
@@ -153,10 +153,8 @@ private fun formatTrait(trait: CharacterTrait): String {
 suspend fun promptTraits(player: Player, race: Race): Set<CharacterTrait> {
 	if (!player.hasPermission("fables.characters.feature.traits")) return emptySet()
 
-	val traitRepository = Services.get<CharacterTraitRepository>()
-
 	val title = "Please select your traits"
-	val traits = traitRepository.forRace(race).toSet()
+	val traits = CharacterTraitRaces[race] ?: return emptySet()
 
 	if (traits.size < 2) return emptySet()
 
@@ -241,8 +239,7 @@ suspend fun forcePromptNewCharacterInfo(player: Player, allowedRaces: Collection
 suspend fun forceCharacterCreation(player: Player,
 								   profiles: EntityProfileRepository = Services.get(),
 								   characters: CharacterRepository = Services.get(),
-								   profileManager: ProfileManager = Services.get(),
-								   characterTraitRepository: CharacterTraitRepository = Services.get()) {
+								   profileManager: ProfileManager = Services.get()) {
 	val newCharacterData = forcePromptNewCharacterInfo(player, Race.values().filter { it != Race.HUMAN && it != Race.OTHER && it != Race.SYLVANI})
 
 	val profile = profiles.create(Profile(
@@ -251,21 +248,20 @@ suspend fun forceCharacterCreation(player: Player,
 			isActive = true
 	))
 
-	val character = characters.create(Character(
+	characters.create(Character(
 			id = profile.id,
 			profile = profile,
 			name = newCharacterData.name,
 			race = newCharacterData.race,
 			gender = newCharacterData.gender,
 			stats = newCharacterData.stats,
+			traits = newCharacterData.traits,
 			description = newCharacterData.description,
 			dateOfBirth = newCharacterData.dateOfBirth,
 			dateOfNaturalDeath = null,
 			lastSeen = Instant.now(),
 			createdAt = Instant.now(),
 	))
-
-	newCharacterData.traits.forEach { characterTraitRepository.linkToCharacter(character, it) }
 
 	profileManager.setCurrentForPlayer(player, profile)
 }

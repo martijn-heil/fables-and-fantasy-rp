@@ -1,9 +1,8 @@
 package com.fablesfantasyrp.plugin.charactermechanics.traits
 
 import com.fablesfantasyrp.plugin.charactermechanics.traits.base.BaseTraitBehavior
-import com.fablesfantasyrp.plugin.characters.domain.KnownCharacterTraits
+import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
-import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.knockout.knockout
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.isRealPlayer
@@ -19,9 +18,8 @@ import org.bukkit.plugin.Plugin
 
 class TooAngryToDie(plugin: Plugin,
 					characters: CharacterRepository,
-					profileManager: ProfileManager,
-					traits: CharacterTraitRepository)
-	: BaseTraitBehavior(KnownCharacterTraits.TOO_ANGRY_TO_DIE, plugin, characters, profileManager, traits) {
+					profileManager: ProfileManager)
+	: BaseTraitBehavior(CharacterTrait.TOO_ANGRY_TO_DIE, plugin, characters, profileManager) {
 
 	override fun init() {
 		super.init()
@@ -42,7 +40,7 @@ class TooAngryToDie(plugin: Plugin,
 
 			val character = profileManager.getCurrentForPlayer(player)?.let { characters.forProfile(it) } ?: return
 
-			if (!traits.hasTrait(character, trait)) return
+			if (!character.traits.contains(trait)) return
 
 			if (player.health - e.finalDamage <= 0) {
 				e.isCancelled = true
@@ -58,7 +56,7 @@ class TooAngryToDie(plugin: Plugin,
 
 			val character = profileManager.getCurrentForPlayer(player)?.let { characters.forProfile(it) } ?: return
 
-			if (!traits.hasTrait(character, trait)) return
+			if (!character.traits.contains(trait)) return
 
 			if (player.health - e.finalDamage <= 0) {
 				e.isCancelled = true
@@ -75,7 +73,7 @@ class TooAngryToDie(plugin: Plugin,
 
 			val character = profileManager.getCurrentForPlayer(player)?.let { characters.forProfile(it) } ?: return
 
-			if (!traits.hasTrait(character, trait)) return
+			if (!character.traits.contains(trait)) return
 
 			if (player.health - e.finalDamage <= 0) {
 				e.isCancelled = true

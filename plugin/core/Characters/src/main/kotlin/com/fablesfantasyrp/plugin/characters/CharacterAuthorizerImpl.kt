@@ -2,14 +2,12 @@ package com.fablesfantasyrp.plugin.characters
 
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
-import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.utils.AuthorizationResult
 import org.bukkit.entity.Player
 import org.bukkit.permissions.Permissible
 
-class CharacterAuthorizerImpl(private val characters: CharacterRepository,
-							  private val traits: CharacterTraitRepository) : CharacterAuthorizer {
+class CharacterAuthorizerImpl(private val characters: CharacterRepository) : CharacterAuthorizer {
 	override fun mayEdit(who: Permissible, what: Character, allowShelved: Boolean): AuthorizationResult {
 		if (!allowShelved && what.isShelved) {
 			return AuthorizationResult(false, "This character is shelved")
@@ -78,7 +76,7 @@ class CharacterAuthorizerImpl(private val characters: CharacterRepository,
 	override fun mayEditTraits(who: Permissible, what: Character, allowShelved: Boolean): AuthorizationResult {
 		mayEditProperty(who, what, allowShelved, Permission.Change.Traits).orElse { return AuthorizationResult(false, it) }
 
-		if (traits.forCharacter(what).isNotEmpty() && !what.isStaffCharacter && !who.hasPermission(Permission.Admin)) {
+		if (what.traits.size >= 2 && !what.isStaffCharacter && !who.hasPermission(Permission.Admin)) {
 			return AuthorizationResult(false, "You can only set your character traits once.")
 		}
 

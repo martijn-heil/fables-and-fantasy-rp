@@ -1,9 +1,8 @@
 package com.fablesfantasyrp.plugin.alternatemechanics.mechanic
 
 import com.fablesfantasyrp.plugin.alternatemechanics.Mechanic
-import com.fablesfantasyrp.plugin.characters.domain.KnownCharacterTraits
+import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
-import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin
@@ -21,7 +20,6 @@ import org.bukkit.plugin.Plugin
 class FarmReplant(private val plugin: Plugin,
 				  private val profileManager: ProfileManager,
 				  private val characters: CharacterRepository,
-				  private val characterTraits: CharacterTraitRepository,
 				  private val worldGuard: WorldGuardPlugin,
 				  private val regionContainer: RegionContainer) : Mechanic {
 	private val server = plugin.server
@@ -50,7 +48,7 @@ class FarmReplant(private val plugin: Plugin,
 			val drops = block.getDrops(tool, e.player)
 
 			val character = profileManager.getCurrentForPlayer(e.player)?.let { characters.forProfile(it) }
-			if (character != null && characterTraits.hasTrait(character, KnownCharacterTraits.HINTISH_HERITAGE)) {
+			if (character != null && character.traits.contains(CharacterTrait.HINTISH_HERITAGE)) {
 				drops.forEach { it.amount *= 2 }
 			}
 

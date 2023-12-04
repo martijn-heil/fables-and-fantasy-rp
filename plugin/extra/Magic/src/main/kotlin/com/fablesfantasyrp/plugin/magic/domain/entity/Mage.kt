@@ -150,7 +150,7 @@ class Mage : DataEntity<Long, Mage> {
 
 		try {
 			val magicType = magicPath.magicType
-			val tear = character.findTear(magicType) ?: character.openTear(magicType)
+			character.findTear(magicType) ?: character.openTear(magicType)
 		} catch(e: OpenTearException) {
 			player.sendMessage("Couldn't open a tear: ${e.message}")
 			return false

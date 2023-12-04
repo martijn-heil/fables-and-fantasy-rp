@@ -5,18 +5,12 @@ import com.fablesfantasyrp.plugin.characters.command.Commands
 import com.fablesfantasyrp.plugin.characters.command.LegacyCommands
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
 import com.fablesfantasyrp.plugin.characters.dal.h2.H2CharacterDataRepository
-import com.fablesfantasyrp.plugin.characters.dal.h2.H2CharacterTraitDataRepository
-import com.fablesfantasyrp.plugin.characters.dal.repository.CharacterTraitDataRepository
 import com.fablesfantasyrp.plugin.characters.domain.mapper.CharacterMapper
-import com.fablesfantasyrp.plugin.characters.domain.mapper.CharacterTraitMapper
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepositoryImpl
-import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
-import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepositoryImpl
 import com.fablesfantasyrp.plugin.characters.modifiers.stats.RaceStatsModifier
 import com.fablesfantasyrp.plugin.characters.modifiers.stats.StatsModifier
 import com.fablesfantasyrp.plugin.characters.web.WebHook
-import com.fablesfantasyrp.plugin.database.FablesDatabase
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
@@ -79,16 +73,13 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 				characterRepositoryImpl
 			} bind CharacterRepository::class
 
-			single { H2CharacterTraitDataRepository(FablesDatabase.fablesDatabase) } bind CharacterTraitDataRepository::class
-			singleOf(::CharacterTraitMapper)
-			singleOf(::CharacterTraitRepositoryImpl) bind CharacterTraitRepository::class
 
 			singleOf(::CharacterAuthorizerImpl) bind CharacterAuthorizer::class
 			singleOf(::CharacterCardGeneratorImpl) bind CharacterCardGenerator::class
 			factoryOf(::RaceStatsModifier) bind StatsModifier::class
 			factoryOf(::CreatureSizeCalculatorImpl) bind CreatureSizeCalculator::class
 
-			factory { CharacterModule(get(), get(), get(), get(), get<Provider<Profile>>(named("Profile"))) }
+			factory { CharacterModule(get(), get(), get(), get<Provider<Profile>>(named("Profile"))) }
 			singleOf(::CharactersListener)
 			singleOf(::CharactersLiveMigrationListener)
 			singleOf(::CharacterCreationListener)
@@ -100,8 +91,6 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 			singleOf(::LegacyCommands)
 		}
 		loadKoinModules(koinModule)
-
-		get<CharacterTraitRepositoryImpl>().init()
 
 		server.servicesManager.register(CharacterRepository::class.java, get(), this, ServicePriority.Normal)
 
@@ -167,7 +156,6 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 		logger.info("Unregistering commands")
 		commands.forEach { unregisterCommand(it) }
 		get<CharacterRepositoryImpl>().saveAllDirty()
-		get<CharacterTraitRepositoryImpl>().saveAllDirty()
 		logger.info("unloadKoinModules()")
 		unloadKoinModules(koinModule)
 	}

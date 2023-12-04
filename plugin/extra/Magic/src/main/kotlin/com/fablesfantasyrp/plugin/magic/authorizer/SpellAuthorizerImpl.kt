@@ -1,16 +1,14 @@
 package com.fablesfantasyrp.plugin.magic.authorizer
 
-import com.fablesfantasyrp.plugin.characters.domain.KnownCharacterTraits
+import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
-import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.magic.dal.model.SpellData
 import com.fablesfantasyrp.plugin.magic.dal.repository.SpellDataRepository
 import com.fablesfantasyrp.plugin.magic.domain.KnownSpells
 import com.fablesfantasyrp.plugin.magic.domain.repository.MageRepository
 
 class SpellAuthorizerImpl(private val mages: MageRepository,
-						  private val spells: SpellDataRepository,
-						  private val traits: CharacterTraitRepository) : SpellAuthorizer {
+						  private val spells: SpellDataRepository) : SpellAuthorizer {
 	override fun getSpells(character: Character): Set<SpellData> {
 		val availableSpells = HashSet<SpellData>()
 
@@ -19,13 +17,13 @@ class SpellAuthorizerImpl(private val mages: MageRepository,
 			availableSpells.addAll(mage.spells)
 		}
 
-		fun hasTrait(id: String) = traits.hasTrait(character, id)
+		fun hasTrait(trait: CharacterTrait) = character.traits.contains(trait)
 		fun addSpell(id: String) = spells.forId(id)?.let { availableSpells.add(it) }
 
-		if (hasTrait(KnownCharacterTraits.ARCANE_INITIATE)) addSpell(KnownSpells.FLAME_ARROW)
-		if (hasTrait(KnownCharacterTraits.DRAGON_BLOODED)) addSpell(KnownSpells.BREATH_OF_THE_DRAGON)
-		if (hasTrait(KnownCharacterTraits.ASPECT_OF_LILITHS_VEIL)) addSpell(KnownSpells.ICE_MAIDENS_KISS)
-		if (hasTrait(KnownCharacterTraits.PROPHET_OF_THE_GREEN_FLAME)) addSpell(KnownSpells.FIREBALL)
+		if (hasTrait(CharacterTrait.ARCANE_INITIATE)) addSpell(KnownSpells.FLAME_ARROW)
+		if (hasTrait(CharacterTrait.DRAGON_BLOODED)) addSpell(KnownSpells.BREATH_OF_THE_DRAGON)
+		if (hasTrait(CharacterTrait.ASPECT_OF_LILITHS_VEIL)) addSpell(KnownSpells.ICE_MAIDENS_KISS)
+		if (hasTrait(CharacterTrait.PROPHET_OF_THE_GREEN_FLAME)) addSpell(KnownSpells.FIREBALL)
 
 		return availableSpells
 	}

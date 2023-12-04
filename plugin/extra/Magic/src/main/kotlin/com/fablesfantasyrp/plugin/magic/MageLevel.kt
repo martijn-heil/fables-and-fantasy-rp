@@ -1,9 +1,7 @@
 package com.fablesfantasyrp.plugin.magic
 
-import com.fablesfantasyrp.plugin.characters.domain.KnownCharacterTraits
-import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
+import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
 import com.fablesfantasyrp.plugin.magic.domain.entity.Mage
-import com.fablesfantasyrp.plugin.utils.Services
 
 val MAGE_LEVEL_MAP = mapOf(
 		Pair(1, mapOf( // Level 1
@@ -59,11 +57,9 @@ val MAGE_LEVEL_MAP = mapOf(
 )
 
 fun getMaxSpells(mageLevel: Int, spellLevel: Int, mage: Mage?): Int {
-	val characterTraits = Services.get<CharacterTraitRepository>()
-
 	var n = MAGE_LEVEL_MAP[mageLevel]?.get(spellLevel) ?: 0
 
-	if (mage != null && characterTraits.hasTrait(mage.character, KnownCharacterTraits.KNOWLEDGEABLE)) {
+	if (mage != null && mage.character.traits.contains(CharacterTrait.KNOWLEDGEABLE)) {
 		n += when (spellLevel) {
 			1 -> 2
 			2 -> 1

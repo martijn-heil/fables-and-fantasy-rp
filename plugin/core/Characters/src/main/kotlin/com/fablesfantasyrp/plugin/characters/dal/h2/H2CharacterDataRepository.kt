@@ -5,10 +5,14 @@ import com.fablesfantasyrp.plugin.characters.dal.enums.Race
 import com.fablesfantasyrp.plugin.characters.dal.model.CharacterData
 import com.fablesfantasyrp.plugin.characters.dal.repository.CharacterDataRepository
 import com.fablesfantasyrp.plugin.characters.domain.CharacterStats
+import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
+import com.fablesfantasyrp.plugin.database.asSequence
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.profile.data.entity.ProfileRepository
 import com.fablesfantasyrp.plugin.time.javatime.FablesLocalDate
 import org.bukkit.OfflinePlayer
+import java.sql.Connection
 import java.sql.ResultSet
 import java.time.Instant
 import java.time.temporal.ChronoField
@@ -16,7 +20,8 @@ import javax.sql.DataSource
 
 class H2CharacterDataRepository(private val dataSource: DataSource,
 								private val profiles: ProfileRepository) : CharacterDataRepository {
-	val TABLE_NAME = "FABLES_CHARACTERS.CHARACTERS"
+	private val SCHEMA = "FABLES_CHARACTERS"
+	private val TABLE_NAME = "$SCHEMA.CHARACTERS"
 
 	override fun all(): Collection<CharacterData> {
 		return dataSource.connection.use { connection ->
@@ -66,6 +71,15 @@ class H2CharacterDataRepository(private val dataSource: DataSource,
 			stmnt.setInt(13, v.stats.agility.toInt())
 			stmnt.setInt(14, v.stats.intelligence.toInt())
 			stmnt.executeUpdate()
+
+			for (trait in v.traits) {
+				connection.prepareStatement("INSERT INTO $SCHEMA.CHARACTER_CHARACTER_TRAIT (character_id, character_trait_id) " +
+					"VALUES (?, ?)").apply {
+					this.setInt(1, v.id)
+					this.setString(2, trait.name.lowercase())
+				}.executeUpdate()
+			}
+
 			return CharacterData(
 				id = v.id,
 				name = v.name,
@@ -77,6 +91,7 @@ class H2CharacterDataRepository(private val dataSource: DataSource,
 				createdAt = v.createdAt,
 				lastSeen = v.lastSeen,
 				stats = v.stats,
+				traits = v.traits
 			)
 		}
 	}
@@ -177,6 +192,34 @@ class H2CharacterDataRepository(private val dataSource: DataSource,
 			stmnt.setInt(17, v.stats.intelligence.toInt())
 			stmnt.setInt(18, v.id)
 			stmnt.executeUpdate()
+
+			connection.prepareStatement("DELETE FROM $SCHEMA.CHARACTER_CHARACTER_TRAIT WHERE character_id = ?").apply {
+				this.setInt(1, v.id)
+			}.executeUpdate()
+
+			addTraitsForCharacter(connection, v.id, v.traits)
+		}
+	}
+
+	private fun traitsForCharacter(characterId: Int): Set<CharacterTrait> {
+		return dataSource.connection.use { connection ->
+			connection.prepareStatement("SELECT character_trait_id FROM $SCHEMA.CHARACTER_CHARACTER_TRAIT WHERE character_id = ?").apply {
+				this.setInt(1, characterId)
+			}.executeQuery().asSequence().mapNotNull {
+				try {
+					CharacterTrait.valueOf(it.getString("character_trait_id").uppercase())
+				} catch (ex: IllegalArgumentException) { null }
+			}.toSet()
+		}
+	}
+
+	private fun addTraitsForCharacter(connection: Connection, characterId: Int, traits: Set<CharacterTrait>) {
+		for (trait in traits) {
+			connection.prepareStatement("INSERT INTO $SCHEMA.CHARACTER_CHARACTER_TRAIT (character_id, character_trait_id) " +
+				"VALUES (?, ?)").apply {
+				this.setInt(1, characterId)
+				this.setString(2, trait.name.lowercase())
+			}.executeUpdate()
 		}
 	}
 
@@ -201,6 +244,7 @@ class H2CharacterDataRepository(private val dataSource: DataSource,
 		val changedStatsAt = result.getObject("changed_stats_at", Instant::class.java)
 		val isDead = result.getBoolean("is_dead")
 		val isShelved = result.getBoolean("is_shelved")
+		val traits = traitsForCharacter(id)
 
 		return CharacterData(
 			id = id,
@@ -218,6 +262,7 @@ class H2CharacterDataRepository(private val dataSource: DataSource,
 			shelvedAt = shelvedAt,
 			diedAt = diedAt,
 			changedStatsAt = changedStatsAt,
+			traits = traits,
 		)
 	}
 }

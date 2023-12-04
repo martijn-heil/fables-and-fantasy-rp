@@ -1,9 +1,9 @@
 package com.fablesfantasyrp.plugin.charactermechanics.traits
 
 import com.fablesfantasyrp.plugin.charactermechanics.traits.base.BaseTraitBehavior
-import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
 import com.fablesfantasyrp.plugin.characters.domain.KnownCharacterTraits
-import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.event.PlayerSwitchProfileEvent
 import com.fablesfantasyrp.plugin.utils.TransactionStep
@@ -21,9 +21,8 @@ import java.time.Instant
 
 class NaturallyStealthy(plugin: Plugin,
 						characters: CharacterRepository,
-						profileManager: ProfileManager,
-						traits: CharacterTraitRepository)
-	: BaseTraitBehavior(KnownCharacterTraits.NATURALLY_STEALTHY, plugin, characters, profileManager, traits) {
+						profileManager: ProfileManager)
+	: BaseTraitBehavior(CharacterTrait.NATURALLY_STEALTHY, plugin, characters, profileManager) {
 	private val effect = PotionEffect(PotionEffectType.INVISIBILITY, 600, 1, false, true, false)
 	private val lastMoved = HashMap<Player, Instant>()
 	private val invisible = HashSet<Player>()

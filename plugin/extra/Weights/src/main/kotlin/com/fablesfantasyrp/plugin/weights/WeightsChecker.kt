@@ -1,8 +1,8 @@
 package com.fablesfantasyrp.plugin.weights
 
+import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
 import com.fablesfantasyrp.plugin.characters.domain.KnownCharacterTraits
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
-import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
@@ -10,8 +10,7 @@ import org.bukkit.plugin.Plugin
 class WeightsChecker(private val plugin: Plugin,
 					 private val config: WeightsConfig,
 					 private val profileManager: ProfileManager,
-					 private val characters: CharacterRepository,
-					 private val characterTraits: CharacterTraitRepository) {
+					 private val characters: CharacterRepository) {
 	private val server = plugin.server
 	private var taskId: Int = -1
 
@@ -33,8 +32,7 @@ class WeightsChecker(private val plugin: Plugin,
 	}
 
 	private fun calculateCap(player: Player): Int {
-		val packMule = characterTraits.forId(KnownCharacterTraits.PACK_MULE)!!
 		val character = profileManager.getCurrentForPlayer(player)?.let { characters.forProfile(it) }
-		return config.cap + if (character != null && characterTraits.hasTrait(character, packMule)) 20 else 0
+		return config.cap + if (character != null && character.traits.contains(CharacterTrait.PACKMULE)) 20 else 0
 	}
 }

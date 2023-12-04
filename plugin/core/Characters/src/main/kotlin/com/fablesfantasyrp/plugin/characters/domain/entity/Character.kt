@@ -8,6 +8,7 @@ import com.fablesfantasyrp.plugin.characters.dal.enums.Gender
 import com.fablesfantasyrp.plugin.characters.dal.enums.Race
 import com.fablesfantasyrp.plugin.characters.domain.CHARACTER_STATS_FLOOR
 import com.fablesfantasyrp.plugin.characters.domain.CharacterStats
+import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
 import com.fablesfantasyrp.plugin.characters.modifiers.health.HealthModifier
 import com.fablesfantasyrp.plugin.characters.modifiers.stats.StatsModifier
 import com.fablesfantasyrp.plugin.database.entity.DataEntity
@@ -137,6 +138,12 @@ class Character : DataEntity<Int, Character> {
 			}
 		}
 
+	var traits: Set<CharacterTrait>
+		set(value) {
+			field = value.toHashSet()
+			dirtyMarker?.markDirty(this)
+		}
+
 	val maximumHealth: UInt get() =
 		max(0, (12 + CharacterStatKind.STRENGTH.getRollModifierFor(totalStats.strength) +
 			GlobalContext.get().getAll<HealthModifier>().sumOf { it.calculateModifier(this) })).toUInt()
@@ -174,6 +181,7 @@ class Character : DataEntity<Int, Character> {
 				isShelved: Boolean = false,
 				shelvedAt: Instant? = null,
 				changedStatsAt: Instant? = null,
+				traits: Set<CharacterTrait> = emptySet(),
 				dirtyMarker: DirtyMarker<Character>? = null) {
 		this.id = id
 		this.profile = profile
@@ -195,6 +203,7 @@ class Character : DataEntity<Int, Character> {
 		this.diedAt = diedAt
 		this.shelvedAt = shelvedAt
 		this.changedStatsAt = changedStatsAt
+		this.traits = traits
 
 		this.dirtyMarker = dirtyMarker
 

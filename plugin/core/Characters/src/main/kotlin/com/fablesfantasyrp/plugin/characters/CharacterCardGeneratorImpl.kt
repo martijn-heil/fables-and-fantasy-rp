@@ -2,8 +2,7 @@ package com.fablesfantasyrp.plugin.characters
 
 import com.fablesfantasyrp.plugin.characters.dal.enums.CharacterStatKind
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
-import com.fablesfantasyrp.plugin.characters.domain.entity.CharacterTrait
-import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
+import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.text.join
 import com.fablesfantasyrp.plugin.text.miniMessage
@@ -25,7 +24,6 @@ import org.ocpsoft.prettytime.PrettyTime
 class CharacterCardGeneratorImpl(private val creatureSizeCalculator: CreatureSizeCalculator) : CharacterCardGenerator {
 	override fun card(character: Character, observer: CommandSender?): Component {
 		val profileManager = Services.get<ProfileManager>()
-		val characterTraitRepository = Services.get<CharacterTraitRepository>()
 		val vaultChat = Services.get<Chat>()
 		val authorizer = Services.get<CharacterAuthorizer>()
 
@@ -65,7 +63,7 @@ class CharacterCardGeneratorImpl(private val creatureSizeCalculator: CreatureSiz
 				"<change_gender> Gender: <white><gender></white><newline>" +
 				"<change_race> Race: <white><race></white><newline>" +
 				"<black>[E]</black> Creature size: <white><creature_size></white><newline>" +
-				"<black>[E]</black> Character traits: <white><traits></white><newline>" +
+				"<change_traits> Character traits: <white><traits></white><newline>" +
 				"<change_description> Description: <white><description></white><newline>" +
 				"<black>[E]</black> Maximum health: <white><maximum_health></white><newline>" +
 				"<change_stats> Stats:<newline>" +
@@ -100,7 +98,7 @@ class CharacterCardGeneratorImpl(private val creatureSizeCalculator: CreatureSiz
 			Placeholder.unparsed("creature_size", creatureSize.displayName),
 			Placeholder.component("description", parseLinks(character.description)),
 			Placeholder.unparsed("maximum_health", character.maximumHealth.toString()),
-			Placeholder.component("traits", formatTraits(characterTraitRepository.forCharacter(character))),
+			Placeholder.component("traits", formatTraits(character.traits)),
 			Placeholder.component("stats", statsMessage),
 			Placeholder.unparsed("last_seen", character.lastSeen?.let { PrettyTime().format(it) } ?: "unknown"),
 			Placeholder.component("change_name", editButton(observer == null || authorizer.mayEditName(observer, character).result, "name")),
@@ -110,6 +108,7 @@ class CharacterCardGeneratorImpl(private val creatureSizeCalculator: CreatureSiz
 			Placeholder.component("change_gender", editButton(observer == null || authorizer.mayEditGender(observer, character).result, "gender")),
 			Placeholder.component("change_stats", editButton(observer == null || authorizer.mayEditStats(observer, character).result, "stats")),
 			Placeholder.component("change_owner", editButton(mayTransfer, "owner", "Click to transfer this character to another player.")),
+			Placeholder.component("change_traits", editButton(observer == null || authorizer.mayEditTraits(observer, character).result, "traits")),
 			Placeholder.component("status", if (character.isDead) Component.text("(dead) ").color(NamedTextColor.RED)
 			else if (character.isShelved) Component.text("(shelved) ").color(NamedTextColor.YELLOW)
 			else Component.empty())

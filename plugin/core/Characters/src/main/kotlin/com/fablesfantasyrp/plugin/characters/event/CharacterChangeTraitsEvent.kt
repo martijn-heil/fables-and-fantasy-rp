@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.characters.event
 
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
-import com.fablesfantasyrp.plugin.characters.domain.entity.CharacterTrait
+import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 

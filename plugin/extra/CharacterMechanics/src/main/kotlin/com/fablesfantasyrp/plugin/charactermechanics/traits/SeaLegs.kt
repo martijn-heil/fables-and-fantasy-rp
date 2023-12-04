@@ -1,9 +1,8 @@
 package com.fablesfantasyrp.plugin.charactermechanics.traits
 
 import com.fablesfantasyrp.plugin.charactermechanics.traits.base.BaseTraitBehavior
+import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
-import com.fablesfantasyrp.plugin.characters.domain.KnownCharacterTraits
-import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.event.PlayerSwitchProfileEvent
 import com.fablesfantasyrp.plugin.utils.TransactionStep
@@ -16,9 +15,8 @@ import org.bukkit.potion.PotionEffectType
 
 class SeaLegs(plugin: Plugin,
 			  characters: CharacterRepository,
-			  profileManager: ProfileManager,
-			  traits: CharacterTraitRepository)
-	: BaseTraitBehavior(KnownCharacterTraits.SEA_LEGS, plugin, characters, profileManager, traits) {
+			  profileManager: ProfileManager)
+	: BaseTraitBehavior(CharacterTrait.SEA_LEGS, plugin, characters, profileManager) {
 	private val effect = PotionEffect(PotionEffectType.DOLPHINS_GRACE, 200, 0, false, false, true)
 
 	override fun init() {
@@ -37,7 +35,7 @@ class SeaLegs(plugin: Plugin,
 			val player = e.player
 			val newCharacter = e.new?.let { characters.forProfile(it) }
 
-			if (newCharacter != null && traits.hasTrait(newCharacter, trait)) {
+			if (newCharacter != null && newCharacter.traits.contains(trait)) {
 				val oldValue = player.maximumAir
 				e.transaction.steps.add(TransactionStep({
 					player.maximumAir = 600 // 30 seconds of breath

@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.charactermechanics.traits.base
 
+import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
-import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepository
 import com.fablesfantasyrp.plugin.characters.event.CharacterChangeTraitsEvent
 import com.fablesfantasyrp.plugin.hacks.PermissionInjector
 import com.fablesfantasyrp.plugin.profile.ProfileManager
@@ -12,13 +12,12 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.plugin.Plugin
 
-abstract class BasePermissionProvidingTrait(traitId: String,
+abstract class BasePermissionProvidingTrait(trait: CharacterTrait,
 											plugin: Plugin,
 											characters: CharacterRepository,
 											profileManager: ProfileManager,
-											traits: CharacterTraitRepository,
 											private val permissionInjector: PermissionInjector)
-	: BaseTraitBehavior(traitId, plugin, characters, profileManager, traits) {
+	: BaseTraitBehavior(trait, plugin, characters, profileManager) {
 
 	abstract val permission: String
 
@@ -33,8 +32,8 @@ abstract class BasePermissionProvidingTrait(traitId: String,
 			val oldCharacter = e.old?.let { characters.forProfile(it) }
 			val newCharacter = e.new?.let { characters.forProfile(it) }
 
-			val oldValue = if (oldCharacter != null && traits.hasTrait(oldCharacter, trait)) true else null
-			val value = if (newCharacter != null && traits.hasTrait(newCharacter, trait)) true else null
+			val oldValue = if (oldCharacter != null && oldCharacter.traits.contains(trait)) true else null
+			val value = if (newCharacter != null && newCharacter.traits.contains(trait)) true else null
 
 			e.transaction.steps.add(TransactionStep(
 				{ permissionInjector.inject(e.player, permission, value) },
@@ -45,7 +44,7 @@ abstract class BasePermissionProvidingTrait(traitId: String,
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 		fun onCharacterChangeTraits(e: CharacterChangeTraitsEvent) {
 			val player = profileManager.getCurrentForProfile(e.character.profile) ?: return
-			val value = if (traits.hasTrait(e.character, trait)) true else null
+			val value = if (e.character.traits.contains(trait)) true else null
 			permissionInjector.inject(player, permission, value)
 		}
 	}

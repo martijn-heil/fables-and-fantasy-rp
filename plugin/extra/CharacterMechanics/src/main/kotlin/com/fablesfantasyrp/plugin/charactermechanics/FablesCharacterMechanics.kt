@@ -7,7 +7,6 @@ import com.fablesfantasyrp.plugin.charactermechanics.racial.sylvani.SylvaniNatur
 import com.fablesfantasyrp.plugin.charactermechanics.racial.sylvani.SylvaniSkogPet
 import com.fablesfantasyrp.plugin.charactermechanics.traits.*
 import com.fablesfantasyrp.plugin.charactermechanics.traits.base.TraitBehavior
-import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterTraitRepositoryImpl
 import com.fablesfantasyrp.plugin.characters.modifiers.health.HealthModifier
 import com.fablesfantasyrp.plugin.characters.modifiers.stats.StatsModifier
 import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
@@ -15,7 +14,6 @@ import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
 import org.koin.core.context.GlobalContext
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.unloadKoinModules
@@ -64,7 +62,6 @@ class FablesCharacterMechanics : JavaPlugin(), KoinComponent {
 	}
 
 	override fun onDisable() {
-		get<CharacterTraitRepositoryImpl>().saveAllDirty()
 		unloadKoinModules(koinModule)
 	}
 

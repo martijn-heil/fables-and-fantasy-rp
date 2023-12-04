@@ -33,6 +33,7 @@ class CharacterMapper(private val child: CharacterDataRepository, private val pr
 		isShelved = v.isShelved,
 		shelvedAt = v.shelvedAt,
 		changedStatsAt = v.changedStatsAt,
+		traits = v.traits,
 		dirtyMarker = dirtyMarker
 	)
 
@@ -51,7 +52,8 @@ class CharacterMapper(private val child: CharacterDataRepository, private val pr
 		diedAt = v.diedAt,
 		isShelved = v.isShelved,
 		shelvedAt = v.shelvedAt,
-		changedStatsAt = v.changedStatsAt
+		changedStatsAt = v.changedStatsAt,
+		traits = v.traits
 	)
 
 	override fun forOwner(offlinePlayer: OfflinePlayer?): Collection<Character> = child.forOwner(offlinePlayer).map { convertFromChild(it) }
