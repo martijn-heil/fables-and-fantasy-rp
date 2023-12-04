@@ -44,4 +44,4 @@ jobs:
         prerelease: true
         title: "Development Build"
         files: |
-          ./*/build/libs/*-SNAPSHOT.jar
+          ./plugin/*/*/build/libs/*-SNAPSHOT.jar
