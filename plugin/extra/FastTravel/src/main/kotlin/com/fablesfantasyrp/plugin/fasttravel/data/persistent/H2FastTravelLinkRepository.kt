@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.fasttravel.data.persistent
 
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
-import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
+import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
 import com.fablesfantasyrp.plugin.fasttravel.data.entity.FastTravelLink
 import com.fablesfantasyrp.plugin.fasttravel.data.entity.FastTravelLinkRepository
 import com.fablesfantasyrp.plugin.worldguardinterop.WorldGuardRegion

@@ -5,7 +5,7 @@ import com.fablesfantasyrp.plugin.characters.dal.enums.Gender
 import com.fablesfantasyrp.plugin.characters.dal.enums.Race
 import com.fablesfantasyrp.plugin.characters.domain.CharacterStats
 import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
-import com.fablesfantasyrp.plugin.database.repository.Identifiable
+import com.fablesfantasyrp.plugin.database.model.Identifiable
 import com.fablesfantasyrp.plugin.time.javatime.FablesLocalDate
 import java.time.Instant
 

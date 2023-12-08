@@ -2,14 +2,14 @@ package com.fablesfantasyrp.plugin.knockout.data.entity
 
 import com.fablesfantasyrp.plugin.database.MappingRepository
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
-import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
+import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
 import com.fablesfantasyrp.plugin.knockout.data.persistent.PersistentKnockoutPlayerData
 import com.fablesfantasyrp.plugin.knockout.data.persistent.PersistentKnockoutPlayerDataRepository
 import java.util.*
 
 class KnockoutPlayerDataEntityMapper(private val child: PersistentKnockoutPlayerDataRepository)
 	: MappingRepository<UUID, PersistentKnockoutPlayerData, KnockoutPlayerEntity, PersistentKnockoutPlayerDataRepository>(child),
-		HasDirtyMarker<KnockoutPlayerEntity> {
+	HasDirtyMarker<KnockoutPlayerEntity> {
 	override var dirtyMarker: DirtyMarker<KnockoutPlayerEntity>? = null
 
 	override fun forId(id: UUID): KnockoutPlayerEntity? = child.forId(id)?.let { convertFromChild(it) }

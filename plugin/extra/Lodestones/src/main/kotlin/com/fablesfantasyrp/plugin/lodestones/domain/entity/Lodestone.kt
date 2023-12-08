@@ -2,7 +2,7 @@ package com.fablesfantasyrp.plugin.lodestones.domain.entity
 
 import com.fablesfantasyrp.plugin.database.entity.DataEntity
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
-import com.fablesfantasyrp.plugin.database.repository.Named
+import com.fablesfantasyrp.plugin.database.model.Named
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.BlockIdentifier
 import org.bukkit.entity.Player
 

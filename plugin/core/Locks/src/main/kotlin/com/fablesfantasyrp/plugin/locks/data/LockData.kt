@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.locks.data
 
-import com.fablesfantasyrp.plugin.database.repository.Identifiable
+import com.fablesfantasyrp.plugin.database.model.Identifiable
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.OfflinePlayer

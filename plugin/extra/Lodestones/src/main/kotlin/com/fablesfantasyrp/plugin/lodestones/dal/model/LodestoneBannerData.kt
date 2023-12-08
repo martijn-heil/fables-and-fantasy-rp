@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.lodestones.dal.model
 
-import com.fablesfantasyrp.plugin.database.repository.Identifiable
+import com.fablesfantasyrp.plugin.database.model.Identifiable
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.BlockIdentifier
 
 data class LodestoneBannerData(

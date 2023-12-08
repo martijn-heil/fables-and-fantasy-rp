@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.magic.dal.model
 
-import com.fablesfantasyrp.plugin.database.repository.Identifiable
+import com.fablesfantasyrp.plugin.database.model.Identifiable
 import com.fablesfantasyrp.plugin.magic.dal.enums.MagicPath
 
 data class SpellData(override val id: String,

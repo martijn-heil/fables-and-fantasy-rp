@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.lodestones.domain.repository
 
-import com.fablesfantasyrp.plugin.database.repository.KeyedRepository
-import com.fablesfantasyrp.plugin.database.repository.Repository
+import com.fablesfantasyrp.plugin.database.sync.repository.KeyedRepository
+import com.fablesfantasyrp.plugin.database.sync.repository.Repository
 import com.fablesfantasyrp.plugin.lodestones.domain.entity.MapBox
 import org.bukkit.Location
 import org.bukkit.World

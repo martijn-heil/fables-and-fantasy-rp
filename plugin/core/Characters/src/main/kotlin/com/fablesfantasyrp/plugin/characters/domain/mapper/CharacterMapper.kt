@@ -6,7 +6,7 @@ import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.database.MappingRepository
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
-import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
+import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.profile.data.entity.ProfileRepository
 import org.bukkit.OfflinePlayer

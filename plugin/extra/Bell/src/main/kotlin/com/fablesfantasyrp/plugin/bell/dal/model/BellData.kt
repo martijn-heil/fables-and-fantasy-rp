@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.bell.dal.model
 
-import com.fablesfantasyrp.plugin.database.repository.Identifiable
-import com.fablesfantasyrp.plugin.database.repository.Named
+import com.fablesfantasyrp.plugin.database.model.Identifiable
+import com.fablesfantasyrp.plugin.database.model.Named
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.BlockIdentifier
 import dev.kord.common.entity.Snowflake
 

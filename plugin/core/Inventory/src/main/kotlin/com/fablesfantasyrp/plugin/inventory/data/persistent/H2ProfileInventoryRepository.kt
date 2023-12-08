@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.inventory.data.persistent
 
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
-import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
+import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
 import com.fablesfantasyrp.plugin.inventory.PassthroughInventory
 import com.fablesfantasyrp.plugin.inventory.PassthroughPlayerInventory
 import com.fablesfantasyrp.plugin.inventory.data.entity.FablesInventoryRepository

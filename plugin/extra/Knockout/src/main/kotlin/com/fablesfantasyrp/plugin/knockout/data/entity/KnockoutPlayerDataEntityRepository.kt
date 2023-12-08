@@ -2,9 +2,9 @@ package com.fablesfantasyrp.plugin.knockout.data.entity
 
 import com.fablesfantasyrp.plugin.database.OnlinePlayerCacheMarker
 import com.fablesfantasyrp.plugin.database.entity.SimpleEntityRepository
-import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
-import com.fablesfantasyrp.plugin.database.repository.KeyedRepository
-import com.fablesfantasyrp.plugin.database.repository.MutableRepository
+import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
+import com.fablesfantasyrp.plugin.database.sync.repository.KeyedRepository
+import com.fablesfantasyrp.plugin.database.sync.repository.MutableRepository
 import org.bukkit.plugin.Plugin
 import java.util.*
 

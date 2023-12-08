@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.locks.data
 
-import com.fablesfantasyrp.plugin.database.repository.KeyedRepository
-import com.fablesfantasyrp.plugin.database.repository.MutableRepository
+import com.fablesfantasyrp.plugin.database.sync.repository.KeyedRepository
+import com.fablesfantasyrp.plugin.database.sync.repository.MutableRepository
 import org.bukkit.Location
 
 interface SimpleLockDataRepository : MutableRepository<SimpleLockData>, KeyedRepository<Location, SimpleLockData> {

@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.economy.data.persistent
 
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
-import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
+import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
 import com.fablesfantasyrp.plugin.economy.data.entity.ProfileEconomy
 import com.fablesfantasyrp.plugin.economy.data.entity.ProfileEconomyRepository
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile

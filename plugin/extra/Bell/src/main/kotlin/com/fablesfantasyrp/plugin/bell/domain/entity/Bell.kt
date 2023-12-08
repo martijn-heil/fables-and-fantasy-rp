@@ -3,7 +3,7 @@ package com.fablesfantasyrp.plugin.bell.domain.entity
 import com.fablesfantasyrp.plugin.bell.PLUGIN
 import com.fablesfantasyrp.plugin.database.entity.DataEntity
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
-import com.fablesfantasyrp.plugin.database.repository.Named
+import com.fablesfantasyrp.plugin.database.model.Named
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.BlockIdentifier
 import com.github.shynixn.mccoroutine.bukkit.launch
 import dev.kord.common.entity.Snowflake

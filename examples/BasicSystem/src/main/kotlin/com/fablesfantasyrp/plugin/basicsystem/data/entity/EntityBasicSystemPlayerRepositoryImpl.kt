@@ -2,7 +2,7 @@ package com.fablesfantasyrp.plugin.basicsystem.data.entity
 
 import com.fablesfantasyrp.plugin.basicsystem.data.BasicSystemPlayerRepository
 import com.fablesfantasyrp.plugin.database.entity.EntityPlayerRepository
-import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
+import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
 import org.bukkit.plugin.Plugin
 
 class EntityBasicSystemPlayerRepositoryImpl<C>(child: C, plugin: Plugin)

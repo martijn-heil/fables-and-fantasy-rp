@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.staffprofiles.data
 
-import com.fablesfantasyrp.plugin.database.repository.MutableRepository
+import com.fablesfantasyrp.plugin.database.sync.repository.MutableRepository
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 
 interface StaffProfileRepository : MutableRepository<Profile> {

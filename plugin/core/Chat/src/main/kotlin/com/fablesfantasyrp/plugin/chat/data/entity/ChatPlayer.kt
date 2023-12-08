@@ -7,7 +7,7 @@ import com.fablesfantasyrp.plugin.chat.channel.*
 import com.fablesfantasyrp.plugin.chat.event.FablesChatEvent
 import com.fablesfantasyrp.plugin.database.entity.DataEntity
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
-import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
+import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
 import com.fablesfantasyrp.plugin.form.completeWaitForChat
 import com.fablesfantasyrp.plugin.knockout.knockout
 import com.fablesfantasyrp.plugin.text.sendError

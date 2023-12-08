@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.fasttravel.data
 
-import com.fablesfantasyrp.plugin.database.repository.Identifiable
+import com.fablesfantasyrp.plugin.database.model.Identifiable
 import com.fablesfantasyrp.plugin.worldguardinterop.WorldGuardRegion
 import org.bukkit.Location
 import kotlin.time.Duration

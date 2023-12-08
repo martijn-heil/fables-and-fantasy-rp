@@ -1,5 +1,7 @@
 package com.fablesfantasyrp.plugin.database.repository
 
+import com.fablesfantasyrp.plugin.database.model.Identifiable
+import com.fablesfantasyrp.plugin.database.sync.repository.PlayerRepository
 import org.bukkit.OfflinePlayer
 import org.bukkit.Server
 import java.util.*

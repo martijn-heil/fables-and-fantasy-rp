@@ -6,7 +6,7 @@ import com.fablesfantasyrp.plugin.chat.channel.ToggleableChatChannel
 import com.fablesfantasyrp.plugin.chat.data.ChatPlayerRepository
 import com.fablesfantasyrp.plugin.chat.data.entity.ChatPlayer
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
-import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
+import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import org.bukkit.OfflinePlayer

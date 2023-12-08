@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.magic.command.provider
 
-import com.fablesfantasyrp.plugin.database.repository.KeyedRepository
+import com.fablesfantasyrp.plugin.database.sync.repository.KeyedRepository
 import com.fablesfantasyrp.plugin.magic.dal.model.SpellData
 import com.sk89q.intake.argument.ArgumentParseException
 import com.sk89q.intake.argument.CommandArgs

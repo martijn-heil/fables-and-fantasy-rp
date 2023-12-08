@@ -3,7 +3,7 @@ package com.fablesfantasyrp.plugin.basicsystem.data.persistent
 import com.fablesfantasyrp.plugin.basicsystem.data.BasicSystemPlayerRepository
 import com.fablesfantasyrp.plugin.basicsystem.data.entity.BasicSystemPlayer
 import com.fablesfantasyrp.plugin.database.repository.BaseH2PlayerRepository
-import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
+import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
 import org.bukkit.Server
 import java.sql.ResultSet
 import java.util.*

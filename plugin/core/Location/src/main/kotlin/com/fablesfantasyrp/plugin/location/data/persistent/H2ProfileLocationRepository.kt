@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.location.data.persistent
 
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
-import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
+import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
 import com.fablesfantasyrp.plugin.location.data.entity.ProfileLocation
 import com.fablesfantasyrp.plugin.location.data.entity.ProfileLocationRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager

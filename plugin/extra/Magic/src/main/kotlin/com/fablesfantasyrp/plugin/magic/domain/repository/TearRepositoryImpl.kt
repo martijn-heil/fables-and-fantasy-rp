@@ -2,7 +2,7 @@ package com.fablesfantasyrp.plugin.magic.domain.repository
 
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
-import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
+import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.SimpleMapRepository
 import com.fablesfantasyrp.plugin.magic.domain.entity.Tear
 import org.bukkit.Location

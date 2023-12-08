@@ -1,4 +1,4 @@
-package com.fablesfantasyrp.plugin.database.repository
+package com.fablesfantasyrp.plugin.database.sync.repository
 
 interface MutableRepository<T> : Repository<T> {
 	fun destroy(v: T)

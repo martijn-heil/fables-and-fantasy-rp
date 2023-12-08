@@ -1,9 +1,9 @@
 package com.fablesfantasyrp.plugin.database.entity
 
-import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
-import com.fablesfantasyrp.plugin.database.repository.Identifiable
-import com.fablesfantasyrp.plugin.database.repository.KeyedRepository
-import com.fablesfantasyrp.plugin.database.repository.MutableRepository
+import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
+import com.fablesfantasyrp.plugin.database.model.Identifiable
+import com.fablesfantasyrp.plugin.database.sync.repository.KeyedRepository
+import com.fablesfantasyrp.plugin.database.sync.repository.MutableRepository
 import org.bukkit.Bukkit
 import java.lang.ref.SoftReference
 import java.util.concurrent.locks.ReadWriteLock

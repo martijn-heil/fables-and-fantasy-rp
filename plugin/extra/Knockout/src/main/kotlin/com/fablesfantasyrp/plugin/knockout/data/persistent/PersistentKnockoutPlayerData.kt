@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.knockout.data.persistent
 
-import com.fablesfantasyrp.plugin.database.repository.Identifiable
+import com.fablesfantasyrp.plugin.database.model.Identifiable
 import com.fablesfantasyrp.plugin.knockout.data.KnockoutState
 import org.bukkit.entity.Entity
 import org.bukkit.event.entity.EntityDamageEvent

@@ -2,7 +2,7 @@ package com.fablesfantasyrp.plugin.profile.data.persistent
 
 import com.fablesfantasyrp.plugin.database.getUuid
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
-import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
+import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
 import com.fablesfantasyrp.plugin.database.setUuid
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.profile.data.entity.ProfileRepository

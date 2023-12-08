@@ -1,9 +1,9 @@
 package com.fablesfantasyrp.plugin.database.command
 
-import com.fablesfantasyrp.plugin.database.repository.Identifiable
-import com.fablesfantasyrp.plugin.database.repository.KeyedRepository
-import com.fablesfantasyrp.plugin.database.repository.Named
-import com.fablesfantasyrp.plugin.database.repository.NamedRepository
+import com.fablesfantasyrp.plugin.database.model.Identifiable
+import com.fablesfantasyrp.plugin.database.sync.repository.KeyedRepository
+import com.fablesfantasyrp.plugin.database.model.Named
+import com.fablesfantasyrp.plugin.database.sync.repository.NamedRepository
 import com.fablesfantasyrp.plugin.utils.quoteCommandArgument
 import com.sk89q.intake.argument.ArgumentParseException
 import com.sk89q.intake.argument.CommandArgs

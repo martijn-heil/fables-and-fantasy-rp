@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.profile.data
 
-import com.fablesfantasyrp.plugin.database.repository.Identifiable
+import com.fablesfantasyrp.plugin.database.model.Identifiable
 import org.bukkit.OfflinePlayer
 
 interface ProfileData : Identifiable<Int> {

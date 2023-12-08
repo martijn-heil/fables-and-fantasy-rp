@@ -2,6 +2,9 @@ package com.fablesfantasyrp.plugin.database.repository
 
 import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.norm
 import com.fablesfantasyrp.plugin.database.PokoInfo
+import com.fablesfantasyrp.plugin.database.model.Identifiable
+import com.fablesfantasyrp.plugin.database.sync.repository.KeyedRepository
+import com.fablesfantasyrp.plugin.database.sync.repository.MutableRepository
 
 open class NormRepository<K, T: Identifiable<K>>(private val keyClazz: Class<K>, private val subjectClazz: Class<T>)
 	: MutableRepository<T>, KeyedRepository<K, T> {

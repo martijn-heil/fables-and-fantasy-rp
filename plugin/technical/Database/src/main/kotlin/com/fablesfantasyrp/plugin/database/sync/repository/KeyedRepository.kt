@@ -1,4 +1,6 @@
-package com.fablesfantasyrp.plugin.database.repository
+package com.fablesfantasyrp.plugin.database.sync.repository
+
+import com.fablesfantasyrp.plugin.database.model.Identifiable
 
 interface KeyedRepository<K, T: Identifiable<K>> : Repository<T> {
 	fun forId(id: K): T?

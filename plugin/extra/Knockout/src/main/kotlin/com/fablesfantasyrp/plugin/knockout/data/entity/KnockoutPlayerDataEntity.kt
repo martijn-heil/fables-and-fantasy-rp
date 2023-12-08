@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.knockout.data.entity
 
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
-import com.fablesfantasyrp.plugin.database.repository.HasDirtyMarker
+import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
 import com.fablesfantasyrp.plugin.knockout.PLUGIN
 import com.fablesfantasyrp.plugin.knockout.data.KnockoutPlayerData
 import com.fablesfantasyrp.plugin.knockout.data.KnockoutState
