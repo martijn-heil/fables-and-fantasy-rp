@@ -21,6 +21,7 @@ abstract class MappingRepository<KeyType, ChildType, ThisType, ChildRepositoryTy
 	override fun allIds(): Collection<KeyType> = child.allIds()
 	override fun all(): Collection<ThisType> = child.all().map { convertFromChild(it) }
 	override fun forId(id: KeyType): ThisType? = child.forId(id)?.let { convertFromChild(it) }
+	override fun createOrUpdate(v: ThisType): ThisType = convertFromChild(child.createOrUpdate(convertToChild(v)))
 
 	override fun destroy(v: ThisType) {
 		destroyHandlers.forEach { it(v) }

@@ -1,9 +1,15 @@
 package com.fablesfantasyrp.plugin.database
 
+import com.github.benmanes.caffeine.cache.Cache
+import com.github.benmanes.caffeine.cache.LoadingCache
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.h2.api.H2Type
+import java.lang.ref.SoftReference
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.util.*
+import kotlin.collections.Map
 
 
 inline fun<reified T> ResultSet.getList(column: String): List<T>  {
@@ -27,3 +33,28 @@ fun ResultSet.getUuid(column: Int) = this.getObject(column) as? UUID
 fun PreparedStatement.setUuid(n: Int, uuid: UUID?) = this.setObject(n, uuid, H2Type.UUID)
 
 fun ResultSet.asSequence(): Sequence<ResultSet> = generateSequence { if (this.next()) this else null }
+
+suspend fun<K, T> MutableMap<K, SoftReference<T>>.getOrLoad(key: K, load: (K) -> T?): T? {
+	val value = this[key]?.get()
+
+	return if (value == null) {
+		val newValue = withContext(Dispatchers.IO) { load(key) }
+
+		val secondTry = this[key]?.get()
+		if (secondTry != null) return secondTry
+
+		if (newValue != null) {
+			this[key] = SoftReference(newValue)
+			newValue
+		} else {
+			this.remove(key)
+			null
+		}
+	} else {
+		value
+	}
+}
+
+suspend fun<K, V> LoadingCache<K, V>.getOrLoadAsync(key: K): V? {
+	return this.getIfPresent(key) ?: withContext(Dispatchers.IO) { this@getOrLoadAsync.get(key) }
+}

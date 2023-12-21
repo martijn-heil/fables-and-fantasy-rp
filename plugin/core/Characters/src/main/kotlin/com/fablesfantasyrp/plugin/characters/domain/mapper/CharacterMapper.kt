@@ -12,7 +12,7 @@ import com.fablesfantasyrp.plugin.profile.data.entity.ProfileRepository
 import org.bukkit.OfflinePlayer
 
 class CharacterMapper(private val child: CharacterDataRepository, private val profiles: ProfileRepository)
-	: MappingRepository<Int, CharacterData, Character, CharacterDataRepository>(child), CharacterRepository, HasDirtyMarker<Character> {
+	: MappingRepository<Int, CharacterData, Character, CharacterDataRepository>(child), HasDirtyMarker<Character> {
 
 	override var dirtyMarker: DirtyMarker<Character>? = null
 
@@ -56,9 +56,9 @@ class CharacterMapper(private val child: CharacterDataRepository, private val pr
 		traits = v.traits
 	)
 
-	override fun forOwner(offlinePlayer: OfflinePlayer?): Collection<Character> = child.forOwner(offlinePlayer).map { convertFromChild(it) }
-	override fun forProfile(profile: Profile): Character? = child.forProfile(profile)?.let { convertFromChild(it) }
-	override fun forName(name: String): Character? = child.forName(name)?.let { convertFromChild(it) }
-	override fun nameExists(name: String): Boolean = child.nameExists(name)
-	override val nameMap: Map<String, Int> = child.nameMap
+	fun forOwner(offlinePlayer: OfflinePlayer?): Collection<Character> = child.forOwner(offlinePlayer).map { convertFromChild(it) }
+	fun forProfile(profile: Profile): Character? = child.forProfile(profile)?.let { convertFromChild(it) }
+	fun forName(name: String): Character? = child.forName(name)?.let { convertFromChild(it) }
+	fun nameExists(name: String): Boolean = child.nameExists(name)
+	val nameMap: Map<String, Int> = child.nameMap
 }

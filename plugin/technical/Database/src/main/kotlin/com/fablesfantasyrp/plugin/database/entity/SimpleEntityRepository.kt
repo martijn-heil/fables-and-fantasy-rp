@@ -37,6 +37,15 @@ open class SimpleEntityRepository<K, T: Identifiable<K>, C>(protected var child:
 		}
 	}
 
+	override fun createOrUpdate(v: T): T {
+		return if (v.id == 0 || !this.exists(v.id)) {
+			this.create(v)
+		} else {
+			this.update(v)
+			v
+		}
+	}
+
 	fun saveAll() {
 		lock.writeLock().withLock {
 			cache.mapNotNull { it.value.get() }.forEach { this.update(it) }
