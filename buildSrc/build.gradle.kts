@@ -24,8 +24,8 @@ repositories {
 
 dependencies {
     implementation("gradle.plugin.com.github.johnrengelman:shadow:7.1.2")
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.10")
-    implementation("org.jetbrains.kotlin:kotlin-serialization:1.9.10")
-    implementation("io.papermc.paperweight.userdev:io.papermc.paperweight.userdev.gradle.plugin:1.3.3")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.21")
+    implementation("org.jetbrains.kotlin:kotlin-serialization:1.9.21")
+    implementation("io.papermc.paperweight.userdev:io.papermc.paperweight.userdev.gradle.plugin:1.5.11")
     implementation( "com.vanniktech:gradle-dependency-graph-generator-plugin:0.7.0")
 }
