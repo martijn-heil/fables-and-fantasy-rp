@@ -43,6 +43,9 @@ fun parseRollExpression(expression: String, character: Character?, defaultKind: 
 		val count = (if (it.groupValues[1] != "") it.groupValues[1] else "1").toUIntOrNull() ?:
 			throw IllegalArgumentException("Invalid syntax")
 
+		// Otherwise the server will crash due to running out of memory or processing taking too long
+		if (count > 100U) throw IllegalArgumentException("$count is too large of a number to process.")
+
 		val statKind = when(it.groupValues[3].lowercase()) {
 			"i" -> CharacterStatKind.INTELLIGENCE
 			"s" -> CharacterStatKind.STRENGTH
