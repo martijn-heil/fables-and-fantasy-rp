@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.lodestones.domain.mapper
 
-import com.fablesfantasyrp.plugin.database.MappingRepository
+import com.fablesfantasyrp.plugin.database.sync.repository.base.MappingRepository
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
 import com.fablesfantasyrp.plugin.lodestones.dal.model.LodestoneData

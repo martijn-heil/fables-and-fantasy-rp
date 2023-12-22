@@ -1,4 +1,4 @@
-package com.fablesfantasyrp.plugin.database
+package com.fablesfantasyrp.plugin.database.sync.repository.base
 
 import com.fablesfantasyrp.plugin.database.entity.HasDestroyHandler
 import com.fablesfantasyrp.plugin.database.model.Identifiable
@@ -7,11 +7,10 @@ import com.fablesfantasyrp.plugin.database.sync.repository.MutableRepository
 
 abstract class MappingRepository<KeyType, ChildType, ThisType, ChildRepositoryType>(private val child: ChildRepositoryType)
 	: MutableRepository<ThisType>, KeyedRepository<KeyType, ThisType>, HasDestroyHandler<ThisType>
-
 		where 	ThisType : Identifiable<KeyType>,
-				 ChildType : Identifiable<KeyType>,
-				 ChildRepositoryType: MutableRepository<ChildType>,
-				 ChildRepositoryType: KeyedRepository<KeyType, ChildType> {
+				ChildType : Identifiable<KeyType>,
+				ChildRepositoryType: MutableRepository<ChildType>,
+				ChildRepositoryType: KeyedRepository<KeyType, ChildType> {
 	private val destroyHandlers = ArrayList<(ThisType) -> Unit>()
 
 	abstract fun convertFromChild(v: ChildType): ThisType

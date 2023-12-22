@@ -2,7 +2,7 @@ package com.fablesfantasyrp.plugin.magic.domain.mapper
 
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
-import com.fablesfantasyrp.plugin.database.MappingRepository
+import com.fablesfantasyrp.plugin.database.sync.repository.base.MappingRepository
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
 import com.fablesfantasyrp.plugin.magic.dal.model.MageData

@@ -6,26 +6,17 @@ import com.fablesfantasyrp.plugin.database.entity.HasDestroyHandler
 import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
 import com.fablesfantasyrp.plugin.database.model.Identifiable
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
-import com.fablesfantasyrp.plugin.database.sync.repository.KeyedRepository
-import com.fablesfantasyrp.plugin.database.sync.repository.MutableRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.forEach
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withContext
-import org.bukkit.Bukkit
 import java.lang.ref.SoftReference
-import java.util.concurrent.locks.ReadWriteLock
-import java.util.concurrent.locks.ReentrantReadWriteLock
-import kotlin.concurrent.withLock
 
 open class AsyncTypicalRepository<K, T: Identifiable<K>, C>(protected var child: C)
 	: AsyncMutableRepository<T>, AsyncKeyedRepository<K, T>, HasDestroyHandler<T>, DirtyMarker<T>
-		where C : KeyedRepository<K, T>,
-			  C : MutableRepository<T>,
+		where C : AsyncKeyedRepository<K, T>,
+			  C : AsyncMutableRepository<T>,
 			  C: HasDirtyMarker<T> {
 	protected val cache = HashMap<K, SoftReference<T>>()
 	protected val strongCache = HashSet<T>()
@@ -47,16 +38,16 @@ open class AsyncTypicalRepository<K, T: Identifiable<K>, C>(protected var child:
 
 	suspend fun saveAllDirty() {
 		val dirtyCopy = dirtyLock.withLock { dirty.toSet() }
-		withContext(Dispatchers.IO) { dirtyCopy.asFlow().onEach { child.update(it) } }
+		dirtyCopy.asFlow().onEach { child.update(it) }
 	}
 
 	suspend fun saveAll() {
 		val all = lock.withLock { cache.mapNotNull { it.value.get() } }
-		withContext(Dispatchers.IO) { all.asFlow().onEach { update(it) } }
+		all.asFlow().onEach { update(it) }
 	}
 
 	override suspend fun create(v: T): T {
-		val result = withContext(Dispatchers.IO) { child.create(v) }
+		val result = child.create(v)
 		lock.withLock {
 			cache[result.id] = SoftReference(result)
 		}
@@ -65,16 +56,16 @@ open class AsyncTypicalRepository<K, T: Identifiable<K>, C>(protected var child:
 
 	private suspend fun saveNWeakDirty(n: Int) {
 		val entries = lock.withLock { dirty.asSequence().filter { !strongCache.contains(it) }.take(n).toList() }
-		withContext(Dispatchers.IO) { entries.asFlow().onEach { update(it) } }
+		entries.asFlow().onEach { update(it) }
 	}
 
 	override suspend fun update(v: T) {
-		withContext(Dispatchers.IO) { child.update(v) }
+		child.update(v)
 		dirtyLock.withLock { dirty.remove(v) }
 	}
 
 	override suspend fun destroy(v: T) {
-		withContext(Dispatchers.IO) { child.destroy(v) }
+		child.destroy(v)
 		lock.withLock {
 			destroyHandlers.forEach { it(v) }
 			cache.remove(v.id)
@@ -82,7 +73,7 @@ open class AsyncTypicalRepository<K, T: Identifiable<K>, C>(protected var child:
 		}
 	}
 
-	override suspend fun allIds(): Collection<K> = withContext(Dispatchers.IO) { child.allIds() }
+	override suspend fun allIds(): Collection<K> = child.allIds()
 
 	override suspend fun createOrUpdate(v: T): T {
 		return if (v.id == 0 || !this.exists(v.id)) {

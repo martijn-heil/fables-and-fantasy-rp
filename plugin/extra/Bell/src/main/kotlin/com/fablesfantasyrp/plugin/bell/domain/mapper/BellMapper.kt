@@ -4,7 +4,7 @@ import com.fablesfantasyrp.plugin.bell.dal.model.BellData
 import com.fablesfantasyrp.plugin.bell.dal.repository.BellDataRepository
 import com.fablesfantasyrp.plugin.bell.domain.entity.Bell
 import com.fablesfantasyrp.plugin.bell.domain.repository.BellRepository
-import com.fablesfantasyrp.plugin.database.MappingRepository
+import com.fablesfantasyrp.plugin.database.sync.repository.base.MappingRepository
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.BlockIdentifier
