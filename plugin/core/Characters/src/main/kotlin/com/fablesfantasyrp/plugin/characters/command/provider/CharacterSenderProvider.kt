@@ -8,6 +8,7 @@ import com.sk89q.intake.argument.CommandArgs
 import com.sk89q.intake.argument.Namespace
 import com.sk89q.intake.parametric.Provider
 import com.sk89q.intake.parametric.ProvisionException
+import kotlinx.coroutines.runBlocking
 import org.bukkit.entity.Player
 
 class CharacterSenderProvider(private val profileManager: ProfileManager,
@@ -18,7 +19,7 @@ class CharacterSenderProvider(private val profileManager: ProfileManager,
 	@Throws(ArgumentException::class, ProvisionException::class)
 	override fun get(commandArgs: CommandArgs, modifiers: List<Annotation>): Character {
 		val sender: Player = senderProvider.get(commandArgs, modifiers)!!
-		return profileManager.getCurrentForPlayer(sender)?.let { characters.forProfile(it) }
+		return profileManager.getCurrentForPlayer(sender)?.let { runBlocking { characters.forProfile(it) } }
 				?: throw ProvisionException("You must be in-character to execute this command.")
 	}
 

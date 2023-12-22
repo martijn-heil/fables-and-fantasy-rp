@@ -5,6 +5,6 @@ import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import org.bukkit.entity.Player
 
 interface LodestoneAuthorizer {
-	fun mayWarpTo(who: Profile?, lodestone: Lodestone): Boolean
-	fun useCoolDown(who: Player): Boolean
+	suspend fun mayWarpTo(who: Profile?, lodestone: Lodestone): Boolean
+	suspend fun useCoolDown(who: Player): Boolean
 }

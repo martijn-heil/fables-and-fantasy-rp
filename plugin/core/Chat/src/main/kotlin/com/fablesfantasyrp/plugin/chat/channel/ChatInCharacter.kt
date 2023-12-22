@@ -31,7 +31,7 @@ object ChatInCharacter : ChatChannel, PreviewableChatChannel, SubChanneledChatCh
 
 	override fun getRecipients(from: Player): Sequence<Player> = ChatInCharacterStandard.getRecipients(from)
 
-	override fun sendMessage(from: Player, message: String) {
+	override suspend fun sendMessage(from: Player, message: String) {
 		val resolved = this.resolveSubChannelRecursive(message)
 		val content = resolved.second
 		val channel = resolved.first.let { if (it === this) ChatInCharacterStandard else it }
@@ -43,7 +43,7 @@ object ChatInCharacter : ChatChannel, PreviewableChatChannel, SubChanneledChatCh
 		return "${matches[1]}${matches[3]}"
 	}
 
-	override fun getPreview(from: Player, message: String): Component {
+	override suspend fun getPreview(from: Player, message: String): Component {
 		val resolved = this.resolveSubChannelRecursive(message)
 		val content = resolved.second
 		val channel = (resolved.first as? PreviewableChatChannel)?.let { if (it === this) ChatInCharacterStandard else it }
@@ -99,7 +99,7 @@ abstract class AbstractChatInCharacter : ChatChannel, PreviewableChatChannel {
 	override fun getRecipients(from: Player): Sequence<Player> =
 			getPlayersWithinRange(from.location, range)
 
-	override fun sendMessage(from: Player, message: String) {
+	override suspend fun sendMessage(from: Player, message: String) {
 		if(message.isEmpty()) return
 
 		val formatted = formatMessage(from, message) ?: return
@@ -115,9 +115,9 @@ abstract class AbstractChatInCharacter : ChatChannel, PreviewableChatChannel {
 	}
 
 
-	protected open fun formatMessage(from: Player, message: String): Component? = formatMessage(from, message, false)
+	protected open suspend fun formatMessage(from: Player, message: String): Component? = formatMessage(from, message, false)
 
-	private fun formatMessage(from: Player, message: String, preview: Boolean): Component? {
+	private suspend fun formatMessage(from: Player, message: String, preview: Boolean): Component? {
 		val actionStyle = from.chat.chatStyle ?: Style.style(NamedTextColor.YELLOW)
 		val speechStyle = Style.style(NamedTextColor.WHITE)
 		val profile = profileManager.getCurrentForPlayer(from)
@@ -151,7 +151,7 @@ abstract class AbstractChatInCharacter : ChatChannel, PreviewableChatChannel {
 		)
 	}
 
-	override fun getPreview(from: Player, message: String): Component
+	override suspend fun getPreview(from: Player, message: String): Component
 		= this.formatMessage(from, message, true) ?: Component.text("")
 }
 
@@ -174,7 +174,7 @@ object ChatInCharacterWhisper : AbstractChatInCharacter(), Serializable {
 	@Transient
 	override val actionWord = "whispers"
 
-	override fun formatMessage(from: Player, message: String): Component? {
+	override suspend fun formatMessage(from: Player, message: String): Component? {
 		return super.formatMessage(from, message)
 				?.let { Component.text("[W] ").color(NamedTextColor.GRAY).append(it) }
 	}
@@ -191,7 +191,7 @@ object ChatInCharacterQuiet : AbstractChatInCharacter(), Serializable {
 	@Transient
 	override val actionWord = "says quietly"
 
-	override fun formatMessage(from: Player, message: String): Component? {
+	override suspend fun formatMessage(from: Player, message: String): Component? {
 		return super.formatMessage(from, message)
 				?.let { Component.text("[Q] ").color(NamedTextColor.GRAY).append(it) }
 	}
@@ -208,7 +208,7 @@ object ChatInCharacterShout : AbstractChatInCharacter(), Serializable {
 	@Transient
 	override val actionWord = "shouts"
 
-	override fun formatMessage(from: Player, message: String): Component? {
+	override suspend fun formatMessage(from: Player, message: String): Component? {
 		return super.formatMessage(from, message)
 				?.let { Component.text("[S] ").color(NamedTextColor.GRAY).append(it) }
 	}
@@ -225,7 +225,7 @@ object ChatInCharacterContextual : AbstractChatInCharacter(), Serializable {
 	@Transient
 	override val actionWord = ""
 
-	override fun formatMessage(from: Player, message: String): Component {
+	override suspend fun formatMessage(from: Player, message: String): Component {
 		val customResolver = TagResolver.builder()
 				.tag("player_name", Tag.selfClosingInserting(Component.text(from.name)))
 				.tag("message", Tag.selfClosingInserting(Component.text(message)))

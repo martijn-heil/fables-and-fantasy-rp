@@ -49,8 +49,8 @@ class ChatDirectMessage(val from: CommandSender, val to: CommandSender) :
 		)
 	}
 
-	override fun getPreview(from: Player, message: String): Component = this.getPreview(from as CommandSender, message)
-	override fun sendMessage(from: Player, message: String) = this.sendMessage(from as CommandSender, message)
+	override suspend fun getPreview(from: Player, message: String): Component = this.getPreview(from as CommandSender, message)
+	override suspend fun sendMessage(from: Player, message: String) = this.sendMessage(from as CommandSender, message)
 	override fun getRecipients(from: CommandSender) = sequenceOf(this.from, to)
 	override fun getRecipients(from: Player) = sequenceOf(this.from as? Player, to as? Player).filterNotNull()
 	override fun toString() = "dm#${to.name.lowercase()}"

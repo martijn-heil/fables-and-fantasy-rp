@@ -4,6 +4,7 @@ import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterReposito
 import com.fablesfantasyrp.plugin.party.PartySpectatorManager
 import com.fablesfantasyrp.plugin.party.data.PartyRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
+import kotlinx.coroutines.runBlocking
 import me.neznamy.tab.api.TabAPI
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
@@ -18,29 +19,31 @@ class TABHook(private val profileManager: ProfileManager,
 		tapi = TabAPI.getInstance()
 		tapi.placeholderManager.registerRelationalPlaceholder(
 			"%rel_party_icon_v2%", 1000) { tabObserver, tabTarget ->
-			try {
-				val observer = tabObserver.player as Player
-				val observerCharacter = profileManager.getCurrentForPlayer(observer)?.let { characters.forProfile(it) }
-				val observerParty = observerCharacter?.let { parties.forMember(observerCharacter) }
-					?: spectatorManager.getParty(observer)
-					?: return@registerRelationalPlaceholder ""
+			runBlocking {
+				try {
+					val observer = tabObserver.player as Player
+					val observerCharacter = profileManager.getCurrentForPlayer(observer)?.let { characters.forProfile(it) }
+					val observerParty = observerCharacter?.let { parties.forMember(observerCharacter) }
+						?: spectatorManager.getParty(observer)
+						?: return@runBlocking ""
 
-				val target = tabTarget.player as Player
-				val targetProfile = profileManager.getCurrentForPlayer(target)
-				val targetCharacter = targetProfile?.let { characters.forProfile(it) }
-					?: return@registerRelationalPlaceholder ""
-				val targetParty = parties.forMember(targetCharacter)
+					val target = tabTarget.player as Player
+					val targetProfile = profileManager.getCurrentForPlayer(target)
+					val targetCharacter = targetProfile?.let { characters.forProfile(it) }
+						?: return@runBlocking ""
+					val targetParty = parties.forMember(targetCharacter)
 
-				if (observerParty.members.contains(targetCharacter)) {
-					"${ChatColor.GOLD}⭐"
-				} else if (targetParty != null) {
-					"${ChatColor.DARK_RED}\uD83D\uDDE1"
-				} else {
-					""
+					if (observerParty.members.contains(targetCharacter)) {
+						"${ChatColor.GOLD}⭐"
+					} else if (targetParty != null) {
+						"${ChatColor.DARK_RED}\uD83D\uDDE1"
+					} else {
+						""
+					}
+				} catch (ex: Exception) {
+					ex.printStackTrace()
+					throw ex
 				}
-			} catch (ex: Exception) {
-				ex.printStackTrace()
-				throw ex
 			}
 		}
 	}

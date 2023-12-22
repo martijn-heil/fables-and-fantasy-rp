@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.magic.web
 
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.magic.dal.repository.SpellDataRepository
 import com.fablesfantasyrp.plugin.magic.domain.entity.Mage
 import com.fablesfantasyrp.plugin.magic.domain.repository.MageRepository
@@ -27,6 +28,7 @@ private class Mages() {
 
 internal class WebRouting(private val plugin: Plugin,
 				 private val mages: MageRepository,
+				 private val characters: CharacterRepository,
 				 private val spells: SpellDataRepository) : BaseWebRoutingLoader() {
 	private val logger = plugin.logger
 
@@ -47,8 +49,10 @@ internal class WebRouting(private val plugin: Plugin,
 		post<Mages.Id> {
 			val webMage = call.receive<WebMage>()
 			withContext(plugin.minecraftDispatcher) {
+				val character = characters.forId(webMage.id.toInt())!!
+
 				mages.create(Mage(
-					id = webMage.id,
+					character = character,
 					magicPath = webMage.magicPath,
 					magicLevel = webMage.magicLevel,
 					spells = spells.forIds(webMage.spells.asSequence()).toList()

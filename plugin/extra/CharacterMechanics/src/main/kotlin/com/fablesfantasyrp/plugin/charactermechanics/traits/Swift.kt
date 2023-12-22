@@ -4,9 +4,15 @@ import com.fablesfantasyrp.plugin.charactermechanics.traits.base.BaseTraitBehavi
 import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
+import com.fablesfantasyrp.plugin.utils.every
+import com.github.shynixn.mccoroutine.bukkit.launch
+import kotlinx.coroutines.flow.forEach
+import kotlinx.coroutines.flow.onEach
 import org.bukkit.plugin.Plugin
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
+import java.time.Duration
+import kotlin.time.toKotlinDuration
 
 // Players with this trait can move 6+d6 (agility) instead of 4+d6 (agility) -
 // Outside CRP, players with this trait get a permanent speed 1 boost.
@@ -19,8 +25,8 @@ class Swift(plugin: Plugin,
 	override fun init() {
 		super.init()
 
-		server.scheduler.scheduleSyncRepeatingTask(plugin, {
-			getPlayersWithTrait().forEach { it.player.addPotionEffect(effect) }
-		}, 0, 1)
+		every(plugin, Duration.ofMillis(50).toKotlinDuration()) {
+			getPlayersWithTrait().onEach { it.player.addPotionEffect(effect) }
+		}
 	}
 }

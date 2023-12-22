@@ -4,6 +4,7 @@ package com.fablesfantasyrp.plugin.utils
 
 import com.github.shynixn.mccoroutine.bukkit.launch
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import org.bukkit.plugin.Plugin
 import java.lang.Long.max
@@ -15,8 +16,8 @@ interface EveryScope {
 	fun stop()
 }
 
-fun every(plugin: Plugin, interval: Duration, what: suspend CoroutineScope.() -> Unit) {
-	plugin.launch {
+fun every(plugin: Plugin, interval: Duration, what: suspend CoroutineScope.() -> Unit): Job {
+	return plugin.launch {
 		val scope = this
 		while (true) {
 			val duration = measureTime { what(scope) }

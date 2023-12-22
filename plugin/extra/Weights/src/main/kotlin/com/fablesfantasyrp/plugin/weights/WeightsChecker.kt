@@ -4,34 +4,38 @@ import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
 import com.fablesfantasyrp.plugin.characters.domain.KnownCharacterTraits
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
+import com.fablesfantasyrp.plugin.utils.every
+import com.github.shynixn.mccoroutine.bukkit.launch
+import kotlinx.coroutines.Job
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
+import java.time.Duration
+import kotlin.time.toKotlinDuration
 
 class WeightsChecker(private val plugin: Plugin,
 					 private val config: WeightsConfig,
 					 private val profileManager: ProfileManager,
 					 private val characters: CharacterRepository) {
 	private val server = plugin.server
-	private var taskId: Int = -1
+	private lateinit var job: Job
 
 	fun start() {
-		taskId = server.scheduler.scheduleSyncRepeatingTask(plugin, {
+		job = every(plugin, Duration.ofMillis(50).toKotlinDuration()) {
 			for (player in server.onlinePlayers) {
 
 				val items = player.inventory.contents.filterNotNull()
 				val weight = calculateWeight(items, config)
 
-				applyWeight(player, weight, calculateCap(player))
+				plugin.launch { applyWeight(player, weight, calculateCap(player)) }
 			}
-		}, 0, 1)
-		check(taskId != -1)
+		}
 	}
 
 	fun stop() {
-		server.scheduler.cancelTask(taskId)
+		job.cancel()
 	}
 
-	private fun calculateCap(player: Player): Int {
+	private suspend fun calculateCap(player: Player): Int {
 		val character = profileManager.getCurrentForPlayer(player)?.let { characters.forProfile(it) }
 		return config.cap + if (character != null && character.traits.contains(CharacterTrait.PACKMULE)) 20 else 0
 	}

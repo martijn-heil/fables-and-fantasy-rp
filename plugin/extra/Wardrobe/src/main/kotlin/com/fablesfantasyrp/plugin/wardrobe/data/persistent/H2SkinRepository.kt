@@ -48,6 +48,10 @@ class H2SkinRepository(private val server: Server,
 		throw UnsupportedOperationException()
 	}
 
+	override fun createOrUpdate(v: Skin): Skin {
+		return create(v)
+	}
+
 	override fun forId(id: Int): Skin? {
 		return dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE id = ?")

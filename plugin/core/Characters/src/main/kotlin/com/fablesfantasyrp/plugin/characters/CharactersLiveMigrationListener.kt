@@ -41,10 +41,11 @@ class CharactersLiveMigrationListener(private val plugin: Plugin,
 	fun onPlayerJoin(e: PlayerJoinEvent) {
 		val player = e.player
 		if (!player.isWhitelisted) return
-		val legacyRaceCharacters = characters.forOwner(player).filter { it.race == Race.HUMAN }
-		if (legacyRaceCharacters.isEmpty()) return
 
 		PLUGIN.launch {
+			val legacyRaceCharacters = characters.forOwner(player).filter { it.race == Race.HUMAN }
+			if (legacyRaceCharacters.isEmpty()) return@launch
+
 			val titleJob = server.scheduler.scheduleSyncRepeatingTask(plugin, {
 				e.player.showTitle(Title.title(Component.text("Welcome back!").color(NamedTextColor.LIGHT_PURPLE),
 						Component.text("Please follow the instructions in chat").color(NamedTextColor.YELLOW),

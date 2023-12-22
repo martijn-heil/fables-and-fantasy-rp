@@ -4,6 +4,9 @@ import com.fablesfantasyrp.plugin.characters.dal.enums.Race
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.mapNotNull
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
@@ -19,8 +22,8 @@ abstract class BaseRaceBehavior(
 
 	}
 
-	protected fun getPlayersWithRace(race: Race = this.race): Sequence<ActiveRaceHolder> {
-		return server.onlinePlayers.asSequence().mapNotNull {
+	protected suspend fun getPlayersWithRace(race: Race = this.race): Flow<ActiveRaceHolder> {
+		return server.onlinePlayers.asFlow().mapNotNull {
 			val profile = profileManager.getCurrentForPlayer(it) ?: return@mapNotNull null
 			val character = characters.forProfile(profile) ?: return@mapNotNull null
 			if (character.race != race) return@mapNotNull null

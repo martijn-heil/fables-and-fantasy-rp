@@ -52,6 +52,10 @@ class H2WorldRestrictionRuleRepository(private val server: Server,
 		}
 	}
 
+	override fun createOrUpdate(v: WorldRestrictionRule): WorldRestrictionRule {
+		throw NotImplementedError()
+	}
+
 	override fun all(): Collection<WorldRestrictionRule> {
 		return dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME")

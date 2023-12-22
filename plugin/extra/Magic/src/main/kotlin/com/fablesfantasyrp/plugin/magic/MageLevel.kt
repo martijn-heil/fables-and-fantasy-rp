@@ -1,7 +1,10 @@
 package com.fablesfantasyrp.plugin.magic
 
 import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.magic.domain.entity.Mage
+import com.fablesfantasyrp.plugin.utils.Services
+import org.koin.core.context.GlobalContext
 
 val MAGE_LEVEL_MAP = mapOf(
 		Pair(1, mapOf( // Level 1

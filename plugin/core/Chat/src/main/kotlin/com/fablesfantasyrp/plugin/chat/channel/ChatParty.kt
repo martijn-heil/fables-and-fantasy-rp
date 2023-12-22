@@ -35,8 +35,8 @@ class ChatParty(val party: Party) : ChatChannel, PreviewableChatChannel, Command
 			.plus(server.consoleSender)
 	}
 
-	override fun getPreview(from: Player, message: String): Component = formatMessage(from, message)
-	override fun sendMessage(from: Player, message: String) = sendMessage(from as CommandSender, message)
+	override suspend fun getPreview(from: Player, message: String): Component = formatMessage(from, message)
+	override suspend fun sendMessage(from: Player, message: String) = sendMessage(from as CommandSender, message)
 	override fun getRecipients(from: Player): Sequence<Player>
 		= party.members.asSequence().mapNotNull { profileManager.getCurrentForProfile(it.profile) }
 

@@ -9,6 +9,7 @@ import com.sk89q.intake.argument.ArgumentParseException
 import com.sk89q.intake.argument.CommandArgs
 import com.sk89q.intake.argument.Namespace
 import com.sk89q.intake.parametric.Provider
+import kotlinx.coroutines.runBlocking
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -31,16 +32,19 @@ class CharacterProvider(private val server: Server,
 				throw ArgumentParseException("You need " + targetAnnotation.value)
 			}
 
-			return if (name.startsWith("#")) {
-				val id = name.removePrefix("#").toIntOrNull() ?: throw ArgumentParseException("Invalid identifier")
-				characters.forId(id)
-			} else {
-				characters.forName(name)?: throw ArgumentParseException("A character called '$name' could not be found")
+			return runBlocking {
+				if (name.startsWith("#")) {
+					val id = name.removePrefix("#").toIntOrNull() ?: throw ArgumentParseException("Invalid identifier")
+					characters.forId(id)
+				} else {
+					characters.forName(name)
+						?: throw ArgumentParseException("A character called '$name' could not be found")
+				}
 			}
 		} else if (targetAnnotation != null) {
 			val player = sender as? Player
 			val currentProfile = player?.let { profileManager.getCurrentForPlayer(it) }
-			val currentCharacter = currentProfile?.let { characters.forProfile(it) }
+			val currentCharacter = currentProfile?.let { runBlocking { characters.forProfile(it) } }
 			if (currentCharacter == null) {
 				arguments.next() // Generate MissingArgumentException
 				return null
@@ -54,9 +58,11 @@ class CharacterProvider(private val server: Server,
 	}
 
 	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
-			return characters.allNames().asSequence()
-				.filter { it.startsWith(prefix.removePrefix("\""), true) }
-				.map { quoteCommandArgument(it) }
-				.toList()
+			return runBlocking {
+				characters.allNames().asSequence()
+					.filter { it.startsWith(prefix.removePrefix("\""), true) }
+					.map { quoteCommandArgument(it) }
+					.toList()
+			}
 	}
 }

@@ -108,6 +108,10 @@ class H2ProfileRepository(private val server: Server,
 		}
 	}
 
+	override fun createOrUpdate(v: Profile): Profile {
+		throw NotImplementedError()
+	}
+
 	override fun forId(id: Int): Profile? {
 		return dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE id = ?")

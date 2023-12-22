@@ -26,9 +26,9 @@ object ChatSpectator : ChatChannel, RawChatChannel, ToggleableChatChannel, Comma
 					}
 					.filter { !it.chat.disabledChannels.contains(this) }
 
-	override fun sendMessage(from: Player, message: String) = this.sendMessage(from, parseLinks(message))
+	override suspend fun sendMessage(from: Player, message: String) = this.sendMessage(from, parseLinks(message))
 	override fun sendMessage(from: CommandSender, message: String) = this.sendMessage(from, parseLinks(message))
-	override fun sendMessage(from: Player, message: Component) = this.sendMessage(from as CommandSender, message)
+	override suspend fun sendMessage(from: Player, message: Component) = this.sendMessage(from as CommandSender, message)
 
 	fun sendMessage(from: CommandSender, message: Component) {
 		val final = this.formatMessage(from, message)
@@ -46,7 +46,7 @@ object ChatSpectator : ChatChannel, RawChatChannel, ToggleableChatChannel, Comma
 				TagResolver.standard(), customResolver)
 	}
 
-	override fun getPreview(from: Player, message: String): Component = this.formatMessage(from, parseLinks(message))
+	override suspend fun getPreview(from: Player, message: String): Component = this.formatMessage(from, parseLinks(message))
 	override fun toString() = "spectator"
 	fun readResolve(): Any? = ChatSpectator
 	private const val serialVersionUID: Long = 1

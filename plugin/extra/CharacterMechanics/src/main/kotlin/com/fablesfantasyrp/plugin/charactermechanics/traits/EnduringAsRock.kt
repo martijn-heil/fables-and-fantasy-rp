@@ -4,9 +4,13 @@ import com.fablesfantasyrp.plugin.charactermechanics.traits.base.BaseTraitBehavi
 import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
+import com.fablesfantasyrp.plugin.utils.every
+import kotlinx.coroutines.flow.onEach
 import org.bukkit.plugin.Plugin
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
+import java.time.Duration
+import kotlin.time.toKotlinDuration
 
 // (Resilience potion effect outside CRP)
 class EnduringAsRock(plugin: Plugin,
@@ -18,8 +22,8 @@ class EnduringAsRock(plugin: Plugin,
 	override fun init() {
 		super.init()
 
-		server.scheduler.scheduleSyncRepeatingTask(plugin, {
-			getPlayersWithTrait().forEach { it.player.addPotionEffect(effect) }
-		}, 0, 1)
+		every(plugin, Duration.ofMillis(50).toKotlinDuration()) {
+			getPlayersWithTrait().onEach { it.player.addPotionEffect(effect) }
+		}
 	}
 }

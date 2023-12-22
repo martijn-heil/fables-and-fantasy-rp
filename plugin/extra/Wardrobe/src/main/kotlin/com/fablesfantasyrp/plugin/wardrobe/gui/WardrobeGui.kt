@@ -20,6 +20,7 @@ import de.themoep.inventorygui.GuiElementGroup
 import de.themoep.inventorygui.InventoryGui
 import de.themoep.inventorygui.StaticGuiElement
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.Component
 import net.wesjd.anvilgui.AnvilGUI
 import org.bukkit.ChatColor
@@ -40,7 +41,7 @@ class WardrobeGui(private val plugin: JavaPlugin,
 				  private val profileSkinRepository: ProfileSkinRepository,
 				  private val skinService: SkinService,
 				  private val originalPlayerProfileService: OriginalPlayerProfileService)
-	: InventoryGui(plugin, player, "${profile.shortName}'s wardrobe", arrayOf("gggggggxd")) {
+	: InventoryGui(plugin, player, "${runBlocking { profile.shortName() }}'s wardrobe", arrayOf("gggggggxd")) {
 	private val server = plugin.server
 
 	init {

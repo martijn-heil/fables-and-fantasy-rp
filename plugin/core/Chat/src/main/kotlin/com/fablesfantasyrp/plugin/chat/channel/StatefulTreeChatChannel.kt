@@ -13,7 +13,7 @@ abstract class StatefulTreeChatChannel(val from: CommandSender) : AbstractSubCha
 	override val subChannels: Map<String, ChatChannel>
 		get() = Bukkit.getOnlinePlayers().associate { Pair(it.name.uppercase(), ChatDirectMessage(from, it)) }
 
-	override fun sendMessage(from: Player, message: String) {
+	override suspend fun sendMessage(from: Player, message: String) {
 		val resolved = this.resolveSubChannelRecursive(message)
 		val content = resolved.second
 		val channel = resolved.first.let { if(it === this) (default) else it }

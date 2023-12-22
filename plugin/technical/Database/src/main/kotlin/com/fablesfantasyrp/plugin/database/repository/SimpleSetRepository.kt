@@ -8,7 +8,7 @@ import kotlin.concurrent.withLock
 open class SimpleSetRepository<T> : MutableRepository<T> {
 	protected val contents = HashSet<T>()
 	protected val lock: ReadWriteLock = ReentrantReadWriteLock()
-
+	override fun createOrUpdate(v: T): T = lock.readLock().withLock { contents.add(v); return v }
 	override fun all(): Collection<T> = lock.readLock().withLock { contents }
 	override fun destroy(v: T) { lock.writeLock().withLock { contents.remove(v) } }
 	override fun create(v: T): T { lock.writeLock().withLock { contents.add(v); return v } }

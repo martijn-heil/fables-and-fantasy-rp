@@ -114,6 +114,10 @@ class H2ChatPlayerRepository(private val server: Server, private val dataSource:
 		}
 	}
 
+	override fun createOrUpdate(v: ChatPlayer): ChatPlayer {
+		throw NotImplementedError()
+	}
+
 	private fun fromRow(row: ResultSet): ChatPlayer {
 		val id = checkNotNull(row.getObject("id", UUID::class.java))
 		val channel = try {

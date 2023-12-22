@@ -25,6 +25,10 @@ class H2StaffProfileRepository(private val server: Server,
 		throw NotImplementedError()
 	}
 
+	override fun createOrUpdate(v: Profile): Profile {
+		throw NotImplementedError()
+	}
+
 	override fun all(): Collection<Profile> {
 		return dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME")

@@ -57,6 +57,10 @@ class YamlSimpleWarpRepository(private val plugin: Plugin,
 		yaml.save(file)
 	}
 
+	override fun createOrUpdate(v: SimpleWarp): SimpleWarp {
+		throw NotImplementedError()
+	}
+
 	private fun updateYaml(v: SimpleWarp, yaml: YamlConfiguration) {
 		yaml.set("world", v.location.world.uid.toString())
 		yaml.set("x", v.location.x)

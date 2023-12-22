@@ -6,6 +6,7 @@ import com.fablesfantasyrp.plugin.chat.channel.ChatSpectator
 import com.fablesfantasyrp.plugin.chat.channel.ChatUnsupportedOperationException
 import com.fablesfantasyrp.plugin.chat.event.FablesChatEvent
 import com.fablesfantasyrp.plugin.text.sendError
+import com.github.shynixn.mccoroutine.bukkit.launch
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Server
@@ -16,21 +17,24 @@ import org.bukkit.event.EventPriority.MONITOR
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerChatEvent
 import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.plugin.Plugin
 
-class ChatListener(private val server: Server) : Listener {
+class ChatListener(private val plugin: Plugin) : Listener {
 	@EventHandler(priority = HIGHEST, ignoreCancelled = true)
 	fun onPlayerChat(e: PlayerChatEvent) {
 		val player = e.player
 		e.isCancelled = true
 		if (e.message.isEmpty()) return
-		try {
-			player.chat.doChat(e.message)
-		} catch (ex: ChatIllegalArgumentException) {
-			player.sendError(ex.message ?: "Illegal argument.")
-		} catch (ex: ChatIllegalStateException) {
-			player.sendError(ex.message ?: "Illegal state.")
-		} catch (ex: ChatUnsupportedOperationException) {
-			player.sendError(ex.message ?: "Unsupported operation.")
+		plugin.launch {
+			try {
+				player.chat.doChat(e.message)
+			} catch (ex: ChatIllegalArgumentException) {
+				player.sendError(ex.message ?: "Illegal argument.")
+			} catch (ex: ChatIllegalStateException) {
+				player.sendError(ex.message ?: "Illegal state.")
+			} catch (ex: ChatUnsupportedOperationException) {
+				player.sendError(ex.message ?: "Unsupported operation.")
+			}
 		}
 	}
 

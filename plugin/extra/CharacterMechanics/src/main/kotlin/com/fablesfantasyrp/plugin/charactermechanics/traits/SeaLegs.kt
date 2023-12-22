@@ -6,12 +6,17 @@ import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterReposito
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.event.PlayerSwitchProfileEvent
 import com.fablesfantasyrp.plugin.utils.TransactionStep
+import com.fablesfantasyrp.plugin.utils.every
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.runBlocking
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.plugin.Plugin
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
+import java.time.Duration
+import kotlin.time.toKotlinDuration
 
 class SeaLegs(plugin: Plugin,
 			  characters: CharacterRepository,
@@ -24,31 +29,33 @@ class SeaLegs(plugin: Plugin,
 
 		server.pluginManager.registerEvents(SeaLegsListener(), plugin)
 
-		server.scheduler.scheduleSyncRepeatingTask(plugin, {
-			getPlayersWithTrait().forEach { it.player.addPotionEffect(effect) }
-		}, 0, 1)
+		every(plugin, Duration.ofMillis(50).toKotlinDuration()) {
+			getPlayersWithTrait().onEach { it.player.addPotionEffect(effect) }
+		}
 	}
 
 	inner class SeaLegsListener : Listener {
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 		fun onPlayerProfileChange(e: PlayerSwitchProfileEvent) {
-			val player = e.player
-			val newCharacter = e.new?.let { characters.forProfile(it) }
+			runBlocking {
+				val player = e.player
+				val newCharacter = e.new?.let { characters.forProfile(it) }
 
-			if (newCharacter != null && newCharacter.traits.contains(trait)) {
-				val oldValue = player.maximumAir
-				e.transaction.steps.add(TransactionStep({
-					player.maximumAir = 600 // 30 seconds of breath
-				}, {
-					player.maximumAir = oldValue
-				}))
-			} else {
-				val oldValue = player.maximumAir
-				e.transaction.steps.add(TransactionStep({
-					player.maximumAir = 300 // this is the default of 15 seconds
-				}, {
-					player.maximumAir = oldValue
-				}))
+				if (newCharacter != null && newCharacter.traits.contains(trait)) {
+					val oldValue = player.maximumAir
+					e.transaction.steps.add(TransactionStep({
+						player.maximumAir = 600 // 30 seconds of breath
+					}, {
+						player.maximumAir = oldValue
+					}))
+				} else {
+					val oldValue = player.maximumAir
+					e.transaction.steps.add(TransactionStep({
+						player.maximumAir = 300 // this is the default of 15 seconds
+					}, {
+						player.maximumAir = oldValue
+					}))
+				}
 			}
 		}
 	}

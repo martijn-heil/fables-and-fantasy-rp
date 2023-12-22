@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.magic.domain.mapper
 
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.database.MappingRepository
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
@@ -8,15 +9,17 @@ import com.fablesfantasyrp.plugin.magic.dal.model.MageData
 import com.fablesfantasyrp.plugin.magic.dal.repository.MageDataRepository
 import com.fablesfantasyrp.plugin.magic.domain.entity.Mage
 import com.fablesfantasyrp.plugin.magic.domain.repository.MageRepository
+import kotlinx.coroutines.runBlocking
 
-class MageMapper(private val child: MageDataRepository)
+class MageMapper(private val child: MageDataRepository,
+				 private val characters: CharacterRepository)
 	: MappingRepository<Long, MageData, Mage, MageDataRepository>(child),
 	MageRepository, HasDirtyMarker<Mage> {
 
 	override var dirtyMarker: DirtyMarker<Mage>? = null
 
 	override fun convertFromChild(v: MageData) = Mage(
-		id = v.id,
+		character = runBlocking { characters.forId(v.id.toInt())!! },
 		magicLevel = v.magicLevel,
 		magicPath = v.magicPath,
 		spells = v.spells,

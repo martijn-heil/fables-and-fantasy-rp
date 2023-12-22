@@ -27,6 +27,7 @@ import com.sk89q.intake.fluent.CommandGraph
 import com.sk89q.intake.parametric.ParametricBuilder
 import com.sk89q.intake.parametric.Provider
 import com.sk89q.intake.parametric.provider.PrimitivesModule
+import kotlinx.coroutines.runBlocking
 import org.bukkit.command.Command
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.ServicePriority
@@ -128,7 +129,7 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 
 		if (server.pluginManager.isPluginEnabled("TAB") && server.pluginManager.isPluginEnabled("Denizen") ) {
 			logger.info("Enabling TAB integration")
-			com.fablesfantasyrp.plugin.characters.nametags.NameTagManager(get(), get()).start()
+			com.fablesfantasyrp.plugin.characters.nametags.NameTagManager(get(), get(), get()).start()
 		}
 
 		if (server.pluginManager.isPluginEnabled("FablesWeb")) {
@@ -155,7 +156,7 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 	override fun onDisable() {
 		logger.info("Unregistering commands")
 		commands.forEach { unregisterCommand(it) }
-		get<CharacterRepositoryImpl>().saveAllDirty()
+		runBlocking { get<CharacterRepositoryImpl>().saveAllDirty() }
 		logger.info("unloadKoinModules()")
 		unloadKoinModules(koinModule)
 	}

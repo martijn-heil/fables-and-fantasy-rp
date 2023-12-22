@@ -19,6 +19,7 @@ import com.fablesfantasyrp.plugin.utils.SPAWN
 import com.fablesfantasyrp.plugin.utils.asEnabledDisabledComponent
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.humanReadable
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.isVanished
+import com.github.shynixn.mccoroutine.bukkit.launch
 import com.gitlab.martijn_heil.nincommands.common.CommandTarget
 import com.gitlab.martijn_heil.nincommands.common.Sender
 import com.gitlab.martijn_heil.nincommands.common.Toggle
@@ -38,10 +39,12 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.WeatherType
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.plugin.Plugin
 import org.ocpsoft.prettytime.PrettyTime
 import java.time.Instant
 
-class InventoryCommands(private val mirroredInventoryManager: MirroredInventoryManager,
+class InventoryCommands(private val plugin: Plugin,
+						private val mirroredInventoryManager: MirroredInventoryManager,
 						private val broadcaster: StaffActionBroadcaster) {
 	@Command(aliases = ["invsee", "finvsee"], desc = "Invsee a character")
 	@Require(Permission.Command.Invsee)
@@ -53,7 +56,7 @@ class InventoryCommands(private val mirroredInventoryManager: MirroredInventoryM
 		mirroredInventoryManager.register(inventory)
 
 		sender.openInventory(inventory.bukkitInventory)
-		broadcaster.log(sender, "Invsee ${target.displayName}")
+		plugin.launch { broadcaster.log(sender, "Invsee ${target.displayName()}") }
 	}
 
 	@Command(aliases = ["endersee", "enderchest", "echest", "fendersee", "fechest", "fenderchest"], desc = "Endersee a character")
@@ -66,11 +69,12 @@ class InventoryCommands(private val mirroredInventoryManager: MirroredInventoryM
 		mirroredInventoryManager.register(inventory)
 
 		sender.openInventory(inventory.bukkitInventory)
-		broadcaster.log(sender, "Endersee ${target.displayName}")
+		plugin.launch { broadcaster.log(sender, "Endersee ${target.displayName()}") }
 	}
 }
 
-class Commands(private val powerToolManager: PowerToolManager,
+class Commands(private val plugin: Plugin,
+			   private val powerToolManager: PowerToolManager,
 			   private val backManager: BackManager,
 			   private val broadcaster: StaffActionBroadcaster) {
 	@Command(aliases = ["teleport", "fteleport", "tp", "ftp", "tele", "ftele"], desc = "Teleport characters")
@@ -80,10 +84,10 @@ class Commands(private val powerToolManager: PowerToolManager,
 				 @Optional @AllowCharacterName @AllowPlayerName two: Profile?) {
 		if (two != null) {
 			one.location = two.location
-			broadcaster.log(sender, "Teleported ${one.displayName} to ${two.displayName}")
+			plugin.launch { broadcaster.log(sender, "Teleported ${one.displayName()} to ${two.displayName()}") }
 		} else if (sender is Player) {
 			sender.teleport(one.location)
-			broadcaster.log(sender, "Teleported themself to ${one.displayName}")
+			plugin.launch { broadcaster.log(sender, "Teleported themself to ${one.displayName()}") }
 		} else {
 			sender.sendError("You have to be a player to use this command.")
 		}
@@ -95,14 +99,14 @@ class Commands(private val powerToolManager: PowerToolManager,
 			  to: Location,
 			  @CommandTarget(Permission.Command.Tppos + ".others") @AllowCharacterName @AllowPlayerName target: Profile) {
 		target.location = to
-		broadcaster.log(sender, "Teleported ${target.displayName} to ${to.humanReadable()}")
+		plugin.launch { broadcaster.log(sender, "Teleported ${target.displayName()} to ${to.humanReadable()}") }
 	}
 
 	@Command(aliases = ["tphere", "ftphere"], desc = "Teleport characters to you")
 	@Require(Permission.Command.Tphere)
 	fun tphere(@Sender sender: Player, @AllowCharacterName @AllowPlayerName who: Profile) {
 		who.location = sender.location
-		broadcaster.log(sender, "Teleported ${who.displayName} to themself")
+		plugin.launch { broadcaster.log(sender, "Teleported ${who.displayName()} to themself") }
 	}
 
 	inner class Ptime {

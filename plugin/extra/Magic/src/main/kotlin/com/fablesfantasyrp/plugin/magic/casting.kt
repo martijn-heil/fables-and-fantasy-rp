@@ -29,6 +29,7 @@ import com.fablesfantasyrp.plugin.utils.DISTANCE_TALK
 import com.fablesfantasyrp.plugin.utils.Services
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.isVanished
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.selects.select
 import kotlinx.coroutines.withTimeout
 import net.kyori.adventure.text.format.NamedTextColor
@@ -44,6 +45,7 @@ suspend fun Character.awaitUnbindAttempts(spell: SpellData, castingRoll: Int): B
 	val player = profileManager.getCurrentForProfile(this.profile) ?: throw IllegalStateException()
 	check(player.isOnline)
 	val otherMages = getPlayersWithinRange(player.location, DISTANCE_TALK)
+		.asFlow()
 		.mapNotNull { profileManager.getCurrentForPlayer(it) }
 		.mapNotNull { characters.forProfile(it) }
 		.mapNotNull { mages.forCharacter(it) }
@@ -54,7 +56,7 @@ suspend fun Character.awaitUnbindAttempts(spell: SpellData, castingRoll: Int): B
 	val prompt = legacyText("$SYSPREFIX Do you want to unbind ${this.name}'s casting attempt?: ")
 	val prompts = otherMages
 		.map { Pair(it, YesNoChatPrompt(profileManager.getCurrentForProfile(it.character.profile)!!, prompt)) }
-		.toMap().toMutableMap()
+		.toList().toMap().toMutableMap()
 	prompts.values.forEach { it.send() }
 
 	try {

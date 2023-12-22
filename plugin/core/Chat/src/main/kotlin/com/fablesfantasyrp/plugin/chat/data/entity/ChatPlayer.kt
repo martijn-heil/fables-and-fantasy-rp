@@ -114,11 +114,11 @@ class ChatPlayer : DataEntity<UUID, ChatPlayer>, HasDirtyMarker<ChatPlayer> {
 		return player.hasPermission(permission)
 	}
 
-	fun doChat(message: String) {
+	suspend fun doChat(message: String) {
 		this.doChat(channel, message)
 	}
 
-	fun doChat(rootChannel: ChatChannel, message: String) {
+	suspend fun doChat(rootChannel: ChatChannel, message: String) {
 		val player = this.offlinePlayer.player ?: throw UnsupportedOperationException("Player is not online")
 
 		if (!this.mayChatIn(rootChannel)) {
@@ -153,14 +153,14 @@ class ChatPlayer : DataEntity<UUID, ChatPlayer>, HasDirtyMarker<ChatPlayer> {
 	}
 
 
-	fun parseChatMessage(message: String): Pair<ChatChannel, String> {
+	suspend fun parseChatMessage(message: String): Pair<ChatChannel, String> {
 		return this.parseChatMessage(this.channel, message)
 	}
 
-	fun parseChatMessage(rootChannel: ChatChannel, message: String): Pair<ChatChannel, String>
+	suspend fun parseChatMessage(rootChannel: ChatChannel, message: String): Pair<ChatChannel, String>
 		= parseChatMessage(rootChannel, message, false)
 
-	fun parseChatMessage(rootChannel: ChatChannel, message: String, updateState: Boolean): Pair<ChatChannel, String> {
+	suspend fun parseChatMessage(rootChannel: ChatChannel, message: String, updateState: Boolean): Pair<ChatChannel, String> {
 		val channelRegex = Regex("^\\s*\\$CHAT_CHAR(\\.?[A-z0-9_.#]+)( (.*))?")
 		val matchResult = channelRegex.matchEntire(message)
 		return if (matchResult != null) {

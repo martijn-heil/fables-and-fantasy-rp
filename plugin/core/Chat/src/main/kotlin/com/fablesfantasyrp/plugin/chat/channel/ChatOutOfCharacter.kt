@@ -23,8 +23,8 @@ object ChatOutOfCharacter : ChatChannel, RawChatChannel, ToggleableChatChannel, 
 			Bukkit.getOnlinePlayers().asSequence()
 					.filter { !it.chat.disabledChannels.contains(this) }
 
-	override fun sendMessage(from: Player, message: String) = this.sendMessage(from, parseLinks(message))
-	override fun sendMessage(from: Player, message: Component) = this.sendMessage(from as CommandSender, message)
+	override suspend fun sendMessage(from: Player, message: String) = this.sendMessage(from, parseLinks(message))
+	override suspend fun sendMessage(from: Player, message: Component) = this.sendMessage(from as CommandSender, message)
 	override fun sendMessage(from: CommandSender, message: String) = this.sendMessage(from, parseLinks(message))
 
 	fun sendMessage(from: CommandSender, message: Component) {
@@ -35,7 +35,7 @@ object ChatOutOfCharacter : ChatChannel, RawChatChannel, ToggleableChatChannel, 
 		logChatToConsole(final)
 	}
 
-	override fun getPreview(from: Player, message: String): Component = this.formatMessage(from, message)
+	override suspend fun getPreview(from: Player, message: String): Component = this.formatMessage(from, message)
 
 	private fun formatMessage(from: CommandSender, message: String): Component = this.formatMessage(from, parseLinks(message))
 

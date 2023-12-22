@@ -12,6 +12,7 @@ import com.sk89q.intake.argument.ArgumentParseException
 import com.sk89q.intake.argument.CommandArgs
 import com.sk89q.intake.argument.Namespace
 import com.sk89q.intake.parametric.Provider
+import kotlinx.coroutines.runBlocking
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -22,28 +23,30 @@ class PartyProvider(private val parties: PartyRepository,
 	override fun isProvided(): Boolean = false
 
 	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): Party {
-		val isCommandTarget = modifiers.any{ it is CommandTarget }
-		val sender = BukkitSenderProvider(CommandSender::class.java).get(arguments, modifiers)!!
+		return runBlocking {
+			val isCommandTarget = modifiers.any{ it is CommandTarget }
+			val sender = BukkitSenderProvider(CommandSender::class.java).get(arguments, modifiers)!!
 
-		return if (isCommandTarget && !arguments.hasNext() && sender is Player) {
-			val character = profileManager.getCurrentForPlayer(sender)?.let { characters.forProfile(it) }
-			val spectatorTarget = spectatorManager.getParty(sender)
-			if (character == null && spectatorTarget == null) {
-				arguments.next()
-				throw IllegalStateException()
+			return@runBlocking if (isCommandTarget && !arguments.hasNext() && sender is Player) {
+				val character = profileManager.getCurrentForPlayer(sender)?.let { characters.forProfile(it) }
+				val spectatorTarget = spectatorManager.getParty(sender)
+				if (character == null && spectatorTarget == null) {
+					arguments.next()
+					throw IllegalStateException()
+				}
+				val party = character?.let { parties.forMember(it) } ?: spectatorTarget
+				if (party == null) {
+					arguments.next()
+					throw IllegalStateException()
+				}
+				party
+			} else if (arguments.peek().startsWith("#")) {
+				val id = arguments.next().removePrefix("#").toIntOrNull() ?: throw ArgumentParseException("Could not parse id")
+				parties.forId(id) ?: throw ArgumentParseException("A party with id #$id could not be found.")
+			} else {
+				val name = arguments.next()
+				parties.forName(name) ?: throw ArgumentParseException("A party with name '$name' could not be found.")
 			}
-			val party = character?.let { parties.forMember(it) } ?: spectatorTarget
-			if (party == null) {
-				arguments.next()
-				throw IllegalStateException()
-			}
-			party
-		} else if (arguments.peek().startsWith("#")) {
-			val id = arguments.next().removePrefix("#").toIntOrNull() ?: throw ArgumentParseException("Could not parse id")
-			parties.forId(id) ?: throw ArgumentParseException("A party with id #$id could not be found.")
-		} else {
-			val name = arguments.next()
-			parties.forName(name) ?: throw ArgumentParseException("A party with name '$name' could not be found.")
 		}
 	}
 

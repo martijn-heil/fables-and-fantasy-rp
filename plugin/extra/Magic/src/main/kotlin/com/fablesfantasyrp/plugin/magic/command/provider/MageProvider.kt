@@ -9,6 +9,7 @@ import com.sk89q.intake.argument.ArgumentParseException
 import com.sk89q.intake.argument.CommandArgs
 import com.sk89q.intake.argument.Namespace
 import com.sk89q.intake.parametric.Provider
+import kotlinx.coroutines.runBlocking
 
 class MageProvider(private val characterProvider: Provider<Character>,
 				   private val characters: CharacterRepository,
@@ -22,11 +23,13 @@ class MageProvider(private val characterProvider: Provider<Character>,
 	}
 
 	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
-		return characters.all().asSequence()
+		return runBlocking {
+			characters.all().asSequence()
 				.filter { mages.forCharacter(it) != null }
 				.map { it.name }
 				.filter { it.startsWith(prefix.removePrefix("\""), true) }
 				.map { quoteCommandArgument(it) }
 				.toList()
+		}
 	}
 }

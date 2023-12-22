@@ -53,10 +53,11 @@ class FablesChat : JavaPlugin(), KoinComponent {
 
 		koinModule = module(createdAtStart = true) {
 			single <Plugin> { this@FablesChat } binds(arrayOf(JavaPlugin::class))
+
 			singleOf(::ChatPreviewManager)
 			singleOf(::ChatReceptionIndicatorManager)
 			singleOf(::ChatListener)
-			single { Commands.CommandChatParty(get(), get(), get(), get()) }
+			single { Commands.CommandChatParty(get(), get(), get(), get(), get()) }
 			single {
 				val tmp = EntityChatPlayerRepositoryImpl(get(), H2ChatPlayerRepository(server, fablesDatabase))
 				tmp.init()
@@ -92,14 +93,14 @@ class FablesChat : JavaPlugin(), KoinComponent {
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
 
 		server.pluginManager.registerEvents(get<ChatListener>(), this)
-		this.getCommand("ic")!!.setExecutor(Commands.CommandChatInCharacter())
-		this.getCommand("looc")!!.setExecutor(Commands.CommandChatLocalOutOfCharacter())
-		this.getCommand("ooc")!!.setExecutor(Commands.CommandChatOutOfCharacter())
-		this.getCommand("dm")!!.setExecutor(Commands.CommandChatDirectMessage())
-		this.getCommand("dm")!!.tabCompleter = Commands.CommandChatDirectMessage()
-		this.getCommand("reply")!!.setExecutor(Commands.CommandReply())
-		this.getCommand("staffchat")!!.setExecutor(Commands.CommandChatStaff())
-		this.getCommand("spectatorchat")!!.setExecutor(Commands.CommandChatSpectator())
+		this.getCommand("ic")!!.setExecutor(Commands.CommandChatInCharacter(this))
+		this.getCommand("looc")!!.setExecutor(Commands.CommandChatLocalOutOfCharacter(this))
+		this.getCommand("ooc")!!.setExecutor(Commands.CommandChatOutOfCharacter(this))
+		this.getCommand("dm")!!.setExecutor(Commands.CommandChatDirectMessage(this))
+		this.getCommand("dm")!!.tabCompleter = Commands.CommandChatDirectMessage(this)
+		this.getCommand("reply")!!.setExecutor(Commands.CommandReply(this))
+		this.getCommand("staffchat")!!.setExecutor(Commands.CommandChatStaff(this))
+		this.getCommand("spectatorchat")!!.setExecutor(Commands.CommandChatSpectator(this))
 		this.getCommand("partychat")!!.setExecutor(get<Commands.CommandChatParty>())
 	}
 

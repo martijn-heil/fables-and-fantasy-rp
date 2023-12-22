@@ -23,6 +23,6 @@ class ToggleableChatChannelProvider(private val server: Server) : Provider<Toggl
 	}
 
 	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
-		return ChatChannel.allStatic().filterIsInstance(ToggleableChatChannel::class.java).map { it.toString() }
+		return ChatChannel.allStatic().filterIsInstance<ToggleableChatChannel>().map { it.toString() }
 	}
 }

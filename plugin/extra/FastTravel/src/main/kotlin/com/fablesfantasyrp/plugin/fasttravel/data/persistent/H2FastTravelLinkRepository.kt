@@ -85,6 +85,10 @@ class H2FastTravelLinkRepository(private val server: Server,
 		throw NotImplementedError()
 	}
 
+	override fun createOrUpdate(v: FastTravelLink): FastTravelLink {
+		throw NotImplementedError()
+	}
+
 	override fun forId(id: Int): FastTravelLink? {
 		return dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE id = ?")

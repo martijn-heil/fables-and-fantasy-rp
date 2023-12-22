@@ -10,6 +10,7 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent
 import com.fablesfantasyrp.plugin.chat.channel.*
 import com.fablesfantasyrp.plugin.form.currentChatInputForm
 import com.fablesfantasyrp.plugin.text.formatError
+import com.github.shynixn.mccoroutine.bukkit.launch
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import org.bukkit.Server
@@ -76,23 +77,25 @@ class ChatPreviewManager(private val plugin: Plugin) {
 						chatPlayerEntity.isTyping = true
 						val requestId = packet.integers.read(0)
 						val rawChatMessage = packet.strings.read(0)
-						try {
-							val result: Pair<ChatChannel, String> = chatPlayerEntity.parseChatMessage(rawChatMessage)
-							val message = result.second
-							val channel = result.first
-							val messageComponent = if (player.currentChatInputForm != null) {
-								player.currentChatInputForm!!.getPreview(message)
-							} else if (channel is PreviewableChatChannel) {
-								chatPlayerEntity.previewChannel = channel
-								channel.getPreview(player, message)
-							} else Component.text("")
-							sendChatPreview(player, requestId, messageComponent)
-						} catch (e: ChatIllegalArgumentException) {
-							sendChatPreview(player, requestId, formatError(e.message ?: "Illegal argument."))
-						} catch (e: ChatIllegalStateException) {
-							sendChatPreview(player, requestId, formatError(e.message ?: "Illegal state."))
-						} catch (e: ChatUnsupportedOperationException) {
-							sendChatPreview(player, requestId, formatError(e.message ?: "Unsupported operation."))
+						plugin.launch {
+							try {
+								val result: Pair<ChatChannel, String> = chatPlayerEntity.parseChatMessage(rawChatMessage)
+								val message = result.second
+								val channel = result.first
+								val messageComponent = if (player.currentChatInputForm != null) {
+									player.currentChatInputForm!!.getPreview(message)
+								} else if (channel is PreviewableChatChannel) {
+									chatPlayerEntity.previewChannel = channel
+									channel.getPreview(player, message)
+								} else Component.text("")
+								sendChatPreview(player, requestId, messageComponent)
+							} catch (e: ChatIllegalArgumentException) {
+								sendChatPreview(player, requestId, formatError(e.message ?: "Illegal argument."))
+							} catch (e: ChatIllegalStateException) {
+								sendChatPreview(player, requestId, formatError(e.message ?: "Illegal state."))
+							} catch (e: ChatUnsupportedOperationException) {
+								sendChatPreview(player, requestId, formatError(e.message ?: "Unsupported operation."))
+							}
 						}
 					}
 				}
@@ -102,11 +105,6 @@ class ChatPreviewManager(private val plugin: Plugin) {
 				// do nothing
 			}
 		})
-	}
-
-	fun sendChatPreview(player: Player, queryId: Int, channel: PreviewableChatChannel, message: String) {
-		val adventureComponent = channel.getPreview(player, message)
-		sendChatPreview(player, queryId, adventureComponent)
 	}
 
 	fun sendChatPreview(player: Player, queryId: Int, message: Component) {

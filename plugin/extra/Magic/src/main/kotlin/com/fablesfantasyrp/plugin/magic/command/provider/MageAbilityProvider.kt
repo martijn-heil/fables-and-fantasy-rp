@@ -10,6 +10,7 @@ import com.sk89q.intake.argument.ArgumentParseException
 import com.sk89q.intake.argument.CommandArgs
 import com.sk89q.intake.argument.Namespace
 import com.sk89q.intake.parametric.Provider
+import kotlinx.coroutines.runBlocking
 import org.bukkit.entity.Player
 
 class MageAbilityProvider(private val profileManager: ProfileManager,
@@ -21,7 +22,7 @@ class MageAbilityProvider(private val profileManager: ProfileManager,
 		val ability = MageAbilities.forId(arguments.next()) ?: throw ArgumentParseException("Ability not found.")
 		if (modifiers.find { it is OwnAbility } != null) {
 			val player = BukkitSenderProvider(Player::class.java).get(arguments, modifiers)!!
-			val character = profileManager.getCurrentForPlayer(player)?.let { characters.forProfile(it) }
+			val character = profileManager.getCurrentForPlayer(player)?.let { runBlocking { characters.forProfile(it) } }
 				?: throw ArgumentParseException("You are not in character.")
 			val mage = mages.forCharacter(character) ?: throw ArgumentParseException("You are not a mage.")
 			if (mage.magicPath != ability.magicPath && mage.magicPath.basePath != ability.magicPath)
@@ -33,7 +34,7 @@ class MageAbilityProvider(private val profileManager: ProfileManager,
 	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
 		if (modifiers.find { it is OwnAbility } != null) {
 			val player = locals.get("sender") as? Player ?: return emptyList()
-			val character = profileManager.getCurrentForPlayer(player)?.let { characters.forProfile(it) }
+			val character = profileManager.getCurrentForPlayer(player)?.let { runBlocking { characters.forProfile(it) } }
 					?: return emptyList()
 			val mage = mages.forCharacter(character) ?: return emptyList()
 			return MageAbilities.forPath(mage.magicPath).asSequence()

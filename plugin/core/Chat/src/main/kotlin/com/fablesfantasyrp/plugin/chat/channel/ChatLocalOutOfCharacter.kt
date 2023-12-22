@@ -24,11 +24,11 @@ object ChatLocalOutOfCharacter : ChatChannel, RawChatChannel, ToggleableChatChan
 			getPlayersWithinRange(from.location, DISTANCE_TALK)
 					.filter { !it.chat.disabledChannels.contains(this) }
 
-	override fun sendMessage(from: Player, message: String) {
+	override suspend fun sendMessage(from: Player, message: String) {
 		this.sendMessage(from, parseLinks(message))
 	}
 
-	override fun sendMessage(from: Player, message: Component) {
+	override suspend fun sendMessage(from: Player, message: Component) {
 		if(PlainTextComponentSerializer.plainText().serialize(message).isEmpty()) return
 
 		val final = this.formatMessage(from, message)
@@ -42,7 +42,7 @@ object ChatLocalOutOfCharacter : ChatChannel, RawChatChannel, ToggleableChatChan
 				.build())
 	}
 
-	private fun formatMessage(from: Player, message: Component): Component {
+	private suspend fun formatMessage(from: Player, message: Component): Component {
 		val profile = profileManager.getCurrentForPlayer(from)
 		val character = profile?.let { characters.forProfile(it) }
 		val characterName = character?.name ?: ""
@@ -58,7 +58,7 @@ object ChatLocalOutOfCharacter : ChatChannel, RawChatChannel, ToggleableChatChan
 						"<gray><message></gray>", TagResolver.standard(), customResolver)
 	}
 
-	override fun getPreview(from: Player, message: String): Component = this.formatMessage(from, parseLinks(message))
+	override suspend fun getPreview(from: Player, message: String): Component = this.formatMessage(from, parseLinks(message))
 	override fun toString() = "looc"
 	fun readResolve(): Any? = ChatLocalOutOfCharacter
 	private const val serialVersionUID: Long = 1

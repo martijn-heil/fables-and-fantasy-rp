@@ -25,28 +25,26 @@ val Player.characterSlotCount: Int get()
 val Character.isStaffCharacter get() = this.profile.owner == FABLES_ADMIN
 val Profile.isStaffCharacter get() = this.owner == FABLES_ADMIN
 
-val Profile.displayName: String
-	get() {
-		val characters = Services.get<CharacterRepository>()
-		val profileManager = Services.get<ProfileManager>()
-		val character = characters.forProfile(this)
-		val player = profileManager.getCurrentForProfile(this)
-		val suffix = if (player != null) " (${player.name})" else ""
-		return if (character != null) {
-			"${character.name}$suffix"
-		} else {
-			"#${this.id}$suffix"
-		}
+suspend fun Profile.displayName(): String {
+	val characters = Services.get<CharacterRepository>()
+	val profileManager = Services.get<ProfileManager>()
+	val character = characters.forProfile(this)
+	val player = profileManager.getCurrentForProfile(this)
+	val suffix = if (player != null) " (${player.name})" else ""
+	return if (character != null) {
+		"${character.name}$suffix"
+	} else {
+		"#${this.id}$suffix"
 	}
+}
 
 val Character.shortName: String get() = name.substringBefore(" ").substringBefore("-")
 
-val Profile.shortName: String
-	get() {
-		val characters = Services.get<CharacterRepository>()
-		val character = characters.forProfile(this)
-		return character?.shortName ?: "#${this.id}"
-	}
+suspend fun Profile.shortName(): String {
+	val characters = Services.get<CharacterRepository>()
+	val character = characters.forProfile(this)
+	return character?.shortName ?: "#${this.id}"
+}
 
 fun calculateDateOfNaturalDeath(dateOfBirth: FablesLocalDate, medianAge: Int): FablesLocalDate {
 	return dateOfBirth.plusYears(Random().nextGaussian(medianAge.toDouble(), 0.075 * medianAge).roundToLong())

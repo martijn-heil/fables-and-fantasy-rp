@@ -7,8 +7,11 @@ import com.fablesfantasyrp.plugin.lodestones.domain.repository.MapBoxRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.sendError
+import com.fablesfantasyrp.plugin.utils.every
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.ColumnIdentifier
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.groundLevel
+import com.github.shynixn.mccoroutine.bukkit.launch
+import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -29,6 +32,7 @@ import org.bukkit.plugin.Plugin
 import java.time.Duration
 import java.util.*
 import kotlin.math.roundToInt
+import kotlin.time.toKotlinDuration
 
 private data class PlayerState(val gameMode: GameMode, val walkSpeed: Float, val allowFlight: Boolean)
 
@@ -54,7 +58,7 @@ class LodestoneBannerService(private val plugin: Plugin,
 	private val previousState = HashMap<UUID, PlayerState>()
 
 	fun init() {
-		server.scheduler.scheduleSyncRepeatingTask(plugin, {
+		every(plugin, Duration.ofMillis(50).toKotlinDuration()) {
 			val players = server.onlinePlayers.asSequence()
 				.filter { it.gameMode != GameMode.CREATIVE }
 				.filter { mapBoxes.anyContains(it.location) }
@@ -93,7 +97,7 @@ class LodestoneBannerService(private val plugin: Plugin,
 						Placeholder.unparsed("location", "${destination.x}, ${destination.z}")))
 				}
 			}
-		}, 0, 1)
+		}
 
 		server.pluginManager.registerEvents(LodestoneBannerServiceListener(), plugin)
 	}
@@ -152,15 +156,17 @@ class LodestoneBannerService(private val plugin: Plugin,
 
 			if (banner != null) {
 				e.isCancelled = true
-				if (authorizer.mayWarpTo(profile, banner.lodestone)) {
-					banner.lodestone.warpHere(e.player)
-				} else {
-					e.player.sendError(
-						"You do not have access to warp to ${banner.lodestone.name}. " +
-							"Please link this lodestone to your warp crystal first."
-					)
+				plugin.launch {
+					if (authorizer.mayWarpTo(profile, banner.lodestone)) {
+						banner.lodestone.warpHere(e.player)
+					} else {
+						e.player.sendError(
+							"You do not have access to warp to ${banner.lodestone.name}. " +
+								"Please link this lodestone to your warp crystal first."
+						)
+					}
 				}
-			} else if (profile == null || characters.forProfile(profile) == null) {
+			} else if (profile == null || runBlocking { characters.forProfile(profile) } == null) {
 				e.isCancelled = true
 				val destination = translateTargetLocation(mapBox, targetedLocation).groundLevel()
 				destination.yaw = 180f // face north

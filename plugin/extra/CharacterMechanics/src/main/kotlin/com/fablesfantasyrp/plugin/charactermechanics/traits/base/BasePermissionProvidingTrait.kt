@@ -7,6 +7,7 @@ import com.fablesfantasyrp.plugin.hacks.PermissionInjector
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.event.PlayerSwitchProfileEvent
 import com.fablesfantasyrp.plugin.utils.TransactionStep
+import kotlinx.coroutines.runBlocking
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -29,16 +30,18 @@ abstract class BasePermissionProvidingTrait(trait: CharacterTrait,
 	inner class BasePermissionProvidingTraitListener : Listener {
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 		fun onPlayerProfileChange(e: PlayerSwitchProfileEvent) {
-			val oldCharacter = e.old?.let { characters.forProfile(it) }
-			val newCharacter = e.new?.let { characters.forProfile(it) }
+			runBlocking {
+				val oldCharacter = e.old?.let { characters.forProfile(it) }
+				val newCharacter = e.new?.let { characters.forProfile(it) }
 
-			val oldValue = if (oldCharacter != null && oldCharacter.traits.contains(trait)) true else null
-			val value = if (newCharacter != null && newCharacter.traits.contains(trait)) true else null
+				val oldValue = if (oldCharacter != null && oldCharacter.traits.contains(trait)) true else null
+				val value = if (newCharacter != null && newCharacter.traits.contains(trait)) true else null
 
-			e.transaction.steps.add(TransactionStep(
-				{ permissionInjector.inject(e.player, permission, value) },
-				{ permissionInjector.inject(e.player, permission, oldValue) }
-			))
+				e.transaction.steps.add(TransactionStep(
+					{ permissionInjector.inject(e.player, permission, value) },
+					{ permissionInjector.inject(e.player, permission, oldValue) }
+				))
+			}
 		}
 
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

@@ -6,6 +6,7 @@ import com.fablesfantasyrp.plugin.party.Permission
 import com.fablesfantasyrp.plugin.party.data.entity.Party
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.utils.AuthorizationResult
+import kotlinx.coroutines.runBlocking
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -74,8 +75,10 @@ class PartyAuthorizerImpl(private val profileManager: ProfileManager,
 	}
 
 	private fun isAdmin(party: Party, who: CommandSender): Boolean {
-		val whoCharacter = (who as? Player)?.let { profileManager.getCurrentForPlayer(it)?.let { characters.forProfile(it) } }
-		return (whoCharacter != null && party.owner == whoCharacter) || who.hasPermission(Permission.Admin)
+		return runBlocking {
+			val whoCharacter = (who as? Player)?.let { profileManager.getCurrentForPlayer(it)?.let { characters.forProfile(it) } }
+			(whoCharacter != null && party.owner == whoCharacter) || who.hasPermission(Permission.Admin)
+		}
 	}
 
 	private fun isAdmin(party: Party, who: Character): Boolean {

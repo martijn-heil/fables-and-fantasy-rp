@@ -56,6 +56,10 @@ class YamlSpellDataRepository(private val plugin: Plugin, private val directory:
 		yaml.save(file)
 	}
 
+	override fun createOrUpdate(v: SpellData): SpellData {
+		throw NotImplementedError()
+	}
+
 	private fun updateYaml(v: SpellData, yaml: YamlConfiguration) {
 		yaml.set("display_name", v.displayName)
 		yaml.set("magic_path", v.magicPath.name)

@@ -45,7 +45,7 @@ class FablesHalt : JavaPlugin(), KoinComponent {
 		val dispatcher = CommandGraph()
 				.builder(builder)
 				.commands()
-				.registerMethods(Commands(get(), get()))
+				.registerMethods(Commands(get(), get(), get()))
 				.graph()
 				.dispatcher
 

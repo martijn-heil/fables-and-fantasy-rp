@@ -75,6 +75,10 @@ class H2BellDataRepository(private val dataSource: DataSource)
 		}
 	}
 
+	override fun createOrUpdate(v: BellData): BellData {
+		throw NotImplementedError()
+	}
+
 	override fun forId(id: Int): BellData? {
 		return dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE id = ?")

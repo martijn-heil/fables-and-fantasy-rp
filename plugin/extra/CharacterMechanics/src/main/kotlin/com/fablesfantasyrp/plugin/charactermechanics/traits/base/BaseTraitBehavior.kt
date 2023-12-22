@@ -4,6 +4,9 @@ import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.mapNotNull
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 
@@ -19,8 +22,8 @@ abstract class BaseTraitBehavior(
 	override fun init() {
 	}
 
-	protected fun getPlayersWithTrait(trait: CharacterTrait = this.trait): Sequence<ActiveTraitHolder> {
-		return server.onlinePlayers.asSequence().mapNotNull {
+	protected suspend fun getPlayersWithTrait(trait: CharacterTrait = this.trait): Flow<ActiveTraitHolder> {
+		return server.onlinePlayers.asFlow().mapNotNull {
 			val profile = profileManager.getCurrentForPlayer(it) ?: return@mapNotNull null
 			val character = characters.forProfile(profile) ?: return@mapNotNull null
 			if (!character.traits.contains(trait)) return@mapNotNull null
@@ -28,7 +31,7 @@ abstract class BaseTraitBehavior(
 		}
 	}
 
-	protected fun hasTrait(player: Player): Boolean {
+	protected suspend fun hasTrait(player: Player): Boolean {
 		val character = profileManager.getCurrentForPlayer(player)?.let { characters.forProfile(it) } ?: return false
 		return character.traits.contains(trait)
 	}

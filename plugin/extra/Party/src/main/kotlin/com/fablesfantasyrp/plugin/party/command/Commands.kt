@@ -15,6 +15,7 @@ import com.fablesfantasyrp.plugin.targeting.data.SimpleTargetingPlayerDataReposi
 import com.fablesfantasyrp.plugin.targeting.targetingPlayerDataRepository
 import com.fablesfantasyrp.plugin.text.*
 import com.fablesfantasyrp.plugin.utils.getPlayersWithinRange
+import com.github.shynixn.mccoroutine.bukkit.launch
 import com.gitlab.martijn_heil.nincommands.common.CommandTarget
 import com.gitlab.martijn_heil.nincommands.common.Sender
 import com.sk89q.intake.Command
@@ -22,6 +23,11 @@ import com.sk89q.intake.Require
 import com.sk89q.intake.parametric.annotation.Optional
 import com.sk89q.intake.parametric.annotation.Range
 import com.sk89q.intake.util.auth.AuthorizationException
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.event.ClickEvent
@@ -46,17 +52,19 @@ class Commands(private val plugin: Plugin,
 		@Command(aliases = ["spectate"], desc = "Spectate a party")
 		@Require(Permission.Command.Party.Spectate)
 		fun spectate(@Sender sender: Player, @Optional party: Party?) {
-			val senderCharacter = profileManager.getCurrentForPlayer(sender)?.let { characters.forProfile(it) }
+			plugin.launch {
+				val senderCharacter = profileManager.getCurrentForPlayer(sender)?.let { characters.forProfile(it) }
 
-			if (senderCharacter != null && parties.forMember(senderCharacter) != null) {
-				sender.sendError("You cannot spectate a party when you are a member of a party")
-				return
-			}
+				if (senderCharacter != null && parties.forMember(senderCharacter) != null) {
+					sender.sendError("You cannot spectate a party when you are a member of a party")
+					return@launch
+				}
 
-			if (party != null) {
-				partySpectatorManager.spectate(party, sender)
-			} else {
-				partySpectatorManager.stopSpectating(sender)
+				if (party != null) {
+					partySpectatorManager.spectate(party, sender)
+				} else {
+					partySpectatorManager.stopSpectating(sender)
+				}
 			}
 		}
 
@@ -199,14 +207,17 @@ class Commands(private val plugin: Plugin,
 					   @Optional("30") @Range(min = 0.00, max = 100.0) radius: Int,
 					   @Optional @CommandTarget party: Party) {
 			partyAuthorizer.mayInviteMember(party, sender).orElse { throw AuthorizationException(it) }
+			plugin.launch {
+				val characters = getPlayersWithinRange(sender.location, radius.toUInt())
+					.asFlow()
+					.mapNotNull { profileManager.getCurrentForPlayer(it) }
+					.mapNotNull { characters.forProfile(it) }
+					.filter { !party.members.contains(it) }
+					.filter { !party.invites.contains(it) }
+					.toList()
 
-			val characters = getPlayersWithinRange(sender.location, radius.toUInt())
-				.mapNotNull { profileManager.getCurrentForPlayer(it) }
-				.mapNotNull { characters.forProfile(it) }
-				.filter { !party.members.contains(it) }
-				.filter { !party.invites.contains(it) }
-
-			party.invites = party.invites.plus(characters)
+				party.invites = party.invites.plus(characters)
+			}
 		}
 
 		@Command(aliases = ["uninvite"], desc = "Retract an invite to a party")
@@ -243,7 +254,7 @@ class Commands(private val plugin: Plugin,
 				 @CommandTarget(Permission.Command.Party.Join + ".others") who: Character) {
 			val senderCharacter = (sender as? Player)
 				?.let { profileManager.getCurrentForPlayer(it) }
-				?.let { characters.forProfile(it) }
+				?.let { runBlocking { characters.forProfile(it) } }
 
 			if (senderCharacter == who) {
 				partyAuthorizer.mayJoin(party, who).orElse { throw AuthorizationException(it) }

@@ -14,7 +14,7 @@ abstract class AbstractSubChanneledChatChannel(private val name: String)
 
 	override fun getRecipients(from: Player): Sequence<Player> = default?.getRecipients(from) ?: emptySequence()
 
-	override fun sendMessage(from: Player, message: String) {
+	override suspend fun sendMessage(from: Player, message: String) {
 		val resolved = this.resolveSubChannelRecursive(message)
 		val content = resolved.second
 		val channel = resolved.first.let { if(it === this) default else it }
@@ -22,7 +22,7 @@ abstract class AbstractSubChanneledChatChannel(private val name: String)
 		channel.sendMessage(from, content)
 	}
 
-	override fun getPreview(from: Player, message: String): Component {
+	override suspend fun getPreview(from: Player, message: String): Component {
 		val resolved = this.resolveSubChannelRecursive(message)
 		val content = resolved.second
 		val channel = (resolved.first as? PreviewableChatChannel)

@@ -201,6 +201,10 @@ class H2CharacterDataRepository(private val dataSource: DataSource,
 		}
 	}
 
+	override fun createOrUpdate(v: CharacterData): CharacterData {
+		throw NotImplementedError()
+	}
+
 	private fun traitsForCharacter(characterId: Int): Set<CharacterTrait> {
 		return dataSource.connection.use { connection ->
 			connection.prepareStatement("SELECT character_trait_id FROM $SCHEMA.CHARACTER_CHARACTER_TRAIT WHERE character_id = ?").apply {

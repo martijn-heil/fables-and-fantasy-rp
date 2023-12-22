@@ -57,17 +57,16 @@ class DenizenSimpleLockDataRepository : SimpleLockDataRepository {
 		))
 	}
 
-	override fun create(v: SimpleLockData): SimpleLockData {
-		this.update(v)
-		return v
-	}
+	override fun create(v: SimpleLockData) = createOrUpdate(v)
+	override fun update(v: SimpleLockData) { createOrUpdate(v) }
 
-	override fun update(v: SimpleLockData) {
+	override fun createOrUpdate(v: SimpleLockData): SimpleLockData {
 		denizenRun("location_set", mapOf(
-				Pair("location", LocationTag(v.location)),
-				Pair("key", ElementTag("locks")),
-				Pair("value", v.asDenizen())
+			Pair("location", LocationTag(v.location)),
+			Pair("key", ElementTag("locks")),
+			Pair("value", v.asDenizen())
 		))
+		return v
 	}
 
 	override fun forId(id: Location): SimpleLockData? {

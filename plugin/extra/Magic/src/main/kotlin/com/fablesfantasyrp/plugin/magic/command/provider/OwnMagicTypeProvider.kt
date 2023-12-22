@@ -9,6 +9,7 @@ import com.sk89q.intake.argument.ArgumentParseException
 import com.sk89q.intake.argument.CommandArgs
 import com.sk89q.intake.argument.Namespace
 import com.sk89q.intake.parametric.provider.EnumProvider
+import kotlinx.coroutines.runBlocking
 import org.bukkit.entity.Player
 
 class OwnMagicTypeProvider(private val profileManager: ProfileManager,
@@ -19,7 +20,7 @@ class OwnMagicTypeProvider(private val profileManager: ProfileManager,
 
 	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): MagicType {
 		val sender = BukkitSenderProvider(Player::class.java).get(arguments, modifiers)!!
-		val character = profileManager.getCurrentForPlayer(sender)?.let { characters.forProfile(it) }
+		val character = profileManager.getCurrentForPlayer(sender)?.let { runBlocking { characters.forProfile(it) } }
 				?: throw ArgumentParseException("You are not currently in character.")
 
 		val magicType = super.get(arguments, modifiers)!!
@@ -32,7 +33,7 @@ class OwnMagicTypeProvider(private val profileManager: ProfileManager,
 
 	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
 		val sender = locals.get("sender") as? Player ?: return emptyList()
-		val character = profileManager.getCurrentForPlayer(sender)?.let { characters.forProfile(it) }
+		val character = profileManager.getCurrentForPlayer(sender)?.let { runBlocking { characters.forProfile(it) } }
 				?: return emptyList()
 
 		return magicTypeAuthorizer.getMagicTypes(character)

@@ -6,6 +6,7 @@ import com.fablesfantasyrp.plugin.characters.dal.enums.Race
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.isRealPlayer
+import com.github.shynixn.mccoroutine.bukkit.launch
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
@@ -36,35 +37,37 @@ class SylvaniBerries(plugin: Plugin,
 	inner class SylvaniBerriesListener : Listener {
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 		fun onPlayerRightClickSylvani(e: PlayerInteractAtEntityEvent) {
-			if (e.hand != EquipmentSlot.HAND || e.player.isSneaking) return
-			val harvester = e.player
-			val player = e.rightClicked as? Player ?: return
-			if (!player.isRealPlayer) return
-			val character = profileManager.getCurrentForPlayer(player)?.let { characters.forProfile(it) } ?: return
-			if (character.race != Race.SYLVANI) return
-			val nextHarvestTime = harvested[character.id]?.plus(Duration.ofHours(1)) ?: Instant.now()
+			plugin.launch {
+				if (e.hand != EquipmentSlot.HAND || e.player.isSneaking) return@launch
+				val harvester = e.player
+				val player = e.rightClicked as? Player ?: return@launch
+				if (!player.isRealPlayer) return@launch
+				val character = profileManager.getCurrentForPlayer(player)?.let { characters.forProfile(it) } ?: return@launch
+				if (character.race != Race.SYLVANI) return@launch
+				val nextHarvestTime = harvested[character.id]?.plus(Duration.ofHours(1)) ?: Instant.now()
 
-			if (nextHarvestTime > Instant.now()) {
-				harvester.sendMessage("$SYSPREFIX You can harvest ${character.name}'s berries again " +
-					PrettyTime().format(nextHarvestTime))
-				return
+				if (nextHarvestTime > Instant.now()) {
+					harvester.sendMessage("$SYSPREFIX You can harvest ${character.name}'s berries again " +
+						PrettyTime().format(nextHarvestTime))
+					return@launch
+				}
+
+				val location = player.location
+				val world = location.world
+				val isEpicDrop = Random.nextInt(1, 101) > 98
+
+				if (isEpicDrop) {
+					val leftOver = harvester.inventory.addItem(ItemStack(Material.GLOW_BERRIES, 8))
+					leftOver.values.forEach { world.dropItem(location, it) }
+					world.playSound(location, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f)
+				} else {
+					val leftOver = harvester.inventory.addItem(ItemStack(Material.SWEET_BERRIES, 8))
+					leftOver.values.forEach { world.dropItem(location, it) }
+					world.playSound(location, Sound.BLOCK_SWEET_BERRY_BUSH_PICK_BERRIES, 1.0f, 1.0f)
+				}
+
+				harvested[character.id] = Instant.now()
 			}
-
-			val location = player.location
-			val world = location.world
-			val isEpicDrop = Random.nextInt(1, 101) > 98
-
-			if (isEpicDrop) {
-				val leftOver = harvester.inventory.addItem(ItemStack(Material.GLOW_BERRIES, 8))
-				leftOver.values.forEach { world.dropItem(location, it) }
-				world.playSound(location, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f)
-			} else {
-				val leftOver = harvester.inventory.addItem(ItemStack(Material.SWEET_BERRIES, 8))
-				leftOver.values.forEach { world.dropItem(location, it) }
-				world.playSound(location, Sound.BLOCK_SWEET_BERRY_BUSH_PICK_BERRIES, 1.0f, 1.0f)
-			}
-
-			harvested[character.id] = Instant.now()
 		}
 	}
 }

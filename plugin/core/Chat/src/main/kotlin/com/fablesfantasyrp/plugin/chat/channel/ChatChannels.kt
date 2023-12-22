@@ -22,11 +22,11 @@ interface CommandSenderCompatibleChatChannel : ChatChannel {
 interface ToggleableChatChannel : ChatChannel
 
 interface RawChatChannel : ChatChannel {
-	fun sendMessage(from: Player, message: Component)
+	suspend fun sendMessage(from: Player, message: Component)
 }
 
 interface PreviewableChatChannel : ChatChannel {
-	fun getPreview(from: Player, message: String): Component
+	suspend fun getPreview(from: Player, message: String): Component
 }
 
 interface SubChanneledChatChannel {
@@ -75,7 +75,7 @@ fun ChatChannel.Companion.allNames(): Collection<String> = ChatChannel.allStatic
 
 private val statefulTreeChannels = HashMap<CommandSender, HashMap<KClass<*>, StatefulTreeChatChannel>>()
 
-fun ChatChannel.Companion.fromStringAliased(s: String, from: CommandSender): ChatChannel? {
+suspend fun ChatChannel.Companion.fromStringAliased(s: String, from: CommandSender): ChatChannel? {
 	val name = s.lowercase()
 
 	val profileManager = Services.get<ProfileManager>()

@@ -43,9 +43,9 @@ abstract class AbstractChatStaff : ChatChannel, RawChatChannel, CommandSenderCom
 			Bukkit.getOnlinePlayers().asSequence()
 					.filter { it.hasPermission(Permission.Channel.Staff + ".${channelName.lowercase()}") }
 
-	override fun sendMessage(from: Player, message: String) = this.sendMessage(from, parseLinks(message))
+	override suspend fun sendMessage(from: Player, message: String) = this.sendMessage(from, parseLinks(message))
 	override fun sendMessage(from: CommandSender, message: String) = this.sendMessage(from, parseLinks(message))
-	override fun sendMessage(from: Player, message: Component) = sendMessage(from as CommandSender, message)
+	override suspend fun sendMessage(from: Player, message: Component) = sendMessage(from as CommandSender, message)
 
 	fun sendMessage(from: CommandSender, message: Component) {
 		if(PlainTextComponentSerializer.plainText().serialize(message).isEmpty()) return
@@ -74,7 +74,7 @@ abstract class AbstractChatStaff : ChatChannel, RawChatChannel, CommandSenderCom
 				TagResolver.standard(), customResolver)
 	}
 
-	override fun getPreview(from: Player, message: String): Component = this.formatMessage(from, parseLinks(message))
+	override suspend fun getPreview(from: Player, message: String): Component = this.formatMessage(from, parseLinks(message))
 	override fun toString() = "staff#${channelName.lowercase()}"
 }
 

@@ -15,6 +15,7 @@ import com.fablesfantasyrp.plugin.timers.CountdownBusyException
 import com.fablesfantasyrp.plugin.timers.countdown
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.toBlockIdentifier
 import com.github.shynixn.mccoroutine.bukkit.launch
+import kotlinx.coroutines.runBlocking
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -48,13 +49,15 @@ class LodestoneListener(private val plugin: JavaPlugin,
 		val lodestone = lodestones.forLocation(block.location.toBlockIdentifier()) ?: return
 		e.isCancelled = true
 
-		val character = profileManager.getCurrentForPlayer(e.player)?.let { characters.forProfile(it) } ?: run {
-			e.player.sendError("You are not in-character so you cannot use your warp crystal.")
-			return
-		}
+		plugin.launch {
+			val character = profileManager.getCurrentForPlayer(e.player)?.let { characters.forProfile(it) } ?: run {
+				e.player.sendError("You are not in-character so you cannot use your warp crystal.")
+				return@launch
+			}
 
-		val slots = slotCountCalculator.getLodestoneSlots(e.player)
-		LodestoneGui(plugin, e.player, character, slots, lodestone, characterLodestoneRepository).show(e.player)
+			val slots = slotCountCalculator.getLodestoneSlots(e.player)
+			LodestoneGui(plugin, e.player, character, slots, lodestone, characterLodestoneRepository).show(e.player)
+		}
 	}
 
 	private val lastWarpedAt = HashMap<Int, Instant>()
@@ -70,7 +73,7 @@ class LodestoneListener(private val plugin: JavaPlugin,
 		val profileId = profileManager.getCurrentForPlayer(e.player)?.id
 
 		val canWarpAgainAt = profileId?.let { lastWarpedAt[it]?.plus(10, ChronoUnit.MINUTES) }
-		if (authorizer.useCoolDown(e.player) && canWarpAgainAt != null && canWarpAgainAt.isAfter(Instant.now())) {
+		if (runBlocking { authorizer.useCoolDown(e.player) } && canWarpAgainAt != null && canWarpAgainAt.isAfter(Instant.now())) {
 			e.player.sendError("Your warpcrystal is on cooldown! You can warp again ${PrettyTime().format(canWarpAgainAt)}")
 			return
 		}

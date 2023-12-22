@@ -110,6 +110,10 @@ class DatabasePersistentKnockoutPlayerDataRepository(private val server: Server,
 		}
 	}
 
+	override fun createOrUpdate(v: PersistentKnockoutPlayerData): PersistentKnockoutPlayerData {
+		throw NotImplementedError()
+	}
+
 	private fun fromRow(row: ResultSet): DatabaseKnockoutPlayerData {
 		val id = checkNotNull(row.getObject("id", UUID::class.java))
 

@@ -10,6 +10,7 @@ import com.sk89q.intake.argument.ArgumentParseException
 import com.sk89q.intake.argument.CommandArgs
 import com.sk89q.intake.argument.Namespace
 import com.sk89q.intake.parametric.Provider
+import kotlinx.coroutines.runBlocking
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -23,7 +24,7 @@ class AllowCharacterNameProfileProvider(private val server: Server,
 	override fun isProvided(): Boolean = false
 
 	private fun getByPlayerCharacter(arguments: CommandArgs, modifiers: List<Annotation>): Profile? {
-		return characterRepository.forName(arguments.peek())?.profile
+		return runBlocking { characterRepository.forName(arguments.peek())?.profile }
 	}
 
 	private fun getByProfileProvider(arguments: CommandArgs, modifiers: List<Annotation>): Profile? {
@@ -66,12 +67,14 @@ class AllowCharacterNameProfileProvider(private val server: Server,
 	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
 		val allowPlayerName = modifiers.any { it is AllowPlayerName }
 
-		return characterRepository.allNames()
+		return runBlocking {
+			characterRepository.allNames()
 				.asSequence()
 				.filter { it.startsWith(prefix.removePrefix("\""), true) }
 				.map { quoteCommandArgument(it) }
 				.plus(if (allowPlayerName) server.onlinePlayers.map { it.name }.filter { it.lowercase().startsWith(prefix.lowercase()) } else emptyList())
 				.distinct()
 				.toList()
+		}
 	}
 }

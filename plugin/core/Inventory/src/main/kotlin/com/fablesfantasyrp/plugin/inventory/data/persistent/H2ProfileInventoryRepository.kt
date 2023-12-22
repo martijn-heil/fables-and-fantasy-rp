@@ -77,6 +77,10 @@ class H2ProfileInventoryRepository(private val dataSource: DataSource)
 		}
 	}
 
+	override fun createOrUpdate(v: ProfileInventory): ProfileInventory {
+		throw NotImplementedError()
+	}
+
 	override fun forId(id: Int): ProfileInventory? {
 		return dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE id = ?")

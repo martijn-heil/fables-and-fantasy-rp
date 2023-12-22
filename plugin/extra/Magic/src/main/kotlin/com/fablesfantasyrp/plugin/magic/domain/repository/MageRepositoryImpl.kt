@@ -8,13 +8,13 @@ import com.fablesfantasyrp.plugin.magic.domain.mapper.MageMapper
 
 class MageRepositoryImpl(child: MageMapper) : MassivelyCachingEntityRepository<Long, Mage, MageMapper>(child), MageRepository {
 
-	private fun forIdOrCreate(id: Long): Mage {
-		val maybe = this.forId(id)
+	override fun forCharacterOrCreate(c: Character): Mage {
+		val maybe = this.forCharacter(c)
 		return if (maybe != null) {
 			maybe
 		} else {
 			val obj = Mage(
-					id = id,
+					character = c,
 					magicPath = MagicPath.AEROMANCY,
 					magicLevel = 0,
 					spells = emptyList()
@@ -26,7 +26,6 @@ class MageRepositoryImpl(child: MageMapper) : MassivelyCachingEntityRepository<L
 	}
 
 	override fun forCharacter(c: Character): Mage? = this.forId(c.id.toLong())
-	override fun forCharacterOrCreate(c: Character): Mage = forIdOrCreate(c.id.toLong())
 
 	override fun destroy(v: Mage) {
 		super.destroy(v)

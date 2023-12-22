@@ -4,6 +4,7 @@ import com.fablesfantasyrp.plugin.alternatemechanics.Mechanic
 import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
+import com.github.shynixn.mccoroutine.bukkit.launch
 import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin
 import com.sk89q.worldguard.protection.regions.RegionContainer
@@ -32,31 +33,34 @@ class FarmReplant(private val plugin: Plugin,
 	inner class FarmReplantListener : Listener {
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 		fun onPlayerFarm(e: PlayerInteractEvent) {
-			if (e.hand != EquipmentSlot.HAND) return
-			if (e.player.inventory.itemInMainHand.type != Material.WOODEN_HOE) return
-			val block = e.clickedBlock ?: return
-			if (!crops.contains(block.type)) return
+			plugin.launch {
 
-			val canBuild = regionContainer.createQuery().testBuild(BukkitAdapter.adapt(block.location), worldGuard.wrapPlayer(e.player))
-			if (!canBuild) return
+				if (e.hand != EquipmentSlot.HAND) return@launch
+				if (e.player.inventory.itemInMainHand.type != Material.WOODEN_HOE) return@launch
+				val block = e.clickedBlock ?: return@launch
+				if (!crops.contains(block.type)) return@launch
 
-			val blockData = (block.blockData as Ageable)
-			if (blockData.age == 0) return
+				val canBuild = regionContainer.createQuery().testBuild(BukkitAdapter.adapt(block.location), worldGuard.wrapPlayer(e.player))
+				if (!canBuild) return@launch
 
-			val location = block.location
-			val tool = e.player.inventory.itemInMainHand
-			val drops = block.getDrops(tool, e.player)
+				val blockData = (block.blockData as Ageable)
+				if (blockData.age == 0) return@launch
 
-			val character = profileManager.getCurrentForPlayer(e.player)?.let { characters.forProfile(it) }
-			if (character != null && character.traits.contains(CharacterTrait.HINTISH_HERITAGE)) {
-				drops.forEach { it.amount *= 2 }
+				val location = block.location
+				val tool = e.player.inventory.itemInMainHand
+				val drops = block.getDrops(tool, e.player)
+
+				val character = profileManager.getCurrentForPlayer(e.player)?.let { characters.forProfile(it) }
+				if (character != null && character.traits.contains(CharacterTrait.HINTISH_HERITAGE)) {
+					drops.forEach { it.amount *= 2 }
+				}
+
+				blockData.age = 0
+				block.blockData = blockData
+
+				location.world.playSound(location, Sound.BLOCK_CROP_BREAK, 1.0f, 1.0f)
+				drops.forEach { location.world.dropItem(location, it) }
 			}
-
-			blockData.age = 0
-			block.blockData = blockData
-
-			location.world.playSound(location, Sound.BLOCK_CROP_BREAK, 1.0f, 1.0f)
-			drops.forEach { location.world.dropItem(location, it) }
 		}
 	}
 }

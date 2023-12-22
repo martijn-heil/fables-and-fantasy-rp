@@ -28,11 +28,11 @@ class CharacterAuthorizerImpl(private val characters: CharacterRepository) : Cha
 		return AuthorizationResult(true)
 	}
 
-	override fun mayBecome(who: Player, what: Character, instant: Boolean, force: Boolean): AuthorizationResult {
+	override suspend fun mayBecome(who: Player, what: Character, instant: Boolean, force: Boolean): AuthorizationResult {
 		return mayBecome(who, what.profile, instant, force)
 	}
 
-	override fun mayBecome(who: Player, what: Profile, instant: Boolean, force: Boolean): AuthorizationResult {
+	override suspend fun mayBecome(who: Player, what: Profile, instant: Boolean, force: Boolean): AuthorizationResult {
 		val owner = what.owner
 		val whatCharacter = characters.forProfile(what)
 

@@ -90,8 +90,10 @@ class Commands(private val plugin: JavaPlugin,
 	@Command(aliases = ["grimoire", "spellbook"], desc = "Show your grimoire.")
 	@Require(Permission.Command.Spellbook)
 	fun spellbook(@Sender sender: Player, @CommandTarget(Permission.Command.Spellbook + ".others") mage: Mage) {
-		val senderCharacter = profileManager.getCurrentForPlayer(sender)?.let { characters.forProfile(it) }
-		SpellbookGui(plugin, spells, mage, readOnly = senderCharacter != mage.character).show(sender)
+		plugin.launch {
+			val senderCharacter = profileManager.getCurrentForPlayer(sender)?.let { characters.forProfile(it) }
+			SpellbookGui(plugin, spells, mage, readOnly = senderCharacter != mage.character).show(sender)
+		}
 	}
 
 	@Command(aliases = ["resetspellbook", "resetgrimoire"], desc = "Reset a mage's grimoire.")

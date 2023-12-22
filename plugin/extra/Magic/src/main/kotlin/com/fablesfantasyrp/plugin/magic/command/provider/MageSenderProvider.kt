@@ -9,6 +9,7 @@ import com.sk89q.intake.argument.ArgumentParseException
 import com.sk89q.intake.argument.CommandArgs
 import com.sk89q.intake.argument.Namespace
 import com.sk89q.intake.parametric.Provider
+import kotlinx.coroutines.runBlocking
 import org.bukkit.entity.Player
 
 class MageSenderProvider(private val profileManager: ProfileManager,
@@ -18,7 +19,7 @@ class MageSenderProvider(private val profileManager: ProfileManager,
 
 	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): Mage {
 		val player = BukkitSenderProvider(Player::class.java).get(arguments, modifiers)!!
-		val character = profileManager.getCurrentForPlayer(player)?.let { characters.forProfile(it) }
+		val character = profileManager.getCurrentForPlayer(player)?.let { runBlocking { characters.forProfile(it) } }
 			?: throw ArgumentParseException("You are not currently in character.")
 		return mages.forCharacter(character)
 				?: throw ArgumentParseException("You have to be a mage to execute this command.")

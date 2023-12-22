@@ -73,6 +73,10 @@ class H2ProfileEconomyRepository(private val dataSource: DataSource)
 		}
 	}
 
+	override fun createOrUpdate(v: ProfileEconomy): ProfileEconomy {
+		throw NotImplementedError()
+	}
+
 	override fun forId(id: Int): ProfileEconomy? {
 		return dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE id = ?")

@@ -69,6 +69,10 @@ class H2LodestoneDataRepository(private val dataSource: DataSource)
 		}
 	}
 
+	override fun createOrUpdate(v: LodestoneData): LodestoneData {
+		throw NotImplementedError()
+	}
+
 	override fun forId(id: Int): LodestoneData? {
 		return dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE id = ?")

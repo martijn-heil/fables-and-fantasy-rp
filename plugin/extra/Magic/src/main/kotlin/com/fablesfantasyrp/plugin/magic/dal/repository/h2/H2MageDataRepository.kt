@@ -83,4 +83,8 @@ class H2MageDataRepository(private val dataSource: DataSource, private val spell
 		)
 		return mage
 	}
+
+	override fun createOrUpdate(v: MageData): MageData {
+		throw NotImplementedError()
+	}
 }

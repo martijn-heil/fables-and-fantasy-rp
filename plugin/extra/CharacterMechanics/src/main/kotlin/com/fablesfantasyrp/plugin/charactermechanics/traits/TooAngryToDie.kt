@@ -6,6 +6,7 @@ import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterReposito
 import com.fablesfantasyrp.plugin.knockout.knockout
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.isRealPlayer
+import kotlinx.coroutines.runBlocking
 import org.bukkit.EntityEffect
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -38,13 +39,16 @@ class TooAngryToDie(plugin: Plugin,
 			if (!player.isRealPlayer) return
 			if (player.knockout.isKnockedOut) return
 
-			val character = profileManager.getCurrentForPlayer(player)?.let { characters.forProfile(it) } ?: return
+			runBlocking {
 
-			if (!character.traits.contains(trait)) return
+				val character = profileManager.getCurrentForPlayer(player)?.let { characters.forProfile(it) } ?: return@runBlocking
 
-			if (player.health - e.finalDamage <= 0) {
-				e.isCancelled = true
-				activate(player)
+				if (!character.traits.contains(trait)) return@runBlocking
+
+				if (player.health - e.finalDamage <= 0) {
+					e.isCancelled = true
+					activate(player)
+				}
 			}
 		}
 
@@ -54,13 +58,15 @@ class TooAngryToDie(plugin: Plugin,
 			if (!player.isRealPlayer) return
 			if (player.knockout.isKnockedOut) return
 
-			val character = profileManager.getCurrentForPlayer(player)?.let { characters.forProfile(it) } ?: return
+			runBlocking {
+				val character = profileManager.getCurrentForPlayer(player)?.let { characters.forProfile(it) } ?: return@runBlocking
 
-			if (!character.traits.contains(trait)) return
+				if (!character.traits.contains(trait)) return@runBlocking
 
-			if (player.health - e.finalDamage <= 0) {
-				e.isCancelled = true
-				activate(player)
+				if (player.health - e.finalDamage <= 0) {
+					e.isCancelled = true
+					activate(player)
+				}
 			}
 		}
 
@@ -71,13 +77,15 @@ class TooAngryToDie(plugin: Plugin,
 			if (!player.isRealPlayer) return
 			if (player.knockout.isKnockedOut) return
 
-			val character = profileManager.getCurrentForPlayer(player)?.let { characters.forProfile(it) } ?: return
+			runBlocking {
+				val character = profileManager.getCurrentForPlayer(player)?.let { characters.forProfile(it) } ?: return@runBlocking
 
-			if (!character.traits.contains(trait)) return
+				if (!character.traits.contains(trait)) return@runBlocking
 
-			if (player.health - e.finalDamage <= 0) {
-				e.isCancelled = true
-				activate(player)
+				if (player.health - e.finalDamage <= 0) {
+					e.isCancelled = true
+					activate(player)
+				}
 			}
 		}
 	}

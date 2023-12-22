@@ -16,6 +16,6 @@ interface CharacterAuthorizer {
 	fun mayEditDescription(who: Permissible, what: Character, allowShelved: Boolean = false): AuthorizationResult
 	fun mayEditStats(who: Permissible, what: Character, allowShelved: Boolean = false): AuthorizationResult
 	fun mayTransfer(who: Permissible, what: Character): AuthorizationResult
-	fun mayBecome(who: Player, what: Character, instant: Boolean = false, force: Boolean = false): AuthorizationResult
-	fun mayBecome(who: Player, what: Profile, instant: Boolean = false, force: Boolean = false): AuthorizationResult
+	suspend fun mayBecome(who: Player, what: Character, instant: Boolean = false, force: Boolean = false): AuthorizationResult
+	suspend fun mayBecome(who: Player, what: Profile, instant: Boolean = false, force: Boolean = false): AuthorizationResult
 }

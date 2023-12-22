@@ -4,6 +4,7 @@ import com.fablesfantasyrp.plugin.charactermechanics.traits.base.BaseTraitBehavi
 import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
+import com.github.shynixn.mccoroutine.bukkit.launch
 import org.bukkit.entity.Cow
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -27,9 +28,10 @@ class HintishHeritage(plugin: Plugin,
 		fun onPlayerKillAnimal(e: EntityDeathEvent) {
 			if (e.entity !is Cow) return
 			if (e.entity.killer == null) return
-
-			if (hasTrait(e.entity.killer!!)) {
-				e.drops.forEach { it.amount *= 2 }
+			plugin.launch {
+				if (hasTrait(e.entity.killer!!)) {
+					e.drops.forEach { it.amount *= 2 }
+				}
 			}
 		}
 	}

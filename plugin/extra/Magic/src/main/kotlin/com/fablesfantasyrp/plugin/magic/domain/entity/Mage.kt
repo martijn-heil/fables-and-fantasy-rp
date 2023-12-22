@@ -23,22 +23,24 @@ import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.sendError
 import com.fablesfantasyrp.plugin.utils.DISTANCE_TALK
 import com.fablesfantasyrp.plugin.utils.Services
+import com.github.shynixn.mccoroutine.bukkit.launch
+import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.Style
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import org.koin.core.component.getScopeId
 
 
 class Mage : DataEntity<Long, Mage> {
-	private val characters: CharacterRepository get() = Services.get<CharacterRepository>()
 	private val mages: MageRepository get() = Services.get<MageRepository>()
 	private val tears: TearRepository get() = Services.get<TearRepository>()
 
 	override var dirtyMarker: DirtyMarker<Mage>? = null
-	override val id: Long
 
 	val character: Character
-		get() = characters.forId(id.toInt())!!
+
+	override val id: Long get() = character.id.toLong()
 
 	var isDeleted: Boolean = false
 
@@ -53,19 +55,22 @@ class Mage : DataEntity<Long, Mage> {
 			if (field != value) {
 				val added = value.minus(field)
 				val removed = field.minus(value)
-				val players = getPlayersWithinRange(character.profile.location, DISTANCE_TALK).toList()
-				added.forEach { ability ->
-					players.forEach {
-						it.sendMessage("$SYSPREFIX ${character.name} activated ${ability.displayName}")
-					}
-				}
-				removed.forEach { ability ->
-					players.forEach {
-						it.sendMessage("$SYSPREFIX ${character.name} deactivated ${ability.displayName}")
-					}
-				}
 				field = value;
 				dirtyMarker?.markDirty(this)
+
+				PLUGIN.launch {
+					val players = getPlayersWithinRange(character.profile.location, DISTANCE_TALK).toList()
+					added.forEach { ability ->
+						players.forEach {
+							it.sendMessage("$SYSPREFIX ${character.name} activated ${ability.displayName}")
+						}
+					}
+					removed.forEach { ability ->
+						players.forEach {
+							it.sendMessage("$SYSPREFIX ${character.name} deactivated ${ability.displayName}")
+						}
+					}
+				}
 			}
 		}
 
@@ -73,8 +78,8 @@ class Mage : DataEntity<Long, Mage> {
 
 	private var isCasting = false
 
-	constructor(id: Long, magicPath: MagicPath, magicLevel: Int, spells: List<SpellData>, dirtyMarker: DirtyMarker<Mage>? = null) : super() {
-		this.id = id
+	constructor(character: Character, magicPath: MagicPath, magicLevel: Int, spells: List<SpellData>, dirtyMarker: DirtyMarker<Mage>? = null) : super() {
+		this.character = character
 		this.magicPath = magicPath
 		this.magicLevel = magicLevel
 		this.spells = spells
@@ -85,7 +90,6 @@ class Mage : DataEntity<Long, Mage> {
 	suspend fun tryCloseTear(tear: Tear): Boolean {
 		val profileManager = Services.get<ProfileManager>()
 		val myPlayer = profileManager.getCurrentForProfile(character.profile)!!
-		val character = this.character
 
 		if (myPlayer.location.world != tear.location.world || myPlayer.location.distance(tear.location) > 15) {
 			myPlayer.sendError("Targeted tear is out of range, you need to be within 15 blocks of the tear")
@@ -139,8 +143,7 @@ class Mage : DataEntity<Long, Mage> {
 
 	suspend fun tryUnbindCast(spell: SpellData, enemy: Character, castingRoll: Int): Boolean {
 		val profileManager = Services.get<ProfileManager>()
-		val player = profileManager.getCurrentForProfile(this.character.profile) ?: throw IllegalStateException()
-		val character = this.character
+		val player = profileManager.getCurrentForProfile(character.profile) ?: throw IllegalStateException()
 		check(player.isOnline)
 
 		if (this.isCasting) {
@@ -167,7 +170,7 @@ class Mage : DataEntity<Long, Mage> {
 		if (roll > castingRoll) {
 			val message = miniMessage.deserialize("<yellow><my_name></yellow> <green>successfully</green> unbound " +
 					"<yellow><enemy_name>'s</yellow> <spell> cast.",
-			Placeholder.unparsed("my_name", this.character.name),
+			Placeholder.unparsed("my_name", character.name),
 			Placeholder.unparsed("enemy_name", enemy.name),
 			Placeholder.component("spell", spellDisplay(spell)))
 					.style(player.chat.chatStyle ?: Style.style(NamedTextColor.YELLOW))
@@ -176,7 +179,7 @@ class Mage : DataEntity<Long, Mage> {
 		} else {
 			val message = miniMessage.deserialize("<yellow><my_name></yellow> <red>failed</red> to unbind " +
 					"<yellow><enemy_name>'s</yellow> <spell> cast.",
-					Placeholder.unparsed("my_name", this.character.name),
+					Placeholder.unparsed("my_name", character.name),
 					Placeholder.unparsed("enemy_name", enemy.name),
 					Placeholder.component("spell", spellDisplay(spell)))
 					.style(player.chat.chatStyle ?: Style.style(NamedTextColor.YELLOW))
