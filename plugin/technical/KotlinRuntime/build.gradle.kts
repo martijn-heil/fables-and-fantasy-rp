@@ -7,8 +7,8 @@ val ktor_version = "2.2.2"
 dependencies {
     // internal module dependencies
     shadow(kotlin("stdlib"))
-    shadow("org.jetbrains.kotlin:kotlin-reflect:1.9.0")
-    api("org.jetbrains.kotlin:kotlin-reflect:1.9.0")
+    shadow("org.jetbrains.kotlin:kotlin-reflect:1.9.21")
+    api("org.jetbrains.kotlin:kotlin-reflect:1.9.21")
     shadow("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.10.0")
     shadow("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.10.0")
     shadow("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")

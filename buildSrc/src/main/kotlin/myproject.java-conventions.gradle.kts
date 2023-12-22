@@ -2,10 +2,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.io.FileOutputStream
 import java.net.URI
-import java.net.URL
-import java.nio.channels.Channels
 
 
 plugins {
@@ -93,26 +90,8 @@ tasks.test {
 	useJUnitPlatform()
 }
 
-fun downloadFile(url: URL, outputFileName: String) {
-	url.openStream().use {
-		Channels.newChannel(it).use { rbc ->
-			FileOutputStream(outputFileName).use { fos ->
-				fos.channel.transferFrom(rbc, 0, Long.MAX_VALUE)
-			}
-		}
-	}
-}
-val downloadPath = "${buildDir.parentFile.parent}/build/download/"
-fun urlFile (url: URL, name: String): ConfigurableFileCollection  {
-	val path = "$downloadPath/${name}.jar"
-	val f = File(path)
-	f.parentFile.mkdirs()
-	if(!f.exists()) downloadFile(url, path)
-	return files(f.absolutePath)
-}
-
 dependencies {
-	paperDevBundle("1.19.2-R0.1-SNAPSHOT")
+	paperweight.paperDevBundle("1.19.2-R0.1-SNAPSHOT")
 	implementation("com.github.MilkBowl:VaultAPI:1.7") {
 		exclude(group = "org.bukkit")
 		exclude(group = "org.spigotmc")
@@ -121,8 +100,8 @@ dependencies {
 	implementation("me.clip:placeholderapi:2.10.0")
 	implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.10.0")
 	implementation("com.github.shynixn.mccoroutine:mccoroutine-bukkit-core:2.10.0")
-	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.7.3")
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0-RC2")
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.8.0-RC2")
 	implementation("org.ocpsoft.prettytime:prettytime:5.0.6.Final")
 	implementation("com.google.guava:guava:31.1-jre")
 	implementation("io.insert-koin:koin-core:3.3.2")
