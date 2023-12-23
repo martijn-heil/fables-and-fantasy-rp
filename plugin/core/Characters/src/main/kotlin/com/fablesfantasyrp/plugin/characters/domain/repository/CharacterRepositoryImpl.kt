@@ -48,11 +48,7 @@ class CharacterRepositoryImpl(child: CharacterMapper, private val profiles: Prof
 	override suspend fun nameExists(name: String): Boolean = nameMap.containsKey(name)
 
 	override fun markDirty(v: Character) {
-		frunBlocking {
-			dirtyLock.withLock {
-				nameMap.inverse()[v.id] = v.name
-				super.markDirty(v)
-			}
-		}
+		nameMap.inverse()[v.id] = v.name
+		super.markDirty(v)
 	}
 }

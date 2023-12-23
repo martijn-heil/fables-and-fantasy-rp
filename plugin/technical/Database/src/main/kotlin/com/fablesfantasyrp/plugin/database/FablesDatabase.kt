@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.database
 
+import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import org.flywaydb.core.Flyway
@@ -13,10 +14,12 @@ import org.koin.dsl.module
 import javax.sql.DataSource
 
 class FablesDatabase : JavaPlugin(), KoinComponent {
-	private val DB_DRIVER = "org.h2.Driver"
 	private lateinit var koinModule: Module
 
 	override fun onEnable() {
+		enforceDependencies(this)
+		instance = this
+
 		logger.fine("Saving default config..")
 		saveDefaultConfig()
 

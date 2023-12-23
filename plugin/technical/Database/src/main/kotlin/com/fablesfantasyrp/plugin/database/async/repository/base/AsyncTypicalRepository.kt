@@ -8,6 +8,7 @@ import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
 import com.fablesfantasyrp.plugin.database.model.Identifiable
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -23,14 +24,9 @@ open class AsyncTypicalRepository<K, T: Identifiable<K>, C>(protected var child:
 	private val EMPTY_LOOKUP_RESULT = LookupResult<T>(null)
 
 	protected val lock: Mutex = Mutex()
-
 	protected val cache = HashMap<K, LookupResult<T>>()
-
 	protected val strongCache = HashSet<T>()
-	protected val strongCacheLock: Mutex = Mutex()
-
 	protected val dirty = LinkedHashSet<T>()
-	protected val dirtyLock: Mutex = Mutex()
 
 	protected val destroyHandlers: MutableCollection<(T) -> Unit> = ArrayList()
 
@@ -38,21 +34,19 @@ open class AsyncTypicalRepository<K, T: Identifiable<K>, C>(protected var child:
 		child.dirtyMarker = this
 	}
 
-	suspend fun markStrong(v: T) { strongCacheLock.withLock { strongCache.add(v) } }
-	suspend fun markWeak(v: T) { strongCacheLock.withLock { strongCache.remove(v) } }
+	suspend fun markStrong(v: T) { strongCache.add(v) }
+	suspend fun markWeak(v: T) { strongCache.remove(v) }
 
-	override fun markDirty(v: T) {
-		frunBlocking { dirtyLock.withLock { dirty.add(v) } }
-	}
+	override fun markDirty(v: T) { dirty.add(v) }
 
 	suspend fun saveAllDirty() {
-		val dirtyCopy = dirtyLock.withLock { dirty.toSet() }
-		dirtyCopy.asFlow().onEach { child.update(it) }
+		val dirtyCopy = dirty.toSet()
+		dirtyCopy.asFlow().onEach { child.update(it) }.collect()
 	}
 
 	suspend fun saveAll() {
 		val all = lock.withLock { cache.mapNotNull { it.value.reference?.get() } }
-		all.asFlow().onEach { update(it) }
+		all.asFlow().onEach { update(it) }.collect()
 	}
 
 	override suspend fun create(v: T): T {
@@ -65,12 +59,12 @@ open class AsyncTypicalRepository<K, T: Identifiable<K>, C>(protected var child:
 
 	private suspend fun saveNWeakDirty(n: Int) {
 		val entries = lock.withLock { dirty.asSequence().filter { !strongCache.contains(it) }.take(n).toList() }
-		entries.asFlow().onEach { update(it) }
+		entries.asFlow().onEach { update(it) }.collect()
 	}
 
 	override suspend fun update(v: T) {
 		child.update(v)
-		dirtyLock.withLock { dirty.remove(v) }
+		dirty.remove(v)
 	}
 
 	override suspend fun destroy(v: T) {
