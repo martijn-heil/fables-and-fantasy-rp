@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.characters.command.provider
 
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
+import com.fablesfantasyrp.plugin.characters.frunBlocking
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.command.annotation.AllowPlayerName
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
@@ -10,21 +11,20 @@ import com.sk89q.intake.argument.ArgumentParseException
 import com.sk89q.intake.argument.CommandArgs
 import com.sk89q.intake.argument.Namespace
 import com.sk89q.intake.parametric.Provider
-import kotlinx.coroutines.runBlocking
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.permissions.Permissible
+import org.bukkit.plugin.Plugin
 
 class AllowCharacterNameProfileProvider(private val server: Server,
 										private val characterRepository: CharacterRepository,
 										private val profileProvider: Provider<Profile>,
 										private val profileManager: ProfileManager) : Provider<Profile> {
-
 	override fun isProvided(): Boolean = false
 
 	private fun getByPlayerCharacter(arguments: CommandArgs, modifiers: List<Annotation>): Profile? {
-		return runBlocking { characterRepository.forName(arguments.peek())?.profile }
+		return frunBlocking { characterRepository.forName(arguments.peek())?.profile }
 	}
 
 	private fun getByProfileProvider(arguments: CommandArgs, modifiers: List<Annotation>): Profile? {
@@ -67,7 +67,7 @@ class AllowCharacterNameProfileProvider(private val server: Server,
 	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
 		val allowPlayerName = modifiers.any { it is AllowPlayerName }
 
-		return runBlocking {
+		return frunBlocking {
 			characterRepository.allNames()
 				.asSequence()
 				.filter { it.startsWith(prefix.removePrefix("\""), true) }

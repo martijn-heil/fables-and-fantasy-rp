@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.charactermechanics.racial.sylvani
 
 import com.fablesfantasyrp.plugin.charactermechanics.SYSPREFIX
+import com.fablesfantasyrp.plugin.charactermechanics.flaunch
 import com.fablesfantasyrp.plugin.charactermechanics.racial.base.BaseRaceBehavior
 import com.fablesfantasyrp.plugin.characters.dal.enums.Race
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
@@ -37,19 +38,19 @@ class SylvaniBerries(plugin: Plugin,
 	inner class SylvaniBerriesListener : Listener {
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 		fun onPlayerRightClickSylvani(e: PlayerInteractAtEntityEvent) {
-			plugin.launch {
-				if (e.hand != EquipmentSlot.HAND || e.player.isSneaking) return@launch
+			flaunch {
+				if (e.hand != EquipmentSlot.HAND || e.player.isSneaking) return@flaunch
 				val harvester = e.player
-				val player = e.rightClicked as? Player ?: return@launch
-				if (!player.isRealPlayer) return@launch
-				val character = profileManager.getCurrentForPlayer(player)?.let { characters.forProfile(it) } ?: return@launch
-				if (character.race != Race.SYLVANI) return@launch
+				val player = e.rightClicked as? Player ?: return@flaunch
+				if (!player.isRealPlayer) return@flaunch
+				val character = profileManager.getCurrentForPlayer(player)?.let { characters.forProfile(it) } ?: return@flaunch
+				if (character.race != Race.SYLVANI) return@flaunch
 				val nextHarvestTime = harvested[character.id]?.plus(Duration.ofHours(1)) ?: Instant.now()
 
 				if (nextHarvestTime > Instant.now()) {
 					harvester.sendMessage("$SYSPREFIX You can harvest ${character.name}'s berries again " +
 						PrettyTime().format(nextHarvestTime))
-					return@launch
+					return@flaunch
 				}
 
 				val location = player.location

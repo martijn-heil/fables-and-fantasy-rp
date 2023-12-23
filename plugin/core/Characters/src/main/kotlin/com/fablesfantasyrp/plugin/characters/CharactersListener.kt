@@ -13,8 +13,6 @@ import com.fablesfantasyrp.plugin.staffprofiles.data.StaffProfileRepository
 import com.fablesfantasyrp.plugin.time.event.NewDayEvent
 import com.fablesfantasyrp.plugin.time.javatime.FablesLocalDate
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.isRealPlayer
-import com.github.shynixn.mccoroutine.bukkit.launch
-import kotlinx.coroutines.runBlocking
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -35,16 +33,16 @@ class CharactersListener(private val plugin: Plugin,
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	fun onPlayerSwitchProfile(e: PostPlayerSwitchProfileEvent) {
-		plugin.launch {
-			val old = e.old ?: return@launch
-			val character = characters.forProfile(old) ?: return@launch
+		flaunch {
+			val old = e.old ?: return@flaunch
+			val character = characters.forProfile(old) ?: return@flaunch
 			character.lastSeen = Instant.now()
 		}
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	fun onPlayerSwitchProfile2(e: PostPlayerSwitchProfileEvent) {
-		plugin.launch {
+		flaunch {
 			val newCharacter = e.new?.let { characters.forProfile(it) }
 			e.player.dFlags.setFlag("characters_name", newCharacter?.let { ElementTag(it.name) }, null)
 		}
@@ -57,9 +55,9 @@ class CharactersListener(private val plugin: Plugin,
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	fun onPlayerSwitchProfile4(e: PostPlayerSwitchProfileEvent) {
-		runBlocking {
-			val newCharacter = e.new?.let { characters.forProfile(it) } ?: return@runBlocking
-			val dateOfDeath = newCharacter.dateOfNaturalDeath ?: return@runBlocking
+		frunBlocking {
+			val newCharacter = e.new?.let { characters.forProfile(it) } ?: return@frunBlocking
+			val dateOfDeath = newCharacter.dateOfNaturalDeath ?: return@frunBlocking
 			val today = FablesLocalDate.now()
 			if (today.isAfter(dateOfDeath)) {
 				newCharacter.isDead = true
@@ -71,7 +69,7 @@ class CharactersListener(private val plugin: Plugin,
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	fun onNewDay(e: NewDayEvent) {
-		plugin.launch {
+		flaunch {
 			profileManager.getActive()
 				.mapValues { characters.forProfile(it.value) }
 				.filter { it.value != null }
@@ -90,14 +88,14 @@ class CharactersListener(private val plugin: Plugin,
 	fun onPlayerForceProfileSelection(e: PlayerForceProfileSelectionEvent) {
 		if (!e.player.isWhitelisted) return
 
-		runBlocking {
-			if (characters.activeForOwner(e.player).isNotEmpty()) return@runBlocking
-			if (staffProfiles.containsAny(profiles.activeForOwner(e.player))) return@runBlocking
+		frunBlocking {
+			if (characters.activeForOwner(e.player).isNotEmpty()) return@frunBlocking
+			if (staffProfiles.containsAny(profiles.activeForOwner(e.player))) return@frunBlocking
 
 			e.isCancelled = true
 
 			server.scheduler.scheduleSyncDelayedTask(plugin, {
-				plugin.launch { forceCharacterCreation(e.player, profiles, characters) }
+				flaunch { forceCharacterCreation(e.player, profiles, characters) }
 			}, 1)
 		}
 	}
@@ -109,11 +107,11 @@ class CharactersListener(private val plugin: Plugin,
 		if (!e.player.isSneaking) return
 		if (!target.isRealPlayer) return
 
-		plugin.launch {
+		flaunch {
 			val currentProfile = profileManager.getCurrentForPlayer(target)
 			val character = currentProfile?.let { characters.forProfile(it) } ?: run {
 				e.player.sendMessage("$SYSPREFIX ${e.rightClicked.name} is currently not in-character")
-				return@launch
+				return@flaunch
 			}
 			e.player.sendMessage(characterCardGenerator.card(character, e.player))
 		}

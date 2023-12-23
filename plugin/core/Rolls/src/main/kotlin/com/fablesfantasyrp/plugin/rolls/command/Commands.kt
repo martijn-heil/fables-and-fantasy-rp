@@ -6,6 +6,7 @@ import com.fablesfantasyrp.plugin.chat.chat
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.rolls.ROLL_RANGE
+import com.fablesfantasyrp.plugin.rolls.flaunch
 import com.fablesfantasyrp.plugin.rolls.rollExpression
 import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
@@ -37,7 +38,7 @@ class Commands(private val plugin: Plugin,
 			 @FixedSuggestions @Suggestions(["3", "6", "20", "100"]) @Optional("20") expression: String,
 			 @Optional kind: CharacterStatKind?) {
 		val senderPlayer = profileManager.getCurrentForProfile(sender) ?: throw IllegalStateException()
-		plugin.launch {
+		flaunch {
 			val senderCharacter = characters.forProfile(sender)
 			val senderName = senderCharacter?.name ?: senderPlayer.name
 			val prefix = legacyText(GLOBAL_SYSPREFIX)
@@ -51,7 +52,7 @@ class Commands(private val plugin: Plugin,
 					rollExpression(expression, senderCharacter, kind)
 				} catch (ex: Exception) {
 					senderPlayer.sendError(ex.message ?: "Unknown error")
-					return@launch
+					return@flaunch
 				}
 
 				server.broadcast(senderPlayer.location, 15,
@@ -65,16 +66,16 @@ class Commands(private val plugin: Plugin,
 						resolver
 					)
 				)
-				return@launch
+				return@flaunch
 			} else {
 				if (senderCharacter == null && kind != null) {
 					senderPlayer.sendError("You cannot roll a specific stat kind while you are out of character")
-					return@launch
+					return@flaunch
 				}
 
 				val dice = expression.toIntOrNull() ?: run {
 					senderPlayer.sendError("Could not parse '$expression' as an integer")
-					return@launch
+					return@flaunch
 				}
 
 				val roll = com.fablesfantasyrp.plugin.rolls.roll(dice.toUInt(), senderCharacter, kind)

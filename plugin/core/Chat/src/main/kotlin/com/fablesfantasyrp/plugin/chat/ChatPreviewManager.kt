@@ -77,7 +77,7 @@ class ChatPreviewManager(private val plugin: Plugin) {
 						chatPlayerEntity.isTyping = true
 						val requestId = packet.integers.read(0)
 						val rawChatMessage = packet.strings.read(0)
-						plugin.launch {
+						flaunch {
 							try {
 								val result: Pair<ChatChannel, String> = chatPlayerEntity.parseChatMessage(rawChatMessage)
 								val message = result.second

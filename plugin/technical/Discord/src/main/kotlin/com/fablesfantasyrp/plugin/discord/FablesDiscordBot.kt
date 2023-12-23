@@ -51,7 +51,7 @@ class FablesDiscordBot(private val plugin: JavaPlugin, private val config: Fable
 	private var calendarEvents: Set<DiscordCalendarEvent> = emptySet()
 
 	fun start() {
-		plugin.launch { main() }
+		flaunch { main() }
 	}
 
 	private suspend fun main() {
@@ -60,7 +60,7 @@ class FablesDiscordBot(private val plugin: JavaPlugin, private val config: Fable
 		nationDiscords = config.nationDiscords.mapNotNull { kord.getGuildOrNull(it) }.toSet()
 
 		server.scheduler.scheduleSyncRepeatingTask(plugin, {
-			plugin.launch {
+			flaunch {
 				async {
 					val events = nationDiscords.map { it.scheduledEvents }.merge()
 					val results = events.map { it.transform() }.toSet()
@@ -86,7 +86,7 @@ class FablesDiscordBot(private val plugin: JavaPlugin, private val config: Fable
 
 			val channel = message.channel
 			val sender = DiscordCommandSender.build(this.member!!.asUser()) {
-				plugin.launch {
+				flaunch {
 					channel.createMessage(it)
 				}
 			}

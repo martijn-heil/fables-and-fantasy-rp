@@ -27,10 +27,10 @@ class BellListener(private val plugin: Plugin,
 		val bell = bells.forLocation(block.location.toBlockIdentifier()) ?: return
 		e.isCancelled = true
 
-		plugin.launch {
+		flaunch {
 			val character = profileManager.getCurrentForPlayer(e.player)?.let { characters.forProfile(it) } ?: run {
 				e.player.sendError("You are not in-character so you cannot ring the bell.")
-				return@launch
+				return@flaunch
 			}
 
 			if (e.player.confirm("Ring the alarm bell?")) {

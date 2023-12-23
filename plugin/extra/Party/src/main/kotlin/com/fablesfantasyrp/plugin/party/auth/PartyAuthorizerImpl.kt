@@ -2,11 +2,11 @@ package com.fablesfantasyrp.plugin.party.auth
 
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
+import com.fablesfantasyrp.plugin.party.frunBlocking
 import com.fablesfantasyrp.plugin.party.Permission
 import com.fablesfantasyrp.plugin.party.data.entity.Party
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.utils.AuthorizationResult
-import kotlinx.coroutines.runBlocking
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -45,7 +45,6 @@ class PartyAuthorizerImpl(private val profileManager: ProfileManager,
 		else AuthorizationResult(false, "You are not authorised to join this party")
 	}
 
-
 	override fun mayInviteMember(party: Party, who: CommandSender): AuthorizationResult {
 		return if(isAdmin(party, who)) AuthorizationResult(true)
 		else AuthorizationResult(false, "You are not authorised to invite a member")
@@ -75,7 +74,7 @@ class PartyAuthorizerImpl(private val profileManager: ProfileManager,
 	}
 
 	private fun isAdmin(party: Party, who: CommandSender): Boolean {
-		return runBlocking {
+		return frunBlocking {
 			val whoCharacter = (who as? Player)?.let { profileManager.getCurrentForPlayer(it)?.let { characters.forProfile(it) } }
 			(whoCharacter != null && party.owner == whoCharacter) || who.hasPermission(Permission.Admin)
 		}

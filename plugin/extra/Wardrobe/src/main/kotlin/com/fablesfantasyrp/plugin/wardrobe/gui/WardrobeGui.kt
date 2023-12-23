@@ -14,13 +14,14 @@ import com.fablesfantasyrp.plugin.wardrobe.data.ProfileSkin
 import com.fablesfantasyrp.plugin.wardrobe.data.ProfileSkinRepository
 import com.fablesfantasyrp.plugin.wardrobe.data.SkinRepository
 import com.fablesfantasyrp.plugin.wardrobe.data.skin
+import com.fablesfantasyrp.plugin.wardrobe.flaunch
+import com.fablesfantasyrp.plugin.wardrobe.frunBlocking
 import com.github.shynixn.mccoroutine.bukkit.launch
 import de.themoep.inventorygui.DynamicGuiElement
 import de.themoep.inventorygui.GuiElementGroup
 import de.themoep.inventorygui.InventoryGui
 import de.themoep.inventorygui.StaticGuiElement
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.Component
 import net.wesjd.anvilgui.AnvilGUI
 import org.bukkit.ChatColor
@@ -41,7 +42,7 @@ class WardrobeGui(private val plugin: JavaPlugin,
 				  private val profileSkinRepository: ProfileSkinRepository,
 				  private val skinService: SkinService,
 				  private val originalPlayerProfileService: OriginalPlayerProfileService)
-	: InventoryGui(plugin, player, "${runBlocking { profile.shortName() }}'s wardrobe", arrayOf("gggggggxd")) {
+	: InventoryGui(plugin, player, "${frunBlocking { profile.shortName() }}'s wardrobe", arrayOf("gggggggxd")) {
 	private val server = plugin.server
 
 	init {
@@ -95,7 +96,7 @@ class WardrobeGui(private val plugin: JavaPlugin,
 	}
 
 	private fun deleteSkin() {
-		plugin.launch {
+		flaunch {
 			val profileSkin = GuiSingleChoice<ProfileSkin>(plugin, "Please select a skin to delete",
 				profileSkinRepository.forProfile(profile).sortedByDescending { it.lastUsedAt }.asSequence(),
 				{ getItem(it) },
@@ -108,7 +109,7 @@ class WardrobeGui(private val plugin: JavaPlugin,
 
 	private fun saveSkin() {
 		this.close()
-		plugin.launch {
+		flaunch {
 			try {
 				val item = itemStack(Material.BLACK_STAINED_GLASS_PANE) { meta { name = Component.empty() } }
 				val deferred = CompletableDeferred<String>()
@@ -131,7 +132,7 @@ class WardrobeGui(private val plugin: JavaPlugin,
 
 				if (originalProfile.textures.skin == null) {
 					player.sendError("You have no skin")
-					return@launch
+					return@flaunch
 				}
 
 				val skin = skinRepository.create(originalProfile.skin)

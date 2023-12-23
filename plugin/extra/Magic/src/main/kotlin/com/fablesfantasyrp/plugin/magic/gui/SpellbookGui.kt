@@ -4,6 +4,7 @@ import com.fablesfantasyrp.plugin.form.promptGui
 import com.fablesfantasyrp.plugin.magic.dal.model.SpellData
 import com.fablesfantasyrp.plugin.magic.dal.repository.SpellDataRepository
 import com.fablesfantasyrp.plugin.magic.domain.entity.Mage
+import com.fablesfantasyrp.plugin.magic.flaunch
 import com.fablesfantasyrp.plugin.magic.getMaxSpells
 import com.fablesfantasyrp.plugin.magic.getRequiredMageLevel
 import com.github.shynixn.mccoroutine.bukkit.launch
@@ -104,7 +105,7 @@ class SpellbookGui(plugin: JavaPlugin,
 
 		private val chooseSpellAction: GuiElement.Action = GuiElement.Action { click ->
 			val player = click.whoClicked as? Player ?: return@Action true
-			plugin.launch {
+			flaunch {
 				val mappedSpellSlots = spellSlots.values.map { it.content }
 				val gui = SpellSelectorGui(plugin, spells.forLevelAndPath(spellLevel, mage.magicPath)
 						.filter { !mage.spells.contains(it) }

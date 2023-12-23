@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.charactermechanics.traits
 
+import com.fablesfantasyrp.plugin.charactermechanics.flaunch
 import com.fablesfantasyrp.plugin.charactermechanics.traits.base.BaseTraitBehavior
 import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
@@ -28,7 +29,7 @@ class HintishHeritage(plugin: Plugin,
 		fun onPlayerKillAnimal(e: EntityDeathEvent) {
 			if (e.entity !is Cow) return
 			if (e.entity.killer == null) return
-			plugin.launch {
+			flaunch {
 				if (hasTrait(e.entity.killer!!)) {
 					e.drops.forEach { it.amount *= 2 }
 				}

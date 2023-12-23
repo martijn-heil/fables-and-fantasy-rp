@@ -45,13 +45,13 @@ class Commands(private val plugin: JavaPlugin,
 	@Command(aliases = ["castspell", "cast"], desc = "Cast a magic spell.")
 	@Require(Permission.Command.Castspell)
 	fun castspell(@Sender sender: Character, @OwnSpell spell: SpellData) {
-		plugin.launch { sender.tryCastSpell(spell) }
+		flaunch { sender.tryCastSpell(spell) }
 	}
 
 	@Command(aliases = ["opentear"], desc = "Open a tear.")
 	@Require(Permission.Command.Opentear)
 	fun opentear(@Sender sender: Character, @OwnMagicType element: MagicType) {
-		plugin.launch {
+		flaunch {
 			try {
 				sender.openTear(element)
 			} catch (ex: OpenTearException) {
@@ -67,15 +67,15 @@ class Commands(private val plugin: JavaPlugin,
 	@Require(Permission.Command.Closetear)
 	fun closetear(@Sender sender: Character) {
 		val player = profileManager.getCurrentForProfile(sender.profile)!!
-		plugin.launch {
+		flaunch {
 			val block = player.getTargetBlock(30) ?: run {
 				player.sendError("Block too far away")
-				return@launch
+				return@flaunch
 			}
 
 			val tear = tears.forLocation(block.location) ?: run {
 				player.sendError("Targeted block is not a tear")
-				return@launch
+				return@flaunch
 			}
 
 			val mage = mages.forCharacter(sender)
@@ -90,7 +90,7 @@ class Commands(private val plugin: JavaPlugin,
 	@Command(aliases = ["grimoire", "spellbook"], desc = "Show your grimoire.")
 	@Require(Permission.Command.Spellbook)
 	fun spellbook(@Sender sender: Player, @CommandTarget(Permission.Command.Spellbook + ".others") mage: Mage) {
-		plugin.launch {
+		flaunch {
 			val senderCharacter = profileManager.getCurrentForPlayer(sender)?.let { characters.forProfile(it) }
 			SpellbookGui(plugin, spells, mage, readOnly = senderCharacter != mage.character).show(sender)
 		}

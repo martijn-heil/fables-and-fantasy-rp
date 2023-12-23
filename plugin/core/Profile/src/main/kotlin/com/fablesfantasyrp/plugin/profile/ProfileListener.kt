@@ -58,7 +58,7 @@ class ProfileListener(private val plugin: JavaPlugin,
 
 		server.scheduler.scheduleSyncDelayedTask(plugin, {
 			val player = server.getPlayer(e.player.uniqueId) ?: return@scheduleSyncDelayedTask
-			plugin.launch { forceProfileSelection(player, ownedProfiles) }
+			flaunch { forceProfileSelection(player, ownedProfiles) }
 		}, 1)
 	}
 
@@ -66,7 +66,7 @@ class ProfileListener(private val plugin: JavaPlugin,
 	fun onProfileSwitch(e: PostPlayerSwitchProfileEvent) {
 		if (e.new == null && e.old != null && PlayerForceProfileSelectionEvent(e.player).callEvent()) {
 			val ownedProfiles = profiles.activeForOwner(e.player)
-			plugin.launch { forceProfileSelection(e.player, ownedProfiles) }
+			flaunch { forceProfileSelection(e.player, ownedProfiles) }
 		}
 		playersCurrentlySwitchingProfile.remove(e.player)
 	}

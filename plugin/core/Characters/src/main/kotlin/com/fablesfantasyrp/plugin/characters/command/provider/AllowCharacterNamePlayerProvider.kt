@@ -1,13 +1,13 @@
 package com.fablesfantasyrp.plugin.characters.command.provider
 
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
+import com.fablesfantasyrp.plugin.characters.frunBlocking
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.utils.quoteCommandArgument
 import com.sk89q.intake.argument.ArgumentParseException
 import com.sk89q.intake.argument.CommandArgs
 import com.sk89q.intake.argument.Namespace
 import com.sk89q.intake.parametric.Provider
-import kotlinx.coroutines.runBlocking
 import org.bukkit.Server
 import org.bukkit.entity.Player
 
@@ -19,7 +19,7 @@ class AllowCharacterNamePlayerProvider(private val server: Server,
 	override fun isProvided(): Boolean = false
 
 	private fun getByPlayerCharacter(arguments: CommandArgs, modifiers: List<Annotation>): Player? {
-		val character = runBlocking { characters.forName(arguments.peek()) } ?: return null
+		val character = frunBlocking { characters.forName(arguments.peek()) } ?: return null
 		return profileManager.getCurrentForProfile(character.profile)
 	}
 
@@ -40,7 +40,7 @@ class AllowCharacterNamePlayerProvider(private val server: Server,
 
 	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
 		return server.onlinePlayers.asSequence()
-				.mapNotNull { profileManager.getCurrentForPlayer(it)?.let { runBlocking { characters.forProfile(it) } } }
+				.mapNotNull { profileManager.getCurrentForPlayer(it)?.let { frunBlocking { characters.forProfile(it) } } }
 				.map { it.name }
 				.plus(playerProvider.getSuggestions(prefix, locals, modifiers))
 				.filter { it.startsWith(prefix.removePrefix("\""), true) }

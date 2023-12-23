@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.party.command.provider
 
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
+import com.fablesfantasyrp.plugin.party.frunBlocking
 import com.fablesfantasyrp.plugin.party.PartySpectatorManager
 import com.fablesfantasyrp.plugin.party.data.PartyRepository
 import com.fablesfantasyrp.plugin.party.data.entity.Party
@@ -12,7 +13,6 @@ import com.sk89q.intake.argument.ArgumentParseException
 import com.sk89q.intake.argument.CommandArgs
 import com.sk89q.intake.argument.Namespace
 import com.sk89q.intake.parametric.Provider
-import kotlinx.coroutines.runBlocking
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -23,11 +23,11 @@ class PartyProvider(private val parties: PartyRepository,
 	override fun isProvided(): Boolean = false
 
 	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): Party {
-		return runBlocking {
+		return frunBlocking {
 			val isCommandTarget = modifiers.any{ it is CommandTarget }
 			val sender = BukkitSenderProvider(CommandSender::class.java).get(arguments, modifiers)!!
 
-			return@runBlocking if (isCommandTarget && !arguments.hasNext() && sender is Player) {
+			return@frunBlocking if (isCommandTarget && !arguments.hasNext() && sender is Player) {
 				val character = profileManager.getCurrentForPlayer(sender)?.let { characters.forProfile(it) }
 				val spectatorTarget = spectatorManager.getParty(sender)
 				if (character == null && spectatorTarget == null) {

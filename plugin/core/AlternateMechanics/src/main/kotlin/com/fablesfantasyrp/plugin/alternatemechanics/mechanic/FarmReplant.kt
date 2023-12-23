@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.alternatemechanics.mechanic
 
 import com.fablesfantasyrp.plugin.alternatemechanics.Mechanic
+import com.fablesfantasyrp.plugin.alternatemechanics.flaunch
 import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
@@ -33,18 +34,17 @@ class FarmReplant(private val plugin: Plugin,
 	inner class FarmReplantListener : Listener {
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 		fun onPlayerFarm(e: PlayerInteractEvent) {
-			plugin.launch {
-
-				if (e.hand != EquipmentSlot.HAND) return@launch
-				if (e.player.inventory.itemInMainHand.type != Material.WOODEN_HOE) return@launch
-				val block = e.clickedBlock ?: return@launch
-				if (!crops.contains(block.type)) return@launch
+			flaunch {
+				if (e.hand != EquipmentSlot.HAND) return@flaunch
+				if (e.player.inventory.itemInMainHand.type != Material.WOODEN_HOE) return@flaunch
+				val block = e.clickedBlock ?: return@flaunch
+				if (!crops.contains(block.type)) return@flaunch
 
 				val canBuild = regionContainer.createQuery().testBuild(BukkitAdapter.adapt(block.location), worldGuard.wrapPlayer(e.player))
-				if (!canBuild) return@launch
+				if (!canBuild) return@flaunch
 
 				val blockData = (block.blockData as Ageable)
-				if (blockData.age == 0) return@launch
+				if (blockData.age == 0) return@flaunch
 
 				val location = block.location
 				val tool = e.player.inventory.itemInMainHand

@@ -23,7 +23,7 @@ class Commands(private val plugin: JavaPlugin,
 	@Require(Permission.Command.Wardrobe)
 	fun wardrobe(@Sender sender: Profile) {
 		val player = profileManager.getCurrentForProfile(sender)!!
-		plugin.launch {
+		flaunch {
 			val slotCount = slotCounter.calculateSkinSlotCount(sender)
 			WardrobeGui(plugin, player, sender, slotCount, skins, profileSkins, skinService, originalPlayerProfileService)
 				.show(player)

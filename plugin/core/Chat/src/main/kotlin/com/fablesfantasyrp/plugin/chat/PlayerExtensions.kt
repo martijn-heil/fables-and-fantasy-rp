@@ -6,7 +6,6 @@ import com.fablesfantasyrp.plugin.chat.channel.PreviewableChatChannel
 import com.fablesfantasyrp.plugin.chat.data.entity.ChatPlayer
 import com.fablesfantasyrp.plugin.chat.data.entity.EntityChatPlayerRepository
 import com.fablesfantasyrp.plugin.form.promptChat
-import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.Component
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
@@ -19,7 +18,7 @@ suspend fun Player.awaitEmote(prompt: String, channel: ChatChannel = ChatInChara
 	val chatEntity = chat
 	val oldChannel = chatEntity.channel
 	chatEntity.channel = channel
-	val message = this.promptChat(prompt, if (channel is PreviewableChatChannel) { { runBlocking { channel.getPreview(this@awaitEmote, it) } } } else null)
+	val message = this.promptChat(prompt, if (channel is PreviewableChatChannel) { { frunBlocking { channel.getPreview(this@awaitEmote, it) } } } else null)
 	channel.sendMessage(this, message)
 	chatEntity.channel = oldChannel
 	return message
@@ -29,7 +28,7 @@ suspend fun Player.awaitEmote(prompt: Component, channel: ChatChannel = ChatInCh
 	val chatEntity = chat
 	val oldChannel = chatEntity.channel
 	chatEntity.channel = channel
-	val message = this.promptChat(prompt, if (channel is PreviewableChatChannel) { { runBlocking { channel.getPreview(this@awaitEmote, it) } } } else null)
+	val message = this.promptChat(prompt, if (channel is PreviewableChatChannel) { { frunBlocking { channel.getPreview(this@awaitEmote, it) } } } else null)
 	channel.sendMessage(this, message)
 	chatEntity.channel = oldChannel
 	return message

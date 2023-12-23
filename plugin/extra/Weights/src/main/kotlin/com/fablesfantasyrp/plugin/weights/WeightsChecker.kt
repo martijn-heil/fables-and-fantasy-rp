@@ -26,7 +26,7 @@ class WeightsChecker(private val plugin: Plugin,
 				val items = player.inventory.contents.filterNotNull()
 				val weight = calculateWeight(items, config)
 
-				plugin.launch { applyWeight(player, weight, calculateCap(player)) }
+				flaunch { applyWeight(player, weight, calculateCap(player)) }
 			}
 		}
 	}

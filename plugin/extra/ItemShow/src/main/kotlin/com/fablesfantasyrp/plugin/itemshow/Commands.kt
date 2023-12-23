@@ -28,11 +28,11 @@ class Commands(private val plugin: Plugin,
 	@Command(aliases = ["itemshow", "showitem"], desc = "")
 	@Require("fables.itemshow.command.itemshow")
 	fun itemshow(@Sender sender: Player) {
-		plugin.launch {
+		flaunch {
 			val item = sender.inventory.itemInMainHand
 			if (item.type == Material.AIR) {
 				sender.sendError("You must hold the item you want to show in your main hand.")
-				return@launch
+				return@flaunch
 			}
 
 			val character = profileManager.getCurrentForPlayer(sender)?.let { characters.forProfile(it) }

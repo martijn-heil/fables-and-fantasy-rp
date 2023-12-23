@@ -98,7 +98,7 @@ class FablesChat : JavaPlugin(), KoinComponent {
 		this.getCommand("ooc")!!.setExecutor(Commands.CommandChatOutOfCharacter(this))
 		this.getCommand("dm")!!.setExecutor(Commands.CommandChatDirectMessage(this))
 		this.getCommand("dm")!!.tabCompleter = Commands.CommandChatDirectMessage(this)
-		this.getCommand("reply")!!.setExecutor(Commands.CommandReply(this))
+		this.getCommand("reply")!!.setExecutor(Commands.CommandReply())
 		this.getCommand("staffchat")!!.setExecutor(Commands.CommandChatStaff(this))
 		this.getCommand("spectatorchat")!!.setExecutor(Commands.CommandChatSpectator(this))
 		this.getCommand("partychat")!!.setExecutor(get<Commands.CommandChatParty>())

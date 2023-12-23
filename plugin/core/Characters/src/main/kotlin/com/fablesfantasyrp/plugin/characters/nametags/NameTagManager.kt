@@ -1,11 +1,11 @@
 package com.fablesfantasyrp.plugin.characters.nametags
 
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
+import com.fablesfantasyrp.plugin.characters.frunBlocking
 import com.fablesfantasyrp.plugin.denizeninterop.dFlags
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.utils.EDEN
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.isVanished
-import kotlinx.coroutines.runBlocking
 import me.neznamy.tab.api.TabAPI
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
@@ -20,7 +20,7 @@ class NameTagManager(private val profileManager: ProfileManager,
 		tapi = TabAPI.getInstance()
 		tapi.placeholderManager.registerRelationalPlaceholder(
 			"%rel_characters_name_v2%", 1000) { tabObserver, tabTarget ->
-			runBlocking {
+			frunBlocking {
 				try {
 					val observer = tabObserver.player as Player
 					val target = tabTarget.player as Player

@@ -23,7 +23,7 @@ class Commands(private val plugin: Plugin,
 	@Command(aliases = ["halt", "h"], desc = "Formally halt nearby players")
 	@Require("fables.halt.command.halt")
 	fun halt(@Sender sender: Character, @AllowCharacterName target: Player) {
-		plugin.launch {
+		flaunch {
 			val senderPlayer = profileManager.getCurrentForProfile(sender.profile)!!
 
 			val targets = listOf(target).asSequence()

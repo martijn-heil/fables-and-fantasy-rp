@@ -19,7 +19,7 @@ class WhitelistMonitor(private val plugin: JavaPlugin) {
 	private lateinit var lastWhitelist: Set<UUID>
 
 	fun start() {
-		plugin.launch {
+		flaunch {
 			lastWhitelist = getWhitelist().await()
 
 			every(plugin, 50.milliseconds) {

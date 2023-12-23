@@ -1,5 +1,7 @@
 package com.fablesfantasyrp.plugin.charactermechanics.traits
 
+import com.fablesfantasyrp.plugin.charactermechanics.flaunch
+import com.fablesfantasyrp.plugin.charactermechanics.frunBlocking
 import com.fablesfantasyrp.plugin.charactermechanics.traits.base.BaseTraitBehavior
 import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
@@ -7,7 +9,6 @@ import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterReposito
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.event.PostPlayerSwitchProfileEvent
 import com.github.shynixn.mccoroutine.bukkit.launch
-import kotlinx.coroutines.runBlocking
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -31,10 +32,10 @@ class NomadsStomach(plugin: Plugin,
 	inner class NomadsStomachListener : Listener {
 		@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 		fun onFoodLevelChange(e: FoodLevelChangeEvent) {
-			runBlocking {
-				val player = e.entity as? Player ?: return@runBlocking
-				if (e.foodLevel > player.foodLevel) return@runBlocking
-				val character = profileManager.getCurrentForPlayer(player)?.let { characters.forProfile(it) } ?: return@runBlocking
+			frunBlocking {
+				val player = e.entity as? Player ?: return@frunBlocking
+				if (e.foodLevel > player.foodLevel) return@frunBlocking
+				val character = profileManager.getCurrentForPlayer(player)?.let { characters.forProfile(it) } ?: return@frunBlocking
 
 				if (odd.contains(character)) {
 					e.isCancelled = true
@@ -47,8 +48,8 @@ class NomadsStomach(plugin: Plugin,
 
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 		fun onPlayerProfileChange(e: PostPlayerSwitchProfileEvent) {
-			plugin.launch {
-				val character = e.old?.let { characters.forProfile(it) } ?: return@launch
+			flaunch {
+				val character = e.old?.let { characters.forProfile(it) } ?: return@flaunch
 				odd.remove(character)
 			}
 		}

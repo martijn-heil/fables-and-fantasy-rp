@@ -6,6 +6,7 @@ import com.fablesfantasyrp.plugin.gui.GuiSingleChoice
 import com.fablesfantasyrp.plugin.gui.Icon
 import com.fablesfantasyrp.plugin.lodestones.domain.entity.Lodestone
 import com.fablesfantasyrp.plugin.lodestones.domain.repository.CharacterLodestoneRepository
+import com.fablesfantasyrp.plugin.lodestones.flaunch
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.itemStack
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.meta
 import com.github.shynixn.mccoroutine.bukkit.launch
@@ -73,7 +74,7 @@ class LodestoneGui(private val plugin: JavaPlugin,
 	}
 
 	private fun unlinkLodestone() {
-		plugin.launch {
+		flaunch {
 			val lodestone = GuiSingleChoice<Lodestone>(plugin, "Please select a lodestone to unlink",
 				characterLodestoneRepository.forCharacter(character).asSequence(),
 				{ getItem(it) },

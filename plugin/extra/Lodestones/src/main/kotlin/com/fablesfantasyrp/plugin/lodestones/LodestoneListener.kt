@@ -1,7 +1,6 @@
 package com.fablesfantasyrp.plugin.lodestones
 
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
-import com.fablesfantasyrp.plugin.characters.isStaffCharacter
 import com.fablesfantasyrp.plugin.lodestones.domain.entity.MapBox
 import com.fablesfantasyrp.plugin.lodestones.domain.repository.CharacterLodestoneRepository
 import com.fablesfantasyrp.plugin.lodestones.domain.repository.LodestoneRepository
@@ -15,7 +14,6 @@ import com.fablesfantasyrp.plugin.timers.CountdownBusyException
 import com.fablesfantasyrp.plugin.timers.countdown
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.toBlockIdentifier
 import com.github.shynixn.mccoroutine.bukkit.launch
-import kotlinx.coroutines.runBlocking
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -29,7 +27,6 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.ocpsoft.prettytime.PrettyTime
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import java.util.UUID
 
 class LodestoneListener(private val plugin: JavaPlugin,
 						private val lodestones: LodestoneRepository,
@@ -49,10 +46,10 @@ class LodestoneListener(private val plugin: JavaPlugin,
 		val lodestone = lodestones.forLocation(block.location.toBlockIdentifier()) ?: return
 		e.isCancelled = true
 
-		plugin.launch {
+		flaunch {
 			val character = profileManager.getCurrentForPlayer(e.player)?.let { characters.forProfile(it) } ?: run {
 				e.player.sendError("You are not in-character so you cannot use your warp crystal.")
-				return@launch
+				return@flaunch
 			}
 
 			val slots = slotCountCalculator.getLodestoneSlots(e.player)
@@ -73,13 +70,13 @@ class LodestoneListener(private val plugin: JavaPlugin,
 		val profileId = profileManager.getCurrentForPlayer(e.player)?.id
 
 		val canWarpAgainAt = profileId?.let { lastWarpedAt[it]?.plus(10, ChronoUnit.MINUTES) }
-		if (runBlocking { authorizer.useCoolDown(e.player) } && canWarpAgainAt != null && canWarpAgainAt.isAfter(Instant.now())) {
+		if (frunBlocking { authorizer.useCoolDown(e.player) } && canWarpAgainAt != null && canWarpAgainAt.isAfter(Instant.now())) {
 			e.player.sendError("Your warpcrystal is on cooldown! You can warp again ${PrettyTime().format(canWarpAgainAt)}")
 			return
 		}
 
 		e.isCancelled = true
-		plugin.launch { warpToMapBox(e.player, mapBox) }
+		flaunch { warpToMapBox(e.player, mapBox) }
 	}
 
 	@EventHandler(priority = NORMAL, ignoreCancelled = true)

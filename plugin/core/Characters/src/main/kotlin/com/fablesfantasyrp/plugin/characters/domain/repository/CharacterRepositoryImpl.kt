@@ -2,17 +2,14 @@ package com.fablesfantasyrp.plugin.characters.domain.repository
 
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.domain.mapper.CharacterMapper
+import com.fablesfantasyrp.plugin.characters.frunBlocking
 import com.fablesfantasyrp.plugin.database.async.repository.base.AsyncTypicalRepository
-import com.fablesfantasyrp.plugin.database.entity.EntityRepository
-import com.fablesfantasyrp.plugin.database.entity.SimpleEntityRepository
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.profile.data.entity.ProfileRepository
 import com.google.common.collect.BiMap
 import com.google.common.collect.HashBiMap
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.withLock
 import org.bukkit.OfflinePlayer
-import kotlin.concurrent.withLock
 
 class CharacterRepositoryImpl(child: CharacterMapper, private val profiles: ProfileRepository)
 	: AsyncTypicalRepository<Int, Character, CharacterMapper>(child), CharacterRepository {
@@ -51,7 +48,7 @@ class CharacterRepositoryImpl(child: CharacterMapper, private val profiles: Prof
 	override suspend fun nameExists(name: String): Boolean = nameMap.containsKey(name)
 
 	override fun markDirty(v: Character) {
-		runBlocking {
+		frunBlocking {
 			dirtyLock.withLock {
 				nameMap.inverse()[v.id] = v.name
 				super.markDirty(v)

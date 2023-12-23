@@ -11,7 +11,6 @@ import com.fablesfantasyrp.plugin.utils.every
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.ColumnIdentifier
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.groundLevel
 import com.github.shynixn.mccoroutine.bukkit.launch
-import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -156,7 +155,7 @@ class LodestoneBannerService(private val plugin: Plugin,
 
 			if (banner != null) {
 				e.isCancelled = true
-				plugin.launch {
+				flaunch {
 					if (authorizer.mayWarpTo(profile, banner.lodestone)) {
 						banner.lodestone.warpHere(e.player)
 					} else {
@@ -166,7 +165,7 @@ class LodestoneBannerService(private val plugin: Plugin,
 						)
 					}
 				}
-			} else if (profile == null || runBlocking { characters.forProfile(profile) } == null) {
+			} else if (profile == null || frunBlocking { characters.forProfile(profile) } == null) {
 				e.isCancelled = true
 				val destination = translateTargetLocation(mapBox, targetedLocation).groundLevel()
 				destination.yaw = 180f // face north

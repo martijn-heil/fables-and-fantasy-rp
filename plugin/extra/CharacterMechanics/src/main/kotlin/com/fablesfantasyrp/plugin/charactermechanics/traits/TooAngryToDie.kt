@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.charactermechanics.traits
 
+import com.fablesfantasyrp.plugin.charactermechanics.frunBlocking
 import com.fablesfantasyrp.plugin.charactermechanics.traits.base.BaseTraitBehavior
 import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
@@ -58,10 +59,10 @@ class TooAngryToDie(plugin: Plugin,
 			if (!player.isRealPlayer) return
 			if (player.knockout.isKnockedOut) return
 
-			runBlocking {
-				val character = profileManager.getCurrentForPlayer(player)?.let { characters.forProfile(it) } ?: return@runBlocking
+			frunBlocking {
+				val character = profileManager.getCurrentForPlayer(player)?.let { characters.forProfile(it) } ?: return@frunBlocking
 
-				if (!character.traits.contains(trait)) return@runBlocking
+				if (!character.traits.contains(trait)) return@frunBlocking
 
 				if (player.health - e.finalDamage <= 0) {
 					e.isCancelled = true
@@ -77,10 +78,10 @@ class TooAngryToDie(plugin: Plugin,
 			if (!player.isRealPlayer) return
 			if (player.knockout.isKnockedOut) return
 
-			runBlocking {
-				val character = profileManager.getCurrentForPlayer(player)?.let { characters.forProfile(it) } ?: return@runBlocking
+			frunBlocking {
+				val character = profileManager.getCurrentForPlayer(player)?.let { characters.forProfile(it) } ?: return@frunBlocking
 
-				if (!character.traits.contains(trait)) return@runBlocking
+				if (!character.traits.contains(trait)) return@frunBlocking
 
 				if (player.health - e.finalDamage <= 0) {
 					e.isCancelled = true

@@ -4,12 +4,12 @@ import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.magic.domain.entity.Mage
 import com.fablesfantasyrp.plugin.magic.domain.repository.MageRepository
+import com.fablesfantasyrp.plugin.magic.frunBlocking
 import com.fablesfantasyrp.plugin.utils.quoteCommandArgument
 import com.sk89q.intake.argument.ArgumentParseException
 import com.sk89q.intake.argument.CommandArgs
 import com.sk89q.intake.argument.Namespace
 import com.sk89q.intake.parametric.Provider
-import kotlinx.coroutines.runBlocking
 
 class MageProvider(private val characterProvider: Provider<Character>,
 				   private val characters: CharacterRepository,
@@ -23,7 +23,7 @@ class MageProvider(private val characterProvider: Provider<Character>,
 	}
 
 	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
-		return runBlocking {
+		return frunBlocking {
 			characters.all().asSequence()
 				.filter { mages.forCharacter(it) != null }
 				.map { it.name }

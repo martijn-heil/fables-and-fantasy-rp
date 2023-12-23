@@ -4,9 +4,9 @@ import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.database.entity.MassivelyCachingEntityRepository
 import com.fablesfantasyrp.plugin.magic.dal.enums.MagicPath
 import com.fablesfantasyrp.plugin.magic.domain.entity.Mage
-import com.fablesfantasyrp.plugin.magic.domain.mapper.MageMapper
+import com.fablesfantasyrp.plugin.magic.domain.mapper.repository.MageRepositoryMapper
 
-class MageRepositoryImpl(child: MageMapper) : MassivelyCachingEntityRepository<Long, Mage, MageMapper>(child), MageRepository {
+class MageRepositoryImpl(child: MageRepositoryMapper) : MassivelyCachingEntityRepository<Long, Mage, MageRepositoryMapper>(child), MageRepository {
 
 	override fun forCharacterOrCreate(c: Character): Mage {
 		val maybe = this.forCharacter(c)

@@ -3,6 +3,7 @@ package com.fablesfantasyrp.plugin.economy.gui.bank
 import com.fablesfantasyrp.plugin.economy.CURRENCY_SYMBOL
 import com.fablesfantasyrp.plugin.economy.SYSPREFIX
 import com.fablesfantasyrp.plugin.economy.data.ProfileEconomyData
+import com.fablesfantasyrp.plugin.economy.flaunch
 import com.fablesfantasyrp.plugin.economy.formatMoney
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.itemStack
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.meta
@@ -35,7 +36,7 @@ class BankGuiMoney(plugin: JavaPlugin, private val data: ProfileEconomyData)
 						"${ChatColor.AQUA}Click to withdraw all money",
 						"${ChatColor.GREEN}Withdraws all money"
 				),
-				StaticGuiElement('3', ItemStack(Material.RED_STAINED_GLASS_PANE), { c -> plugin.launch { withdraw(c.whoClicked as Player) }; true },
+				StaticGuiElement('3', ItemStack(Material.RED_STAINED_GLASS_PANE), { c -> flaunch { withdraw(c.whoClicked as Player) }; true },
 						"${ChatColor.AQUA}Click to withdraw money",
 						"${ChatColor.GREEN}Enter the amount to withdraw"
 				),
@@ -45,7 +46,7 @@ class BankGuiMoney(plugin: JavaPlugin, private val data: ProfileEconomyData)
 							"${ChatColor.GREEN}Your current amount of $CURRENCY_SYMBOL"
 					)
 				},
-				StaticGuiElement('5', ItemStack(Material.GREEN_STAINED_GLASS_PANE), { c -> plugin.launch { deposit(c.whoClicked as Player) }; true },
+				StaticGuiElement('5', ItemStack(Material.GREEN_STAINED_GLASS_PANE), { c -> flaunch { deposit(c.whoClicked as Player) }; true },
 						"${ChatColor.AQUA}Click to deposit money",
 						"${ChatColor.GREEN}Enter the amount to deposit"
 				),

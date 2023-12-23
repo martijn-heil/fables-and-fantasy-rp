@@ -3,16 +3,14 @@ package com.fablesfantasyrp.plugin.database.async.repository.base
 import com.fablesfantasyrp.plugin.database.async.repository.AsyncKeyedRepository
 import com.fablesfantasyrp.plugin.database.async.repository.AsyncMutableRepository
 import com.fablesfantasyrp.plugin.database.entity.HasDestroyHandler
+import com.fablesfantasyrp.plugin.database.frunBlocking
 import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
 import com.fablesfantasyrp.plugin.database.model.Identifiable
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import org.bukkit.Bukkit
 import java.lang.ref.SoftReference
 
 open class AsyncTypicalRepository<K, T: Identifiable<K>, C>(protected var child: C)
@@ -40,7 +38,7 @@ open class AsyncTypicalRepository<K, T: Identifiable<K>, C>(protected var child:
 	suspend fun markWeak(v: T) { strongCacheLock.withLock { strongCache.remove(v) } }
 
 	override fun markDirty(v: T) {
-		runBlocking { dirtyLock.withLock { dirty.add(v) } }
+		frunBlocking { dirtyLock.withLock { dirty.add(v) } }
 	}
 
 	suspend fun saveAllDirty() {
@@ -93,19 +91,21 @@ open class AsyncTypicalRepository<K, T: Identifiable<K>, C>(protected var child:
 
 	override suspend fun all(): Collection<T> = child.allIds().mapNotNull { this.forId(it) }
 	override suspend fun forId(id: K): T? {
-		Bukkit.getLogger().info("trying to lock, isLocked = ${lock.isLocked}")
-		return lock.withLock {
-			Bukkit.getLogger().info("locked")
-			val result = cache[id]?.get() ?: run {
-				Bukkit.getLogger().info("didnt get from cache, retrieving from child")
-				delay(1000)
-				val obj = null //child.forId(id) ?: return@run null
-				Bukkit.getLogger().info("got $obj from child")
-				cache[id] = SoftReference(obj)
-				obj
+		val fromCache = lock.withLock { cache[id]?.get() }
+
+		if (fromCache != null) {
+			return fromCache
+		} else {
+			val obj = child.forId(id) ?: return null
+			lock.withLock {
+				val fromCacheAgain = cache[id]?.get()
+				return if (fromCacheAgain == null) {
+					cache[id] = SoftReference(obj)
+					obj
+				} else {
+					fromCacheAgain
+				}
 			}
-			Bukkit.getLogger().info("result: $result")
-			result
 		}
 	}
 

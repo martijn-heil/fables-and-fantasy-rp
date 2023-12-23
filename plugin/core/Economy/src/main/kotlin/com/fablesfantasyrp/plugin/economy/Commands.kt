@@ -27,7 +27,7 @@ class Commands(private val plugin: JavaPlugin,
 	@Require(Permission.Command.Balance)
 	fun balance(@Sender sender: CommandSender,
 				@CommandTarget(Permission.Command.Balance + ".others") @AllowCharacterName target: Profile) {
-		plugin.launch {
+		flaunch {
 			val currentPlayer = profileManager.getCurrentForProfile(target)
 			val start = if (currentPlayer == sender) "You have" else "${target.displayName()} has"
 			sender.sendMessage("$SYSPREFIX $start ${CURRENCY_SYMBOL}${target.money}")
@@ -37,7 +37,7 @@ class Commands(private val plugin: JavaPlugin,
 	@Command(aliases = ["pay", "fpay"], desc = "Pay someone money")
 	@Require(Permission.Command.Pay)
 	fun pay(@Sender sender: Profile, @AllowCharacterName target: Profile, @Range(min = 1.0) amount: Int) {
-		plugin.launch {
+		flaunch {
 			val targetPlayer = profileManager.getCurrentForProfile(target)
 
 			val senderPlayer = profileManager.getCurrentForProfile(sender)!!
@@ -45,17 +45,17 @@ class Commands(private val plugin: JavaPlugin,
 
 			if (!target.isActive) {
 				senderPlayer.sendError("You cannot pay an inactive profile!")
-				return@launch
+				return@flaunch
 			}
 
 			if (sender.money < amount) {
 				senderPlayer.sendError("You cannot afford that!")
-				return@launch
+				return@flaunch
 			}
 
 			if (!senderPlayer.hasPermission(Permission.PayOwn) && senderOwnProfiles.contains(target)) {
 				senderPlayer.sendError("You cannot pay a profile that you own!")
-				return@launch
+				return@flaunch
 			}
 
 			sender.money -= amount
@@ -71,7 +71,7 @@ class Commands(private val plugin: JavaPlugin,
 		fun give(@Sender sender: CommandSender,
 				 @CommandTarget @AllowCharacterName target: Profile,
 				 @Range(min = 1.0) amount: Int) {
-			plugin.launch {
+			flaunch {
 				target.money += amount
 				sender.sendMessage("$SYSPREFIX Gave $CURRENCY_SYMBOL$amount to ${target.displayName()}")
 			}
@@ -82,7 +82,7 @@ class Commands(private val plugin: JavaPlugin,
 		fun take(@Sender sender: CommandSender,
 				 @CommandTarget @AllowCharacterName target: Profile,
 				 @Range(min = 1.0) amount: Int) {
-			plugin.launch {
+			flaunch {
 				target.money -= amount
 				sender.sendMessage("$SYSPREFIX Took $CURRENCY_SYMBOL$amount from ${target.displayName()}")
 			}
@@ -93,7 +93,7 @@ class Commands(private val plugin: JavaPlugin,
 		fun set(@Sender sender: CommandSender,
 				@CommandTarget @AllowCharacterName target: Profile,
 				@Range(min = 0.0) amount: Int) {
-			plugin.launch {
+			flaunch {
 				target.money = amount
 				sender.sendMessage("$SYSPREFIX Set ${target.displayName()}'s balance to $CURRENCY_SYMBOL$amount")
 			}
@@ -106,10 +106,10 @@ class Commands(private val plugin: JavaPlugin,
 		fun give(@Sender sender: CommandSender,
 				 @CommandTarget player: Player,
 				 @Range(min = 1.0) amount: Int) {
-			plugin.launch {
+			flaunch {
 				val target = profileManager.getCurrentForPlayer(player) ?: run {
 					sender.sendError("This player is not currently on a profile")
-					return@launch
+					return@flaunch
 				}
 				target.money += amount
 				sender.sendMessage("$SYSPREFIX Gave $CURRENCY_SYMBOL$amount to ${target.displayName()}")
@@ -121,10 +121,10 @@ class Commands(private val plugin: JavaPlugin,
 		fun take(@Sender sender: CommandSender,
 				 @CommandTarget player: Player,
 				 @Range(min = 1.0) amount: Int) {
-			plugin.launch {
+			flaunch {
 				val target = profileManager.getCurrentForPlayer(player) ?: run {
 					sender.sendError("This player is not currently on a profile")
-					return@launch
+					return@flaunch
 				}
 				target.money -= amount
 				sender.sendMessage("$SYSPREFIX Took $CURRENCY_SYMBOL$amount from ${target.displayName()}")
@@ -136,10 +136,10 @@ class Commands(private val plugin: JavaPlugin,
 		fun set(@Sender sender: CommandSender,
 				@CommandTarget player: Player,
 				@Range(min = 0.0) amount: Int) {
-			plugin.launch {
+			flaunch {
 				val target = profileManager.getCurrentForPlayer(player) ?: run {
 					sender.sendError("This player is not currently on a profile")
-					return@launch
+					return@flaunch
 				}
 				target.money = amount
 				sender.sendMessage("$SYSPREFIX Set ${target.displayName()}'s balance to $CURRENCY_SYMBOL$amount")

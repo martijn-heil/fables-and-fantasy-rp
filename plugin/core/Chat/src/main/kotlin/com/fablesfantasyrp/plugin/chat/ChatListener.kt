@@ -25,7 +25,7 @@ class ChatListener(private val plugin: Plugin) : Listener {
 		val player = e.player
 		e.isCancelled = true
 		if (e.message.isEmpty()) return
-		plugin.launch {
+		flaunch {
 			try {
 				player.chat.doChat(e.message)
 			} catch (ex: ChatIllegalArgumentException) {

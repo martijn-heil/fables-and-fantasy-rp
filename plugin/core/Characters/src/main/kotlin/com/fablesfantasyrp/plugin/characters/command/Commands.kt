@@ -82,8 +82,8 @@ class LegacyCommands(private val plugin: Plugin, private val characterCommands: 
 	@Command(aliases = ["removecharacter", "removechar", "permakill", "pk"], desc = "Kill a character")
 	@Require(Permission.Command.Characters.Kill)
 	fun removeCharacter(@Sender sender: CommandSender, @CommandTarget target: Character) {
-		plugin.launch {
-			if (sender is Player && !sender.confirm("Permanently kill ${target.name}?")) return@launch
+		flaunch {
+			if (sender is Player && !sender.confirm("Permanently kill ${target.name}?")) return@flaunch
 			characterCommands.kill(sender, target)
 		}
 	}
@@ -102,7 +102,7 @@ class Commands(private val plugin: JavaPlugin,
 		@Command(aliases = ["new"], desc = "Create a new character!")
 		@Require(Permission.Command.Characters.New)
 		fun new(@Sender sender: Player) {
-			plugin.launch {
+			flaunch {
 				val isStaffCharacter: Boolean = if (sender.hasPermission(Permission.Staff)) {
 					val prompt = YesNoChatPrompt(sender, miniMessage.deserialize(
 							"<prefix> Is this character a staff character?<newline>",
@@ -116,7 +116,7 @@ class Commands(private val plugin: JavaPlugin,
 					val maxSlotCount = sender.characterSlotCount
 					if (usedSlotCount >= maxSlotCount) {
 						sender.sendError("You already have ${usedSlotCount}/${maxSlotCount} character slots occupied")
-						return@launch
+						return@flaunch
 					}
 				}
 
@@ -159,7 +159,7 @@ class Commands(private val plugin: JavaPlugin,
 		@Require(Permission.Command.Characters.List)
 		fun list(@Sender sender: CommandSender,
 				@CommandTarget(Permission.Command.Characters.List + ".others") owner: OfflinePlayer) {
-			plugin.launch {
+			flaunch {
 				val message = legacyText("$SYSPREFIX ${owner.name} has the following characters:")
 					.append(Component.newline())
 					.append(
@@ -175,7 +175,7 @@ class Commands(private val plugin: JavaPlugin,
 		@Command(aliases = ["listunowned"], desc = "List characters without an owner")
 		@Require(Permission.Command.Characters.Listunowned)
 		fun listunowned(@Sender sender: CommandSender) {
-			plugin.launch {
+			flaunch {
 				sender.sendMessage(legacyText("$SYSPREFIX The following characters have no owner:").append(
 					Component.join(JoinConfiguration.newlines(), characterRepository.forOwner(null).map {
 						val dead = if (it.isDead) " ${ChatColor.RED}(dead)" else ""
@@ -228,12 +228,12 @@ class Commands(private val plugin: JavaPlugin,
 				return
 			}
 
-			plugin.launch {
+			flaunch {
 				if (owner != null && !target.isStaffCharacter) {
 					val shelved = characterRepository.forOwner(owner).filter { it.isShelved && !it.isDead }.size
 					if (shelved >= 3) {
 						sender.sendError("You cannot shelve more than 3 characters!")
-						return@launch
+						return@flaunch
 					}
 				}
 
@@ -245,7 +245,7 @@ class Commands(private val plugin: JavaPlugin,
 							Placeholder.unparsed("character_name", target.name)).color(NamedTextColor.GRAY))
 					prompt.send()
 					val confirmation: Boolean = prompt.await()
-					if (!confirmation) return@launch
+					if (!confirmation) return@flaunch
 				}
 
 				target.isShelved = true
@@ -273,13 +273,13 @@ class Commands(private val plugin: JavaPlugin,
 				return
 			}
 
-			plugin.launch {
+			flaunch {
 				val target: Profile = targetMaybe ?: run {
 					val profiles = profileRepository.activeForOwner(who)
 					profilePrompter.promptSelect(who, profiles)
 				}
 
-				authorizer.mayBecome(sender, target).orElse { sender.sendError(it); return@launch }
+				authorizer.mayBecome(sender, target).orElse { sender.sendError(it); return@flaunch }
 
 				if (!instant && who == sender) {
 					who.countdown(10U, emptyList(), listOf(CancelReason.MOVEMENT, CancelReason.HURT))
@@ -325,9 +325,9 @@ class Commands(private val plugin: JavaPlugin,
 		fun transfer(@Sender sender: CommandSender, to: Player, @CommandTarget target: Character) {
 			authorizer.mayTransfer(sender, target).orElse { throw AuthorizationException(it) }
 
-			plugin.launch {
+			flaunch {
 				if (sender is Player) {
-					if (!sender.confirm("Transfer ${target.shortName} to ${to.name}?")) return@launch
+					if (!sender.confirm("Transfer ${target.shortName} to ${to.name}?")) return@flaunch
 				}
 
 				target.profile.owner = to
@@ -371,7 +371,7 @@ class Commands(private val plugin: JavaPlugin,
 				val gui = CharacterStatsGui(plugin, minimums, "#${target.id} ${target.name}'s stats",
 						initialSliderValues)
 
-				plugin.launch { target.stats = gui.execute(sender) }
+				flaunch { target.stats = gui.execute(sender) }
 			}
 		}
 
@@ -380,7 +380,7 @@ class Commands(private val plugin: JavaPlugin,
 			fun dateofbirth(@Sender sender: Player, @CommandTarget target: Character) {
 				authorizer.mayEditDateOfBirth(sender, target).orElse { throw AuthorizationException(it) }
 
-				plugin.launch {
+				flaunch {
 					val newDate = promptDateOfBirth(sender, target.race)
 					target.dateOfBirth = newDate
 					sender.sendMessage("$SYSPREFIX Date of birth changed!")
@@ -391,7 +391,7 @@ class Commands(private val plugin: JavaPlugin,
 			fun traits(@Sender sender: Player, @CommandTarget target: Character) {
 				authorizer.mayEditTraits(sender, target).orElse { throw AuthorizationException(it) }
 
-				plugin.launch {
+				flaunch {
 					target.traits = promptTraits(sender, target.race)
 					sender.sendMessage("$SYSPREFIX Traits changed!")
 				}
@@ -401,7 +401,7 @@ class Commands(private val plugin: JavaPlugin,
 			fun description(@Sender sender: Player, @CommandTarget target: Character) {
 				authorizer.mayEditDescription(sender, target).orElse { throw AuthorizationException(it) }
 
-				plugin.launch {
+				flaunch {
 					val newDescription = sender.promptChat("$SYSPREFIX Please enter ${target.name}'s new description:")
 					target.description = newDescription
 					sender.sendMessage("$SYSPREFIX Description changed!")
@@ -412,28 +412,28 @@ class Commands(private val plugin: JavaPlugin,
 			fun name(@Sender sender: Player, @CommandTarget target: Character) {
 				authorizer.mayEditName(sender, target).orElse { throw AuthorizationException(it) }
 
-				plugin.launch {
+				flaunch {
 					val oldName = target.name
 					val newName = sender.promptChat("$SYSPREFIX Please enter ${oldName}'s new name:")
 
 					if (newName.length > 32) {
 						sender.sendError("Your character name cannot be longer than 32 characters")
-						return@launch
+						return@flaunch
 					}
 
 					if (NAME_DISALLOWED_CHARACTERS.containsMatchIn(newName)) {
 						sender.sendError("Your character name contains illegal characters, please only use alphanumeric characters and single quotes.")
-						return@launch
+						return@flaunch
 					}
 
 					if (newName.isBlank()) {
 						sender.sendError("Your character name is blank")
-						return@launch
+						return@flaunch
 					}
 
 					if (characterRepository.nameExists(newName)) {
 						sender.sendError("This name is already in use")
-						return@launch
+						return@flaunch
 					}
 
 					target.name = newName
@@ -464,7 +464,7 @@ class Commands(private val plugin: JavaPlugin,
 				}
 
 				val gui = CharacterStatsGui(plugin, minimums, "#${target.id} ${target.name}'s stats", initialSliderValues)
-				plugin.launch {
+				flaunch {
 					val oldStats = target.stats
 					val newStats = gui.execute(sender)
 					target.stats = newStats
@@ -473,7 +473,7 @@ class Commands(private val plugin: JavaPlugin,
 
 					target.changedStatsAt = Instant.now()
 
-					val player = profileManager.getCurrentForProfile(target.profile) ?: return@launch
+					val player = profileManager.getCurrentForProfile(target.profile) ?: return@flaunch
 					server.broadcast(player.location, 30, "$SYSPREFIX ${target.name} changed their stats!")
 				}
 			}
@@ -482,7 +482,7 @@ class Commands(private val plugin: JavaPlugin,
 			fun race(@Sender sender: Player, @CommandTarget target: Character) {
 				authorizer.mayEditRace(sender, target).orElse { throw AuthorizationException(it) }
 
-				plugin.launch {
+				flaunch {
 					val race: Race = sender.promptGui(GuiSingleChoice(plugin,
 							"Please choose a new race",
 							Race.values().asSequence(),
@@ -498,7 +498,7 @@ class Commands(private val plugin: JavaPlugin,
 			fun gender(@Sender sender: Player, @CommandTarget target: Character) {
 				authorizer.mayEditGender(sender, target).orElse { throw AuthorizationException(it) }
 
-				plugin.launch {
+				flaunch {
 					val gender: Gender = sender.promptGui(GuiSingleChoice(FablesCharacters.instance,
 							"Please choose a new gender",
 							Gender.values().asSequence(),
@@ -520,7 +520,7 @@ class Commands(private val plugin: JavaPlugin,
 			fun owner(@Sender sender: Player, @CommandTarget target: Character) {
 				authorizer.mayTransfer(sender, target).orElse { throw AuthorizationException(it) }
 
-				plugin.launch {
+				flaunch {
 					val playerName = sender.promptChat(
 						Component.text("Please enter the name of the player to transfer ${target.name} to:")
 							.color(NamedTextColor.GRAY)
@@ -529,10 +529,10 @@ class Commands(private val plugin: JavaPlugin,
 
 					if (!player.isOnline && !player.hasPlayedBefore()) {
 						sender.sendError("Player not found.")
-						return@launch
+						return@flaunch
 					}
 
-					if (!sender.confirm("Transfer ${target.shortName} to ${player.name}?")) return@launch
+					if (!sender.confirm("Transfer ${target.shortName} to ${player.name}?")) return@flaunch
 
 					target.profile.owner = player
 					sender.sendMessage("$SYSPREFIX Transferred ownership of ${target.name} to ${player.name}")

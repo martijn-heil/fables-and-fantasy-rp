@@ -24,12 +24,10 @@ import com.fablesfantasyrp.plugin.text.sendError
 import com.fablesfantasyrp.plugin.utils.DISTANCE_TALK
 import com.fablesfantasyrp.plugin.utils.Services
 import com.github.shynixn.mccoroutine.bukkit.launch
-import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.Style
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
-import org.koin.core.component.getScopeId
 
 
 class Mage : DataEntity<Long, Mage> {

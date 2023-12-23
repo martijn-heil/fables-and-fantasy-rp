@@ -3,6 +3,7 @@ package com.fablesfantasyrp.plugin.party.command
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.characters.shortName
+import com.fablesfantasyrp.plugin.party.frunBlocking
 import com.fablesfantasyrp.plugin.glowing.GlowingManager
 import com.fablesfantasyrp.plugin.party.*
 import com.fablesfantasyrp.plugin.party.Permission
@@ -27,7 +28,6 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.event.ClickEvent
@@ -52,12 +52,12 @@ class Commands(private val plugin: Plugin,
 		@Command(aliases = ["spectate"], desc = "Spectate a party")
 		@Require(Permission.Command.Party.Spectate)
 		fun spectate(@Sender sender: Player, @Optional party: Party?) {
-			plugin.launch {
+			flaunch {
 				val senderCharacter = profileManager.getCurrentForPlayer(sender)?.let { characters.forProfile(it) }
 
 				if (senderCharacter != null && parties.forMember(senderCharacter) != null) {
 					sender.sendError("You cannot spectate a party when you are a member of a party")
-					return@launch
+					return@flaunch
 				}
 
 				if (party != null) {
@@ -207,7 +207,7 @@ class Commands(private val plugin: Plugin,
 					   @Optional("30") @Range(min = 0.00, max = 100.0) radius: Int,
 					   @Optional @CommandTarget party: Party) {
 			partyAuthorizer.mayInviteMember(party, sender).orElse { throw AuthorizationException(it) }
-			plugin.launch {
+			flaunch {
 				val characters = getPlayersWithinRange(sender.location, radius.toUInt())
 					.asFlow()
 					.mapNotNull { profileManager.getCurrentForPlayer(it) }
@@ -254,7 +254,7 @@ class Commands(private val plugin: Plugin,
 				 @CommandTarget(Permission.Command.Party.Join + ".others") who: Character) {
 			val senderCharacter = (sender as? Player)
 				?.let { profileManager.getCurrentForPlayer(it) }
-				?.let { runBlocking { characters.forProfile(it) } }
+				?.let { frunBlocking { characters.forProfile(it) } }
 
 			if (senderCharacter == who) {
 				partyAuthorizer.mayJoin(party, who).orElse { throw AuthorizationException(it) }

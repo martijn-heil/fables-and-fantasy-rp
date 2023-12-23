@@ -26,7 +26,6 @@ import com.sk89q.intake.fluent.CommandGraph
 import com.sk89q.intake.parametric.ParametricBuilder
 import com.sk89q.intake.parametric.Provider
 import com.sk89q.intake.parametric.provider.PrimitivesModule
-import kotlinx.coroutines.runBlocking
 import org.bukkit.command.Command
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.ServicePriority
@@ -154,7 +153,7 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 	override fun onDisable() {
 		logger.info("Unregistering commands")
 		commands.forEach { unregisterCommand(it) }
-		runBlocking { get<CharacterRepositoryImpl>().saveAllDirty() }
+		frunBlocking { get<CharacterRepositoryImpl>().saveAllDirty() }
 		logger.info("unloadKoinModules()")
 		unloadKoinModules(koinModule)
 	}

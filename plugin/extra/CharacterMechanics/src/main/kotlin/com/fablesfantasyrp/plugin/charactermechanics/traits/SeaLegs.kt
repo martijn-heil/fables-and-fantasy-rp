@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.charactermechanics.traits
 
+import com.fablesfantasyrp.plugin.charactermechanics.frunBlocking
 import com.fablesfantasyrp.plugin.charactermechanics.traits.base.BaseTraitBehavior
 import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
@@ -8,7 +9,6 @@ import com.fablesfantasyrp.plugin.profile.event.PlayerSwitchProfileEvent
 import com.fablesfantasyrp.plugin.utils.TransactionStep
 import com.fablesfantasyrp.plugin.utils.every
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.runBlocking
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -37,7 +37,7 @@ class SeaLegs(plugin: Plugin,
 	inner class SeaLegsListener : Listener {
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 		fun onPlayerProfileChange(e: PlayerSwitchProfileEvent) {
-			runBlocking {
+			frunBlocking {
 				val player = e.player
 				val newCharacter = e.new?.let { characters.forProfile(it) }
 

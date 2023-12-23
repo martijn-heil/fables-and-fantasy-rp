@@ -56,7 +56,7 @@ class InventoryCommands(private val plugin: Plugin,
 		mirroredInventoryManager.register(inventory)
 
 		sender.openInventory(inventory.bukkitInventory)
-		plugin.launch { broadcaster.log(sender, "Invsee ${target.displayName()}") }
+		flaunch { broadcaster.log(sender, "Invsee ${target.displayName()}") }
 	}
 
 	@Command(aliases = ["endersee", "enderchest", "echest", "fendersee", "fechest", "fenderchest"], desc = "Endersee a character")
@@ -69,7 +69,7 @@ class InventoryCommands(private val plugin: Plugin,
 		mirroredInventoryManager.register(inventory)
 
 		sender.openInventory(inventory.bukkitInventory)
-		plugin.launch { broadcaster.log(sender, "Endersee ${target.displayName()}") }
+		flaunch { broadcaster.log(sender, "Endersee ${target.displayName()}") }
 	}
 }
 
@@ -84,10 +84,10 @@ class Commands(private val plugin: Plugin,
 				 @Optional @AllowCharacterName @AllowPlayerName two: Profile?) {
 		if (two != null) {
 			one.location = two.location
-			plugin.launch { broadcaster.log(sender, "Teleported ${one.displayName()} to ${two.displayName()}") }
+			flaunch { broadcaster.log(sender, "Teleported ${one.displayName()} to ${two.displayName()}") }
 		} else if (sender is Player) {
 			sender.teleport(one.location)
-			plugin.launch { broadcaster.log(sender, "Teleported themself to ${one.displayName()}") }
+			flaunch { broadcaster.log(sender, "Teleported themself to ${one.displayName()}") }
 		} else {
 			sender.sendError("You have to be a player to use this command.")
 		}
@@ -99,14 +99,14 @@ class Commands(private val plugin: Plugin,
 			  to: Location,
 			  @CommandTarget(Permission.Command.Tppos + ".others") @AllowCharacterName @AllowPlayerName target: Profile) {
 		target.location = to
-		plugin.launch { broadcaster.log(sender, "Teleported ${target.displayName()} to ${to.humanReadable()}") }
+		flaunch { broadcaster.log(sender, "Teleported ${target.displayName()} to ${to.humanReadable()}") }
 	}
 
 	@Command(aliases = ["tphere", "ftphere"], desc = "Teleport characters to you")
 	@Require(Permission.Command.Tphere)
 	fun tphere(@Sender sender: Player, @AllowCharacterName @AllowPlayerName who: Profile) {
 		who.location = sender.location
-		plugin.launch { broadcaster.log(sender, "Teleported ${who.displayName()} to themself") }
+		flaunch { broadcaster.log(sender, "Teleported ${who.displayName()} to themself") }
 	}
 
 	inner class Ptime {

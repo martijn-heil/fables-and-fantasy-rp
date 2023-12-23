@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.charactermechanics.racial.sylvani
 
+import com.fablesfantasyrp.plugin.charactermechanics.frunBlocking
 import com.fablesfantasyrp.plugin.charactermechanics.racial.base.BaseRaceBehavior
 import com.fablesfantasyrp.plugin.characters.dal.enums.Race
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
@@ -11,7 +12,6 @@ import com.fablesfantasyrp.plugin.utils.TransactionStep
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.customModel
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.itemStack
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.meta
-import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Material
@@ -47,7 +47,7 @@ class SylvaniAntlers(plugin: Plugin,
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 		fun onPlayerProfileChange(e: PlayerSwitchProfileEvent) {
 			val newProfile = e.new
-			val newCharacter = newProfile?.let { runBlocking { characters.forProfile(it) } } ?: return
+			val newCharacter = newProfile?.let { frunBlocking { characters.forProfile(it) } } ?: return
 			if (newCharacter.race != Race.SYLVANI) return
 
 			val location = profileLocations.forOwner(newProfile).location
@@ -73,7 +73,7 @@ class SylvaniAntlers(plugin: Plugin,
 			if (clickedInventory.type != InventoryType.PLAYER) return
 			if (e.slot != HELMET_SLOT && e.currentItem != ANTLERS_ITEM) return
 			val player = e.whoClicked as? Player ?: return
-			val character = profileManager.getCurrentForPlayer(player)?.let { runBlocking { characters.forProfile(it) } } ?: return
+			val character = profileManager.getCurrentForPlayer(player)?.let { frunBlocking { characters.forProfile(it) } } ?: return
 			if (character.race != Race.SYLVANI) return
 
 			e.isCancelled = true

@@ -4,6 +4,7 @@ import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.form.YesNoChatPrompt
 import com.fablesfantasyrp.plugin.inventorysearch.Permission
 import com.fablesfantasyrp.plugin.inventorysearch.SYSPREFIX
+import com.fablesfantasyrp.plugin.inventorysearch.flaunch
 import com.fablesfantasyrp.plugin.inventorysearch.gui.InventorySearchGui
 import com.fablesfantasyrp.plugin.item.ItemTraitService
 import com.fablesfantasyrp.plugin.profile.ProfileManager
@@ -38,7 +39,7 @@ class Commands(private val plugin: JavaPlugin,
 			return
 		}
 
-		plugin.launch {
+		flaunch {
 			val request = YesNoChatPrompt(targetPlayer, miniMessage.deserialize(
 				"<gray><prefix> <searcher_name> wants to search your inventory. Do you accept?</gray>",
 				Placeholder.component("prefix", legacyText(SYSPREFIX)),
@@ -52,7 +53,7 @@ class Commands(private val plugin: JavaPlugin,
 			if (!request.await()) {
 				senderPlayer.sendMessage("$SYSPREFIX ${target.name} declined your request.")
 				targetPlayer.sendMessage("$SYSPREFIX Declined ${sender.name}'s request.")
-				return@launch
+				return@flaunch
 			}
 
 			val gui = InventorySearchGui(plugin, target, itemTraitService)

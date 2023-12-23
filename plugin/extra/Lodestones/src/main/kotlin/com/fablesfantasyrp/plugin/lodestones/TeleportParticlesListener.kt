@@ -29,7 +29,7 @@ class TeleportParticlesListener(private val plugin: Plugin) : Listener {
 	}
 
 	private fun playSound(from: Location, to: Location) {
-		plugin.launch {
+		flaunch {
 			playSound(from)
 
 			plugin.server.scheduler.scheduleSyncDelayedTask(plugin, {

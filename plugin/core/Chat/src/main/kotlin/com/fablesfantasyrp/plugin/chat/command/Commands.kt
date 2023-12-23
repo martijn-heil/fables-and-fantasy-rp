@@ -1,11 +1,9 @@
 package com.fablesfantasyrp.plugin.chat.command
 
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
-import com.fablesfantasyrp.plugin.chat.FablesChat
-import com.fablesfantasyrp.plugin.chat.Permission
+import com.fablesfantasyrp.plugin.chat.*
 import com.fablesfantasyrp.plugin.chat.SYSPREFIX
 import com.fablesfantasyrp.plugin.chat.channel.*
-import com.fablesfantasyrp.plugin.chat.chat
 import com.fablesfantasyrp.plugin.chat.event.FablesChatEvent
 import com.fablesfantasyrp.plugin.chat.gui.ChatColorGui
 import com.fablesfantasyrp.plugin.party.PartySpectatorManager
@@ -158,10 +156,10 @@ class Commands {
 				return true
 			}
 
-			plugin.launch {
+			flaunch {
 				try {
 					if (message.isEmpty()) {
-						if (sender !is Player) return@launch
+						if (sender !is Player) return@flaunch
 						sender.chat.channel = channel
 					} else if (channel is CommandSenderCompatibleChatChannel) {
 						if (sender is Player) {
@@ -189,16 +187,16 @@ class Commands {
 								private val parties: PartyRepository,
 								private val partySpectatorManager: PartySpectatorManager) : CommandExecutor {
 		override fun onCommand(sender: CommandSender, command: org.bukkit.command.Command, label: String, args: Array<out String>): Boolean {
-			plugin.launch {
+			flaunch {
 				if (!sender.hasPermission(Permission.Channel.Party)) {
 					sender.sendError("Permission denied.")
-					return@launch
+					return@flaunch
 				}
 
 				val message = args.joinToString(" ")
 				if (sender !is Player) {
 					sender.sendError("You have to be a Player to use this command. You are a ${sender::class.java.simpleName}.")
-					return@launch
+					return@flaunch
 				}
 
 				val character = (sender as? Player)?.let { profileManager.getCurrentForPlayer(it) }?.let { characters.forProfile(it) }
@@ -206,7 +204,7 @@ class Commands {
 
 				if (party == null) {
 					sender.sendError("You are not a member of any party.")
-					return@launch
+					return@flaunch
 				}
 
 				val channel = ChatParty(party)
@@ -216,7 +214,7 @@ class Commands {
 						sender.chat.channel = channel
 					} else {
 						if (!FablesChatEvent(sender, channel, message, channel.getRecipients(sender).toSet()).callEvent()) {
-							return@launch
+							return@flaunch
 						}
 
 						sender.chat.doChat(channel, message)
@@ -245,7 +243,7 @@ class Commands {
 					return false
 				}
 
-				plugin.launch {
+				flaunch {
 					try {
 						val channel = ChatChannel.fromStringAliased("dm", sender)!!
 
@@ -255,11 +253,11 @@ class Commands {
 							if (sender is Player) {
 								sender.chat.channel = subChannel
 							}
-							return@launch
+							return@flaunch
 						}
 
 						if (sender is Player && !FablesChatEvent(sender, channel, content, subChannel.getRecipients(sender).toSet()).callEvent()) {
-							return@launch
+							return@flaunch
 						}
 
 						val message = "#$playerName $content"
@@ -269,7 +267,7 @@ class Commands {
 							channel.sendMessage(sender, message)
 						} else {
 							sender.sendError("You must be a Player to chat in this channel.")
-							return@launch
+							return@flaunch
 						}
 					} catch (e: ChatIllegalArgumentException) {
 						sender.sendError(e.message ?: "Illegal argument.")
@@ -290,13 +288,13 @@ class Commands {
 		}
 	}
 
-	class CommandReply(private val plugin: Plugin) : CommandExecutor {
+	class CommandReply : CommandExecutor {
 		override fun onCommand(sender: CommandSender, command: org.bukkit.command.Command, label: String, args: Array<out String>): Boolean {
-			plugin.launch {
+			flaunch {
 				val channel = ChatChannel.fromStringAliased("dm", sender)
 				if (channel == null) {
 					sender.sendError("Unknown channel")
-					return@launch
+					return@flaunch
 				}
 
 				val content = args.joinToString(" ")
@@ -304,11 +302,11 @@ class Commands {
 					if (sender is Player) {
 						sender.chat.channel = channel
 					}
-					return@launch
+					return@flaunch
 				}
 
 				if (sender is Player && !FablesChatEvent(sender, channel, content, channel.getRecipients(sender).toSet()).callEvent()) {
-					return@launch
+					return@flaunch
 				}
 
 				try {
@@ -318,7 +316,7 @@ class Commands {
 						channel.sendMessage(sender, content)
 					} else {
 						sender.sendError("You must be a Player to chat in this channel.")
-						return@launch
+						return@flaunch
 					}
 				} catch (e: ChatIllegalArgumentException) {
 					sender.sendError(e.message ?: "Illegal argument.")
