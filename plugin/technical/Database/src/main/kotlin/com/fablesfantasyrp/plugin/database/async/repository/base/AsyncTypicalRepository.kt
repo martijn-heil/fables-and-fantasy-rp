@@ -18,9 +18,13 @@ open class AsyncTypicalRepository<K, T: Identifiable<K>, C>(protected var child:
 		where C : AsyncKeyedRepository<K, T>,
 			  C : AsyncMutableRepository<T>,
 			  C : HasDirtyMarker<T> {
+	protected data class LookupResult<T>(val reference: SoftReference<T>?)
+
+	private val EMPTY_LOOKUP_RESULT = LookupResult<T>(null)
+
 	protected val lock: Mutex = Mutex()
 
-	protected val cache = HashMap<K, SoftReference<T>>()
+	protected val cache = HashMap<K, LookupResult<T>>()
 
 	protected val strongCache = HashSet<T>()
 	protected val strongCacheLock: Mutex = Mutex()
@@ -47,14 +51,14 @@ open class AsyncTypicalRepository<K, T: Identifiable<K>, C>(protected var child:
 	}
 
 	suspend fun saveAll() {
-		val all = lock.withLock { cache.mapNotNull { it.value.get() } }
+		val all = lock.withLock { cache.mapNotNull { it.value.reference?.get() } }
 		all.asFlow().onEach { update(it) }
 	}
 
 	override suspend fun create(v: T): T {
 		val result = child.create(v)
 		lock.withLock {
-			cache[result.id] = SoftReference(result)
+			cache[result.id] = LookupResult(SoftReference(result))
 		}
 		return result
 	}
@@ -91,30 +95,27 @@ open class AsyncTypicalRepository<K, T: Identifiable<K>, C>(protected var child:
 
 	override suspend fun all(): Collection<T> = child.allIds().mapNotNull { this.forId(it) }
 	override suspend fun forId(id: K): T? {
-		val fromCache = lock.withLock { cache[id]?.get() }
+		val lookupResult = lock.withLock { cache[id] }
+		val entity = lookupResult?.reference?.get()
 
-		if (fromCache != null) {
-			return fromCache
+		if (entity != null) {
+			return entity
+		} else if (lookupResult == EMPTY_LOOKUP_RESULT) { // Entity was already looked up earlier but doesn't exist
+			return null
 		} else {
-			val obj = child.forId(id) ?: return null
-			lock.withLock {
-				val fromCacheAgain = cache[id]?.get()
-				return if (fromCacheAgain == null) {
-					cache[id] = SoftReference(obj)
-					obj
-				} else {
-					fromCacheAgain
-				}
+			val obj = child.forId(id) ?: run {
+				cache[id] = EMPTY_LOOKUP_RESULT
+				return null
 			}
+			return lock.withLock { deduplicate(obj) }
 		}
 	}
 
-	protected fun deduplicate(entities: Collection<T>): Collection<T> {
-		return entities.map { deduplicate(it) }
-	}
+	protected fun deduplicate(entities: Collection<T>): Collection<T>
+		= entities.map { deduplicate(it) }
 
 	protected fun deduplicate(v: T)
-		= cache.merge(v.id, SoftReference(v)) { a, b -> if (a.get() != null) a else b }!!.get()!!
+		= cache.merge(v.id, LookupResult(SoftReference(v))) { a, b -> if (a.reference?.get() != null) a else b }!!.reference!!.get()!!
 
 	override fun onDestroy(callback: (T) -> Unit) {
 		destroyHandlers.add(callback)
