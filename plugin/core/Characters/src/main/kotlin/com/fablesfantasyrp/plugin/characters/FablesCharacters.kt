@@ -15,7 +15,6 @@ import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
-import com.github.shynixn.mccoroutine.bukkit.SuspendingJavaPlugin
 import com.gitlab.martijn_heil.nincommands.common.CommonModule
 import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
 import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.BukkitModule
@@ -64,7 +63,7 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 		}
 
 		koinModule = module(createdAtStart = true) {
-			single <Plugin> { this@FablesCharacters } binds(arrayOf(JavaPlugin::class, SuspendingJavaPlugin::class))
+			single <Plugin> { this@FablesCharacters } binds(arrayOf(JavaPlugin::class))
 
 			single {
 				val h2CharacterRepository = H2CharacterDataRepository(get(), get())
@@ -73,7 +72,6 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 				characterRepositoryImpl.init()
 				characterRepositoryImpl
 			} bind CharacterRepository::class
-
 
 			singleOf(::CharacterAuthorizerImpl) bind CharacterAuthorizer::class
 			singleOf(::CharacterCardGeneratorImpl) bind CharacterCardGenerator::class
@@ -129,7 +127,7 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 
 		if (server.pluginManager.isPluginEnabled("TAB") && server.pluginManager.isPluginEnabled("Denizen") ) {
 			logger.info("Enabling TAB integration")
-			com.fablesfantasyrp.plugin.characters.nametags.NameTagManager(get(), get(), get()).start()
+			com.fablesfantasyrp.plugin.characters.nametags.NameTagManager(get(), get()).start()
 		}
 
 		if (server.pluginManager.isPluginEnabled("FablesWeb")) {

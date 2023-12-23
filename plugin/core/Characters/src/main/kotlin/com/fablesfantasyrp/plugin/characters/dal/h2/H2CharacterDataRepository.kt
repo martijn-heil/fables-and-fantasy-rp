@@ -11,6 +11,7 @@ import com.fablesfantasyrp.plugin.database.asSequence
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.profile.data.entity.ProfileRepository
 import com.fablesfantasyrp.plugin.time.javatime.FablesLocalDate
+import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import java.sql.Connection
 import java.sql.ResultSet
@@ -133,11 +134,19 @@ class H2CharacterDataRepository(private val dataSource: DataSource,
 		}
 
 	override fun forId(id: Int): CharacterData? {
+		Bukkit.getLogger().info("forId($id), getting connection")
 		return dataSource.connection.use { connection ->
+			Bukkit.getLogger().info("forId($id), got connection")
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE id = ?")
 			stmnt.setInt(1, id)
+			Bukkit.getLogger().info("forId($id), executing query")
 			val result = stmnt.executeQuery()
-			if (!result.next()) return null
+			Bukkit.getLogger().info("forId($id), executed query")
+			if (!result.next()) {
+				Bukkit.getLogger().info("forId($id) got no result")
+				return null
+			}
+			Bukkit.getLogger().info("forId($id), fromrow")
 			fromRow(result)
 		}
 	}

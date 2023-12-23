@@ -4,7 +4,6 @@ import com.fablesfantasyrp.plugin.characters.dal.model.CharacterData
 import com.fablesfantasyrp.plugin.characters.dal.repository.CharacterDataRepository
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.database.async.repository.base.AsyncMappingRepository
-import com.fablesfantasyrp.plugin.database.sync.repository.base.MappingRepository
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
