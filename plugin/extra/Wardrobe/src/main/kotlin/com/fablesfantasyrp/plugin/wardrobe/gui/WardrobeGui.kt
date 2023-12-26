@@ -116,9 +116,9 @@ class WardrobeGui(private val plugin: JavaPlugin,
 					.title("Enter a description")
 					.itemLeft(item)
 					.itemOutput(item)
-					.onComplete { _, s ->
-						deferred.complete(s.trim())
-						AnvilGUI.Response.close()
+					.onClick { _, snapshot ->
+						deferred.complete(snapshot.text.trim())
+						listOf(AnvilGUI.ResponseAction.close())
 					}
 					.onClose {
 						deferred.cancel()

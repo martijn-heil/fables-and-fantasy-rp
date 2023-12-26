@@ -99,10 +99,11 @@ class BankGuiMoney(plugin: JavaPlugin, private val data: ProfileEconomyData)
 				.title(title)
 				.itemLeft(item)
 				.itemOutput(item)
-				.onComplete { _, s ->
-					val amount = s.toUIntOrNull() ?: return@onComplete AnvilGUI.Response.text("Invalid number '$s'")
+				.onClick { _, snapshot ->
+					val amount = snapshot.text.toUIntOrNull() ?:
+						return@onClick listOf(AnvilGUI.ResponseAction.replaceInputText("Invalid number '${snapshot.text}'"))
 					deferred.complete(amount)
-					AnvilGUI.Response.close()
+					listOf(AnvilGUI.ResponseAction.close())
 				}
 				.onClose {
 					deferred.cancel()
