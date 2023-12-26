@@ -77,9 +77,7 @@ class DenizenGlowingManager(private val plugin: Plugin, private val tapi: TabAPI
 		ex(mapOf(
 			Pair("player", PlayerTag.mirrorBukkitPlayer(viewing)),
 			Pair("target", PlayerTag.mirrorBukkitPlayer(glowing))
-		),
-			"adjust <queue> linked_player:<[player]>",
-			"glow <[target]>")
+		), "glow <[target]> true for:<[player]>")
 		server.scheduler.scheduleSyncDelayedTask(plugin) { reloadPlayer(glowing, viewing) }
 	}
 
@@ -87,9 +85,7 @@ class DenizenGlowingManager(private val plugin: Plugin, private val tapi: TabAPI
 		ex(mapOf(
 			Pair("player", PlayerTag.mirrorBukkitPlayer(viewing)),
 			Pair("target", PlayerTag.mirrorBukkitPlayer(glowing))
-		),
-			"adjust <queue> linked_player:<[player]>",
-			"glow <[target]> false")
+		), "glow <[target]> false for:<[player]>")
 		server.scheduler.scheduleSyncDelayedTask(plugin) { reloadPlayer(glowing, viewing) }
 	}
 
@@ -110,7 +106,8 @@ class DenizenGlowingManager(private val plugin: Plugin, private val tapi: TabAPI
 	private fun updatePlayerTeam(player: Player) {
 		val glowColor = getGlowColor(player) ?: defaultGlowColor
 		val tabPlayer = tapi.getPlayer(player.uniqueId) ?: return
-		tapi.teamManager.setPrefix(tabPlayer, glowColor.toString())
+		val nameTagManager = tapi.nameTagManager ?: throw IllegalStateException()
+		nameTagManager.setPrefix(tabPlayer, glowColor.toString())
 	}
 
 	private inner class GlowingListener : Listener {

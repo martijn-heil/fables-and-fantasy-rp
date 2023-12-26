@@ -2,7 +2,7 @@ package com.fablesfantasyrp.plugin.utils
 
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.toBytes
 import net.minecraft.nbt.NbtIo
-import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack
+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack
 import org.bukkit.inventory.ItemStack
 import java.io.Externalizable
 import java.io.IOException

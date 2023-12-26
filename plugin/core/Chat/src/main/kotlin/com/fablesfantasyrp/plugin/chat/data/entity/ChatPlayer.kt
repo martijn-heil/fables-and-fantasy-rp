@@ -12,7 +12,7 @@ import com.fablesfantasyrp.plugin.form.completeWaitForChat
 import com.fablesfantasyrp.plugin.knockout.knockout
 import com.fablesfantasyrp.plugin.text.sendError
 import me.neznamy.tab.api.TabAPI
-import me.neznamy.tab.api.team.UnlimitedNametagManager
+import me.neznamy.tab.api.nametag.UnlimitedNameTagManager
 import net.kyori.adventure.text.format.Style
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -83,14 +83,14 @@ class ChatPlayer : DataEntity<UUID, ChatPlayer>, HasDirtyMarker<ChatPlayer> {
 			if (value == field) return
 			field = value
 			val tabPlayer = TabAPI.getInstance().getPlayer(id) ?: return
-			val teamManager = TabAPI.getInstance().teamManager as? UnlimitedNametagManager ?: return
+			val nameTagManager = TabAPI.getInstance().nameTagManager as? UnlimitedNameTagManager ?: return
 			if (value) {
-				teamManager.setLine(tabPlayer, "belowname", ChatColor.GRAY.toString() + ".")
+				nameTagManager.setLine(tabPlayer, "belowname", ChatColor.GRAY.toString() + ".")
 				this.cycleTypingAnimation()
 			} else {
 				this.lastTypingAnimation = null
 				this.previewChannel = null
-				teamManager.resetLine(tabPlayer, "belowname")
+				nameTagManager.setLine(tabPlayer, "belowname", null)
 			}
 		}
 
@@ -184,8 +184,8 @@ class ChatPlayer : DataEntity<UUID, ChatPlayer>, HasDirtyMarker<ChatPlayer> {
 			else -> "."
 		}
 		val tabPlayer = TabAPI.getInstance().getPlayer(id) ?: return
-		val teamManager = TabAPI.getInstance().teamManager as? UnlimitedNametagManager ?: return
-		teamManager.setLine(tabPlayer, "belowname", ChatColor.WHITE.toString() + animation)
+		val nameTagManager = TabAPI.getInstance().nameTagManager as? UnlimitedNameTagManager ?: return
+		nameTagManager.setLine(tabPlayer, "belowname", ChatColor.WHITE.toString() + animation)
 		this.lastTypingAnimation = animation
 	}
 

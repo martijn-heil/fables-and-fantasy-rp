@@ -2,9 +2,9 @@ package com.fablesfantasyrp.plugin.hacks
 
 import com.mojang.authlib.GameProfile
 import com.mojang.authlib.properties.Property
-import net.minecraft.network.protocol.game.ClientboundAddPlayerPacket
+//import net.minecraft.network.protocol.game.ClientboundAddPlayerPacket
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer
+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -14,6 +14,7 @@ import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.player.PlayerShowEntityEvent
 import org.bukkit.plugin.Plugin
 
+@Deprecated("Needs to be updated for 1.20.*")
 class FlippedPlayerManager(private val plugin: Plugin) : Listener {
 	private val server = plugin.server
 	private val flippedPlayers = HashSet<Player>()
@@ -95,7 +96,7 @@ class FlippedPlayerManager(private val plugin: Plugin) : Listener {
 		check (player is CraftPlayer)
 		reloadingPlayers.add(player)
 		observer.handle.connection.send(ClientboundRemoveEntitiesPacket(player.getEntityId()))
-		observer.handle.connection.send(ClientboundAddPlayerPacket(player.handle))
+		//observer.handle.connection.send(ClientboundAddPlayerPacket(player.handle))
 		observer.hidePlayer(plugin, player)
 		observer.showPlayer(plugin, player)
 		reloadingPlayers.remove(player)

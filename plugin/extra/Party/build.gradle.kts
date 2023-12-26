@@ -9,5 +9,4 @@ dependencies {
     implementation(project(":plugin:technical:Glowing"))
     implementation(project(":plugin:core:Characters"))
     implementation(project(":plugin:extra:Targeting"))
-    implementation("me.neznamy:tab-api:3.2.1")
 }

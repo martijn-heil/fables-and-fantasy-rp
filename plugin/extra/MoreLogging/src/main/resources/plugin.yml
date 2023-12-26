@@ -6,7 +6,6 @@ depend:
   - FablesUtils
   - FablesDenizenInterop
   - FablesText
-  - dDiscordBot
 softdepend:
   - SuperVanish
 main: com.fablesfantasyrp.plugin.morelogging.FablesMoreLogging

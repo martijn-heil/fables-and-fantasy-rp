@@ -4,7 +4,7 @@ import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterReposito
 import org.bukkit.event.Listener
 
 class HackyListener(private val characters: CharacterRepository,
-					private val flippedPlayerManager: FlippedPlayerManager) : Listener {
+					/*private val flippedPlayerManager: FlippedPlayerManager*/) : Listener {
 	/*@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	fun onPlayerProfileChange(e: PrePlayerSwitchProfileEvent) {
 		if (e.player.uniqueId != NINJOH_UUID) return

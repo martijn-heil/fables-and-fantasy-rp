@@ -34,7 +34,7 @@ import org.koin.dsl.binds
 import org.koin.dsl.module
 
 internal val SYSPREFIX = GLOBAL_SYSPREFIX
-val CHAT_CHAR = "$"
+const val CHAT_CHAR = "$"
 
 class FablesChat : JavaPlugin(), KoinComponent {
 	private lateinit var commands: Collection<Command>
@@ -53,12 +53,12 @@ class FablesChat : JavaPlugin(), KoinComponent {
 
 		koinModule = module(createdAtStart = true) {
 			single <Plugin> { this@FablesChat } binds(arrayOf(JavaPlugin::class))
-			singleOf(::ChatPreviewManager)
+			//singleOf(::ChatPreviewManager) Chat preview was removed from the game in 1.20 :(((
 			singleOf(::ChatReceptionIndicatorManager)
 			singleOf(::ChatListener)
 			single { Commands.CommandChatParty(get(), get(), get(), get()) }
 			single {
-				val tmp = EntityChatPlayerRepositoryImpl(get(), H2ChatPlayerRepository(server, fablesDatabase))
+				val tmp = EntityChatPlayerRepositoryImpl(this@FablesChat, H2ChatPlayerRepository(server, fablesDatabase))
 				tmp.init()
 				tmp
 			} binds(arrayOf(ChatPlayerRepository::class, EntityChatPlayerRepository::class))
@@ -67,7 +67,7 @@ class FablesChat : JavaPlugin(), KoinComponent {
 		loadKoinModules(koinModule)
 
 		get<ChatReceptionIndicatorManager>().start()
-		get<ChatPreviewManager>().start()
+		//get<ChatPreviewManager>().start() Chat preview was removed from the game in 1.20 :(((
 
 		val injector = Intake.createInjector()
 		injector.install(PrimitivesModule())

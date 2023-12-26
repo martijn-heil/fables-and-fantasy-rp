@@ -5,5 +5,7 @@ depend:
   - FablesKotlinRuntime
   - FablesUtils
   - FablesProfile
+softdepend:
+  - Multiverse-Core
 main: com.fablesfantasyrp.plugin.location.FablesLocation
 api-version: @bukkit_api_version@

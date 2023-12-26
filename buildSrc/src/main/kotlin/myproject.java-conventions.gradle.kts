@@ -2,7 +2,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.net.URI
 
 
 plugins {
@@ -59,19 +58,20 @@ tasks {
 // Projects should use Maven Central for external dependencies
 // This could be the organization's private repository
 repositories {
-	maven { url = URI("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") }
-	maven { url = URI("https://repo.extendedclip.com/content/repositories/placeholderapi") }
-	maven { url = URI("https://ci.citizensnpcs.co/job/Denizen/1765/maven-repository/repository/") }
-	maven { url = URI("https://repo.kryptonmc.org/releases") }
-	maven { url = URI("https://repo.dmulloy2.net/repository/public/") }
-	maven { url = URI("https://repo.codemc.io/repository/maven-public/") }
-	maven { url = URI("https://maven.enginehub.org/repo/")}
-	maven { url = URI("https://oss.sonatype.org/content/repositories/snapshots/") }
-	maven { url = URI("https://repo.codemc.org/repository/maven-releases/") }
+	maven("https://repo.papermc.io/repository/maven-public/")
+	maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
+	maven("https://repo.extendedclip.com/content/repositories/placeholderapi")
+	maven("https://ci.citizensnpcs.co/job/Denizen/1765/maven-repository/repository/")
+	maven("https://repo.kryptonmc.org/releases")
+	maven("https://repo.dmulloy2.net/repository/public/")
+	maven("https://repo.codemc.io/repository/maven-public/")
+	maven("https://maven.enginehub.org/repo/")
+	maven("https://oss.sonatype.org/content/repositories/snapshots/")
+	maven("https://repo.codemc.org/repository/maven-releases/")
 	mavenLocal()
 	mavenCentral()
-	maven { url = URI("https://jitpack.io") }
-	maven { url = URI("https://repo.minebench.de/") }
+	maven("https://jitpack.io")
+	maven("https://repo.minebench.de/")
 }
 
 idea {
@@ -91,7 +91,7 @@ tasks.test {
 }
 
 dependencies {
-	paperweight.paperDevBundle("1.19.2-R0.1-SNAPSHOT")
+	paperweight.paperDevBundle("1.20.2-R0.1-SNAPSHOT")
 	implementation("com.github.MilkBowl:VaultAPI:1.7") {
 		exclude(group = "org.bukkit")
 		exclude(group = "org.spigotmc")
@@ -104,7 +104,7 @@ dependencies {
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.8.0-RC2")
 	implementation("org.ocpsoft.prettytime:prettytime:5.0.6.Final")
 	implementation("com.google.guava:guava:31.1-jre")
-	implementation("io.insert-koin:koin-core:3.3.2")
+	implementation("io.insert-koin:koin-core:3.3.3")
 	implementation("com.gitlab.martijn-heil:NinCommands:master-SNAPSHOT") { isChanging = true }
 	implementation(fileTree("${project.rootDir}/lib") { include("*.jar") })
 
