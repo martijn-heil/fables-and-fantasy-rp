@@ -8,7 +8,7 @@ import com.github.shynixn.mccoroutine.bukkit.scope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
-import org.bukkit.craftbukkit.v1_19_R1.CraftServer
+import org.bukkit.craftbukkit.v1_20_R2.CraftServer
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
 import kotlin.time.Duration.Companion.milliseconds
@@ -49,7 +49,7 @@ class WhitelistMonitor(private val plugin: JavaPlugin) {
 	}
 
 	private fun getWhitelist(): Deferred<Set<UUID>> {
-		val whitelist = (server as CraftServer).handle.whiteList.values
+		val whitelist = (server as CraftServer).handle.whiteList.entries
 		return plugin.scope.async { whitelist.asSequence().mapNotNull { it.user?.id }.toHashSet() }
 	}
 }

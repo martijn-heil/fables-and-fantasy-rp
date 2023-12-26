@@ -3,8 +3,8 @@ package com.fablesfantasyrp.plugin.utils.extensions.bukkit
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket
 import net.minecraft.world.entity.item.ItemEntity
 import org.bukkit.Bukkit
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer
-import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack
+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer
+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack
 import org.bukkit.entity.Item
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerDropItemEvent
@@ -19,7 +19,7 @@ fun Player.showEndCredits() {
 fun Player.tryFakeDrop(itemStack: ItemStack): Boolean {
 	val p = (this as CraftPlayer).handle
 	val d0: Double = p.eyeY - 0.30000001192092896
-	val entityItem = ItemEntity(p.level, p.x, d0, p.z, (itemStack as CraftItemStack).handle)
+	val entityItem = ItemEntity(p.level(), p.x, d0, p.z, (itemStack as CraftItemStack).handle)
 
 	val drop = entityItem.bukkitEntity as Item
 	val event = PlayerDropItemEvent(this, drop)

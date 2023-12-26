@@ -9,6 +9,8 @@ import org.bukkit.event.Listener
 class ProfileLocationListener(private val profileLocationRepository: EntityProfileLocationRepository<*>) : Listener {
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	fun onPlayerSwitchProfile(e: PlayerSwitchProfileEvent) {
+		if (!e.player.isOnline) return
+
 		val old = e.old
 		val new = e.new
 		val transaction = e.transaction
