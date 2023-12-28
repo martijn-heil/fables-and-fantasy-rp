@@ -2,10 +2,10 @@ package com.fablesfantasyrp.plugin.targeting
 
 import com.fablesfantasyrp.plugin.characters.command.provider.AllowCharacterName
 import com.fablesfantasyrp.plugin.targeting.data.SimpleTargetingPlayerDataRepository
-import com.gitlab.martijn_heil.nincommands.common.Sender
-import com.sk89q.intake.Command
-import com.sk89q.intake.Require
-import com.sk89q.intake.parametric.annotation.Switch
+import com.fablesfantasyrp.caturix.spigot.common.Sender
+import com.fablesfantasyrp.caturix.Command
+import com.fablesfantasyrp.caturix.Require
+import com.fablesfantasyrp.caturix.parametric.annotation.Switch
 import org.bukkit.entity.Player
 
 class Commands {

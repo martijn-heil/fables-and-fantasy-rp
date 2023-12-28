@@ -7,6 +7,6 @@ depend:
   - FablesCharacters
   - FablesText
   - FablesChat
-  - NinCommands
+  - Caturix
 main: com.fablesfantasyrp.plugin.distances.FablesDistances
 api-version: @bukkit_api_version@

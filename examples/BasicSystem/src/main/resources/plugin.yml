@@ -5,6 +5,6 @@ depend:
   - FablesKotlinRuntime
   - FablesUtils
   - FablesDatabase
-  - NinCommands
+  - Caturix
 main: com.fablesfantasyrp.plugin.basicsystem.FablesBasicSystem
 api-version: @bukkit_api_version@

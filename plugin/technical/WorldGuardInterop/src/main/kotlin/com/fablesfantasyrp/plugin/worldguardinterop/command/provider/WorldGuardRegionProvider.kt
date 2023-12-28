@@ -1,16 +1,16 @@
 package com.fablesfantasyrp.plugin.worldguardinterop.command.provider
 
 import com.fablesfantasyrp.plugin.worldguardinterop.WorldGuardRegion
-import com.sk89q.intake.argument.ArgumentParseException
-import com.sk89q.intake.argument.CommandArgs
-import com.sk89q.intake.argument.Namespace
-import com.sk89q.intake.parametric.Provider
+import com.fablesfantasyrp.caturix.argument.ArgumentParseException
+import com.fablesfantasyrp.caturix.argument.CommandArgs
+import com.fablesfantasyrp.caturix.argument.Namespace
+import com.fablesfantasyrp.caturix.parametric.Provider
 import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldguard.protection.regions.RegionContainer
 import org.bukkit.Server
 
 class WorldGuardRegionProvider(private val server: Server, private val regionContainer: RegionContainer) : Provider<WorldGuardRegion> {
-	override fun isProvided(): Boolean = false
+	override val isProvided = false
 
 	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): WorldGuardRegion {
 		val descriptor = arguments.next().split(",")

@@ -16,7 +16,7 @@ depend:
   - FablesDenizenInterop
   - FablesProfile
   - FablesLocation
-  - NinCommands
+  - Caturix
 softdepend:
   - FablesWeb
 main: com.fablesfantasyrp.plugin.magic.FablesMagic

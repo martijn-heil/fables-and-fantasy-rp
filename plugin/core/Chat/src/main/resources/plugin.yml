@@ -11,7 +11,7 @@ depend:
   - FablesCharacters
   - FablesDenizenInterop
   - FablesParty
-  - NinCommands
+  - Caturix
   - TAB
   - ProtocolLib
   - Vault

@@ -8,13 +8,13 @@ import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
-import com.gitlab.martijn_heil.nincommands.common.Sender
-import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.OfflinePlayerProvider
-import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.PlayerProvider
-import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.sender.BukkitSenderProvider
-import com.sk89q.intake.parametric.AbstractModule
-import com.sk89q.intake.parametric.Provider
-import com.sk89q.intake.parametric.provider.EnumProvider
+import com.fablesfantasyrp.caturix.spigot.common.Sender
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.OfflinePlayerProvider
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.PlayerProvider
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.sender.BukkitSenderProvider
+import com.fablesfantasyrp.caturix.parametric.AbstractModule
+import com.fablesfantasyrp.caturix.parametric.Provider
+import com.fablesfantasyrp.caturix.parametric.provider.EnumProvider
 import org.bukkit.Server
 import org.bukkit.entity.Player
 

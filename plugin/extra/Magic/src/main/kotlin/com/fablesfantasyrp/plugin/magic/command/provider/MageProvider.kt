@@ -5,15 +5,15 @@ import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterReposito
 import com.fablesfantasyrp.plugin.magic.domain.entity.Mage
 import com.fablesfantasyrp.plugin.magic.domain.repository.MageRepository
 import com.fablesfantasyrp.plugin.utils.quoteCommandArgument
-import com.sk89q.intake.argument.ArgumentParseException
-import com.sk89q.intake.argument.CommandArgs
-import com.sk89q.intake.argument.Namespace
-import com.sk89q.intake.parametric.Provider
+import com.fablesfantasyrp.caturix.argument.ArgumentParseException
+import com.fablesfantasyrp.caturix.argument.CommandArgs
+import com.fablesfantasyrp.caturix.argument.Namespace
+import com.fablesfantasyrp.caturix.parametric.Provider
 
 class MageProvider(private val characterProvider: Provider<Character>,
 				   private val characters: CharacterRepository,
 				   private val mages: MageRepository) : Provider<Mage> {
-	override fun isProvided(): Boolean = false
+	override val isProvided: Boolean = false
 
 	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): Mage {
 		val character = characterProvider.get(arguments, modifiers)!!

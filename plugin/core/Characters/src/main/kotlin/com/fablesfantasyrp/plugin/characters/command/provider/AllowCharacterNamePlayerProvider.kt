@@ -3,10 +3,10 @@ package com.fablesfantasyrp.plugin.characters.command.provider
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.utils.quoteCommandArgument
-import com.sk89q.intake.argument.ArgumentParseException
-import com.sk89q.intake.argument.CommandArgs
-import com.sk89q.intake.argument.Namespace
-import com.sk89q.intake.parametric.Provider
+import com.fablesfantasyrp.caturix.argument.ArgumentParseException
+import com.fablesfantasyrp.caturix.argument.CommandArgs
+import com.fablesfantasyrp.caturix.argument.Namespace
+import com.fablesfantasyrp.caturix.parametric.Provider
 import org.bukkit.Server
 import org.bukkit.entity.Player
 
@@ -15,7 +15,7 @@ class AllowCharacterNamePlayerProvider(private val server: Server,
 									   private val profileManager: ProfileManager,
 									   private val characters: CharacterRepository) : Provider<Player> {
 
-	override fun isProvided(): Boolean = false
+	override val isProvided: Boolean = false
 
 	private fun getByPlayerCharacter(arguments: CommandArgs, modifiers: List<Annotation>): Player? {
 		val character = characters.forName(arguments.peek()) ?: return null

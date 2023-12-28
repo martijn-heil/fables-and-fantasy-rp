@@ -3,9 +3,9 @@ package com.fablesfantasyrp.plugin.basicsystem
 import com.fablesfantasyrp.plugin.basicsystem.data.entity.EntityBasicSystemPlayerRepository
 import com.fablesfantasyrp.plugin.basicsystem.data.entity.EntitySlidingDoorRepository
 import com.fablesfantasyrp.plugin.text.sendError
-import com.gitlab.martijn_heil.nincommands.common.Sender
-import com.sk89q.intake.Command
-import com.sk89q.intake.Require
+import com.fablesfantasyrp.caturix.spigot.common.Sender
+import com.fablesfantasyrp.caturix.Command
+import com.fablesfantasyrp.caturix.Require
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 

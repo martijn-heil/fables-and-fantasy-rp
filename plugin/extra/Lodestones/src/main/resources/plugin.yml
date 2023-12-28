@@ -8,6 +8,6 @@ depend:
   - FablesForm
   - FablesTimers
   - FablesCharacters
-  - NinCommands
+  - Caturix
 main: com.fablesfantasyrp.plugin.lodestones.FablesLodestones
 api-version: @bukkit_api_version@

@@ -4,25 +4,27 @@ import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterReposito
 import com.fablesfantasyrp.plugin.magic.authorizer.MagicTypeAuthorizer
 import com.fablesfantasyrp.plugin.magic.dal.enums.MagicType
 import com.fablesfantasyrp.plugin.profile.ProfileManager
-import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.sender.BukkitSenderProvider
-import com.sk89q.intake.argument.ArgumentParseException
-import com.sk89q.intake.argument.CommandArgs
-import com.sk89q.intake.argument.Namespace
-import com.sk89q.intake.parametric.provider.EnumProvider
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.sender.BukkitSenderProvider
+import com.fablesfantasyrp.caturix.argument.ArgumentParseException
+import com.fablesfantasyrp.caturix.argument.CommandArgs
+import com.fablesfantasyrp.caturix.argument.Namespace
+import com.fablesfantasyrp.caturix.parametric.Provider
+import com.fablesfantasyrp.caturix.parametric.provider.EnumProvider
 import org.bukkit.entity.Player
 
 class OwnMagicTypeProvider(private val profileManager: ProfileManager,
 						   private val characters: CharacterRepository,
-						   private val magicTypeAuthorizer: MagicTypeAuthorizer) : EnumProvider<MagicType>(MagicType::class.java) {
+						   private val enumProvider: EnumProvider<MagicType>,
+						   private val magicTypeAuthorizer: MagicTypeAuthorizer) : Provider<MagicType> {
 
-	override fun isProvided(): Boolean = false
+	override val isProvided: Boolean = false
 
 	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): MagicType {
 		val sender = BukkitSenderProvider(Player::class.java).get(arguments, modifiers)!!
 		val character = profileManager.getCurrentForPlayer(sender)?.let { characters.forProfile(it) }
 				?: throw ArgumentParseException("You are not currently in character.")
 
-		val magicType = super.get(arguments, modifiers)!!
+		val magicType = enumProvider.get(arguments, modifiers)
 
 		if (!magicTypeAuthorizer.getMagicTypes(character).contains(magicType))
 			throw ArgumentParseException("You don't have access to this element.")

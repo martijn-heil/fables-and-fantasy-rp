@@ -4,12 +4,12 @@ import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.command.annotation.AllowPlayerName
 import com.fablesfantasyrp.plugin.profile.data.entity.EntityProfileRepository
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
-import com.gitlab.martijn_heil.nincommands.common.CommandTarget
-import com.sk89q.intake.argument.ArgumentParseException
-import com.sk89q.intake.argument.CommandArgs
-import com.sk89q.intake.argument.Namespace
-import com.sk89q.intake.parametric.Provider
-import com.sk89q.intake.parametric.ProvisionException
+import com.fablesfantasyrp.caturix.spigot.common.CommandTarget
+import com.fablesfantasyrp.caturix.argument.ArgumentParseException
+import com.fablesfantasyrp.caturix.argument.CommandArgs
+import com.fablesfantasyrp.caturix.argument.Namespace
+import com.fablesfantasyrp.caturix.parametric.Provider
+import com.fablesfantasyrp.caturix.parametric.ProvisionException
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -19,9 +19,9 @@ class ProfileProvider(private val profiles: EntityProfileRepository,
 					  private val profileManager: ProfileManager,
 					  private val playerProvider: Provider<Player>,
 					  private val server: Server) : Provider<Profile> {
-	override fun isProvided(): Boolean = false
+	override val isProvided: Boolean = false
 
-	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): Profile? {
+	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): Profile {
 		val sender = arguments.namespace.get("sender") as CommandSender
 		val targetAnnotation = modifiers.find { it is CommandTarget } as? CommandTarget
 		val allowPlayerName = modifiers.any { it is AllowPlayerName }
@@ -51,8 +51,8 @@ class ProfileProvider(private val profiles: EntityProfileRepository,
 		} else {
 			// Generate MissingArgumentException
 			arguments.next()
+			throw IllegalStateException()
 		}
-		return null
 	}
 
 	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {

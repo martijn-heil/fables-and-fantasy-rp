@@ -5,7 +5,7 @@ depend:
   - FablesKotlinRuntime
   - FablesUtils
   - FablesCharacters
-  - NinCommands
+  - Caturix
 main: com.fablesfantasyrp.plugin.halt.FablesHalt
 api-version: @bukkit_api_version@
 permissions:

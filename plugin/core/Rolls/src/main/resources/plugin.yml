@@ -9,6 +9,6 @@ depend:
   - FablesLocation
   - FablesText
   - FablesChat
-  - NinCommands
+  - Caturix
 main: com.fablesfantasyrp.plugin.rolls.FablesRolls
 api-version: @bukkit_api_version@

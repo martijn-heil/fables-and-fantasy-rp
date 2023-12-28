@@ -13,20 +13,20 @@ import com.fablesfantasyrp.plugin.profile.web.WebHook
 import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.fablesfantasyrp.plugin.utils.Services
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
-import com.gitlab.martijn_heil.nincommands.common.CommonModule
-import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
-import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.BukkitModule
-import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.OfflinePlayerProvider
-import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.PlayerProvider
-import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.sender.BukkitSenderModule
-import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.sender.BukkitSenderProvider
-import com.gitlab.martijn_heil.nincommands.common.bukkit.registerCommand
-import com.gitlab.martijn_heil.nincommands.common.bukkit.unregisterCommand
-import com.sk89q.intake.Intake
-import com.sk89q.intake.fluent.CommandGraph
-import com.sk89q.intake.parametric.ParametricBuilder
-import com.sk89q.intake.parametric.Provider
-import com.sk89q.intake.parametric.provider.PrimitivesModule
+import com.fablesfantasyrp.caturix.spigot.common.CommonModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.BukkitAuthorizer
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.BukkitModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.OfflinePlayerProvider
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.PlayerProvider
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.sender.BukkitSenderModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.sender.BukkitSenderProvider
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.registerCommand
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.unregisterCommand
+import com.fablesfantasyrp.caturix.Caturix
+import com.fablesfantasyrp.caturix.fluent.CommandGraph
+import com.fablesfantasyrp.caturix.parametric.ParametricBuilder
+import com.fablesfantasyrp.caturix.parametric.Provider
+import com.fablesfantasyrp.caturix.parametric.provider.PrimitivesModule
 import org.bukkit.Server
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
@@ -108,7 +108,7 @@ class FablesProfile : JavaPlugin(), KoinComponent {
 
 		Services.register(ProfilePrompter::class, get(), this, ServicePriority.Low)
 
-		val injector = Intake.createInjector()
+		val injector = Caturix.createInjector()
 		injector.install(PrimitivesModule())
 		injector.install(BukkitModule(server))
 		injector.install(BukkitSenderModule())

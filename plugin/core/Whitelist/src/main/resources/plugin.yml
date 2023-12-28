@@ -8,6 +8,6 @@ depend:
   - FablesUtilsOffline
   - FablesChat
   - SuperVanish
-  - NinCommands
+  - Caturix
 main: com.fablesfantasyrp.plugin.whitelist.FablesWhitelist
 api-version: @bukkit_api_version@

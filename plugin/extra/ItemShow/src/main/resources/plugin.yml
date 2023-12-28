@@ -6,6 +6,6 @@ depend:
   - FablesUtils
   - FablesText
   - FablesCharacters
-  - NinCommands
+  - Caturix
 main: com.fablesfantasyrp.plugin.itemshow.FablesItemShow
 api-version: @bukkit_api_version@

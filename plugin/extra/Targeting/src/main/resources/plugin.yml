@@ -5,7 +5,7 @@ depend:
   - FablesKotlinRuntime
   - FablesGlowing
   - FablesUtils
-  - NinCommands
+  - Caturix
 softdepend:
   - FablesMoreLogging
 main: com.fablesfantasyrp.plugin.targeting.FablesTargeting

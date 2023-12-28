@@ -4,7 +4,7 @@ import com.fablesfantasyrp.plugin.lodestones.domain.entity.Lodestone
 import com.fablesfantasyrp.plugin.lodestones.domain.entity.LodestoneBanner
 import com.fablesfantasyrp.plugin.lodestones.domain.repository.LodestoneBannerRepository
 import com.fablesfantasyrp.plugin.lodestones.domain.repository.LodestoneRepository
-import com.sk89q.intake.parametric.AbstractModule
+import com.fablesfantasyrp.caturix.parametric.AbstractModule
 
 class LodestoneModule(private val lodestones: LodestoneRepository,
 					  private val banners: LodestoneBannerRepository) : AbstractModule() {

@@ -6,8 +6,8 @@ import com.fablesfantasyrp.plugin.party.PartySpectatorManager
 import com.fablesfantasyrp.plugin.party.data.PartyRepository
 import com.fablesfantasyrp.plugin.party.data.entity.Party
 import com.fablesfantasyrp.plugin.profile.ProfileManager
-import com.sk89q.intake.parametric.AbstractModule
-import com.sk89q.intake.parametric.provider.EnumProvider
+import com.fablesfantasyrp.caturix.parametric.AbstractModule
+import com.fablesfantasyrp.caturix.parametric.provider.EnumProvider
 
 class PartyModule(private val parties: PartyRepository,
 				  private val characters: CharacterRepository,

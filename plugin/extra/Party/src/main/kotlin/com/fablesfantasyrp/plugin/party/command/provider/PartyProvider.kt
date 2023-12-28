@@ -6,12 +6,12 @@ import com.fablesfantasyrp.plugin.party.data.PartyRepository
 import com.fablesfantasyrp.plugin.party.data.entity.Party
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.utils.quoteCommandArgument
-import com.gitlab.martijn_heil.nincommands.common.CommandTarget
-import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.sender.BukkitSenderProvider
-import com.sk89q.intake.argument.ArgumentParseException
-import com.sk89q.intake.argument.CommandArgs
-import com.sk89q.intake.argument.Namespace
-import com.sk89q.intake.parametric.Provider
+import com.fablesfantasyrp.caturix.spigot.common.CommandTarget
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.sender.BukkitSenderProvider
+import com.fablesfantasyrp.caturix.argument.ArgumentParseException
+import com.fablesfantasyrp.caturix.argument.CommandArgs
+import com.fablesfantasyrp.caturix.argument.Namespace
+import com.fablesfantasyrp.caturix.parametric.Provider
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -19,7 +19,7 @@ class PartyProvider(private val parties: PartyRepository,
 					private val characters: CharacterRepository,
 					private val profileManager: ProfileManager,
 					private val spectatorManager: PartySpectatorManager) : Provider<Party> {
-	override fun isProvided(): Boolean = false
+	override val isProvided: Boolean = false
 
 	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): Party {
 		val isCommandTarget = modifiers.any{ it is CommandTarget }

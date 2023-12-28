@@ -55,6 +55,10 @@ tasks {
 	}
 }
 
+configurations.all {
+	resolutionStrategy.cacheChangingModulesFor(0, "seconds")
+}
+
 // Projects should use Maven Central for external dependencies
 // This could be the organization's private repository
 repositories {
@@ -105,7 +109,7 @@ dependencies {
 	implementation("org.ocpsoft.prettytime:prettytime:5.0.6.Final")
 	implementation("com.google.guava:guava:31.1-jre")
 	implementation("io.insert-koin:koin-core:3.3.3")
-	implementation("com.gitlab.martijn-heil:NinCommands:master-SNAPSHOT") { isChanging = true }
+	implementation("com.github.fablesfantasyrp:caturix-spigot:b0eb57ec41")
 	implementation(fileTree("${project.rootDir}/lib") { include("*.jar") })
 
 	testImplementation(kotlin("test"))

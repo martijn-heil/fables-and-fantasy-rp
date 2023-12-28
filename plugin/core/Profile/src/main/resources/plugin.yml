@@ -9,7 +9,7 @@ depend:
   - FablesText
   - FablesForm
   - FablesGui
-  - NinCommands
+  - Caturix
 softdepend:
   - FablesWeb
 main: com.fablesfantasyrp.plugin.profile.FablesProfile

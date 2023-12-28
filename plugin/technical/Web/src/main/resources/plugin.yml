@@ -5,6 +5,6 @@ depend:
   - FablesKotlinRuntime
   - FablesUtils
   - FablesText
-  - NinCommands
+  - Caturix
 main: com.fablesfantasyrp.plugin.web.FablesWeb
 api-version: @bukkit_api_version@

@@ -2,7 +2,7 @@ package com.fablesfantasyrp.plugin.chat.command.provider
 
 import com.fablesfantasyrp.plugin.chat.channel.ChatChannel
 import com.fablesfantasyrp.plugin.chat.channel.ToggleableChatChannel
-import com.sk89q.intake.parametric.AbstractModule
+import com.fablesfantasyrp.caturix.parametric.AbstractModule
 import org.bukkit.Server
 
 class ChatModule(private val server: Server) : AbstractModule() {

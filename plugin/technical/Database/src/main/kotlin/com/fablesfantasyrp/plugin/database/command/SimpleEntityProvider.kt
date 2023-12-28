@@ -2,15 +2,15 @@ package com.fablesfantasyrp.plugin.database.command
 
 import com.fablesfantasyrp.plugin.database.repository.Identifiable
 import com.fablesfantasyrp.plugin.database.repository.KeyedRepository
-import com.sk89q.intake.argument.ArgumentParseException
-import com.sk89q.intake.argument.CommandArgs
-import com.sk89q.intake.argument.Namespace
-import com.sk89q.intake.parametric.Provider
+import com.fablesfantasyrp.caturix.argument.ArgumentParseException
+import com.fablesfantasyrp.caturix.argument.CommandArgs
+import com.fablesfantasyrp.caturix.argument.Namespace
+import com.fablesfantasyrp.caturix.parametric.Provider
 
 abstract class SimpleEntityProvider<T, R>(private val repository: R) : Provider<T>
 	where T : Identifiable<Int>,
 		  R: KeyedRepository<Int, T> {
-	override fun isProvided(): Boolean = false
+	override val isProvided: Boolean = false
 	abstract val entityName: String
 
 	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): T {

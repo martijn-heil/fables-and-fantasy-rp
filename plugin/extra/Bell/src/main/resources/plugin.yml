@@ -8,6 +8,6 @@ depend:
   - FablesForm
   - FablesChat
   - FablesDiscord
-  - NinCommands
+  - Caturix
 main: com.fablesfantasyrp.plugin.bell.FablesBell
 api-version: @bukkit_api_version@

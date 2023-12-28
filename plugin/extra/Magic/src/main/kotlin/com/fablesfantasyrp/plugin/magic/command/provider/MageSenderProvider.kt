@@ -4,17 +4,17 @@ import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterReposito
 import com.fablesfantasyrp.plugin.magic.domain.entity.Mage
 import com.fablesfantasyrp.plugin.magic.domain.repository.MageRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
-import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.sender.BukkitSenderProvider
-import com.sk89q.intake.argument.ArgumentParseException
-import com.sk89q.intake.argument.CommandArgs
-import com.sk89q.intake.argument.Namespace
-import com.sk89q.intake.parametric.Provider
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.sender.BukkitSenderProvider
+import com.fablesfantasyrp.caturix.argument.ArgumentParseException
+import com.fablesfantasyrp.caturix.argument.CommandArgs
+import com.fablesfantasyrp.caturix.argument.Namespace
+import com.fablesfantasyrp.caturix.parametric.Provider
 import org.bukkit.entity.Player
 
 class MageSenderProvider(private val profileManager: ProfileManager,
 						 private val characters: CharacterRepository,
 						 private val mages: MageRepository) : Provider<Mage> {
-	override fun isProvided(): Boolean = true
+	override val isProvided: Boolean = true
 
 	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): Mage {
 		val player = BukkitSenderProvider(Player::class.java).get(arguments, modifiers)!!

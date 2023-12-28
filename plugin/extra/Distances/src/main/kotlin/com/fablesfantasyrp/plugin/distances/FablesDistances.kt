@@ -3,17 +3,17 @@ package com.fablesfantasyrp.plugin.distances
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
 import com.fablesfantasyrp.plugin.distances.command.Commands
 import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
-import com.gitlab.martijn_heil.nincommands.common.CommonModule
-import com.gitlab.martijn_heil.nincommands.common.FixedSuggestionsModule
-import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
-import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.BukkitModule
-import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.sender.BukkitSenderModule
-import com.gitlab.martijn_heil.nincommands.common.bukkit.registerCommand
-import com.gitlab.martijn_heil.nincommands.common.bukkit.unregisterCommand
-import com.sk89q.intake.Intake
-import com.sk89q.intake.fluent.CommandGraph
-import com.sk89q.intake.parametric.ParametricBuilder
-import com.sk89q.intake.parametric.provider.PrimitivesModule
+import com.fablesfantasyrp.caturix.spigot.common.CommonModule
+import com.fablesfantasyrp.caturix.spigot.common.FixedSuggestionsModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.BukkitAuthorizer
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.BukkitModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.sender.BukkitSenderModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.registerCommand
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.unregisterCommand
+import com.fablesfantasyrp.caturix.Caturix
+import com.fablesfantasyrp.caturix.fluent.CommandGraph
+import com.fablesfantasyrp.caturix.parametric.ParametricBuilder
+import com.fablesfantasyrp.caturix.parametric.provider.PrimitivesModule
 import org.bukkit.command.Command
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.component.KoinComponent
@@ -27,7 +27,7 @@ class FablesDistances : JavaPlugin(), KoinComponent {
 	override fun onEnable() {
 		instance = this
 
-		val injector = Intake.createInjector()
+		val injector = Caturix.createInjector()
 		injector.install(PrimitivesModule())
 		injector.install(BukkitModule(server))
 		injector.install(BukkitSenderModule())
@@ -42,7 +42,7 @@ class FablesDistances : JavaPlugin(), KoinComponent {
 				.builder(builder)
 				.commands()
 				.registerMethods(Commands(this))
-				.graph()
+				.graph
 				.dispatcher
 
 		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }

@@ -1,17 +1,17 @@
 package com.fablesfantasyrp.plugin.tools.command.provider
 
-import com.sk89q.intake.argument.ArgumentException
-import com.sk89q.intake.argument.ArgumentParseException
-import com.sk89q.intake.argument.CommandArgs
-import com.sk89q.intake.argument.Namespace
-import com.sk89q.intake.parametric.Provider
-import com.sk89q.intake.parametric.ProvisionException
+import com.fablesfantasyrp.caturix.argument.ArgumentException
+import com.fablesfantasyrp.caturix.argument.ArgumentParseException
+import com.fablesfantasyrp.caturix.argument.CommandArgs
+import com.fablesfantasyrp.caturix.argument.Namespace
+import com.fablesfantasyrp.caturix.parametric.Provider
+import com.fablesfantasyrp.caturix.parametric.ProvisionException
 import org.bukkit.Location
 import org.bukkit.Server
 
 
 class LocationProvider(private val server: Server) : Provider<Location> {
-	override fun isProvided() = false
+	override val isProvided = false
 
 	@Throws(ArgumentException::class, ProvisionException::class)
 	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): Location {

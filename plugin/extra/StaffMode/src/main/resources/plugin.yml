@@ -5,7 +5,7 @@ depend:
   - FablesKotlinRuntime
   - FablesText
   - FablesUtils
-  - NinCommands
+  - Caturix
   - PlaceholderAPI
 softdepend:
   - FablesMoreLogging
