@@ -24,6 +24,7 @@ import com.fablesfantasyrp.caturix.Caturix
 import com.fablesfantasyrp.caturix.fluent.CommandGraph
 import com.fablesfantasyrp.caturix.parametric.ParametricBuilder
 import com.fablesfantasyrp.caturix.parametric.provider.PrimitivesModule
+import com.github.shynixn.mccoroutine.bukkit.launch
 import org.bukkit.command.Command
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
@@ -122,7 +123,9 @@ class FablesLodestones : JavaPlugin(), KoinComponent {
 		rootDispatcherNode.group("lodebanner").registerMethods(get<LodestoneBannerCommand>())
 		val dispatcher = rootDispatcherNode.dispatcher
 
-		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
+		commands = dispatcher.commands.mapNotNull { command ->
+			registerCommand(command.callable, this, command.allAliases.toList()) { this.launch(block = it) }
+		}
 
 		server.pluginManager.registerEvents(get<LodestoneListener>(), this)
 		server.pluginManager.registerEvents(get<TeleportParticlesListener>(), this)

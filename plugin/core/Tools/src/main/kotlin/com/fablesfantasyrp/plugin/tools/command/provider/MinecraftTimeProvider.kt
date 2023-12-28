@@ -20,12 +20,12 @@ class MinecraftTimeProvider : Provider<MinecraftTime> {
 	)
 
 	@Throws(ArgumentException::class, ProvisionException::class)
-	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): MinecraftTime {
+	override suspend fun get(arguments: CommandArgs, modifiers: List<Annotation>): MinecraftTime {
 		val value = arguments.next()
 		val time = constants[value] ?: value.toLongOrNull() ?: throw ArgumentParseException("Invalid time '$value'")
 		return MinecraftTime(time)
 	}
 
-	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String>
+	override suspend fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String>
 			= constants.keys.toList()
 }

@@ -14,7 +14,7 @@ class LocationProvider(private val server: Server) : Provider<Location> {
 	override val isProvided = false
 
 	@Throws(ArgumentException::class, ProvisionException::class)
-	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): Location {
+	override suspend fun get(arguments: CommandArgs, modifiers: List<Annotation>): Location {
 		val x = arguments.nextInt()
 		val y = arguments.nextInt()
 		val z = arguments.next()
@@ -24,6 +24,6 @@ class LocationProvider(private val server: Server) : Provider<Location> {
 		return Location(world, x.toDouble(), y.toDouble(), z.toDouble())
 	}
 
-	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String>
+	override suspend fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String>
 			= emptyList()
 }

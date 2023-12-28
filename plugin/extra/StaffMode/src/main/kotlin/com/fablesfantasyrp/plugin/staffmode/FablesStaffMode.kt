@@ -13,6 +13,7 @@ import com.fablesfantasyrp.caturix.Caturix
 import com.fablesfantasyrp.caturix.fluent.CommandGraph
 import com.fablesfantasyrp.caturix.parametric.ParametricBuilder
 import com.fablesfantasyrp.caturix.parametric.provider.PrimitivesModule
+import com.github.shynixn.mccoroutine.bukkit.launch
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.command.Command
@@ -59,7 +60,9 @@ class FablesStaffMode : JavaPlugin() {
 				.graph
 				.dispatcher
 
-		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
+		commands = dispatcher.commands.mapNotNull { command ->
+			registerCommand(command.callable, this, command.allAliases.toList()) { this.launch(block = it) }
+		}
 
 		// This is the only reliable way I've managed to solve this problem
 		server.scheduler.scheduleSyncRepeatingTask(this, {

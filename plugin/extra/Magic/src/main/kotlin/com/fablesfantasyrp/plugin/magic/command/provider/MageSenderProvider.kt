@@ -16,7 +16,7 @@ class MageSenderProvider(private val profileManager: ProfileManager,
 						 private val mages: MageRepository) : Provider<Mage> {
 	override val isProvided: Boolean = true
 
-	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): Mage {
+	override suspend fun get(arguments: CommandArgs, modifiers: List<Annotation>): Mage {
 		val player = BukkitSenderProvider(Player::class.java).get(arguments, modifiers)!!
 		val character = profileManager.getCurrentForPlayer(player)?.let { characters.forProfile(it) }
 			?: throw ArgumentParseException("You are not currently in character.")
@@ -24,7 +24,7 @@ class MageSenderProvider(private val profileManager: ProfileManager,
 				?: throw ArgumentParseException("You have to be a mage to execute this command.")
 	}
 
-	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
+	override suspend fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
 		return emptyList()
 	}
 }

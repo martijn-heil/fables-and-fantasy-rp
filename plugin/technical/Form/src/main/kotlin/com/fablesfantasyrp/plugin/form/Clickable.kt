@@ -15,6 +15,7 @@ import com.fablesfantasyrp.caturix.Require
 import com.fablesfantasyrp.caturix.fluent.CommandGraph
 import com.fablesfantasyrp.caturix.parametric.ParametricBuilder
 import com.fablesfantasyrp.caturix.parametric.provider.PrimitivesModule
+import com.github.shynixn.mccoroutine.bukkit.launch
 import kotlinx.coroutines.CompletableDeferred
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
@@ -81,7 +82,9 @@ internal class ClickableManager(private val plugin: Plugin) {
 				.graph
 				.dispatcher
 
-		dispatcher.commands.forEach { registerCommand(it.callable, plugin, it.allAliases.toList()) }
+		dispatcher.commands.mapNotNull { command ->
+			registerCommand(command.callable, plugin, command.allAliases.toList()) { plugin.launch(block = it) }
+		}
 
 		server.scheduler.scheduleSyncRepeatingTask(plugin, {
 			val now = Instant.now()

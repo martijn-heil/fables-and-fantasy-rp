@@ -13,7 +13,7 @@ import org.bukkit.Server
 class ToggleableChatChannelProvider(private val server: Server) : Provider<ToggleableChatChannel> {
 	override val isProvided: Boolean = false
 
-	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): ToggleableChatChannel {
+	override suspend fun get(arguments: CommandArgs, modifiers: List<Annotation>): ToggleableChatChannel {
 		val channelName = arguments.next().lowercase()
 		val channel = ChatChannel.fromString(channelName)
 				?: throw ArgumentParseException("Chat channel '$channelName' not found.")
@@ -22,7 +22,7 @@ class ToggleableChatChannelProvider(private val server: Server) : Provider<Toggl
 				?: throw ArgumentParseException("Chat channel '$channelName' is not toggleable!")
 	}
 
-	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
-		return ChatChannel.allStatic().filterIsInstance(ToggleableChatChannel::class.java).map { it.toString() }
+	override suspend fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
+		return ChatChannel.allStatic().filterIsInstance<ToggleableChatChannel>().map { it.toString() }
 	}
 }

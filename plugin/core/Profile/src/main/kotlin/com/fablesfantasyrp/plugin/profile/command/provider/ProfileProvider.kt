@@ -21,7 +21,7 @@ class ProfileProvider(private val profiles: EntityProfileRepository,
 					  private val server: Server) : Provider<Profile> {
 	override val isProvided: Boolean = false
 
-	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): Profile {
+	override suspend fun get(arguments: CommandArgs, modifiers: List<Annotation>): Profile {
 		val sender = arguments.namespace.get("sender") as CommandSender
 		val targetAnnotation = modifiers.find { it is CommandTarget } as? CommandTarget
 		val allowPlayerName = modifiers.any { it is AllowPlayerName }
@@ -55,7 +55,7 @@ class ProfileProvider(private val profiles: EntityProfileRepository,
 		}
 	}
 
-	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
+	override suspend fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
 		val allowPlayerName = modifiers.any { it is AllowPlayerName }
 		return if (allowPlayerName) {
 			server.onlinePlayers.map { it.name }.filter { it.lowercase().startsWith(prefix.lowercase()) }

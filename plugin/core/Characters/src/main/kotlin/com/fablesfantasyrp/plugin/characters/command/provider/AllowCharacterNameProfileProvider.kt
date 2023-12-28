@@ -26,11 +26,11 @@ class AllowCharacterNameProfileProvider(private val server: Server,
 		return characterRepository.forName(arguments.peek())?.profile
 	}
 
-	private fun getByProfileProvider(arguments: CommandArgs, modifiers: List<Annotation>): Profile? {
+	private suspend fun getByProfileProvider(arguments: CommandArgs, modifiers: List<Annotation>): Profile? {
 		return profileProvider.get(arguments, modifiers)
 	}
 
-	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): Profile {
+	override suspend fun get(arguments: CommandArgs, modifiers: List<Annotation>): Profile {
 		val sender = arguments.namespace.get("sender") as CommandSender
 		val permissible = arguments.namespace.get(Permissible::class.java)!!
 		val targetAnnotation = modifiers.find { it is CommandTarget } as? CommandTarget
@@ -63,7 +63,7 @@ class AllowCharacterNameProfileProvider(private val server: Server,
 		}
 	}
 
-	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
+	override suspend fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
 		val allowPlayerName = modifiers.any { it is AllowPlayerName }
 
 		return characterRepository.allNames()

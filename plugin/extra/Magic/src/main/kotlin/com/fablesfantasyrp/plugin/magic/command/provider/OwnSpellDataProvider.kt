@@ -19,7 +19,7 @@ class OwnSpellDataProvider(private val spellProvider: Provider<SpellData>,
 
 	override val isProvided: Boolean = false
 
-	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): SpellData {
+	override suspend fun get(arguments: CommandArgs, modifiers: List<Annotation>): SpellData {
 		val sender = BukkitSenderProvider(Player::class.java).get(arguments, modifiers)!!
 		val character = profileManager.getCurrentForPlayer(sender)?.let { characters.forProfile(it) }
 				?: throw ArgumentParseException("You are not currently in character.")
@@ -28,7 +28,7 @@ class OwnSpellDataProvider(private val spellProvider: Provider<SpellData>,
 		return spell
 	}
 
-	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
+	override suspend fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
 		val sender = locals.get("sender") as? Player ?: return emptyList()
 		val character = profileManager.getCurrentForPlayer(sender)?.let { characters.forProfile(it) }
 				?: return emptyList()

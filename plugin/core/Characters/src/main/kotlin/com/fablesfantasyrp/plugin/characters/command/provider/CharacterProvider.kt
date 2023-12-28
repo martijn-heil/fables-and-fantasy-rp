@@ -19,7 +19,7 @@ class CharacterProvider(private val server: Server,
 						private val profileManager: ProfileManager) : Provider<Character> {
 	override val isProvided: Boolean = false
 
-	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): Character {
+	override suspend fun get(arguments: CommandArgs, modifiers: List<Annotation>): Character {
 		val sender = arguments.namespace.get("sender") as CommandSender
 		val targetAnnotation = modifiers.find { it is CommandTarget } as? CommandTarget
 
@@ -53,7 +53,7 @@ class CharacterProvider(private val server: Server,
 		}
 	}
 
-	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
+	override suspend fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
 			return characters.allNames().asSequence()
 				.filter { it.startsWith(prefix.removePrefix("\""), true) }
 				.map { quoteCommandArgument(it) }

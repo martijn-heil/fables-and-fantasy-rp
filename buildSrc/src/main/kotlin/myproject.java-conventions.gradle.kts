@@ -109,7 +109,7 @@ dependencies {
 	implementation("org.ocpsoft.prettytime:prettytime:5.0.6.Final")
 	implementation("com.google.guava:guava:31.1-jre")
 	implementation("io.insert-koin:koin-core:3.3.3")
-	implementation("com.github.fablesfantasyrp:caturix-spigot:b0eb57ec41")
+	implementation("com.github.fablesfantasyrp:caturix-spigot:f7cd2ecfe6")
 	implementation(fileTree("${project.rootDir}/lib") { include("*.jar") })
 
 	testImplementation(kotlin("test"))

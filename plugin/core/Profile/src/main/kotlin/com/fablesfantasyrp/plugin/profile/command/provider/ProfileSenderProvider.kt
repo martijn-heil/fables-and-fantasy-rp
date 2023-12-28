@@ -14,13 +14,13 @@ class ProfileSenderProvider(private val profileManager: ProfileManager,
 	override val isProvided: Boolean = true
 
 	@Throws(ArgumentException::class, ProvisionException::class)
-	override fun get(commandArgs: CommandArgs, modifiers: List<Annotation>): Profile {
+	override suspend fun get(commandArgs: CommandArgs, modifiers: List<Annotation>): Profile {
 		val sender: Player = senderProvider.get(commandArgs, modifiers)!!
 		return profileManager.getCurrentForPlayer(sender)
 				?: throw ProvisionException("You are not a profile")
 	}
 
-	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
+	override suspend fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
 		return emptyList()
 	}
 }

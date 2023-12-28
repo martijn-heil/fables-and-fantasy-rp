@@ -14,11 +14,11 @@ class WarpProvider(private val warps: SimpleWarpRepository) : Provider<SimpleWar
 	override val isProvided = false
 
 	@Throws(ArgumentException::class, ProvisionException::class)
-	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): SimpleWarp {
+	override suspend fun get(arguments: CommandArgs, modifiers: List<Annotation>): SimpleWarp {
 		val id = arguments.next()
 		return warps.forId(id) ?: throw ArgumentParseException("A warp with name '$id' does not exist!")
 	}
 
-	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String>
+	override suspend fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String>
 			= warps.allIds().filter { it.startsWith(prefix) }
 }

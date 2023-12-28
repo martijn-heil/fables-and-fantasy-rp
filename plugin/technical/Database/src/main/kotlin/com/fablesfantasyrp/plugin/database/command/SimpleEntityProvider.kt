@@ -13,7 +13,7 @@ abstract class SimpleEntityProvider<T, R>(private val repository: R) : Provider<
 	override val isProvided: Boolean = false
 	abstract val entityName: String
 
-	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): T {
+	override suspend fun get(arguments: CommandArgs, modifiers: List<Annotation>): T {
 		return if (arguments.peek().startsWith("#")) {
 			val id = arguments.next().removePrefix("#").toIntOrNull()
 				?: throw ArgumentParseException("Could not parse id")
@@ -23,7 +23,7 @@ abstract class SimpleEntityProvider<T, R>(private val repository: R) : Provider<
 		}
 	}
 
-	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
+	override suspend fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
 		return emptyList()
 	}
 }

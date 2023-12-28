@@ -38,6 +38,7 @@ import com.fablesfantasyrp.caturix.parametric.annotation.Range
 import com.fablesfantasyrp.caturix.parametric.annotation.Switch
 import com.fablesfantasyrp.caturix.util.auth.AuthorizationException
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.format.NamedTextColor

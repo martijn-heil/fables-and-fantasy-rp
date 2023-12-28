@@ -2,5 +2,7 @@ name: FablesKotlinRuntime
 version: @version@
 authors: [@authors@]
 depend: []
+loadbefore:
+  - Caturix
 main: com.fablesfantasyrp.plugin.kotlinruntime.FablesKotlinRuntime
 api-version: @bukkit_api_version@

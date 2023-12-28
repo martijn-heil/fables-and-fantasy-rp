@@ -19,7 +19,7 @@ class OwnMagicTypeProvider(private val profileManager: ProfileManager,
 
 	override val isProvided: Boolean = false
 
-	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): MagicType {
+	override suspend fun get(arguments: CommandArgs, modifiers: List<Annotation>): MagicType {
 		val sender = BukkitSenderProvider(Player::class.java).get(arguments, modifiers)!!
 		val character = profileManager.getCurrentForPlayer(sender)?.let { characters.forProfile(it) }
 				?: throw ArgumentParseException("You are not currently in character.")
@@ -32,7 +32,7 @@ class OwnMagicTypeProvider(private val profileManager: ProfileManager,
 		return magicType
 	}
 
-	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
+	override suspend fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
 		val sender = locals.get("sender") as? Player ?: return emptyList()
 		val character = profileManager.getCurrentForPlayer(sender)?.let { characters.forProfile(it) }
 				?: return emptyList()

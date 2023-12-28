@@ -15,13 +15,13 @@ class MageProvider(private val characterProvider: Provider<Character>,
 				   private val mages: MageRepository) : Provider<Mage> {
 	override val isProvided: Boolean = false
 
-	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): Mage {
+	override suspend fun get(arguments: CommandArgs, modifiers: List<Annotation>): Mage {
 		val character = characterProvider.get(arguments, modifiers)!!
 		return mages.forCharacter(character)
 				?: throw ArgumentParseException("The provided character is not a mage.")
 	}
 
-	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
+	override suspend fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
 		return characters.all().asSequence()
 				.filter { mages.forCharacter(it) != null }
 				.map { it.name }

@@ -22,11 +22,11 @@ class AllowCharacterNamePlayerProvider(private val server: Server,
 		return profileManager.getCurrentForProfile(character.profile)
 	}
 
-	private fun getByPlayerProvider(arguments: CommandArgs, modifiers: List<Annotation>): Player? {
+	private suspend fun getByPlayerProvider(arguments: CommandArgs, modifiers: List<Annotation>): Player? {
 		return playerProvider.get(arguments, modifiers)
 	}
 
-	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): Player {
+	override suspend fun get(arguments: CommandArgs, modifiers: List<Annotation>): Player {
 		val firstAttempt = getByPlayerCharacter(arguments, modifiers)
 		return if (firstAttempt != null) {
 			arguments.next()
@@ -37,7 +37,7 @@ class AllowCharacterNamePlayerProvider(private val server: Server,
 		}
 	}
 
-	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
+	override suspend fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
 		return server.onlinePlayers.asSequence()
 				.mapNotNull { profileManager.getCurrentForPlayer(it)?.let { characters.forProfile(it) } }
 				.map { it.name }

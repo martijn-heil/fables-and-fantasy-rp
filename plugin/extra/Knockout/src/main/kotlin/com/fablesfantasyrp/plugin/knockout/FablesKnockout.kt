@@ -21,6 +21,7 @@ import com.fablesfantasyrp.caturix.Caturix
 import com.fablesfantasyrp.caturix.fluent.CommandGraph
 import com.fablesfantasyrp.caturix.parametric.ParametricBuilder
 import com.fablesfantasyrp.caturix.parametric.provider.PrimitivesModule
+import com.github.shynixn.mccoroutine.bukkit.launch
 import org.bukkit.command.Command
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
@@ -66,7 +67,9 @@ class FablesKnockout : JavaPlugin() {
 				.graph
 				.dispatcher
 
-		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
+		commands = dispatcher.commands.mapNotNull { command ->
+			registerCommand(command.callable, this, command.allAliases.toList()) { this.launch(block = it) }
+		}
 
 		server.pluginManager.registerEvents(KnockoutListener(server), this)
 	}

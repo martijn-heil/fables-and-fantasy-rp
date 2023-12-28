@@ -16,13 +16,13 @@ class CharacterSenderProvider(private val profileManager: ProfileManager,
 	override val isProvided: Boolean = true
 
 	@Throws(ArgumentException::class, ProvisionException::class)
-	override fun get(commandArgs: CommandArgs, modifiers: List<Annotation>): Character {
-		val sender: Player = senderProvider.get(commandArgs, modifiers)!!
+	override suspend fun get(arguments: CommandArgs, modifiers: List<Annotation>): Character {
+		val sender: Player = senderProvider.get(arguments, modifiers)
 		return profileManager.getCurrentForPlayer(sender)?.let { characters.forProfile(it) }
 				?: throw ProvisionException("You must be in-character to execute this command.")
 	}
 
-	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
+	override suspend fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
 		return emptyList()
 	}
 }

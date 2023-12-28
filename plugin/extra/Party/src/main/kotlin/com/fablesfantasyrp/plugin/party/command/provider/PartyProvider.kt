@@ -21,7 +21,7 @@ class PartyProvider(private val parties: PartyRepository,
 					private val spectatorManager: PartySpectatorManager) : Provider<Party> {
 	override val isProvided: Boolean = false
 
-	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): Party {
+	override suspend fun get(arguments: CommandArgs, modifiers: List<Annotation>): Party {
 		val isCommandTarget = modifiers.any{ it is CommandTarget }
 		val sender = BukkitSenderProvider(CommandSender::class.java).get(arguments, modifiers)!!
 
@@ -47,7 +47,7 @@ class PartyProvider(private val parties: PartyRepository,
 		}
 	}
 
-	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
+	override suspend fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
 		return parties.allNames().asSequence()
 			.filter { it.startsWith(prefix.removePrefix("\""), true) }
 			.map { quoteCommandArgument(it) }
