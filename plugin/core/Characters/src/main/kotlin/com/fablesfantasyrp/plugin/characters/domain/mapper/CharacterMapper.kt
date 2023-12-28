@@ -60,5 +60,5 @@ class CharacterMapper(private val child: CharacterDataRepository, private val pr
 	override fun forProfile(profile: Profile): Character? = child.forProfile(profile)?.let { convertFromChild(it) }
 	override fun forName(name: String): Character? = child.forName(name)?.let { convertFromChild(it) }
 	override fun nameExists(name: String): Boolean = child.nameExists(name)
-	override val nameMap: Map<String, Int> = child.nameMap
+	override val nameMap: Map<String, Int> get() = child.nameMap
 }

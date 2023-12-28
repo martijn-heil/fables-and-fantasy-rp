@@ -108,14 +108,15 @@ dependencies {
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.8.0-RC2")
 	implementation("org.ocpsoft.prettytime:prettytime:5.0.6.Final")
 	implementation("com.google.guava:guava:31.1-jre")
-	implementation("io.insert-koin:koin-core:3.3.3")
+	implementation("io.insert-koin:koin-core:3.5.3")
 	implementation("com.github.fablesfantasyrp:caturix-spigot:0e470ccf0b") {
 		exclude(group = "org.bukkit")
 		exclude(group = "org.spigotmc")
 	}
 	implementation(fileTree("${project.rootDir}/lib") { include("*.jar") })
 
-	testImplementation(kotlin("test"))
+	//testImplementation(kotlin("test"))
 	testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
 	testImplementation("io.mockk:mockk:1.13.7")
+	testImplementation("io.insert-koin:koin-test:3.5.3")
 }
