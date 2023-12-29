@@ -54,4 +54,5 @@ include("examples:BlankSystem",
 		"plugin:extra:InventorySearch",
 		"plugin:extra:CharacterMechanics",
 		"plugin:extra:Lodestones",
-		"plugin:extra:CustomItems")
+		"plugin:extra:CustomItems",
+		"plugin:extra:Shops")
