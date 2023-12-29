@@ -9,6 +9,6 @@ depend:
   - FablesCharacters
   - FablesGui
   - FablesForm
-  - NinCommands
+  - Caturix
 main: com.fablesfantasyrp.plugin.wardrobe.FablesWardrobe
 api-version: @bukkit_api_version@

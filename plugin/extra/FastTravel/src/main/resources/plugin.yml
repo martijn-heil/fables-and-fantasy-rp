@@ -7,7 +7,7 @@ depend:
   - FablesTimers
   - FablesText
   - FablesWorldGuardInterop
-  - NinCommands
+  - Caturix
   - WorldGuard
 main: com.fablesfantasyrp.plugin.fasttravel.FablesFastTravel
 api-version: @bukkit_api_version@

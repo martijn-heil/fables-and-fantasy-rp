@@ -1,5 +1,11 @@
 package com.fablesfantasyrp.plugin.rolls.command
 
+import com.fablesfantasyrp.caturix.Command
+import com.fablesfantasyrp.caturix.Require
+import com.fablesfantasyrp.caturix.parametric.annotation.Optional
+import com.fablesfantasyrp.caturix.spigot.common.FixedSuggestions
+import com.fablesfantasyrp.caturix.spigot.common.Sender
+import com.fablesfantasyrp.caturix.spigot.common.Suggestions
 import com.fablesfantasyrp.plugin.characters.dal.enums.CharacterStatKind
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.chat.chat
@@ -13,13 +19,6 @@ import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.sendError
 import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.broadcast
-import com.github.shynixn.mccoroutine.bukkit.launch
-import com.gitlab.martijn_heil.nincommands.common.FixedSuggestions
-import com.gitlab.martijn_heil.nincommands.common.Sender
-import com.gitlab.martijn_heil.nincommands.common.Suggestions
-import com.sk89q.intake.Command
-import com.sk89q.intake.Require
-import com.sk89q.intake.parametric.annotation.Optional
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.Style
 import net.kyori.adventure.text.minimessage.tag.Tag

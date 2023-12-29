@@ -68,5 +68,5 @@ class CharacterMapper(private val child: CharacterDataRepository, private val pr
 
 	suspend fun nameExists(name: String): Boolean = withContext(Dispatchers.IO) { child.nameExists(name) }
 
-	val nameMap: Map<String, Int> = child.nameMap
+	suspend fun nameMap(): Map<String, Int> = withContext(Dispatchers.IO) { child.nameMap }
 }

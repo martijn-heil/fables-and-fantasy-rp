@@ -3,9 +3,10 @@ version: @version@
 authors: [@authors@]
 depend:
   - FablesKotlinRuntime
+  - FablesCharacters
   - FablesGlowing
   - FablesUtils
-  - NinCommands
+  - Caturix
 softdepend:
   - FablesMoreLogging
 main: com.fablesfantasyrp.plugin.targeting.FablesTargeting

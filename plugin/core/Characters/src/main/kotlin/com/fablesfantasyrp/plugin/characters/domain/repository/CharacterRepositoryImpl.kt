@@ -19,7 +19,7 @@ class CharacterRepositoryImpl(child: CharacterMapper, private val profiles: Prof
 	override fun init() {
 		super.init()
 		nameMap = HashBiMap.create()
-		child.nameMap.entries.forEach { nameMap[it.key] = it.value }
+		frunBlocking { child.nameMap().entries.forEach { nameMap[it.key] = it.value } }
 	}
 
 	override suspend fun create(v: Character): Character {

@@ -3,9 +3,9 @@ package com.fablesfantasyrp.plugin.profile.command.provider
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.data.entity.EntityProfileRepository
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
-import com.gitlab.martijn_heil.nincommands.common.Sender
-import com.sk89q.intake.parametric.AbstractModule
-import com.sk89q.intake.parametric.Provider
+import com.fablesfantasyrp.caturix.spigot.common.Sender
+import com.fablesfantasyrp.caturix.parametric.AbstractModule
+import com.fablesfantasyrp.caturix.parametric.Provider
 import org.bukkit.Server
 import org.bukkit.entity.Player
 

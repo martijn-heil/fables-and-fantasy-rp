@@ -2,9 +2,9 @@ package com.fablesfantasyrp.plugin.knockout.command
 
 import com.fablesfantasyrp.plugin.knockout.Permission
 import com.fablesfantasyrp.plugin.knockout.knockout
-import com.gitlab.martijn_heil.nincommands.common.CommandTarget
-import com.sk89q.intake.Command
-import com.sk89q.intake.Require
+import com.fablesfantasyrp.caturix.spigot.common.CommandTarget
+import com.fablesfantasyrp.caturix.Command
+import com.fablesfantasyrp.caturix.Require
 import org.bukkit.entity.Player
 import org.bukkit.event.entity.EntityDamageEvent
 

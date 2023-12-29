@@ -10,16 +10,17 @@ import com.fablesfantasyrp.plugin.wardrobe.data.ProfileSkinRepository
 import com.fablesfantasyrp.plugin.wardrobe.data.SkinRepository
 import com.fablesfantasyrp.plugin.wardrobe.data.persistent.H2ProfileSkinRepository
 import com.fablesfantasyrp.plugin.wardrobe.data.persistent.H2SkinRepository
-import com.gitlab.martijn_heil.nincommands.common.CommonModule
-import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
-import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.BukkitModule
-import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.sender.BukkitSenderModule
-import com.gitlab.martijn_heil.nincommands.common.bukkit.registerCommand
-import com.gitlab.martijn_heil.nincommands.common.bukkit.unregisterCommand
-import com.sk89q.intake.Intake
-import com.sk89q.intake.fluent.CommandGraph
-import com.sk89q.intake.parametric.ParametricBuilder
-import com.sk89q.intake.parametric.provider.PrimitivesModule
+import com.fablesfantasyrp.caturix.spigot.common.CommonModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.BukkitAuthorizer
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.BukkitModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.sender.BukkitSenderModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.registerCommand
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.unregisterCommand
+import com.fablesfantasyrp.caturix.Caturix
+import com.fablesfantasyrp.caturix.fluent.CommandGraph
+import com.fablesfantasyrp.caturix.parametric.ParametricBuilder
+import com.fablesfantasyrp.caturix.parametric.provider.PrimitivesModule
+import com.github.shynixn.mccoroutine.bukkit.launch
 import org.bukkit.command.Command
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
@@ -73,7 +74,7 @@ class FablesWardrobe : JavaPlugin(), KoinComponent {
 		}
 		loadKoinModules(koinModule)
 
-		val injector = Intake.createInjector()
+		val injector = Caturix.createInjector()
 		injector.install(PrimitivesModule())
 		injector.install(BukkitModule(server))
 		injector.install(BukkitSenderModule())
@@ -87,7 +88,9 @@ class FablesWardrobe : JavaPlugin(), KoinComponent {
 		rootDispatcherNode.registerMethods(get<Commands>())
 		val dispatcher = rootDispatcherNode.dispatcher
 
-		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
+		commands = dispatcher.commands.mapNotNull { command ->
+			registerCommand(command.callable, this, command.allAliases.toList()) { this.launch(block = it) }
+		}
 
 		server.pluginManager.registerEvents(get<WardrobeListener>(), this)
 	}

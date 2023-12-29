@@ -6,7 +6,7 @@ val ktor_version = "2.2.2"
 
 dependencies {
     // internal module dependencies
-    shadow(kotlin("stdlib"))
+    shadow(kotlin("stdlib", "1.9.21"))
     shadow("org.jetbrains.kotlin:kotlin-reflect:1.9.21")
     api("org.jetbrains.kotlin:kotlin-reflect:1.9.21")
     shadow("com.github.shynixn.mccoroutine:mccoroutine-bukkit-api:2.10.0")
@@ -15,7 +15,7 @@ dependencies {
     shadow("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.7.3")
     shadow("org.ocpsoft.prettytime:prettytime:5.0.6.Final")
     shadow("com.google.guava:guava:31.1-jre")
-    shadow("io.insert-koin:koin-core:3.3.3")
+    shadow("io.insert-koin:koin-core:3.5.3")
     shadow("com.github.Keelar:ExprK:91fdabf")
     shadow("dev.kord:kord-core:0.9.0")
 

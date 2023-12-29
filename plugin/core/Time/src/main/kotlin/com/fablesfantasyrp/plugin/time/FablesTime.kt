@@ -3,16 +3,17 @@ package com.fablesfantasyrp.plugin.time
 import com.fablesfantasyrp.plugin.time.command.Commands
 import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
-import com.gitlab.martijn_heil.nincommands.common.CommonModule
-import com.gitlab.martijn_heil.nincommands.common.bukkit.BukkitAuthorizer
-import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.BukkitModule
-import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.sender.BukkitSenderModule
-import com.gitlab.martijn_heil.nincommands.common.bukkit.registerCommand
-import com.gitlab.martijn_heil.nincommands.common.bukkit.unregisterCommand
-import com.sk89q.intake.Intake
-import com.sk89q.intake.fluent.CommandGraph
-import com.sk89q.intake.parametric.ParametricBuilder
-import com.sk89q.intake.parametric.provider.PrimitivesModule
+import com.fablesfantasyrp.caturix.spigot.common.CommonModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.BukkitAuthorizer
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.BukkitModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.sender.BukkitSenderModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.registerCommand
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.unregisterCommand
+import com.fablesfantasyrp.caturix.Caturix
+import com.fablesfantasyrp.caturix.fluent.CommandGraph
+import com.fablesfantasyrp.caturix.parametric.ParametricBuilder
+import com.fablesfantasyrp.caturix.parametric.provider.PrimitivesModule
+import com.github.shynixn.mccoroutine.bukkit.launch
 import org.bukkit.command.Command
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
@@ -60,7 +61,7 @@ class FablesTime : JavaPlugin(), KoinComponent {
 		synchronizer = WorldTimeSynchronizer(this, worlds, get())
 		synchronizer.start()
 
-		val injector = Intake.createInjector()
+		val injector = Caturix.createInjector()
 		injector.install(PrimitivesModule())
 		injector.install(BukkitModule(server))
 		injector.install(BukkitSenderModule())
@@ -74,7 +75,9 @@ class FablesTime : JavaPlugin(), KoinComponent {
 		rootDispatcherNode.group("datetime").registerMethods(get<Commands>().DateTime())
 		val dispatcher = rootDispatcherNode.dispatcher
 
-		commands = dispatcher.commands.mapNotNull { registerCommand(it.callable, this, it.allAliases.toList()) }
+		commands = dispatcher.commands.mapNotNull { command ->
+			registerCommand(command.callable, this, command.allAliases.toList()) { this.launch(block = it) }
+		}
 	}
 
 	override fun onDisable() {

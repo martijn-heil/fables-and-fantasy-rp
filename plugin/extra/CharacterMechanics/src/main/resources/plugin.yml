@@ -12,6 +12,6 @@ depend:
   - FablesWorldGuardInterop
   - FablesLocation
   - FablesInventory
-  - NinCommands
+  - Caturix
 main: com.fablesfantasyrp.plugin.charactermechanics.FablesCharacterMechanics
 api-version: @bukkit_api_version@

@@ -1,7 +1,6 @@
 package com.fablesfantasyrp.plugin.weights
 
 import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
-import com.fablesfantasyrp.plugin.characters.domain.KnownCharacterTraits
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.utils.every

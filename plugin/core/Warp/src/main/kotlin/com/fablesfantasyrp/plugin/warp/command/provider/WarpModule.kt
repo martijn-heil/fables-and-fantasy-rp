@@ -2,7 +2,7 @@ package com.fablesfantasyrp.plugin.warp.command.provider
 
 import com.fablesfantasyrp.plugin.warp.data.SimpleWarp
 import com.fablesfantasyrp.plugin.warp.data.SimpleWarpRepository
-import com.sk89q.intake.parametric.AbstractModule
+import com.fablesfantasyrp.caturix.parametric.AbstractModule
 
 
 class WarpModule(private val warps: SimpleWarpRepository) : AbstractModule() {

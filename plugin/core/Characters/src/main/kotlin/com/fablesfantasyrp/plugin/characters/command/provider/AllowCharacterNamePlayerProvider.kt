@@ -4,10 +4,10 @@ import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterReposito
 import com.fablesfantasyrp.plugin.characters.frunBlocking
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.utils.quoteCommandArgument
-import com.sk89q.intake.argument.ArgumentParseException
-import com.sk89q.intake.argument.CommandArgs
-import com.sk89q.intake.argument.Namespace
-import com.sk89q.intake.parametric.Provider
+import com.fablesfantasyrp.caturix.argument.ArgumentParseException
+import com.fablesfantasyrp.caturix.argument.CommandArgs
+import com.fablesfantasyrp.caturix.argument.Namespace
+import com.fablesfantasyrp.caturix.parametric.Provider
 import org.bukkit.Server
 import org.bukkit.entity.Player
 
@@ -16,18 +16,18 @@ class AllowCharacterNamePlayerProvider(private val server: Server,
 									   private val profileManager: ProfileManager,
 									   private val characters: CharacterRepository) : Provider<Player> {
 
-	override fun isProvided(): Boolean = false
+	override val isProvided: Boolean = false
 
 	private fun getByPlayerCharacter(arguments: CommandArgs, modifiers: List<Annotation>): Player? {
 		val character = frunBlocking { characters.forName(arguments.peek()) } ?: return null
 		return profileManager.getCurrentForProfile(character.profile)
 	}
 
-	private fun getByPlayerProvider(arguments: CommandArgs, modifiers: List<Annotation>): Player? {
+	private suspend fun getByPlayerProvider(arguments: CommandArgs, modifiers: List<Annotation>): Player? {
 		return playerProvider.get(arguments, modifiers)
 	}
 
-	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): Player {
+	override suspend fun get(arguments: CommandArgs, modifiers: List<Annotation>): Player {
 		val firstAttempt = getByPlayerCharacter(arguments, modifiers)
 		return if (firstAttempt != null) {
 			arguments.next()
@@ -38,7 +38,7 @@ class AllowCharacterNamePlayerProvider(private val server: Server,
 		}
 	}
 
-	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
+	override suspend fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
 		return server.onlinePlayers.asSequence()
 				.mapNotNull { profileManager.getCurrentForPlayer(it)?.let { frunBlocking { characters.forProfile(it) } } }
 				.map { it.name }

@@ -18,7 +18,7 @@ depend:
   - FablesStaffProfiles
   - Vault
   - SuperVanish
-  - NinCommands
+  - Caturix
 softdepend:
   - TAB
   - Denizen

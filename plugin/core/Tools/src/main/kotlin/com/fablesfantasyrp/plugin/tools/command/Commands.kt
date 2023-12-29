@@ -1,5 +1,15 @@
 package com.fablesfantasyrp.plugin.tools.command
 
+import com.fablesfantasyrp.caturix.Command
+import com.fablesfantasyrp.caturix.Require
+import com.fablesfantasyrp.caturix.parametric.annotation.Optional
+import com.fablesfantasyrp.caturix.parametric.annotation.Range
+import com.fablesfantasyrp.caturix.parametric.annotation.Switch
+import com.fablesfantasyrp.caturix.parametric.annotation.Text
+import com.fablesfantasyrp.caturix.spigot.common.CommandTarget
+import com.fablesfantasyrp.caturix.spigot.common.Sender
+import com.fablesfantasyrp.caturix.spigot.common.Toggle
+import com.fablesfantasyrp.caturix.util.auth.AuthorizationException
 import com.fablesfantasyrp.plugin.characters.command.provider.AllowCharacterName
 import com.fablesfantasyrp.plugin.characters.displayName
 import com.fablesfantasyrp.plugin.inventory.MirroredInventory
@@ -19,17 +29,6 @@ import com.fablesfantasyrp.plugin.utils.SPAWN
 import com.fablesfantasyrp.plugin.utils.asEnabledDisabledComponent
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.humanReadable
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.isVanished
-import com.github.shynixn.mccoroutine.bukkit.launch
-import com.gitlab.martijn_heil.nincommands.common.CommandTarget
-import com.gitlab.martijn_heil.nincommands.common.Sender
-import com.gitlab.martijn_heil.nincommands.common.Toggle
-import com.sk89q.intake.Command
-import com.sk89q.intake.Require
-import com.sk89q.intake.parametric.annotation.Optional
-import com.sk89q.intake.parametric.annotation.Range
-import com.sk89q.intake.parametric.annotation.Switch
-import com.sk89q.intake.parametric.annotation.Text
-import com.sk89q.intake.util.auth.AuthorizationException
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder

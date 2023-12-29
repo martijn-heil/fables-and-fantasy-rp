@@ -7,10 +7,10 @@ import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.nameStyle
 import com.fablesfantasyrp.plugin.utils.asEnabledDisabledComponent
-import com.gitlab.martijn_heil.nincommands.common.CommandTarget
-import com.gitlab.martijn_heil.nincommands.common.Sender
-import com.sk89q.intake.Command
-import com.sk89q.intake.Require
+import com.fablesfantasyrp.caturix.spigot.common.CommandTarget
+import com.fablesfantasyrp.caturix.spigot.common.Sender
+import com.fablesfantasyrp.caturix.Command
+import com.fablesfantasyrp.caturix.Require
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.command.CommandSender

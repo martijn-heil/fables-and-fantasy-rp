@@ -3,8 +3,8 @@ package com.fablesfantasyrp.plugin.tools.command.provider
 import com.fablesfantasyrp.plugin.tools.MovementType
 import com.fablesfantasyrp.plugin.tools.PlayerWeather
 import com.fablesfantasyrp.plugin.tools.Weather
-import com.sk89q.intake.parametric.AbstractModule
-import com.sk89q.intake.parametric.provider.EnumProvider
+import com.fablesfantasyrp.caturix.parametric.AbstractModule
+import com.fablesfantasyrp.caturix.parametric.provider.EnumProvider
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.Server

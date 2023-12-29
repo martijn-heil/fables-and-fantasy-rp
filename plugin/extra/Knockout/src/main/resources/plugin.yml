@@ -10,7 +10,7 @@ depend:
   - FablesCharacters
   - FablesDenizenInterop
   - FablesMoreLogging
-  - NinCommands
+  - Caturix
   - TAB
   - ProtocolLib
   - Vault

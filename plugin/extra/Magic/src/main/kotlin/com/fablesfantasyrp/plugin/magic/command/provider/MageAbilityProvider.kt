@@ -6,19 +6,19 @@ import com.fablesfantasyrp.plugin.magic.ability.MageAbility
 import com.fablesfantasyrp.plugin.magic.domain.repository.MageRepository
 import com.fablesfantasyrp.plugin.magic.frunBlocking
 import com.fablesfantasyrp.plugin.profile.ProfileManager
-import com.gitlab.martijn_heil.nincommands.common.bukkit.provider.sender.BukkitSenderProvider
-import com.sk89q.intake.argument.ArgumentParseException
-import com.sk89q.intake.argument.CommandArgs
-import com.sk89q.intake.argument.Namespace
-import com.sk89q.intake.parametric.Provider
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.sender.BukkitSenderProvider
+import com.fablesfantasyrp.caturix.argument.ArgumentParseException
+import com.fablesfantasyrp.caturix.argument.CommandArgs
+import com.fablesfantasyrp.caturix.argument.Namespace
+import com.fablesfantasyrp.caturix.parametric.Provider
 import org.bukkit.entity.Player
 
 class MageAbilityProvider(private val profileManager: ProfileManager,
 						  private val characters: CharacterRepository,
 						  private val mages: MageRepository) : Provider<MageAbility> {
-	override fun isProvided(): Boolean = false
+	override val isProvided: Boolean = false
 
-	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): MageAbility {
+	override suspend fun get(arguments: CommandArgs, modifiers: List<Annotation>): MageAbility {
 		val ability = MageAbilities.forId(arguments.next()) ?: throw ArgumentParseException("Ability not found.")
 		if (modifiers.find { it is OwnAbility } != null) {
 			val player = BukkitSenderProvider(Player::class.java).get(arguments, modifiers)!!
@@ -31,7 +31,7 @@ class MageAbilityProvider(private val profileManager: ProfileManager,
 		return ability
 	}
 
-	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
+	override suspend fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
 		if (modifiers.find { it is OwnAbility } != null) {
 			val player = locals.get("sender") as? Player ?: return emptyList()
 			val character = profileManager.getCurrentForPlayer(player)?.let { frunBlocking { characters.forProfile(it) } }

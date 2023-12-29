@@ -5,11 +5,11 @@ import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterReposito
 import com.fablesfantasyrp.plugin.characters.frunBlocking
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.utils.quoteCommandArgument
-import com.gitlab.martijn_heil.nincommands.common.CommandTarget
-import com.sk89q.intake.argument.ArgumentParseException
-import com.sk89q.intake.argument.CommandArgs
-import com.sk89q.intake.argument.Namespace
-import com.sk89q.intake.parametric.Provider
+import com.fablesfantasyrp.caturix.spigot.common.CommandTarget
+import com.fablesfantasyrp.caturix.argument.ArgumentParseException
+import com.fablesfantasyrp.caturix.argument.CommandArgs
+import com.fablesfantasyrp.caturix.argument.Namespace
+import com.fablesfantasyrp.caturix.parametric.Provider
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -18,9 +18,9 @@ import org.bukkit.permissions.Permissible
 class CharacterProvider(private val server: Server,
 						private val characters: CharacterRepository,
 						private val profileManager: ProfileManager) : Provider<Character> {
-	override fun isProvided(): Boolean = false
+	override val isProvided: Boolean = false
 
-	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): Character? {
+	override suspend fun get(arguments: CommandArgs, modifiers: List<Annotation>): Character {
 		val sender = arguments.namespace.get("sender") as CommandSender
 		val targetAnnotation = modifiers.find { it is CommandTarget } as? CommandTarget
 
@@ -32,14 +32,11 @@ class CharacterProvider(private val server: Server,
 				throw ArgumentParseException("You need " + targetAnnotation.value)
 			}
 
-			return frunBlocking {
-				if (name.startsWith("#")) {
-					val id = name.removePrefix("#").toIntOrNull() ?: throw ArgumentParseException("Invalid identifier")
-					characters.forId(id)
-				} else {
-					characters.forName(name)
-						?: throw ArgumentParseException("A character called '$name' could not be found")
-				}
+			return if (name.startsWith("#")) {
+				val id = name.removePrefix("#").toIntOrNull() ?: throw ArgumentParseException("Invalid identifier")
+				characters.forId(id) ?: throw ArgumentParseException("A character with id '$id' could not be found")
+			} else {
+				characters.forName(name)?: throw ArgumentParseException("A character called '$name' could not be found")
 			}
 		} else if (targetAnnotation != null) {
 			val player = sender as? Player
@@ -47,22 +44,20 @@ class CharacterProvider(private val server: Server,
 			val currentCharacter = currentProfile?.let { frunBlocking { characters.forProfile(it) } }
 			if (currentCharacter == null) {
 				arguments.next() // Generate MissingArgumentException
-				return null
+				throw IllegalStateException()
 			}
 			return currentCharacter
 		} else {
 			// Generate MissingArgumentException
 			arguments.next()
-			return null
+			throw IllegalStateException()
 		}
 	}
 
-	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
-			return frunBlocking {
-				characters.allNames().asSequence()
-					.filter { it.startsWith(prefix.removePrefix("\""), true) }
-					.map { quoteCommandArgument(it) }
-					.toList()
-			}
+	override suspend fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
+			return characters.allNames().asSequence()
+				.filter { it.startsWith(prefix.removePrefix("\""), true) }
+				.map { quoteCommandArgument(it) }
+				.toList()
 	}
 }

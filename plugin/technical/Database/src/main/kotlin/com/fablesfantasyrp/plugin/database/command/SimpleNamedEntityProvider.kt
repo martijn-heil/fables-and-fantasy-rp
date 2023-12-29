@@ -5,20 +5,20 @@ import com.fablesfantasyrp.plugin.database.sync.repository.KeyedRepository
 import com.fablesfantasyrp.plugin.database.model.Named
 import com.fablesfantasyrp.plugin.database.sync.repository.NamedRepository
 import com.fablesfantasyrp.plugin.utils.quoteCommandArgument
-import com.sk89q.intake.argument.ArgumentParseException
-import com.sk89q.intake.argument.CommandArgs
-import com.sk89q.intake.argument.Namespace
-import com.sk89q.intake.parametric.Provider
+import com.fablesfantasyrp.caturix.argument.ArgumentParseException
+import com.fablesfantasyrp.caturix.argument.CommandArgs
+import com.fablesfantasyrp.caturix.argument.Namespace
+import com.fablesfantasyrp.caturix.parametric.Provider
 
 abstract class SimpleNamedEntityProvider<T, R>(private val repository: R) : Provider<T>
 	where T : Identifiable<Int>,
 		  T: Named,
 		  R: KeyedRepository<Int, T>,
 		  R: NamedRepository<T> {
-	override fun isProvided(): Boolean = false
+	override val isProvided: Boolean = false
 	abstract val entityName: String
 
-	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): T {
+	override suspend fun get(arguments: CommandArgs, modifiers: List<Annotation>): T {
 		return if (arguments.peek().startsWith("#")) {
 			val id = arguments.next().removePrefix("#").toIntOrNull()
 				?: throw ArgumentParseException("Could not parse id")
@@ -29,7 +29,7 @@ abstract class SimpleNamedEntityProvider<T, R>(private val repository: R) : Prov
 		}
 	}
 
-	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
+	override suspend fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
 		return repository.allNames().asSequence()
 			.filter { it.startsWith(prefix.removePrefix("\""), true) }
 			.map { quoteCommandArgument(it) }

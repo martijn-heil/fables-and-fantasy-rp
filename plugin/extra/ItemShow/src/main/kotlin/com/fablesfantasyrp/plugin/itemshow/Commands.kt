@@ -1,5 +1,8 @@
 package com.fablesfantasyrp.plugin.itemshow
 
+import com.fablesfantasyrp.caturix.Command
+import com.fablesfantasyrp.caturix.Require
+import com.fablesfantasyrp.caturix.spigot.common.Sender
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.text.legacyText
@@ -7,16 +10,11 @@ import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.sendError
 import com.fablesfantasyrp.plugin.utils.DISTANCE_TALK
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.broadcast
-import com.github.shynixn.mccoroutine.bukkit.launch
-import com.gitlab.martijn_heil.nincommands.common.Sender
-import com.sk89q.intake.Command
-import com.sk89q.intake.Require
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Material
-import org.bukkit.Server
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 

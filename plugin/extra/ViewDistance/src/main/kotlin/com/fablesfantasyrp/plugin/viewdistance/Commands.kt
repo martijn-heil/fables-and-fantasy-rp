@@ -1,9 +1,9 @@
 package com.fablesfantasyrp.plugin.viewdistance
 
-import com.gitlab.martijn_heil.nincommands.common.CommandTarget
-import com.sk89q.intake.Command
-import com.sk89q.intake.CommandException
-import com.sk89q.intake.Require
+import com.fablesfantasyrp.caturix.spigot.common.CommandTarget
+import com.fablesfantasyrp.caturix.Command
+import com.fablesfantasyrp.caturix.CommandException
+import com.fablesfantasyrp.caturix.Require
 import org.bukkit.entity.Player
 
 class Commands {

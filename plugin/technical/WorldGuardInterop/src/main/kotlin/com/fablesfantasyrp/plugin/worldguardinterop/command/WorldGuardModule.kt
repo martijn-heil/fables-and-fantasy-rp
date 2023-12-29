@@ -2,7 +2,7 @@ package com.fablesfantasyrp.plugin.worldguardinterop.command
 
 import com.fablesfantasyrp.plugin.worldguardinterop.WorldGuardRegion
 import com.fablesfantasyrp.plugin.worldguardinterop.command.provider.WorldGuardRegionProvider
-import com.sk89q.intake.parametric.AbstractModule
+import com.fablesfantasyrp.caturix.parametric.AbstractModule
 import com.sk89q.worldguard.protection.regions.RegionContainer
 import org.bukkit.Server
 

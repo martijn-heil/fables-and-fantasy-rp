@@ -1,5 +1,8 @@
 package com.fablesfantasyrp.plugin.halt
 
+import com.fablesfantasyrp.caturix.Command
+import com.fablesfantasyrp.caturix.Require
+import com.fablesfantasyrp.caturix.spigot.common.Sender
 import com.fablesfantasyrp.plugin.characters.command.provider.AllowCharacterName
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
@@ -7,10 +10,6 @@ import com.fablesfantasyrp.plugin.location.location
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.distanceSafe
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.isVanished
-import com.github.shynixn.mccoroutine.bukkit.launch
-import com.gitlab.martijn_heil.nincommands.common.Sender
-import com.sk89q.intake.Command
-import com.sk89q.intake.Require
 import org.bukkit.ChatColor.GRAY
 import org.bukkit.ChatColor.RED
 import org.bukkit.GameMode.SPECTATOR

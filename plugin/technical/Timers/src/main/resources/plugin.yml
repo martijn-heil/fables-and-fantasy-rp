@@ -4,6 +4,6 @@ authors: [@authors@]
 depend:
   - FablesKotlinRuntime
   - FablesUtils
-  - NinCommands
+  - Caturix
 main: com.fablesfantasyrp.plugin.timers.FablesTimers
 api-version: @bukkit_api_version@

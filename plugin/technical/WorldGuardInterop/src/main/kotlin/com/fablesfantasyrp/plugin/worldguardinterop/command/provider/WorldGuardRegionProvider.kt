@@ -1,18 +1,18 @@
 package com.fablesfantasyrp.plugin.worldguardinterop.command.provider
 
 import com.fablesfantasyrp.plugin.worldguardinterop.WorldGuardRegion
-import com.sk89q.intake.argument.ArgumentParseException
-import com.sk89q.intake.argument.CommandArgs
-import com.sk89q.intake.argument.Namespace
-import com.sk89q.intake.parametric.Provider
+import com.fablesfantasyrp.caturix.argument.ArgumentParseException
+import com.fablesfantasyrp.caturix.argument.CommandArgs
+import com.fablesfantasyrp.caturix.argument.Namespace
+import com.fablesfantasyrp.caturix.parametric.Provider
 import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldguard.protection.regions.RegionContainer
 import org.bukkit.Server
 
 class WorldGuardRegionProvider(private val server: Server, private val regionContainer: RegionContainer) : Provider<WorldGuardRegion> {
-	override fun isProvided(): Boolean = false
+	override val isProvided = false
 
-	override fun get(arguments: CommandArgs, modifiers: List<Annotation>): WorldGuardRegion {
+	override suspend fun get(arguments: CommandArgs, modifiers: List<Annotation>): WorldGuardRegion {
 		val descriptor = arguments.next().split(",")
 		val regionName = descriptor.getOrNull(0) ?: throw ArgumentParseException("Missing region name")
 		val worldName = descriptor.getOrNull(1) ?: throw ArgumentParseException("Missing world name")
@@ -23,7 +23,7 @@ class WorldGuardRegionProvider(private val server: Server, private val regionCon
 				?: throw ArgumentParseException("Unknown region '$regionName' in world '$worldName'"))
 	}
 
-	override fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
+	override suspend fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
 		return server.worlds.asSequence()
 				.mapNotNull { world -> regionContainer.get(BukkitAdapter.adapt(world))?.let { Pair(world, it) } }
 				.map { Pair(it.first, it.second.regions.values) }

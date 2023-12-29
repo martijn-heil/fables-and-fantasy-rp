@@ -7,9 +7,9 @@ import com.fablesfantasyrp.plugin.time.gui.DatePicker
 import com.fablesfantasyrp.plugin.time.javatime.FablesLocalDateTime
 import com.fablesfantasyrp.plugin.utils.EDEN
 import com.github.shynixn.mccoroutine.bukkit.launch
-import com.gitlab.martijn_heil.nincommands.common.Sender
-import com.sk89q.intake.Command
-import com.sk89q.intake.Require
+import com.fablesfantasyrp.caturix.spigot.common.Sender
+import com.fablesfantasyrp.caturix.Command
+import com.fablesfantasyrp.caturix.Require
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
