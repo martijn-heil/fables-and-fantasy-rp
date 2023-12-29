@@ -1,13 +1,16 @@
 package com.fablesfantasyrp.plugin.characters.command.provider
 
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
-import com.fablesfantasyrp.plugin.characters.frunBlocking
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.utils.quoteCommandArgument
 import com.fablesfantasyrp.caturix.argument.ArgumentParseException
 import com.fablesfantasyrp.caturix.argument.CommandArgs
 import com.fablesfantasyrp.caturix.argument.Namespace
 import com.fablesfantasyrp.caturix.parametric.Provider
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.toList
 import org.bukkit.Server
 import org.bukkit.entity.Player
 
@@ -18,8 +21,8 @@ class AllowCharacterNamePlayerProvider(private val server: Server,
 
 	override val isProvided: Boolean = false
 
-	private fun getByPlayerCharacter(arguments: CommandArgs, modifiers: List<Annotation>): Player? {
-		val character = frunBlocking { characters.forName(arguments.peek()) } ?: return null
+	private suspend fun getByPlayerCharacter(arguments: CommandArgs, modifiers: List<Annotation>): Player? {
+		val character = characters.forName(arguments.peek()) ?: return null
 		return profileManager.getCurrentForProfile(character.profile)
 	}
 
@@ -39,9 +42,10 @@ class AllowCharacterNamePlayerProvider(private val server: Server,
 	}
 
 	override suspend fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
-		return server.onlinePlayers.asSequence()
-				.mapNotNull { profileManager.getCurrentForPlayer(it)?.let { frunBlocking { characters.forProfile(it) } } }
+		return server.onlinePlayers.asFlow()
+				.mapNotNull { profileManager.getCurrentForPlayer(it)?.let { characters.forProfile(it) } }
 				.map { it.name }
+				.toList().asSequence()
 				.plus(playerProvider.getSuggestions(prefix, locals, modifiers))
 				.filter { it.startsWith(prefix.removePrefix("\""), true) }
 				.map { quoteCommandArgument(it) }

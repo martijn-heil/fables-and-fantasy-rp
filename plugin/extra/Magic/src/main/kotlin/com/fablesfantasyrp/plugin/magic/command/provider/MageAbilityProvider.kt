@@ -4,7 +4,6 @@ import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterReposito
 import com.fablesfantasyrp.plugin.magic.MageAbilities
 import com.fablesfantasyrp.plugin.magic.ability.MageAbility
 import com.fablesfantasyrp.plugin.magic.domain.repository.MageRepository
-import com.fablesfantasyrp.plugin.magic.frunBlocking
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.sender.BukkitSenderProvider
 import com.fablesfantasyrp.caturix.argument.ArgumentParseException
@@ -21,8 +20,8 @@ class MageAbilityProvider(private val profileManager: ProfileManager,
 	override suspend fun get(arguments: CommandArgs, modifiers: List<Annotation>): MageAbility {
 		val ability = MageAbilities.forId(arguments.next()) ?: throw ArgumentParseException("Ability not found.")
 		if (modifiers.find { it is OwnAbility } != null) {
-			val player = BukkitSenderProvider(Player::class.java).get(arguments, modifiers)!!
-			val character = profileManager.getCurrentForPlayer(player)?.let { frunBlocking { characters.forProfile(it) } }
+			val player = BukkitSenderProvider(Player::class.java).get(arguments, modifiers)
+			val character = profileManager.getCurrentForPlayer(player)?.let { characters.forProfile(it) }
 				?: throw ArgumentParseException("You are not in character.")
 			val mage = mages.forCharacter(character) ?: throw ArgumentParseException("You are not a mage.")
 			if (mage.magicPath != ability.magicPath && mage.magicPath.basePath != ability.magicPath)
@@ -34,7 +33,7 @@ class MageAbilityProvider(private val profileManager: ProfileManager,
 	override suspend fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
 		if (modifiers.find { it is OwnAbility } != null) {
 			val player = locals.get("sender") as? Player ?: return emptyList()
-			val character = profileManager.getCurrentForPlayer(player)?.let { frunBlocking { characters.forProfile(it) } }
+			val character = profileManager.getCurrentForPlayer(player)?.let { characters.forProfile(it) }
 					?: return emptyList()
 			val mage = mages.forCharacter(character) ?: return emptyList()
 			return MageAbilities.forPath(mage.magicPath).asSequence()

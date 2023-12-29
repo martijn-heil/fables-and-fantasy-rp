@@ -249,12 +249,12 @@ class Commands(private val plugin: Plugin,
 
 		@Command(aliases = ["join"], desc = "Join a party")
 		@Require(Permission.Command.Party.Join)
-		fun join(@Sender sender: CommandSender,
+		suspend fun join(@Sender sender: CommandSender,
 				 party: Party,
 				 @CommandTarget(Permission.Command.Party.Join + ".others") who: Character) {
 			val senderCharacter = (sender as? Player)
 				?.let { profileManager.getCurrentForPlayer(it) }
-				?.let { frunBlocking { characters.forProfile(it) } }
+				?.let { characters.forProfile(it) }
 
 			if (senderCharacter == who) {
 				partyAuthorizer.mayJoin(party, who).orElse { throw AuthorizationException(it) }

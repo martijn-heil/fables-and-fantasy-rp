@@ -1,14 +1,13 @@
 package com.fablesfantasyrp.plugin.characters.command.provider
 
-import com.fablesfantasyrp.plugin.characters.domain.entity.Character
-import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
-import com.fablesfantasyrp.plugin.characters.frunBlocking
-import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.caturix.argument.ArgumentException
 import com.fablesfantasyrp.caturix.argument.CommandArgs
 import com.fablesfantasyrp.caturix.argument.Namespace
 import com.fablesfantasyrp.caturix.parametric.Provider
 import com.fablesfantasyrp.caturix.parametric.ProvisionException
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
+import com.fablesfantasyrp.plugin.profile.ProfileManager
 import org.bukkit.entity.Player
 
 class CharacterSenderProvider(private val profileManager: ProfileManager,

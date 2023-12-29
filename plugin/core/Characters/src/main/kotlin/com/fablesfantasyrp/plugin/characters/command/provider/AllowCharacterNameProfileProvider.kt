@@ -1,21 +1,19 @@
 package com.fablesfantasyrp.plugin.characters.command.provider
 
-import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
-import com.fablesfantasyrp.plugin.characters.frunBlocking
-import com.fablesfantasyrp.plugin.profile.ProfileManager
-import com.fablesfantasyrp.plugin.profile.command.annotation.AllowPlayerName
-import com.fablesfantasyrp.plugin.profile.data.entity.Profile
-import com.fablesfantasyrp.plugin.utils.quoteCommandArgument
-import com.fablesfantasyrp.caturix.spigot.common.CommandTarget
 import com.fablesfantasyrp.caturix.argument.ArgumentParseException
 import com.fablesfantasyrp.caturix.argument.CommandArgs
 import com.fablesfantasyrp.caturix.argument.Namespace
 import com.fablesfantasyrp.caturix.parametric.Provider
+import com.fablesfantasyrp.caturix.spigot.common.CommandTarget
+import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
+import com.fablesfantasyrp.plugin.profile.ProfileManager
+import com.fablesfantasyrp.plugin.profile.command.annotation.AllowPlayerName
+import com.fablesfantasyrp.plugin.profile.data.entity.Profile
+import com.fablesfantasyrp.plugin.utils.quoteCommandArgument
 import org.bukkit.Server
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.permissions.Permissible
-import org.bukkit.plugin.Plugin
 
 class AllowCharacterNameProfileProvider(private val server: Server,
 										private val characterRepository: CharacterRepository,
@@ -23,8 +21,8 @@ class AllowCharacterNameProfileProvider(private val server: Server,
 										private val profileManager: ProfileManager) : Provider<Profile> {
 	override val isProvided: Boolean = false
 
-	private fun getByPlayerCharacter(arguments: CommandArgs, modifiers: List<Annotation>): Profile? {
-		return frunBlocking { characterRepository.forName(arguments.peek())?.profile }
+	private suspend fun getByPlayerCharacter(arguments: CommandArgs, modifiers: List<Annotation>): Profile? {
+		return characterRepository.forName(arguments.peek())?.profile
 	}
 
 	private suspend fun getByProfileProvider(arguments: CommandArgs, modifiers: List<Annotation>): Profile? {
@@ -67,14 +65,12 @@ class AllowCharacterNameProfileProvider(private val server: Server,
 	override suspend fun getSuggestions(prefix: String, locals: Namespace, modifiers: List<Annotation>): List<String> {
 		val allowPlayerName = modifiers.any { it is AllowPlayerName }
 
-		return frunBlocking {
-			characterRepository.allNames()
-				.asSequence()
-				.filter { it.startsWith(prefix.removePrefix("\""), true) }
-				.map { quoteCommandArgument(it) }
-				.plus(if (allowPlayerName) server.onlinePlayers.map { it.name }.filter { it.lowercase().startsWith(prefix.lowercase()) } else emptyList())
-				.distinct()
-				.toList()
-		}
+		return characterRepository.allNames()
+			.asSequence()
+			.filter { it.startsWith(prefix.removePrefix("\""), true) }
+			.map { quoteCommandArgument(it) }
+			.plus(if (allowPlayerName) server.onlinePlayers.map { it.name }.filter { it.lowercase().startsWith(prefix.lowercase()) } else emptyList())
+			.distinct()
+			.toList()
 	}
 }

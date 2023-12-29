@@ -16,7 +16,6 @@ import com.fablesfantasyrp.plugin.wardrobe.data.SkinRepository
 import com.fablesfantasyrp.plugin.wardrobe.data.skin
 import com.fablesfantasyrp.plugin.wardrobe.flaunch
 import com.fablesfantasyrp.plugin.wardrobe.frunBlocking
-import com.github.shynixn.mccoroutine.bukkit.launch
 import de.themoep.inventorygui.DynamicGuiElement
 import de.themoep.inventorygui.GuiElementGroup
 import de.themoep.inventorygui.InventoryGui
