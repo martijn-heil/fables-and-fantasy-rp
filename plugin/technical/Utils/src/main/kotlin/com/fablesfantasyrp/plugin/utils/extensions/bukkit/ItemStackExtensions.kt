@@ -15,7 +15,22 @@ import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import java.io.ByteArrayOutputStream
+import kotlin.math.min
 import net.minecraft.world.item.ItemStack as NMSItemStack
+
+fun ItemStack.splitStacks(stackSize: Int = this.maxStackSize): Collection<ItemStack> {
+	assert(stackSize > 0)
+
+	val stacks = ArrayList<ItemStack>()
+	var amount = this.amount
+
+	while (amount > 0) {
+		stacks.add(this.asQuantity(min(stackSize, amount)))
+		amount -= stackSize
+	}
+
+	return stacks
+}
 
 fun ItemStack.toBytes(): ByteArray {
 	val outputStream = ByteArrayOutputStream()

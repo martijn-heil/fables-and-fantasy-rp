@@ -1,15 +1,17 @@
 package com.fablesfantasyrp.plugin.shops.domain.repository
 
-import com.fablesfantasyrp.plugin.database.entity.MassivelyCachingEntityRepository
+import com.fablesfantasyrp.plugin.database.async.repository.base.AsyncTypicalRepository
 import com.fablesfantasyrp.plugin.shops.domain.entity.Shop
 import com.fablesfantasyrp.plugin.shops.domain.mapper.ShopMapper
+import com.fablesfantasyrp.plugin.shops.frunBlocking
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.BlockIdentifier
 
-class ShopRepositoryImpl(child: ShopMapper) : MassivelyCachingEntityRepository<Int, Shop, ShopMapper>(child), ShopRepository {
+class ShopRepositoryImpl(child: ShopMapper) : AsyncTypicalRepository<Int, Shop, ShopMapper>(child), ShopRepository {
     private val byLocation = HashMap<BlockIdentifier, Shop>()
 
 	override fun init() {
 		super.init()
+		frunBlocking { all().forEach { markStrong(it) } }
 		strongCache.forEach { byLocation[it.location] = it }
 	}
 
@@ -17,19 +19,19 @@ class ShopRepositoryImpl(child: ShopMapper) : MassivelyCachingEntityRepository<I
 		return byLocation[location]
 	}
 
-	override fun create(v: Shop): Shop {
+	override suspend fun create(v: Shop): Shop {
 		val created = super.create(v)
 		byLocation[created.location] = created
 		return created
 	}
 
-	override fun forId(id: Int): Shop? {
+	override suspend fun forId(id: Int): Shop? {
 		val found = super.forId(id)
 		if (found != null) byLocation[found.location] = found
 		return found
 	}
 
-	override fun destroy(v: Shop) {
+	override suspend fun destroy(v: Shop) {
 		super.destroy(v)
 		byLocation.remove(v.location)
 		v.isDestroyed = true

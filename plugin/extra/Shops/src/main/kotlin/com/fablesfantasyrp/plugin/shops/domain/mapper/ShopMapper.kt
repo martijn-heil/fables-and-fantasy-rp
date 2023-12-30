@@ -1,15 +1,15 @@
 package com.fablesfantasyrp.plugin.shops.domain.mapper
 
+import com.fablesfantasyrp.plugin.database.async.repository.base.AsyncMappingRepository
 import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
-import com.fablesfantasyrp.plugin.database.sync.repository.base.MappingRepository
 import com.fablesfantasyrp.plugin.profile.data.entity.ProfileRepository
 import com.fablesfantasyrp.plugin.shops.dal.model.ShopData
 import com.fablesfantasyrp.plugin.shops.dal.repository.ShopDataRepository
 import com.fablesfantasyrp.plugin.shops.domain.entity.Shop
 
 class ShopMapper(private val child: ShopDataRepository, private val profiles: ProfileRepository)
-	: MappingRepository<Int, ShopData, Shop, ShopDataRepository>(child), HasDirtyMarker<Shop> {
+	: AsyncMappingRepository<Int, ShopData, Shop, ShopDataRepository>(child), HasDirtyMarker<Shop> {
 
 	override var dirtyMarker: DirtyMarker<Shop>? = null
 

@@ -14,5 +14,7 @@ object Icon {
 	val UP = itemStack(Material.MAP) 					{ meta { customModel = 2; name = Component.empty() } }
 	val DOWN = itemStack(Material.FILLED_MAP) 			{ meta { customModel = 2; name = Component.empty() } }
 
+	val ANDROS = itemStack(Material.PAPER) 				{}
+
 	fun digit(digit: Int) = itemStack(Material.PLAYER_HEAD) { meta { customModel = digit } }
 }

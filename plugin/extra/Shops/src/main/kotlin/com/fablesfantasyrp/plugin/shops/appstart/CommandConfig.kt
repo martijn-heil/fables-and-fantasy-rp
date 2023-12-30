@@ -11,17 +11,15 @@ import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.BukkitModule
 import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.sender.BukkitSenderModule
 import com.fablesfantasyrp.caturix.spigot.common.bukkit.registerCommand
 import com.fablesfantasyrp.caturix.spigot.common.bukkit.unregisterCommand
-import com.fablesfantasyrp.plugin.characters.command.Commands
-import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
+import com.fablesfantasyrp.plugin.shops.command.ShopCommand
 import com.fablesfantasyrp.plugin.shops.command.provider.ShopModule
 import com.github.shynixn.mccoroutine.bukkit.launch
 import org.bukkit.command.Command
 import org.bukkit.plugin.Plugin
 
 internal class CommandConfig(private val plugin: Plugin,
-							 private val characterModule: CharacterModule,
 							 private val shopModule: ShopModule,
-							 private val commandsShop: Commands,
+							 private val commandsShop: ShopCommand,
 							 ) {
 	private val server = plugin.server
 	private lateinit var bukkitCommands: Collection<Command>
@@ -44,7 +42,6 @@ internal class CommandConfig(private val plugin: Plugin,
 		injector.install(BukkitModule(server))
 		injector.install(BukkitSenderModule())
 		injector.install(CommonModule())
-		injector.install(characterModule)
 		injector.install(shopModule)
 
 		val builder = ParametricBuilder(injector)

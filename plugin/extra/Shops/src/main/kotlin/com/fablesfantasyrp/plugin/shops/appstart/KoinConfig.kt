@@ -1,8 +1,6 @@
 package com.fablesfantasyrp.plugin.shops.appstart
 
-import com.fablesfantasyrp.plugin.shops.ShopAuthorizer
-import com.fablesfantasyrp.plugin.shops.ShopAuthorizerImpl
-import com.fablesfantasyrp.plugin.shops.ShopListener
+import com.fablesfantasyrp.plugin.shops.*
 import com.fablesfantasyrp.plugin.shops.command.ShopCommand
 import com.fablesfantasyrp.plugin.shops.command.provider.ShopModule
 import com.fablesfantasyrp.plugin.shops.dal.h2.H2ShopDataRepository
@@ -33,6 +31,7 @@ internal class KoinConfig(private val plugin: JavaPlugin) : BaseKoinConfig() {
 		} bind ShopRepository::class
 
 		singleOf(::CommandConfig)
+		singleOf(::ShopSlotCountCalculatorImpl) bind ShopSlotCountCalculator::class
 
 		factoryOf(::ShopModule)
 		factoryOf(::ShopCommand)

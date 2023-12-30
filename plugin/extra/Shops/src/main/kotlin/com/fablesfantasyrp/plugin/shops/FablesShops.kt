@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.shops
 
 import com.fablesfantasyrp.plugin.database.applyMigrations
+import com.fablesfantasyrp.plugin.database.scheduleRepeatingDataSave
 import com.fablesfantasyrp.plugin.shops.appstart.CommandConfig
 import com.fablesfantasyrp.plugin.shops.appstart.KoinConfig
 import com.fablesfantasyrp.plugin.shops.domain.repository.ShopRepositoryImpl
@@ -27,8 +28,6 @@ class FablesShops : JavaPlugin(), KoinComponent {
 			return
 		}
 
-		saveDefaultConfig()
-
 		koinConfig = KoinConfig(this)
 		koinConfig.load()
 
@@ -36,11 +35,13 @@ class FablesShops : JavaPlugin(), KoinComponent {
 		get<CommandConfig>().init()
 
 		server.pluginManager.registerEvents(get<ShopListener>(), this)
+
+		scheduleRepeatingDataSave(this) { get<ShopRepositoryImpl>().saveAllDirty() }
 	}
 
 	override fun onDisable() {
 		get<CommandConfig>().cleanup()
-		get<ShopRepositoryImpl>().saveAllDirty()
+		frunBlocking { get<ShopRepositoryImpl>().saveAllDirty() }
 		koinConfig.unload()
 	}
 
