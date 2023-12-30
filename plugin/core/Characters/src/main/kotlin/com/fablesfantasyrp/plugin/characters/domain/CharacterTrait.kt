@@ -22,6 +22,8 @@ enum class CharacterTrait(val displayName: String, val description: String?) {
 	PROPHET_OF_THE_GREEN_FLAME("Prophet of the Green Flame","Players with this trait know the 'fireball' spell without needing to be a spellcaster. Additionally, this flame is green and POISONS and BURNS any player it hits for D3 turns."),
 	ASPECT_OF_LILITHS_VEIL("Aspect of Lilith's Veil","Players with this trait know the \"Ice Maiden's Kiss\" spell without needing to be a spellcaster during the season Lilith's Veil"),
 
+	BLIND("Blind", "Players have permanent blindness and have a -2 debuff on Strength, Defence, and Agility rolls."),
+
 	// This one is not linked to a race at the moment, but implemented
 	HULKING_BRUTE("Hulking Brute", "Players with this trait are considered LARGE creatures instead of MEDIUM."),
 

@@ -5,13 +5,13 @@ import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.utils.every
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.onEach
 import org.bukkit.plugin.Plugin
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
-import java.time.Duration
-import kotlin.time.toKotlinDuration
+import kotlin.time.Duration.Companion.milliseconds
 
 // Players with this trait get the night vision effect when entering dark spaces and during the night.
 class Nightseer(plugin: Plugin,
@@ -23,10 +23,11 @@ class Nightseer(plugin: Plugin,
 	override fun init() {
 		super.init()
 
-		every(plugin, Duration.ofMillis(50).toKotlinDuration()) {
+		every(plugin, 50.milliseconds) {
 			getPlayersWithTrait()
 				.filter { it.player.location.block.lightLevel <= 1.toByte() }
 				.onEach { it.player.addPotionEffect(effect) }
+				.collect()
 		}
 
 		server.scheduler.scheduleSyncRepeatingTask(plugin, {

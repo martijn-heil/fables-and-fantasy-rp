@@ -7,6 +7,7 @@ import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.event.PlayerSwitchProfileEvent
 import com.fablesfantasyrp.plugin.utils.TransactionStep
 import com.fablesfantasyrp.plugin.utils.every
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -19,7 +20,7 @@ import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import java.time.Duration
 import java.time.Instant
-import kotlin.time.toKotlinDuration
+import kotlin.time.Duration.Companion.milliseconds
 
 class NaturallyStealthy(plugin: Plugin,
 						characters: CharacterRepository,
@@ -34,7 +35,7 @@ class NaturallyStealthy(plugin: Plugin,
 
 		server.pluginManager.registerEvents(NaturallyStealthyListener(), plugin)
 
-		every(plugin, Duration.ofMillis(50).toKotlinDuration()) {
+		every(plugin, 50.milliseconds) {
 			getPlayersWithTrait()
 				.onEach {
 					val lastMoved = lastMoved[it.player]
@@ -43,7 +44,7 @@ class NaturallyStealthy(plugin: Plugin,
 					} else {
 						setInvisible(it.player, false)
 					}
-				}
+				}.collect()
 
 				invisible.forEach { it.addPotionEffect(effect) }
 		}

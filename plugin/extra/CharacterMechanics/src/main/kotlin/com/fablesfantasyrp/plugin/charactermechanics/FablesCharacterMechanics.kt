@@ -48,6 +48,7 @@ class FablesCharacterMechanics : JavaPlugin(), KoinComponent {
 			singleOf(::Strong) binds arrayOf(TraitBehavior::class, StatsModifier::class)
 			singleOf(::Sturdy) binds arrayOf(TraitBehavior::class, StatsModifier::class)
 			singleOf(::Intelligent) binds arrayOf(TraitBehavior::class, StatsModifier::class)
+			singleOf(::Blind) binds arrayOf(TraitBehavior::class, StatsModifier::class)
 			singleOf(::AttianHeritage) binds arrayOf(TraitBehavior::class, HealthModifier::class)
 
 			singleOf(::SylvaniSkogPet) bind RaceBehavior::class

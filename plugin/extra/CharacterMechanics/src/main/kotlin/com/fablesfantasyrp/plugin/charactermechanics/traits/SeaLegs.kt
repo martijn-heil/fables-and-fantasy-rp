@@ -8,6 +8,7 @@ import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.event.PlayerSwitchProfileEvent
 import com.fablesfantasyrp.plugin.utils.TransactionStep
 import com.fablesfantasyrp.plugin.utils.every
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -15,8 +16,7 @@ import org.bukkit.event.Listener
 import org.bukkit.plugin.Plugin
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
-import java.time.Duration
-import kotlin.time.toKotlinDuration
+import kotlin.time.Duration.Companion.milliseconds
 
 class SeaLegs(plugin: Plugin,
 			  characters: CharacterRepository,
@@ -29,8 +29,8 @@ class SeaLegs(plugin: Plugin,
 
 		server.pluginManager.registerEvents(SeaLegsListener(), plugin)
 
-		every(plugin, Duration.ofMillis(50).toKotlinDuration()) {
-			getPlayersWithTrait().onEach { it.player.addPotionEffect(effect) }
+		every(plugin, 50.milliseconds) {
+			getPlayersWithTrait().onEach { it.player.addPotionEffect(effect) }.collect()
 		}
 	}
 
