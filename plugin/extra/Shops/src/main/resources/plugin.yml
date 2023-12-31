@@ -8,7 +8,9 @@ depend:
   - FablesForm
   - FablesTimers
   - FablesProfile
+  - FablesCharacters
   - FablesInventory
+  - FablesEconomy
   - Caturix
 main: com.fablesfantasyrp.plugin.shops.FablesShops
 api-version: @bukkit_api_version@

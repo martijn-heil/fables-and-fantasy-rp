@@ -30,12 +30,19 @@ fun Inventory.withdrawSimilar(item: ItemStack, max: Int = Int.MAX_VALUE): ItemSt
 
 fun Inventory.deposit(item: ItemStack): ItemStack? {
 	var leftOver = item.splitStacks().toTypedArray()
+	var totalAmountLeft = leftOver.sumOf { it.amount }
 
 	while (leftOver.isNotEmpty()) {
 		val leftOverAmount = addItem(*leftOver).values.sumOf { it.amount }
 		leftOver = item.asQuantity(leftOverAmount).splitStacks().toTypedArray()
+
+		if (leftOverAmount == totalAmountLeft) {
+			// No space left
+			break
+		}
+
+		totalAmountLeft = leftOverAmount
 	}
 
-	val leftOverAmount = leftOver.sumOf { it.amount }
-	return if (leftOverAmount > 0) item.asQuantity(leftOverAmount) else null
+	return if (totalAmountLeft > 0) item.asQuantity(totalAmountLeft) else null
 }

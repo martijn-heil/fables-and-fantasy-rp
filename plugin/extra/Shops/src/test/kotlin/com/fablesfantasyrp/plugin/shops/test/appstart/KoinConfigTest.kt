@@ -1,6 +1,8 @@
 package com.fablesfantasyrp.plugin.shops.test.appstart
 
+import com.fablesfantasyrp.plugin.economy.data.entity.ProfileEconomyRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
+import com.fablesfantasyrp.plugin.profile.command.provider.ProfileModule
 import com.fablesfantasyrp.plugin.profile.data.entity.EntityProfileRepository
 import com.fablesfantasyrp.plugin.profile.data.entity.ProfileRepository
 import com.fablesfantasyrp.plugin.shops.appstart.KoinConfig
@@ -23,6 +25,8 @@ internal class KoinConfigTest {
 		val profileManager = mockk<ProfileManager>()
 		val profiles = mockk<EntityProfileRepository>()
 		val dataSource = mockk<DataSource>()
+		val profileModule = mockk<ProfileModule>()
+		val profileEconomyRepository = mockk<ProfileEconomyRepository>()
 
 		every { plugin.server } returns server
 
@@ -32,8 +36,10 @@ internal class KoinConfigTest {
 				single { server }
 				single { dataSource }
 				single { profiles }
+				single { profileModule }
 				single<ProfileRepository> { profiles }
 				single { profileManager }
+				single { profileEconomyRepository }
 			}, KoinConfig(plugin).koinModule)
 		}
 		container.checkModules()

@@ -17,13 +17,14 @@ class Shop : DataEntity<Int, Shop> {
 	var owner: Profile?				set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 	var item: ItemStack				set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 	var lastActive: Instant			set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
-	var amount: Int					set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
-	var buyPrice: Int				set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
-	var sellPrice: Int				set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
-	var stock: Int					set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
+	var amount: Int					set(value) { check(value in 1..64); if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
+	var buyPrice: Int				set(value) { check(value > 0); if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
+	var sellPrice: Int				set(value) { check(value > 0); if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
+	var stock: Int					set(value) { check(value > 0); if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 
 	val isBuying get() = buyPrice != 0
 	val isSelling get() = sellPrice != 0
+	val isPublic get() = owner == null
 
 	constructor(location: BlockIdentifier,
 				owner: Profile?,
@@ -38,7 +39,7 @@ class Shop : DataEntity<Int, Shop> {
 		this.id = id
 		this.location = location
 		this.owner = owner
-		this.item = item
+		this.item = item.asOne()
 		this.lastActive = lastActive
 		this.amount = amount
 		this.buyPrice = buyPrice

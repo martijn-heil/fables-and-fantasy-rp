@@ -19,7 +19,7 @@ import kotlin.math.min
 import net.minecraft.world.item.ItemStack as NMSItemStack
 
 fun ItemStack.splitStacks(stackSize: Int = this.maxStackSize): Collection<ItemStack> {
-	assert(stackSize > 0)
+	check(stackSize > 0)
 
 	val stacks = ArrayList<ItemStack>()
 	var amount = this.amount
@@ -206,6 +206,9 @@ var ItemMeta.customModel: Int?
 var ItemMeta.localName: TranslatableComponent
 	get() = if (hasDisplayName()) displayName() as TranslatableComponent else translatable("")
 	set(value) = displayName(value)
+
+fun ItemStack.formatNameWithAmount(amount: Int = this.amount) =
+	if (amount > 1) "$amount ${this.asQuantity(amount).fancyName}" else this.asQuantity(amount).fancyName
 
 val ItemStack.fancyName: String get() {
 	var id = this.type.name.lowercase().replace('_', ' ')
