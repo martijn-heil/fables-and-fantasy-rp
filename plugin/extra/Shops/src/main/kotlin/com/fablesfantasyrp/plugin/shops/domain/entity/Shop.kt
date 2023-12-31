@@ -18,9 +18,9 @@ class Shop : DataEntity<Int, Shop> {
 	var item: ItemStack				set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 	var lastActive: Instant			set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 	var amount: Int					set(value) { check(value in 1..64); if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
-	var buyPrice: Int				set(value) { check(value > 0); if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
-	var sellPrice: Int				set(value) { check(value > 0); if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
-	var stock: Int					set(value) { check(value > 0); if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
+	var buyPrice: Int				set(value) { check(value >= 0); if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
+	var sellPrice: Int				set(value) { check(value >= 0); if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
+	var stock: Int					set(value) { check(value >= 0); if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 
 	val isBuying get() = buyPrice != 0
 	val isSelling get() = sellPrice != 0
