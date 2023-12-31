@@ -12,7 +12,7 @@ import org.bukkit.command.CommandSender
 class ShopCommand(private val shops: ShopRepository) {
 	@Command(aliases = ["destroy"], desc = "Destroy a shop")
 	@Require(Permission.Command.Shop.Destroy)
-	fun destroy(@Sender sender: CommandSender, shop: Shop) {
+	suspend fun destroy(@Sender sender: CommandSender, shop: Shop) {
 		shops.destroy(shop)
 		sender.sendMessage("$SYSPREFIX Destroyed shop #${shop.id}")
 	}

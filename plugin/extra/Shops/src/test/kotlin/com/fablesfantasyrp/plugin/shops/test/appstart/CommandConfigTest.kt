@@ -1,7 +1,8 @@
-package com.fablesfantasyrp.plugin.shops.appstart
+package com.fablesfantasyrp.plugin.shops.test.appstart
 
 import com.fablesfantasyrp.caturix.spigot.common.bukkit.registerCommand
 import com.fablesfantasyrp.caturix.spigot.common.bukkit.unregisterCommand
+import com.fablesfantasyrp.plugin.shops.appstart.CommandConfig
 import com.fablesfantasyrp.plugin.shops.command.ShopCommand
 import com.fablesfantasyrp.plugin.shops.command.provider.ShopModule
 import com.fablesfantasyrp.plugin.shops.domain.repository.ShopRepository

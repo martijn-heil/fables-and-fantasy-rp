@@ -1,8 +1,9 @@
-package com.fablesfantasyrp.plugin.shops.appstart
+package com.fablesfantasyrp.plugin.shops.test.appstart
 
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.data.entity.EntityProfileRepository
 import com.fablesfantasyrp.plugin.profile.data.entity.ProfileRepository
+import com.fablesfantasyrp.plugin.shops.appstart.KoinConfig
 import io.mockk.every
 import io.mockk.mockk
 import org.bukkit.Server

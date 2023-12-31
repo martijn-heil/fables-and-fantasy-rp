@@ -1,4 +1,4 @@
-package com.fablesfantasyrp.plugin.database
+package com.fablesfantasyrp.plugin.database.testfixtures
 
 import org.flywaydb.core.Flyway
 import org.h2.jdbcx.JdbcConnectionPool

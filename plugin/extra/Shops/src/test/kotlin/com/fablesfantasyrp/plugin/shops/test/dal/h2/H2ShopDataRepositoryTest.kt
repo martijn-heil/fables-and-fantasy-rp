@@ -1,6 +1,7 @@
-package com.fablesfantasyrp.plugin.shops.dal.h2
+package com.fablesfantasyrp.plugin.shops.test.dal.h2
 
-import com.fablesfantasyrp.plugin.database.BaseH2RepositoryTest
+import com.fablesfantasyrp.plugin.database.testfixtures.BaseH2RepositoryTest
+import com.fablesfantasyrp.plugin.shops.dal.h2.H2ShopDataRepository
 import com.fablesfantasyrp.plugin.shops.dal.model.ShopData
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.BlockIdentifier
 import io.mockk.every
