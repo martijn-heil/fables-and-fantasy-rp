@@ -43,7 +43,7 @@ class ShopCustomerGui(plugin: JavaPlugin,
 				StaticGuiElement('b', Icon.DOWN, { click ->
 					(click.whoClicked as? Player)?.let { buy(it) }
 					true
-				}, "${ChatColor.GOLD}Buy ${getItemName()} for ${shop.sellPrice} $CURRENCY_NAME")
+				}, "${ChatColor.GOLD}Buy ${getItemName()} for ${shop.buyPrice} $CURRENCY_NAME")
 			})
 		}
 

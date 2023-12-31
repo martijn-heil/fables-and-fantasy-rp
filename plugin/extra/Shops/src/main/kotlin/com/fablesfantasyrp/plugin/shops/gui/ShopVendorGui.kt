@@ -27,7 +27,7 @@ class ShopVendorGui(plugin: JavaPlugin,
 					private val profileManager: ProfileManager,
 					private val profileEconomyRepository: ProfileEconomyRepository) : InventoryGui(plugin, "", arrayOf(
 	"d135    t",
-	"arbs i v ",
+	"arbs i   ",
 	"w246    c")) {
 
 	init {
