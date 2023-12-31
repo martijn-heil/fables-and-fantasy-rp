@@ -47,7 +47,7 @@ internal class CommandConfigTest {
 		val playerProvider = PlayerProvider(server, offlinePlayerProvider)
 		val senderProvider = BukkitSenderProvider(Player::class.java)
 		val profileModule = ProfileModule(profiles, profileManager, senderProvider, playerProvider, server)
-		val shopModule = ShopModule(shops)
+		val shopModule = ShopModule(shops, senderProvider)
 		val commands = ShopCommand(shops, shopAuthorizer, shopSlotCountCalculator)
 
 		val config = CommandConfig(plugin, profileModule, shopModule, commands)

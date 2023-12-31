@@ -36,10 +36,11 @@ class ShopListener(private val plugin: JavaPlugin,
 		e.isCancelled = true
 
 		flaunch {
+			val title = shop.displayTitle()
 			if (authorizer.mayEdit(shop, profile)) {
-				ShopVendorGui(plugin, shop, shops, profileManager, profileEconomyRepository).show(player)
+				ShopVendorGui(plugin, title, shop, shops, profileManager, profileEconomyRepository).show(player)
 			} else {
-				ShopCustomerGui(plugin, shop, profileManager, profileEconomyRepository).show(player)
+				ShopCustomerGui(plugin, title, shop, profileManager, profileEconomyRepository).show(player)
 			}
 		}
 	}

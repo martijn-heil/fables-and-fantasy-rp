@@ -6,6 +6,8 @@ import com.fablesfantasyrp.plugin.profile.command.provider.ProfileModule
 import com.fablesfantasyrp.plugin.profile.data.entity.EntityProfileRepository
 import com.fablesfantasyrp.plugin.profile.data.entity.ProfileRepository
 import com.fablesfantasyrp.plugin.shops.appstart.KoinConfig
+import com.fablesfantasyrp.plugin.utils.domain.premium.PremiumRankCalculator
+import com.sk89q.worldguard.protection.regions.RegionContainer
 import io.mockk.every
 import io.mockk.mockk
 import org.bukkit.Server
@@ -26,6 +28,8 @@ internal class KoinConfigTest {
 		val profiles = mockk<EntityProfileRepository>()
 		val dataSource = mockk<DataSource>()
 		val profileModule = mockk<ProfileModule>()
+		val premiumRankCalculator = mockk<PremiumRankCalculator>()
+		val regionContainer = mockk<RegionContainer>()
 		val profileEconomyRepository = mockk<ProfileEconomyRepository>()
 
 		every { plugin.server } returns server
@@ -40,6 +44,8 @@ internal class KoinConfigTest {
 				single<ProfileRepository> { profiles }
 				single { profileManager }
 				single { profileEconomyRepository }
+				single { premiumRankCalculator }
+				single { regionContainer }
 			}, KoinConfig(plugin).koinModule)
 		}
 		container.checkModules()

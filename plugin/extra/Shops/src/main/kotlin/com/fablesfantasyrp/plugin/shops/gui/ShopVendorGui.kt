@@ -22,17 +22,17 @@ import kotlin.math.max
 import kotlin.math.min
 
 class ShopVendorGui(plugin: JavaPlugin,
+					title: String,
 					private val shop: Shop,
 					private val shops: ShopRepository,
 					private val profileManager: ProfileManager,
-					private val profileEconomyRepository: ProfileEconomyRepository) : InventoryGui(plugin, "", arrayOf(
+					private val profileEconomyRepository: ProfileEconomyRepository)
+	: InventoryGui(plugin, title, arrayOf(
 	"d135    t",
 	"arbs i   ",
 	"w246    c")) {
 
 	init {
-		flaunch { title = getShopTitle(shop) }
-
 		initStock()
 		initRate()
 		initBuying()
@@ -43,12 +43,14 @@ class ShopVendorGui(plugin: JavaPlugin,
 		})
 
 		this.addElement(StaticGuiElement('c', ItemStack(Material.OAK_SIGN), { click ->
-			ShopCustomerGui(plugin, shop, profileManager, profileEconomyRepository).show(click.whoClicked)
+			playClickSound()
+			ShopCustomerGui(plugin, title, shop, profileManager, profileEconomyRepository).show(click.whoClicked)
 			true
 		}, "${ChatColor.GOLD}View as customer"))
 
 		this.addElement(StaticGuiElement('t', Icon.TRASH_BIN, { click ->
 			val whoClicked = click.whoClicked
+			playClickSound()
 			flaunch {
 				if (shop.stock != 0) {
 					whoClicked.sendError("This shop is not empty. Take out all of the stock before destroying it.")
@@ -127,12 +129,14 @@ class ShopVendorGui(plugin: JavaPlugin,
 
 		this.addElement(StaticGuiElement('3', Icon.UP, {
 			shop.buyPrice = max(shop.buyPrice, shop.buyPrice + 1)
+			playClickSound()
 			draw()
 			true
 		}, "${ChatColor.GREEN}+"))
 
 		this.addElement(StaticGuiElement('4', Icon.DOWN, {
 			shop.buyPrice = max(0, shop.buyPrice - 1)
+			playClickSound()
 			draw()
 			true
 		}, "${ChatColor.RED}-"))
@@ -148,12 +152,14 @@ class ShopVendorGui(plugin: JavaPlugin,
 
 		this.addElement(StaticGuiElement('5', Icon.UP, {
 			shop.sellPrice = max(shop.sellPrice, shop.sellPrice + 1)
+			playClickSound()
 			draw()
 			true
 		}, "${ChatColor.GREEN}+"))
 
 		this.addElement(StaticGuiElement('6', Icon.DOWN, {
 			shop.sellPrice = max(0, shop.sellPrice - 1)
+			playClickSound()
 			draw()
 			true
 		}, "${ChatColor.RED}-"))

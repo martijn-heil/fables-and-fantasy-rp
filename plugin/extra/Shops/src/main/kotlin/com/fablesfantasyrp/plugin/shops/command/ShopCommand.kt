@@ -17,6 +17,7 @@ import com.fablesfantasyrp.plugin.shops.domain.repository.ShopRepository
 import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.sendError
+import com.fablesfantasyrp.plugin.utils.command.OrVisual
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.fancyName
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.toBlockIdentifier
 import net.kyori.adventure.text.Component
@@ -31,7 +32,7 @@ class ShopCommand(private val shops: ShopRepository,
 				  private val slotCountCalculator: ShopSlotCountCalculator) {
 	@Command(aliases = ["destroy"], desc = "Destroy a shop")
 	@Require(Permission.Command.Shop.Destroy)
-	suspend fun destroy(@Sender sender: CommandSender, shop: Shop) {
+	suspend fun destroy(@Sender sender: CommandSender, @OrVisual shop: Shop) {
 		shops.destroy(shop)
 		sender.sendMessage("$SYSPREFIX Destroyed shop #${shop.id}")
 	}
@@ -63,8 +64,19 @@ class ShopCommand(private val shops: ShopRepository,
 			// TODO check shop slot count
 		}
 
+		val blockIdentifier = targetBlock.location.toBlockIdentifier()
+
+		if (shops.forLocation(blockIdentifier) != null) {
+			sender.sendError("A shop already exists here")
+			return
+		}
+
+		if (!authorizer.mayCreateShopAt(sender, blockIdentifier)) {
+			throw AuthorizationException("You are not allowed to make a shop here, you need build permissions")
+		}
+
 		val shop = shops.create(Shop(
-			location = targetBlock.location.toBlockIdentifier(),
+			location = blockIdentifier,
 			owner = profile,
 			amount = 1,
 			buyPrice = 0,

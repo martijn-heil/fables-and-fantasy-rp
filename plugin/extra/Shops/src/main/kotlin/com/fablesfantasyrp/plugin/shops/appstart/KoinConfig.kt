@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.shops.appstart
 
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.sender.BukkitSenderProvider
 import com.fablesfantasyrp.plugin.shops.*
 import com.fablesfantasyrp.plugin.shops.command.ShopCommand
 import com.fablesfantasyrp.plugin.shops.command.provider.ShopModule
@@ -8,6 +9,7 @@ import com.fablesfantasyrp.plugin.shops.domain.mapper.ShopMapper
 import com.fablesfantasyrp.plugin.shops.domain.repository.ShopRepository
 import com.fablesfantasyrp.plugin.shops.domain.repository.ShopRepositoryImpl
 import com.fablesfantasyrp.plugin.utils.koin.BaseKoinConfig
+import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.module.Module
@@ -33,7 +35,7 @@ internal class KoinConfig(private val plugin: JavaPlugin) : BaseKoinConfig() {
 		singleOf(::CommandConfig)
 		singleOf(::ShopSlotCountCalculatorImpl) bind ShopSlotCountCalculator::class
 
-		factoryOf(::ShopModule)
+		factory { ShopModule(get(), BukkitSenderProvider(Player::class.java)) }
 		factoryOf(::ShopCommand)
 		factoryOf(::ShopAuthorizerImpl) bind ShopAuthorizer::class
 	}

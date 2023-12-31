@@ -6,9 +6,8 @@ import com.fablesfantasyrp.plugin.gui.Icon
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.shops.SYSPREFIX
 import com.fablesfantasyrp.plugin.shops.domain.entity.Shop
-import com.fablesfantasyrp.plugin.shops.flaunch
 import com.fablesfantasyrp.plugin.text.sendError
-import com.fablesfantasyrp.plugin.utils.extensions.bukkit.*
+import com.fablesfantasyrp.plugin.utils.validation.CommandValidationException
 import de.themoep.inventorygui.DynamicGuiElement
 import de.themoep.inventorygui.InventoryGui
 import de.themoep.inventorygui.StaticGuiElement
@@ -16,34 +15,40 @@ import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import org.ocpsoft.prettytime.PrettyTime
-import java.time.Instant
 
 class ShopCustomerGui(plugin: JavaPlugin,
+					  title: String,
 					  private val shop: Shop,
 					  private val profileManager: ProfileManager,
 					  private val profileEconomyRepository: ProfileEconomyRepository)
-	: InventoryGui(plugin, "", arrayOf(
+	: InventoryGui(plugin, title, arrayOf(
 	"    s    ",
 	"    x  i ",
 	"    b    ")) {
 	init {
-		flaunch { title = getShopTitle(shop) }
-
-		if (shop.sellPrice > 0) {
+		if (shop.customersCanSell) {
 			this.addElement(DynamicGuiElement('s') { _ ->
 				StaticGuiElement('s', Icon.UP, { click ->
-					(click.whoClicked as? Player)?.let { sell(it) }
+					playClickSound()
+					(click.whoClicked as? Player)?.let {
+						sell(it)
+						draw()
+					}
 					true
-				},  "${ChatColor.GOLD}Sell ${getItemName()} for ${shop.sellPrice} $CURRENCY_NAME")
+				},  "${ChatColor.GOLD}Sell ${shop.itemName} for ${shop.sellPrice} $CURRENCY_NAME")
 			})
 		}
 
-		if (shop.buyPrice > 0) {
+		if (shop.customersCanBuy) {
 			this.addElement(DynamicGuiElement('b') { _ ->
 				StaticGuiElement('b', Icon.DOWN, { click ->
-					(click.whoClicked as? Player)?.let { buy(it) }
+					playClickSound()
+					(click.whoClicked as? Player)?.let {
+						buy(it)
+						draw()
+					}
 					true
-				}, "${ChatColor.GOLD}Buy ${getItemName()} for ${shop.buyPrice} $CURRENCY_NAME")
+				}, "${ChatColor.GOLD}Buy ${shop.itemName} for ${shop.buyPrice} $CURRENCY_NAME")
 			})
 		}
 
@@ -61,53 +66,38 @@ class ShopCustomerGui(plugin: JavaPlugin,
 		})
 	}
 
-	private fun sell(player: Player) {
-		val profile = profileManager.getCurrentForPlayer(player) ?: run {
-			player.sendError("Are you are currently not on a profile")
+	private fun sell(customerPlayer: Player) {
+		val customerProfile = profileManager.getCurrentForPlayer(customerPlayer) ?: run {
+			customerPlayer.sendError("Are you are currently not on a profile")
 			return
 		}
-		val profileEconomy = profileEconomyRepository.forProfile(profile)
+		val customerEconomy = profileEconomyRepository.forProfile(customerProfile)
+		val ownerEconomy = shop.owner?.let { profileEconomyRepository.forProfile(it) }
 
-		val inventory = player.inventory
-		val available = inventory.countSimilar(shop.item)
-		if (available < shop.amount) {
-			player.sendError("You do not have ${getItemName()}")
+		try {
+			shop.sell(customerPlayer, customerEconomy, ownerEconomy)
+		} catch (ex: CommandValidationException) {
+			customerPlayer.sendError(ex.component)
 			return
 		}
-
-		inventory.withdrawSimilar(shop.item, shop.amount)
-		shop.stock += shop.amount
-		profileEconomy.money += shop.sellPrice
-		player.sendMessage("$SYSPREFIX You sold ${getItemName()} for ${shop.sellPrice} $CURRENCY_NAME")
-		shop.lastActive = Instant.now()
-		draw()
+		customerPlayer.sendMessage("$SYSPREFIX You sold ${shop.itemName} for ${shop.sellPrice} $CURRENCY_NAME")
 	}
 
-	private fun buy(player: Player) {
-		val profile = profileManager.getCurrentForPlayer(player) ?: run {
-			player.sendError("You are currently not on a profile")
+	private fun buy(customerPlayer: Player) {
+		val customerProfile = profileManager.getCurrentForPlayer(customerPlayer) ?: run {
+			customerPlayer.sendError("Are you are currently not on a profile")
+			return
+		}
+		val customerEconomy = profileEconomyRepository.forProfile(customerProfile)
+		val ownerEconomy = shop.owner?.let { profileEconomyRepository.forProfile(it) }
+
+		try {
+			shop.buy(customerPlayer, customerEconomy, ownerEconomy)
+		} catch (ex: CommandValidationException) {
+			customerPlayer.sendError(ex.component)
 			return
 		}
 
-		if (shop.stock < shop.amount) {
-			player.sendError("The shop is out of stock!")
-			return
-		}
-
-		val profileEconomy = profileEconomyRepository.forProfile(profile)
-		if (profileEconomy.money < shop.buyPrice) {
-			player.sendError("You do not have enough funds to buy ${getItemName()}")
-			return
-		}
-
-		profileEconomy.money -= shop.buyPrice
-		shop.stock -= shop.amount
-		val remainder = player.inventory.deposit(shop.item.asQuantity(shop.amount))
-		remainder?.splitStacks()?.forEach { player.location.world.dropItem(player.location, it) }
-		player.sendMessage("$SYSPREFIX You bought ${getItemName()} for ${shop.buyPrice} $CURRENCY_NAME")
-		shop.lastActive = Instant.now()
-		draw()
+		customerPlayer.sendMessage("$SYSPREFIX You bought ${shop.itemName} for ${shop.buyPrice} $CURRENCY_NAME")
 	}
-
-	private fun getItemName() = shop.item.formatNameWithAmount(shop.amount)
 }

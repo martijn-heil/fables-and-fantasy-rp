@@ -19,14 +19,15 @@ import kotlin.math.min
 import net.minecraft.world.item.ItemStack as NMSItemStack
 
 fun ItemStack.splitStacks(stackSize: Int = this.maxStackSize): Collection<ItemStack> {
-	check(stackSize > 0)
+	check(stackSize == -1 || stackSize > 0)
+	val finalStackSize = if (stackSize == -1) 64 else stackSize
 
 	val stacks = ArrayList<ItemStack>()
 	var amount = this.amount
 
 	while (amount > 0) {
-		stacks.add(this.asQuantity(min(stackSize, amount)))
-		amount -= stackSize
+		stacks.add(this.asQuantity(min(finalStackSize, amount)))
+		amount -= finalStackSize
 	}
 
 	return stacks

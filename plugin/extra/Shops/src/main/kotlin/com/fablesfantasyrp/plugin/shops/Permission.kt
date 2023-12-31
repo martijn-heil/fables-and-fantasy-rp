@@ -12,6 +12,7 @@ object Permission {
 			private const val prefix = Command.prefix + ".shop"
 			const val Destroy = "$prefix.destroy"
 			const val Create = "$prefix.create"
+			const val Mode = "$prefix.mode"
 			const val CreateOthers = "$prefix.create.others"
 		}
 	}
