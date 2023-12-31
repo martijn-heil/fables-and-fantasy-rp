@@ -44,4 +44,6 @@ class ShopListener(private val plugin: JavaPlugin,
 			}
 		}
 	}
+
+	// TODO prevent block breaking of shop slabs
 }

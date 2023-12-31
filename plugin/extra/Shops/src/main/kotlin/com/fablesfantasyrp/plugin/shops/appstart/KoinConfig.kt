@@ -8,6 +8,8 @@ import com.fablesfantasyrp.plugin.shops.dal.h2.H2ShopDataRepository
 import com.fablesfantasyrp.plugin.shops.domain.mapper.ShopMapper
 import com.fablesfantasyrp.plugin.shops.domain.repository.ShopRepository
 import com.fablesfantasyrp.plugin.shops.domain.repository.ShopRepositoryImpl
+import com.fablesfantasyrp.plugin.shops.service.DisplayItemService
+import com.fablesfantasyrp.plugin.shops.service.DisplayItemServiceImpl
 import com.fablesfantasyrp.plugin.utils.koin.BaseKoinConfig
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
@@ -34,6 +36,7 @@ internal class KoinConfig(private val plugin: JavaPlugin) : BaseKoinConfig() {
 
 		singleOf(::CommandConfig)
 		singleOf(::ShopSlotCountCalculatorImpl) bind ShopSlotCountCalculator::class
+		singleOf(::DisplayItemServiceImpl) bind DisplayItemService::class
 
 		factory { ShopModule(get(), BukkitSenderProvider(Player::class.java)) }
 		factoryOf(::ShopCommand)

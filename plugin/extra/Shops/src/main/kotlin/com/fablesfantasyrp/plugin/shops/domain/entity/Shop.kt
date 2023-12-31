@@ -29,6 +29,7 @@ class Shop : DataEntity<Int, Shop> {
 	val customersCanBuy get() = buyPrice != 0
 	val customersCanSell get() = sellPrice != 0
 	val isPublic get() = owner == null
+	val itemName get() = this.item.formatNameWithAmount(this.amount)
 
 	suspend fun displayTitle() =
 		if (isPublic) {
@@ -87,8 +88,6 @@ class Shop : DataEntity<Int, Shop> {
 
 		this.lastActive = Instant.now()
 	}
-
-	val itemName get() = this.item.formatNameWithAmount(this.amount)
 
 	constructor(location: BlockIdentifier,
 				owner: Profile?,
