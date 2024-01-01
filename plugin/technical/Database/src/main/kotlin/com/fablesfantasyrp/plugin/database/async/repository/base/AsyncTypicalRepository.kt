@@ -3,15 +3,12 @@ package com.fablesfantasyrp.plugin.database.async.repository.base
 import com.fablesfantasyrp.plugin.database.async.repository.AsyncKeyedRepository
 import com.fablesfantasyrp.plugin.database.async.repository.AsyncMutableRepository
 import com.fablesfantasyrp.plugin.database.entity.HasDestroyHandler
-import com.fablesfantasyrp.plugin.database.frunBlocking
 import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
 import com.fablesfantasyrp.plugin.database.model.Identifiable
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import java.lang.ref.SoftReference
 
 open class AsyncTypicalRepository<K, T: Identifiable<K>, C>(protected var child: C)
@@ -23,7 +20,6 @@ open class AsyncTypicalRepository<K, T: Identifiable<K>, C>(protected var child:
 
 	private val EMPTY_LOOKUP_RESULT = LookupResult<T>(null)
 
-	protected val lock: Mutex = Mutex()
 	protected val cache = HashMap<K, LookupResult<T>>()
 	protected val strongCache = HashSet<T>()
 	protected val dirty = LinkedHashSet<T>()
@@ -45,20 +41,18 @@ open class AsyncTypicalRepository<K, T: Identifiable<K>, C>(protected var child:
 	}
 
 	suspend fun saveAll() {
-		val all = lock.withLock { cache.mapNotNull { it.value.reference?.get() } }
+		val all = cache.mapNotNull { it.value.reference?.get() }
 		all.asFlow().onEach { update(it) }.collect()
 	}
 
 	override suspend fun create(v: T): T {
 		val result = child.create(v)
-		lock.withLock {
-			cache[result.id] = LookupResult(SoftReference(result))
-		}
+		cache[result.id] = LookupResult(SoftReference(result))
 		return result
 	}
 
 	private suspend fun saveNWeakDirty(n: Int) {
-		val entries = lock.withLock { dirty.asSequence().filter { !strongCache.contains(it) }.take(n).toList() }
+		val entries = dirty.asSequence().filter { !strongCache.contains(it) }.take(n).toList()
 		entries.asFlow().onEach { update(it) }.collect()
 	}
 
@@ -69,11 +63,9 @@ open class AsyncTypicalRepository<K, T: Identifiable<K>, C>(protected var child:
 
 	override suspend fun destroy(v: T) {
 		child.destroy(v)
-		lock.withLock {
-			destroyHandlers.forEach { it(v) }
-			cache.remove(v.id)
-			strongCache.remove(v)
-		}
+		destroyHandlers.forEach { it(v) }
+		cache.remove(v.id)
+		strongCache.remove(v)
 	}
 
 	override suspend fun allIds(): Collection<K> = child.allIds()
@@ -89,7 +81,7 @@ open class AsyncTypicalRepository<K, T: Identifiable<K>, C>(protected var child:
 
 	override suspend fun all(): Collection<T> = child.allIds().mapNotNull { this.forId(it) }
 	override suspend fun forId(id: K): T? {
-		val lookupResult = lock.withLock { cache[id] }
+		val lookupResult = cache[id]
 		val entity = lookupResult?.reference?.get()
 
 		if (entity != null) {
@@ -101,7 +93,7 @@ open class AsyncTypicalRepository<K, T: Identifiable<K>, C>(protected var child:
 				cache[id] = EMPTY_LOOKUP_RESULT
 				return null
 			}
-			return lock.withLock { deduplicate(obj) }
+			return deduplicate(obj)
 		}
 	}
 
