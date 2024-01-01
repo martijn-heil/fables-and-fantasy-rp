@@ -59,7 +59,7 @@ class ShopCustomerGui(plugin: JavaPlugin,
 				"${ChatColor.GOLD}Additional information\n" +
 					"\n" +
 					"${ChatColor.DARK_PURPLE}${ChatColor.ITALIC}Items in stock\n" +
-					"${ChatColor.GRAY}${shop.stock}\n" +
+					"${ChatColor.GRAY}${if (shop.isPublic) "\u221E" else shop.stock}\n" +
 					"\n" +
 					"${ChatColor.DARK_PURPLE}${ChatColor.ITALIC}Last active\n" +
 					"${ChatColor.GRAY}${PrettyTime().format(shop.lastActive)}")

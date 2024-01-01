@@ -42,6 +42,8 @@ class Shop : DataEntity<Int, Shop> {
 	fun sell(customerPlayer: Player,
 			 customerEconomy: ProfileEconomy,
 			 ownerEconomy: ProfileEconomy?) {
+		if (isPublic) require(ownerEconomy == null)
+
 		val inventory = customerPlayer.inventory
 		val available = inventory.countSimilar(this.item)
 		if (available < this.amount) {
@@ -67,7 +69,9 @@ class Shop : DataEntity<Int, Shop> {
 	fun buy(customerPlayer: Player,
 			customerEconomy: ProfileEconomy,
 			ownerEconomy: ProfileEconomy?) {
-		if (this.stock < this.amount) {
+		if (isPublic) require(ownerEconomy == null)
+
+		if (ownerEconomy != null && this.stock < this.amount) {
 			throw CommandValidationException("The shop is out of stock!")
 		}
 
@@ -78,7 +82,9 @@ class Shop : DataEntity<Int, Shop> {
 		}
 
 		customerEconomy.money -= price
-		this.stock -= this.amount
+		if (ownerEconomy != null) {
+			this.stock -= this.amount
+		}
 		val remainder = customerPlayer.inventory.deposit(this.item.asQuantity(this.amount))
 		remainder?.splitStacks()?.forEach { customerPlayer.location.world.dropItem(customerPlayer.location, it) }
 

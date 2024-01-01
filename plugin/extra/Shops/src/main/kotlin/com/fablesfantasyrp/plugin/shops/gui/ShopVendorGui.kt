@@ -72,14 +72,16 @@ class ShopVendorGui(plugin: JavaPlugin,
 	}
 
 	private fun initStock() {
-		this.addElement(StaticGuiElement('d', Icon.UP, { click ->
-			val whoClicked = click.whoClicked
-			val toDeposit = whoClicked.inventory.withdrawSimilar(shop.item).amount
-			shop.stock += toDeposit
-			playClickSound()
-			draw()
-			true
-		}, "${ChatColor.GOLD}Deposit all items"))
+		if (!shop.isPublic) {
+			this.addElement(StaticGuiElement('d', Icon.UP, { click ->
+				val whoClicked = click.whoClicked
+				val toDeposit = whoClicked.inventory.withdrawSimilar(shop.item).amount
+				shop.stock += toDeposit
+				playClickSound()
+				draw()
+				true
+			}, "${ChatColor.GOLD}Deposit all items"))
+		}
 
 		this.addElement(StaticGuiElement('w', Icon.DOWN, { click ->
 			val whoClicked = click.whoClicked

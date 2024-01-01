@@ -92,8 +92,8 @@ internal class ShopTest {
 
 	@ParameterizedTest
 	@CsvSource(
-		"50,100,20,130",
-		"10,100,10,100")
+		"50,100,20,130", // Success
+		"10,100,10,100") // Customer does not have enough funds
 	fun testBuy(customerMoneyString: String,
 				ownerMoneyString: String,
 				expectedCustomerMoneyString: String,
@@ -226,5 +226,118 @@ internal class ShopTest {
 		assertEquals(expectedStock, shop.stock)
 		assertEquals(expectedCustomerMoney, customerEconomy.money)
 		assertEquals(expectedOwnerMoney, ownerEconomy.money)
+	}
+
+	@ParameterizedTest
+	@CsvSource(
+		"1,1,50,2,80", 	// Success
+		"1,0,50,1,50", 	// Not enough available in customer's inventory
+	)
+	fun testSellPublic(stockString: String,
+					   customerAmountAvailableString: String,
+					   customerMoneyString: String,
+					   expectedStockString: String,
+					   expectedCustomerMoneyString: String) {
+		val stock = stockString.toInt()
+		val customerAmountAvailable = customerAmountAvailableString.toInt()
+		val customerMoney = customerMoneyString.toInt()
+		val expectedStock = expectedStockString.toInt()
+		val expectedCustomerMoney = expectedCustomerMoneyString.toInt()
+
+		val customerPlayer = mockk<Player>()
+		val customerPlayerInventory = mockk<PlayerInventory>()
+
+		every { customerPlayer.inventory } returns customerPlayerInventory
+		every { customerPlayer.sendMessage(any<String>()) } just runs
+		every { customerPlayer.sendMessage(any<Component>()) } just runs
+		every { customerPlayerInventory.countSimilar(any()) } returns customerAmountAvailable
+		every { customerPlayerInventory.withdrawSimilar(any(), any()) } answers { secondArg<ItemStack>().asQuantity(thirdArg()) }
+
+		val customerEconomy = ProfileEconomy(
+			id = 1,
+			money = customerMoney,
+			bankMoney = 0
+		)
+
+		val shop = Shop(
+			location = BlockIdentifier(UUID.randomUUID(), 0, 0, 0),
+			amount = 1,
+			item = ItemStack(Material.COBBLESTONE),
+			buyPrice = 0,
+			sellPrice = 30,
+			lastActive = Instant.now(),
+			stock = stock,
+			owner = null,
+		)
+
+		var success = true
+		try {
+			shop.sell(customerPlayer, customerEconomy, null)
+		} catch (_: CommandValidationException) {
+			success = false
+		}
+
+		if (success) {
+			verify(exactly = 1) { customerPlayerInventory.withdrawSimilar(match { it.type == Material.COBBLESTONE }, shop.amount) }
+		} else {
+			verify(exactly = 0) { customerPlayerInventory.withdrawSimilar(match { it.type == Material.COBBLESTONE }, shop.amount) }
+		}
+
+		assertEquals(expectedStock, shop.stock)
+		assertEquals(expectedCustomerMoney, customerEconomy.money)
+	}
+
+	@ParameterizedTest
+	@CsvSource(
+		"50,20", // Success
+		"10,10") // Customer does not have enough funds
+	fun testBuyPublic(customerMoneyString: String,
+					  expectedCustomerMoneyString: String) {
+		val customerMoney = customerMoneyString.toInt()
+		val expectedCustomerMoney = expectedCustomerMoneyString.toInt()
+
+		val customerPlayer = mockk<Player>()
+		val customerPlayerInventory = mockk<PlayerInventory>()
+
+		every { customerPlayer.inventory } returns customerPlayerInventory
+		every { customerPlayer.sendMessage(any<String>()) } just runs
+		every { customerPlayer.sendMessage(any<Component>()) } just runs
+		every { customerPlayerInventory.deposit(any()) } returns null
+
+		val customerEconomy = ProfileEconomy(
+			id = 1,
+			money = customerMoney,
+			bankMoney = 0
+		)
+
+		val shop = Shop(
+			location = BlockIdentifier(UUID.randomUUID(), 0, 0, 0),
+			amount = 1,
+			item = ItemStack(Material.COBBLESTONE),
+			buyPrice = 30,
+			sellPrice = 0,
+			lastActive = Instant.now(),
+			stock = 1,
+			owner = Profile(
+				owner = null,
+				isActive = true,
+				description = null
+			)
+		)
+
+		var success = true
+		try {
+			shop.buy(customerPlayer, customerEconomy, null)
+		} catch (_: CommandValidationException) {
+			success = false
+		}
+
+		if (success) {
+			verify(exactly = 1) { customerPlayerInventory.deposit(match { it.type == Material.COBBLESTONE && it.amount == 1 }) }
+		} else {
+			verify(exactly = 0) { customerPlayerInventory.deposit(match { it.type == Material.COBBLESTONE && it.amount == 1 }) }
+		}
+
+		assertEquals(expectedCustomerMoney, customerEconomy.money)
 	}
 }
