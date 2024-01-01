@@ -2,7 +2,6 @@ package com.fablesfantasyrp.plugin.shops
 
 object Permission {
 	const val prefix = "fables.shops"
-	const val Slots = "${prefix}.slots"
 	const val Admin = "${prefix}.admin"
 
 	object Command {
@@ -12,7 +11,6 @@ object Permission {
 			private const val prefix = Command.prefix + ".shop"
 			const val Destroy = "$prefix.destroy"
 			const val Create = "$prefix.create"
-			const val Mode = "$prefix.mode"
 			const val CreateOthers = "$prefix.create.others"
 		}
 	}
