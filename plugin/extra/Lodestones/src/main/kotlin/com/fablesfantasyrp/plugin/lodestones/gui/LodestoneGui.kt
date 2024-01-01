@@ -4,6 +4,7 @@ import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.shortName
 import com.fablesfantasyrp.plugin.gui.GuiSingleChoice
 import com.fablesfantasyrp.plugin.gui.Icon
+import com.fablesfantasyrp.plugin.lodestones.MAX_LODESTONE_SLOTS
 import com.fablesfantasyrp.plugin.lodestones.domain.entity.Lodestone
 import com.fablesfantasyrp.plugin.lodestones.domain.repository.CharacterLodestoneRepository
 import com.fablesfantasyrp.plugin.lodestones.flaunch
@@ -56,7 +57,7 @@ class LodestoneGui(private val plugin: JavaPlugin,
 					"${ChatColor.GRAY}this lodestone to your collection.")
 			})
 
-			group.addElements((slotCount until 4).map {
+			group.addElements((slotCount until MAX_LODESTONE_SLOTS).map {
 				StaticGuiElement('g', ItemStack(Material.WITHER_SKELETON_SKULL), { true },
 					"${ChatColor.RED}Locked slot!",
 					"${ChatColor.GRAY}Higher VIP ranks may access this slot.")
