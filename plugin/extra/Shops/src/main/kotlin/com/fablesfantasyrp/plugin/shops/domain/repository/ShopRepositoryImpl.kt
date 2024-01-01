@@ -5,9 +5,12 @@ import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.shops.domain.entity.Shop
 import com.fablesfantasyrp.plugin.shops.domain.mapper.ShopMapper
 import com.fablesfantasyrp.plugin.shops.frunBlocking
+import com.fablesfantasyrp.plugin.shops.service.DisplayItemService
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.BlockIdentifier
 
-class ShopRepositoryImpl(child: ShopMapper) : AsyncTypicalRepository<Int, Shop, ShopMapper>(child), ShopRepository {
+class ShopRepositoryImpl(child: ShopMapper,
+						 private val displayItemService: DisplayItemService)
+	: AsyncTypicalRepository<Int, Shop, ShopMapper>(child), ShopRepository {
     private val byLocation = HashMap<BlockIdentifier, Shop>()
 
 	override fun init() {
@@ -27,6 +30,7 @@ class ShopRepositoryImpl(child: ShopMapper) : AsyncTypicalRepository<Int, Shop, 
 	override suspend fun create(v: Shop): Shop {
 		val created = super.create(v)
 		byLocation[created.location] = created
+		displayItemService.spawnDisplayItem(v.location, v.item)
 		return created
 	}
 

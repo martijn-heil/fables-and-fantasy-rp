@@ -30,7 +30,7 @@ internal class KoinConfig(private val plugin: JavaPlugin) : BaseKoinConfig() {
 		single {
 			val h2Repository = H2ShopDataRepository(get())
 			val mapper = ShopMapper(h2Repository, get())
-			val domainRepository = ShopRepositoryImpl(mapper)
+			val domainRepository = ShopRepositoryImpl(mapper, get())
 			domainRepository
 		} bind ShopRepository::class
 
