@@ -6,5 +6,6 @@ import org.bukkit.inventory.ItemStack
 
 interface DisplayItemService {
 	fun spawnDisplayItem(location: BlockIdentifier, item: ItemStack)
+	fun removeDisplayItem(location: BlockIdentifier)
 	fun isDisplayItem(item: Item): Boolean
 }

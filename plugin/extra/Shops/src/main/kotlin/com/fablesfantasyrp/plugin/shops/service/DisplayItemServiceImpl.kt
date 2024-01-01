@@ -49,6 +49,12 @@ class DisplayItemServiceImpl(private val plugin: Plugin) : DisplayItemService {
 		itemIds.add(spawnedItem.uniqueId)
 	}
 
+	override fun removeDisplayItem(location: BlockIdentifier) {
+		val item = hovering.remove(location) ?: return
+		itemIds.remove(item.uniqueId)
+		item.remove()
+	}
+
 	override fun isDisplayItem(item: Item) = itemIds.contains(item.uniqueId)
 
 	private fun isStrayDisplayItem(item: Item)

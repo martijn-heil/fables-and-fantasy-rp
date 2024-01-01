@@ -45,6 +45,7 @@ class ShopRepositoryImpl(child: ShopMapper,
 		super.destroy(v)
 		byLocation.remove(v.location)
 		v.isDestroyed = true
+		displayItemService.removeDisplayItem(v.location)
 	}
 
 	override fun markDirty(v: Shop, what: String, oldValue: Any?, newValue: Any?) {
