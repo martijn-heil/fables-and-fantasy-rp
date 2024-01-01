@@ -59,9 +59,15 @@ class ShopCommand(private val shops: ShopRepository,
 			return
 		}
 
-		if (sender == profile?.owner) {
+		if (!isPublic && sender == profile?.owner) {
 			val slots = slotCountCalculator.getShopSlots(sender)
-			// TODO check shop slot count
+			if (slots != null) {
+				val usedSlots = shops.forOwner(profile).size
+				if (usedSlots >= slots) {
+					sender.sendError("You have already used ${slots}/${slots} of your shop tiles. Destroy another shop first.")
+					return
+				}
+			}
 		}
 
 		val blockIdentifier = targetBlock.location.toBlockIdentifier()

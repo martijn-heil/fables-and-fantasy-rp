@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.shops.domain.repository
 
 import com.fablesfantasyrp.plugin.database.async.repository.base.AsyncTypicalRepository
+import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.shops.domain.entity.Shop
 import com.fablesfantasyrp.plugin.shops.domain.mapper.ShopMapper
 import com.fablesfantasyrp.plugin.shops.frunBlocking
@@ -17,6 +18,10 @@ class ShopRepositoryImpl(child: ShopMapper) : AsyncTypicalRepository<Int, Shop, 
 
 	override fun forLocation(location: BlockIdentifier): Shop? {
 		return byLocation[location]
+	}
+
+	override suspend fun forOwner(owner: Profile): Collection<Shop> {
+		return deduplicate(child.forOwner(owner))
 	}
 
 	override suspend fun create(v: Shop): Shop {

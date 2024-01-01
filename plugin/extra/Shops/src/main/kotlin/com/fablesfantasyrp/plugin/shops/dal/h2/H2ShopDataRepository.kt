@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.shops.dal.h2
 
+import com.fablesfantasyrp.plugin.database.asSequence
 import com.fablesfantasyrp.plugin.database.getUuid
 import com.fablesfantasyrp.plugin.database.repository.BaseH2KeyedRepository
 import com.fablesfantasyrp.plugin.database.setUuid
@@ -97,6 +98,14 @@ class H2ShopDataRepository(private val dataSource: DataSource)
 			val result = stmnt.executeQuery()
 			if (!result.next()) return null
 			fromRow(result)
+		}
+	}
+
+	override fun forOwner(ownerId: Int): Collection<ShopData> {
+		return dataSource.connection.use { connection ->
+			connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE owner = ?").apply {
+				this.setInt(1, ownerId)
+			}.executeQuery().asSequence().map { fromRow(it) }.toList()
 		}
 	}
 

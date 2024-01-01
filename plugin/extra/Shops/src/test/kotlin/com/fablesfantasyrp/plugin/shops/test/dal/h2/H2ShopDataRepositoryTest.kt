@@ -151,4 +151,26 @@ internal class H2ShopDataRepositoryTest : BaseH2RepositoryTest("FABLES_SHOPS") {
 
 		assertEquals(updated, repository.forId(updated.id))
 	}
+
+	@Test
+	fun testForOwner() {
+		repository.all().forEach { repository.destroy(it) }
+		repository.create(simpleEntity.copy(owner = 1))
+		repository.create(simpleEntity.copy(owner = 1))
+
+		repository.create(simpleEntity.copy(owner = 2))
+		repository.create(simpleEntity.copy(owner = 2))
+		repository.create(simpleEntity.copy(owner = 2))
+
+		repository.create(simpleEntity.copy(owner = null))
+
+		val ownerOne = repository.forOwner(1)
+		val ownerTwo = repository.forOwner(2)
+
+		assertEquals(2, ownerOne.size)
+		assert(ownerOne.all { it.owner == 1 })
+
+		assertEquals(3, ownerTwo.size)
+		assert(ownerTwo.all { it.owner == 2 })
+	}
 }
