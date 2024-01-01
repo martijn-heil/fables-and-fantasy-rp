@@ -24,7 +24,7 @@ import kotlin.test.assertEquals
 internal class H2ShopDataRepositoryTest : BaseH2RepositoryTest("FABLES_SHOPS") {
 	private val repository = H2ShopDataRepository(dataSource)
 
-	private val simpleEntity = ShopData(
+	private fun simpleEntity() = ShopData(
 		location = BlockIdentifier(UUID.randomUUID(), 0, 0, 0),
 		amount = 0,
 		buyPrice = 0,
@@ -35,7 +35,7 @@ internal class H2ShopDataRepositoryTest : BaseH2RepositoryTest("FABLES_SHOPS") {
 		stock = 0,
 	)
 
-	private val maxEntity = simpleEntity.copy(
+	private val maxEntity = simpleEntity().copy(
 		amount = Int.MAX_VALUE,
 		buyPrice = Int.MAX_VALUE,
 		sellPrice = Int.MAX_VALUE,
@@ -43,7 +43,7 @@ internal class H2ShopDataRepositoryTest : BaseH2RepositoryTest("FABLES_SHOPS") {
 		stock = Int.MAX_VALUE
 	)
 
-	private val minEntity = simpleEntity.copy(
+	private val minEntity = simpleEntity().copy(
 		amount = Int.MIN_VALUE,
 		buyPrice = Int.MIN_VALUE,
 		sellPrice = Int.MIN_VALUE,
@@ -69,7 +69,7 @@ internal class H2ShopDataRepositoryTest : BaseH2RepositoryTest("FABLES_SHOPS") {
 
 	@Test
 	fun testCreateSimple() {
-		val created1 = repository.create(simpleEntity)
+		val created1 = repository.create(simpleEntity())
 		assertEquals(created1, repository.forId(created1.id))
 	}
 
@@ -87,13 +87,13 @@ internal class H2ShopDataRepositoryTest : BaseH2RepositoryTest("FABLES_SHOPS") {
 
 	@Test
 	fun testCreateNullability() {
-		val created = repository.create(simpleEntity.copy(owner = null))
+		val created = repository.create(simpleEntity().copy(owner = null))
 		assertEquals(created, repository.forId(created.id))
 	}
 
 	@Test
 	fun testUpdateSimple() {
-		val created = repository.create(simpleEntity)
+		val created = repository.create(simpleEntity())
 		assertEquals(created, repository.forId(created.id))
 
 		val updated = created.copy(
@@ -144,7 +144,7 @@ internal class H2ShopDataRepositoryTest : BaseH2RepositoryTest("FABLES_SHOPS") {
 
 	@Test
 	fun testUpdateNullability() {
-		val created = repository.create(simpleEntity.copy(owner = 1))
+		val created = repository.create(simpleEntity().copy(owner = 1))
 
 		val updated = created.copy(owner = null)
 		repository.update(updated)
@@ -155,14 +155,14 @@ internal class H2ShopDataRepositoryTest : BaseH2RepositoryTest("FABLES_SHOPS") {
 	@Test
 	fun testForOwner() {
 		repository.all().forEach { repository.destroy(it) }
-		repository.create(simpleEntity.copy(owner = 1))
-		repository.create(simpleEntity.copy(owner = 1))
+		repository.create(simpleEntity().copy(owner = 1))
+		repository.create(simpleEntity().copy(owner = 1))
 
-		repository.create(simpleEntity.copy(owner = 2))
-		repository.create(simpleEntity.copy(owner = 2))
-		repository.create(simpleEntity.copy(owner = 2))
+		repository.create(simpleEntity().copy(owner = 2))
+		repository.create(simpleEntity().copy(owner = 2))
+		repository.create(simpleEntity().copy(owner = 2))
 
-		repository.create(simpleEntity.copy(owner = null))
+		repository.create(simpleEntity().copy(owner = null))
 
 		val ownerOne = repository.forOwner(1)
 		val ownerTwo = repository.forOwner(2)

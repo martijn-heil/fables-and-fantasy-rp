@@ -28,6 +28,7 @@ class ShopRepositoryImpl(child: ShopMapper,
 	}
 
 	override suspend fun create(v: Shop): Shop {
+		require(forLocation(v.location) == null)
 		val created = super.create(v)
 		byLocation[created.location] = created
 		displayItemService.spawnDisplayItem(v.location, v.item)

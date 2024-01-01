@@ -10,5 +10,7 @@ CREATE TABLE shop (
 	amount				INT NOT NULL,
 	buy_price			INT NOT NULL,
 	sell_price			INT NOT NULL,
-	stock				INT NOT NULL
+	stock				INT NOT NULL,
+
+	UNIQUE(world, location_x, location_y, location_z)
 );
