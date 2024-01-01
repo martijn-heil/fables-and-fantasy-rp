@@ -23,6 +23,7 @@ import org.bukkit.inventory.PlayerInventory
 import org.bukkit.inventory.meta.Damageable
 import org.bukkit.inventory.meta.ItemMeta
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import java.time.Instant
@@ -339,5 +340,42 @@ internal class ShopTest {
 		}
 
 		assertEquals(expectedCustomerMoney, customerEconomy.money)
+	}
+
+	@Test
+	fun testInvalidPublicShopUsage() {
+		val customerPlayer = mockk<Player>()
+		val customerPlayerInventory = mockk<PlayerInventory>()
+
+		every { customerPlayer.inventory } returns customerPlayerInventory
+		every { customerPlayer.sendMessage(any<String>()) } just runs
+		every { customerPlayer.sendMessage(any<Component>()) } just runs
+		every { customerPlayerInventory.deposit(any()) } returns null
+
+		val customerEconomy = ProfileEconomy(
+			id = 1,
+			money = 30,
+			bankMoney = 0
+		)
+		val ownerEconomy = ProfileEconomy(
+			id = 2,
+			money = 0,
+			bankMoney = 0
+		)
+
+		val shop = Shop(
+			location = BlockIdentifier(UUID.randomUUID(), 0, 0, 0),
+			amount = 1,
+			item = ItemStack(Material.COBBLESTONE),
+			buyPrice = 0,
+			sellPrice = 30,
+			lastActive = Instant.now(),
+			stock = 1,
+			owner = null
+		)
+
+		assertThrows<IllegalArgumentException> {
+			shop.buy(customerPlayer, customerEconomy, ownerEconomy)
+		}
 	}
 }
