@@ -9,7 +9,6 @@ import com.fablesfantasyrp.plugin.lodestones.domain.repository.CharacterLodeston
 import com.fablesfantasyrp.plugin.lodestones.flaunch
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.itemStack
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.meta
-import com.github.shynixn.mccoroutine.bukkit.launch
 import de.themoep.inventorygui.DynamicGuiElement
 import de.themoep.inventorygui.GuiElementGroup
 import de.themoep.inventorygui.InventoryGui
@@ -57,7 +56,7 @@ class LodestoneGui(private val plugin: JavaPlugin,
 					"${ChatColor.GRAY}this lodestone to your collection.")
 			})
 
-			group.addElements((slotCount..6).map {
+			group.addElements((slotCount until 4).map {
 				StaticGuiElement('g', ItemStack(Material.WITHER_SKELETON_SKULL), { true },
 					"${ChatColor.RED}Locked slot!",
 					"${ChatColor.GRAY}Higher VIP ranks may access this slot.")
