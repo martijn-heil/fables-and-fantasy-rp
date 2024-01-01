@@ -1,0 +1,17 @@
+name: FablesShops
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+  - FablesDatabase
+  - FablesForm
+  - FablesTimers
+  - FablesProfile
+  - FablesCharacters
+  - FablesInventory
+  - FablesEconomy
+  - WorldGuard
+  - Caturix
+main: com.fablesfantasyrp.plugin.shops.FablesShops
+api-version: @bukkit_api_version@

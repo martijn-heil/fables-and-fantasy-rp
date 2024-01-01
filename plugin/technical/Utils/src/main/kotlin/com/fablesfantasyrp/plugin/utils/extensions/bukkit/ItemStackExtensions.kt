@@ -15,7 +15,23 @@ import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import java.io.ByteArrayOutputStream
+import kotlin.math.min
 import net.minecraft.world.item.ItemStack as NMSItemStack
+
+fun ItemStack.splitStacks(stackSize: Int = this.maxStackSize): Collection<ItemStack> {
+	check(stackSize == -1 || stackSize > 0)
+	val finalStackSize = if (stackSize == -1) 64 else stackSize
+
+	val stacks = ArrayList<ItemStack>()
+	var amount = this.amount
+
+	while (amount > 0) {
+		stacks.add(this.asQuantity(min(finalStackSize, amount)))
+		amount -= finalStackSize
+	}
+
+	return stacks
+}
 
 fun ItemStack.toBytes(): ByteArray {
 	val outputStream = ByteArrayOutputStream()
@@ -191,6 +207,9 @@ var ItemMeta.customModel: Int?
 var ItemMeta.localName: TranslatableComponent
 	get() = if (hasDisplayName()) displayName() as TranslatableComponent else translatable("")
 	set(value) = displayName(value)
+
+fun ItemStack.formatNameWithAmount(amount: Int = this.amount) =
+	if (amount > 1) "$amount ${this.asQuantity(amount).fancyName}" else this.asQuantity(amount).fancyName
 
 val ItemStack.fancyName: String get() {
 	var id = this.type.name.lowercase().replace('_', ' ')

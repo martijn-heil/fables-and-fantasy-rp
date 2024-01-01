@@ -13,6 +13,9 @@ object Icon {
 	val TRASH_BIN = itemStack(Material.HOPPER_MINECART) { meta { customModel = 1; name = Component.empty() } }
 	val UP = itemStack(Material.MAP) 					{ meta { customModel = 2; name = Component.empty() } }
 	val DOWN = itemStack(Material.FILLED_MAP) 			{ meta { customModel = 2; name = Component.empty() } }
+	val INFO = itemStack(Material.SUNFLOWER)			{ meta { customModel = 1; name = Component.empty() }}
+
+	val ANDROS = itemStack(Material.PAPER) 				{}
 
 	fun digit(digit: Int) = itemStack(Material.PLAYER_HEAD) { meta { customModel = digit } }
 }

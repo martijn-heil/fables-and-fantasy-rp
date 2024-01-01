@@ -1,4 +1,5 @@
 plugins {
+	`java-test-fixtures`
     id("myproject.java-conventions")
 }
 
