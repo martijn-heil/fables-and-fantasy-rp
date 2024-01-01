@@ -5,6 +5,7 @@ import com.fablesfantasyrp.plugin.economy.data.entity.ProfileEconomyRepository
 import com.fablesfantasyrp.plugin.gui.Icon
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.shops.SYSPREFIX
+import com.fablesfantasyrp.plugin.shops.domain.entity.SHOP_MAX_AMOUNT
 import com.fablesfantasyrp.plugin.shops.domain.entity.Shop
 import com.fablesfantasyrp.plugin.shops.domain.repository.ShopRepository
 import com.fablesfantasyrp.plugin.shops.flaunch
@@ -101,7 +102,7 @@ class ShopVendorGui(plugin: JavaPlugin,
 
 	private fun initRate() {
 		this.addElement(StaticGuiElement('1', Icon.UP, {
-			if (shop.amount > 0) shop.amount = min(64, shop.amount * 2) else shop.amount = 1
+			if (shop.amount > 0) shop.amount = min(SHOP_MAX_AMOUNT, shop.amount * 2) else shop.amount = 1
 			playClickSound()
 			draw()
 			true

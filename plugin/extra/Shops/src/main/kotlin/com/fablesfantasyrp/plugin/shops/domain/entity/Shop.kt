@@ -7,9 +7,12 @@ import com.fablesfantasyrp.plugin.economy.data.entity.ProfileEconomy
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.*
 import com.fablesfantasyrp.plugin.utils.validation.CommandValidationException
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.time.Instant
+
+const val SHOP_MAX_AMOUNT = 128
 
 class Shop : DataEntity<Int, Shop> {
 	override var dirtyMarker: DirtyMarker<Shop>? = null
@@ -19,9 +22,9 @@ class Shop : DataEntity<Int, Shop> {
 
 	var location: BlockIdentifier	set(value) { if (field != value) { val oldValue = field; field = value; dirtyMarker?.markDirty(this, "location", oldValue, value) } }
 	var owner: Profile?				set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
-	var item: ItemStack				set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
+	var item: ItemStack				set(value) { require(value.type != Material.AIR); if (field != value) { field = value.asOne(); dirtyMarker?.markDirty(this) } }
 	var lastActive: Instant			set(value) { if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
-	var amount: Int					set(value) { require(value in 1..64); if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
+	var amount: Int					set(value) { require(value in 1..SHOP_MAX_AMOUNT); if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 	var buyPrice: Int				set(value) { require(value >= 0); if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 	var sellPrice: Int				set(value) { require(value >= 0); if (field != value) { field = value; dirtyMarker?.markDirty(this) } }
 	var stock: Int					set(value) { require(value >= 0); if (field != value) { field = value; dirtyMarker?.markDirty(this) } }

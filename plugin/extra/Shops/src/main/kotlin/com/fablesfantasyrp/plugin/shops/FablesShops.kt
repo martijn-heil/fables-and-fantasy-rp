@@ -30,6 +30,8 @@ class FablesShops : JavaPlugin(), KoinComponent {
 			return
 		}
 
+		//UltimateShopsMigration(this, fablesDatabase).run()
+
 		koinConfig = KoinConfig(this)
 		koinConfig.load()
 
@@ -45,9 +47,10 @@ class FablesShops : JavaPlugin(), KoinComponent {
 		scheduleRepeatingDataSave(this) { get<ShopRepositoryImpl>().saveAllDirty() }
 
 		flaunch {
+			val shops = shopRepository.all()
 			logger.info("Spawning display items..")
 			val stopwatch = Stopwatch.createStarted()
-			shopRepository.all().forEach { displayItemService.spawnDisplayItem(it.location, it.item.asOne()) }
+			shops.forEach { displayItemService.spawnDisplayItem(it.location, it.item.asOne()) }
 			stopwatch.stop()
 			logger.info("Spawning display items done! Took ${stopwatch.elapsed().toMillis()}ms")
 		}

@@ -26,9 +26,15 @@ class DisplayItemServiceImpl(private val plugin: Plugin) : DisplayItemService {
 	private val key = NamespacedKey.fromString("fablesfantasyrp:shops_display_item")!!
 
 	override fun spawnDisplayItem(location: BlockIdentifier, item: ItemStack) {
-		val hoverItem = item.asOne().apply {
-			itemMeta = itemMeta.apply { persistentDataContainer.set(key, PersistentDataType.BOOLEAN, true) }
+		val hoverItem = item.asOne()
+		val itemMeta = hoverItem.itemMeta ?: server.itemFactory.getItemMeta(hoverItem.type)
+		if (itemMeta == null) {
+			plugin.logger.info("itemMeta is null: type: ${hoverItem.type}")
 		}
+		val persistentDataContainer = itemMeta.persistentDataContainer
+		persistentDataContainer.set(key, PersistentDataType.BOOLEAN, true)
+		hoverItem.itemMeta = itemMeta
+
 		val world = server.getWorld(location.world)!!
 		val block = world.getBlockAt(location.x, location.y, location.z)
 		val hoverHeight = getHoverHeight(block)
