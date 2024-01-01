@@ -2,7 +2,6 @@ package com.fablesfantasyrp.plugin.lodestones
 
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.distanceSafe
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.isVanished
-import com.github.shynixn.mccoroutine.bukkit.launch
 import org.bukkit.Effect
 import org.bukkit.GameMode
 import org.bukkit.Location
@@ -16,10 +15,17 @@ import kotlin.math.floor
 import kotlin.random.Random
 
 class TeleportParticlesListener(private val plugin: Plugin) : Listener {
+	private val teleportCauses = hashSetOf(
+		PlayerTeleportEvent.TeleportCause.PLUGIN,
+		PlayerTeleportEvent.TeleportCause.COMMAND,
+		PlayerTeleportEvent.TeleportCause.UNKNOWN
+	)
+
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	fun onPlayerTeleport(e: PlayerTeleportEvent) {
 		if (e.player.gameMode == GameMode.SPECTATOR) return
 		if (e.player.isVanished) return
+		if (!teleportCauses.contains(e.cause)) return
 
 		playSound(e.from, e.to)
 
