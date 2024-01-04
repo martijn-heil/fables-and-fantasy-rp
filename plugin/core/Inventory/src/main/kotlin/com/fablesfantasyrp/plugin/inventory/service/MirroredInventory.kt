@@ -1,5 +1,6 @@
-package com.fablesfantasyrp.plugin.inventory
+package com.fablesfantasyrp.plugin.inventory.service
 
+import com.fablesfantasyrp.plugin.inventory.domain.FablesInventory
 import net.kyori.adventure.text.Component
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.InventoryHolder

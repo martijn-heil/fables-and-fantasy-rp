@@ -1,32 +1,40 @@
 package com.fablesfantasyrp.plugin.inventory
 
+import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
+import com.fablesfantasyrp.plugin.inventory.domain.FablesInventory
 import com.fablesfantasyrp.plugin.utils.SerializableItemStack
 import org.bukkit.entity.HumanEntity
 import org.bukkit.inventory.ItemStack
 import java.io.Serializable
 
-open class SerializableInventory constructor(private val persistentContent: Array<SerializableItemStack?>) : FablesInventory, Serializable {
+open class SerializableInventory
+	constructor(private val persistentContent: Array<SerializableItemStack?>,
+				@Transient var dirtyMarker: DirtyMarker<in SerializableInventory>? = null)
+		: FablesInventory, Serializable, Cloneable {
 
 	override val size get() = persistentContent.size
 
 	override val viewers: List<HumanEntity> get() = emptyList()
 
-	open var contents: List<ItemStack?>
+	override var contents: List<ItemStack?>
 		get() = persistentContent.map { it?.itemStack }
 		set(value) {
 			value.map { if (it != null) SerializableItemStack(it) else null }
 					.toTypedArray().copyInto(persistentContent)
+			dirtyMarker?.markDirty(this)
 		}
 
 	override fun clear() {
 		for (i in persistentContent.indices) {
 			persistentContent[i] = null
 		}
+		dirtyMarker?.markDirty(this)
 	}
 
 	override operator fun set(index: Int, value: ItemStack?) {
 		if (index < 0 || index >= size) throw IndexOutOfBoundsException()
 		persistentContent[index] = value?.let { SerializableItemStack(it) }
+		dirtyMarker?.markDirty(this)
 	}
 
 	override fun get(index: Int): ItemStack? = contents[index]
@@ -50,6 +58,7 @@ open class SerializableInventory constructor(private val persistentContent: Arra
 	override fun indexOf(element: ItemStack?): Int = contents.indexOf(element)
 	override fun containsAll(elements: Collection<ItemStack?>): Boolean = contents.toList().containsAll(elements)
 	override fun contains(element: ItemStack?): Boolean = contents.contains(element)
+	public override fun clone() = SerializableInventory(persistentContent.clone())
 
 	companion object {
 		@JvmStatic

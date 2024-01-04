@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.inventory
 
+import com.fablesfantasyrp.plugin.inventory.domain.FablesPlayerInventory
 import com.fablesfantasyrp.plugin.utils.SerializableItemStack
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.getInventorySlotIndex
 import org.bukkit.inventory.EquipmentSlot
@@ -50,6 +51,13 @@ class PassthroughPlayerInventory constructor(private val persistentContent: Arra
 				newInventory.heldItemSlot = heldItemSlot
 			}
 
+			if (oldInventory == null && newInventory != null) {
+				cacheMarker?.markStrong(this)
+			} else if (oldInventory != null && newInventory == null) {
+				dirtyMarker?.markDirty(this)
+				cacheMarker?.markWeak(this)
+			}
+
 			field = newInventory
 		}
 
@@ -82,6 +90,8 @@ class PassthroughPlayerInventory constructor(private val persistentContent: Arra
 	override operator fun set(equipmentSlot: EquipmentSlot, value: ItemStack?) {
 		this[equipmentSlot.getInventorySlotIndex(heldItemSlot)] = value
 	}
+
+	override fun clone() = PassthroughPlayerInventory(persistentContent.clone())
 
 	companion object {
 		const val size = 41

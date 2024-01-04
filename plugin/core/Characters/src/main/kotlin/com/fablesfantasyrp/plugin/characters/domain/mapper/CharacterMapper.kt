@@ -3,19 +3,23 @@ package com.fablesfantasyrp.plugin.characters.domain.mapper
 import com.fablesfantasyrp.plugin.characters.dal.model.CharacterData
 import com.fablesfantasyrp.plugin.characters.dal.repository.CharacterDataRepository
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
+import com.fablesfantasyrp.plugin.database.CacheMarker
 import com.fablesfantasyrp.plugin.database.async.repository.base.AsyncMappingRepository
-import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
+import com.fablesfantasyrp.plugin.database.model.HasCacheMarker
 import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
+import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.profile.data.entity.ProfileRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.bukkit.OfflinePlayer
 
-class CharacterMapper(private val child: CharacterDataRepository, private val profiles: ProfileRepository)
-	: AsyncMappingRepository<Int, CharacterData, Character, CharacterDataRepository>(child), HasDirtyMarker<Character> {
+class CharacterMapper(child: CharacterDataRepository, private val profiles: ProfileRepository)
+	: AsyncMappingRepository<Int, CharacterData, Character, CharacterDataRepository>(child),
+	HasDirtyMarker<Character>, HasCacheMarker<Character> {
 
 	override var dirtyMarker: DirtyMarker<Character>? = null
+	override var cacheMarker: CacheMarker<Character>? = null
 
 	override fun convertFromChild(v: CharacterData) = Character(
 		id = v.id,

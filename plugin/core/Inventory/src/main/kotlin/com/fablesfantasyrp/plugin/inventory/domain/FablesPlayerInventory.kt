@@ -1,4 +1,4 @@
-package com.fablesfantasyrp.plugin.inventory
+package com.fablesfantasyrp.plugin.inventory.domain
 
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack

@@ -6,16 +6,19 @@ import com.fablesfantasyrp.plugin.characters.domain.CharacterStats
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.inventory.PassthroughInventory
 import com.fablesfantasyrp.plugin.inventory.PassthroughPlayerInventory
-import com.fablesfantasyrp.plugin.inventory.data.entity.FablesInventoryRepository
-import com.fablesfantasyrp.plugin.inventory.data.entity.ProfileInventory
+import com.fablesfantasyrp.plugin.inventory.domain.entity.ProfileInventory
+import com.fablesfantasyrp.plugin.inventory.domain.repository.ProfileInventoryRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.time.FablesInstantSource
 import com.fablesfantasyrp.plugin.time.javatime.FablesLocalDate
 import com.fablesfantasyrp.plugin.time.javatime.FablesLocalDateTime
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.runBlocking
 import org.bukkit.Bukkit
 import org.bukkit.plugin.SimpleServicesManager
 import org.junit.jupiter.api.Test
@@ -34,11 +37,14 @@ internal class CharacterTest {
 				= Instant.ofEpochSecond(FablesLocalDateTime.of(1550, 2, 2, 1, 1, 1).toEpochSecond())
 		}
 
+		mockkStatic(::flaunch)
+
 		val profileManager = mockk<ProfileManager>()
 		every { profileManager.getCurrentForProfile(any()) } returns null
+		every { flaunch(any()) } answers { runBlocking { firstArg<suspend CoroutineScope.() -> Unit>()(); mockk() } }
 
-		val inventoryRepository = mockk<FablesInventoryRepository>()
-		every { inventoryRepository.forOwner(any()) } returns ProfileInventory(0,
+		val inventoryRepository = mockk<ProfileInventoryRepository>()
+		coEvery { inventoryRepository.forOwner(any()) } returns ProfileInventory(0,
 			PassthroughPlayerInventory.createEmpty(),
 			PassthroughInventory(emptyArray()))
 
@@ -51,7 +57,7 @@ internal class CharacterTest {
 			modules(module {
 				single<ProfileManager> { profileManager }
 				single<FablesInstantSource> { stubInstantSource }
-				single<FablesInventoryRepository> { inventoryRepository }
+				single<ProfileInventoryRepository> { inventoryRepository }
 			})
 		}
 	}

@@ -12,9 +12,9 @@ import com.fablesfantasyrp.caturix.spigot.common.Toggle
 import com.fablesfantasyrp.caturix.util.auth.AuthorizationException
 import com.fablesfantasyrp.plugin.characters.command.provider.AllowCharacterName
 import com.fablesfantasyrp.plugin.characters.displayName
-import com.fablesfantasyrp.plugin.inventory.MirroredInventory
-import com.fablesfantasyrp.plugin.inventory.MirroredInventoryManager
-import com.fablesfantasyrp.plugin.inventory.inventory
+import com.fablesfantasyrp.plugin.inventory.domain.repository.ProfileInventoryRepository
+import com.fablesfantasyrp.plugin.inventory.service.MirroredInventory
+import com.fablesfantasyrp.plugin.inventory.service.MirroredInventoryManager
 import com.fablesfantasyrp.plugin.location.location
 import com.fablesfantasyrp.plugin.morelogging.StaffActionBroadcaster
 import com.fablesfantasyrp.plugin.profile.command.annotation.AllowPlayerName
@@ -38,55 +38,57 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.WeatherType
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.bukkit.plugin.Plugin
 import org.ocpsoft.prettytime.PrettyTime
 import java.time.Instant
 
-class InventoryCommands(private val plugin: Plugin,
+class InventoryCommands(private val inventories: ProfileInventoryRepository,
 						private val mirroredInventoryManager: MirroredInventoryManager,
 						private val broadcaster: StaffActionBroadcaster) {
 	@Command(aliases = ["invsee", "finvsee"], desc = "Invsee a character")
 	@Require(Permission.Command.Invsee)
-	fun invsee(@Sender sender: Player, @AllowCharacterName @AllowPlayerName target: Profile) {
+	suspend fun invsee(@Sender sender: Player, @AllowCharacterName @AllowPlayerName target: Profile) {
+		val profileInventory = inventories.forOwner(target)
+
 		val inventory = MirroredInventory(
-				target.inventory.inventory,
+				profileInventory.inventory,
 				sender,
 				Component.text("${target.id}'s inventory"))
 		mirroredInventoryManager.register(inventory)
 
 		sender.openInventory(inventory.bukkitInventory)
-		flaunch { broadcaster.log(sender, "Invsee ${target.displayName()}") }
+		broadcaster.log(sender, "Invsee ${target.displayName()}")
 	}
 
 	@Command(aliases = ["endersee", "enderchest", "echest", "fendersee", "fechest", "fenderchest"], desc = "Endersee a character")
 	@Require(Permission.Command.Endersee)
-	fun endersee(@Sender sender: Player, @AllowCharacterName @AllowPlayerName target: Profile) {
+	suspend fun endersee(@Sender sender: Player, @AllowCharacterName @AllowPlayerName target: Profile) {
+		val profileInventory = inventories.forOwner(target)
+
 		val inventory = MirroredInventory(
-				target.inventory.enderChest,
+				profileInventory.enderChest,
 				sender,
 				Component.text("${target.id}'s enderchest"))
 		mirroredInventoryManager.register(inventory)
 
 		sender.openInventory(inventory.bukkitInventory)
-		flaunch { broadcaster.log(sender, "Endersee ${target.displayName()}") }
+		broadcaster.log(sender, "Endersee ${target.displayName()}")
 	}
 }
 
-class Commands(private val plugin: Plugin,
-			   private val powerToolManager: PowerToolManager,
+class Commands(private val powerToolManager: PowerToolManager,
 			   private val backManager: BackManager,
 			   private val broadcaster: StaffActionBroadcaster) {
 	@Command(aliases = ["teleport", "fteleport", "tp", "ftp", "tele", "ftele"], desc = "Teleport characters")
 	@Require(Permission.Command.Teleport)
-	fun teleport(@Sender sender: CommandSender,
+	suspend fun teleport(@Sender sender: CommandSender,
 				 @AllowCharacterName @AllowPlayerName one: Profile,
 				 @Optional @AllowCharacterName @AllowPlayerName two: Profile?) {
 		if (two != null) {
 			one.location = two.location
-			flaunch { broadcaster.log(sender, "Teleported ${one.displayName()} to ${two.displayName()}") }
+			broadcaster.log(sender, "Teleported ${one.displayName()} to ${two.displayName()}")
 		} else if (sender is Player) {
 			sender.teleport(one.location)
-			flaunch { broadcaster.log(sender, "Teleported themself to ${one.displayName()}") }
+			broadcaster.log(sender, "Teleported themself to ${one.displayName()}")
 		} else {
 			sender.sendError("You have to be a player to use this command.")
 		}
@@ -94,18 +96,18 @@ class Commands(private val plugin: Plugin,
 
 	@Command(aliases = ["tppos", "ftppos"], desc = "Teleport to a position")
 	@Require(Permission.Command.Tppos)
-	fun tppos(@Sender sender: CommandSender,
+	suspend fun tppos(@Sender sender: CommandSender,
 			  to: Location,
 			  @CommandTarget(Permission.Command.Tppos + ".others") @AllowCharacterName @AllowPlayerName target: Profile) {
 		target.location = to
-		flaunch { broadcaster.log(sender, "Teleported ${target.displayName()} to ${to.humanReadable()}") }
+		broadcaster.log(sender, "Teleported ${target.displayName()} to ${to.humanReadable()}")
 	}
 
 	@Command(aliases = ["tphere", "ftphere"], desc = "Teleport characters to you")
 	@Require(Permission.Command.Tphere)
-	fun tphere(@Sender sender: Player, @AllowCharacterName @AllowPlayerName who: Profile) {
+	suspend fun tphere(@Sender sender: Player, @AllowCharacterName @AllowPlayerName who: Profile) {
 		who.location = sender.location
-		flaunch { broadcaster.log(sender, "Teleported ${who.displayName()} to themself") }
+		broadcaster.log(sender, "Teleported ${who.displayName()} to themself")
 	}
 
 	inner class Ptime {

@@ -7,4 +7,6 @@ dependencies {
     implementation(project(":plugin:technical:Utils"))
     implementation(project(":plugin:technical:Database"))
     implementation(project(":plugin:core:Profile"))
+
+	testImplementation(testFixtures(project(":plugin:technical:Database")))
 }

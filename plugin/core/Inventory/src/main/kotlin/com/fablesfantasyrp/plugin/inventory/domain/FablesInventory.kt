@@ -1,4 +1,4 @@
-package com.fablesfantasyrp.plugin.inventory
+package com.fablesfantasyrp.plugin.inventory.domain
 
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
@@ -9,6 +9,7 @@ import org.bukkit.inventory.InventoryHolder
 import org.bukkit.inventory.ItemStack
 
 interface FablesInventory : List<ItemStack?> {
+	var contents: List<ItemStack?>
 	val viewers: List<HumanEntity>
 	fun clear()
 	operator fun set(index: Int, value: ItemStack?)

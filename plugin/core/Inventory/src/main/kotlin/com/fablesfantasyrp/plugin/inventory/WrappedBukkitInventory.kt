@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.inventory
 
+import com.fablesfantasyrp.plugin.inventory.domain.FablesInventory
 import org.bukkit.entity.HumanEntity
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
@@ -8,6 +9,10 @@ import org.bukkit.inventory.ItemStack
 class WrappedBukkitInventory(private val bukkitInventory: Inventory) : FablesInventory {
 	override val size: Int
 		get() = bukkitInventory.size
+
+	override var contents: List<ItemStack?>
+		get() = bukkitInventory.contents.toList()
+		set(value) { bukkitInventory.contents = value.toTypedArray() }
 
 	override val viewers: List<HumanEntity>
 		get() = bukkitInventory.viewers

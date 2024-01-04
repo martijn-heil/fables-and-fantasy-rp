@@ -1,5 +1,7 @@
 package com.fablesfantasyrp.plugin.inventory
 
+import com.fablesfantasyrp.plugin.database.CacheMarker
+import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.utils.SerializableItemStack
 import org.bukkit.entity.HumanEntity
 import org.bukkit.inventory.Inventory
@@ -10,7 +12,9 @@ import org.bukkit.inventory.ItemStack
  * A serializable inventory with read/write-through operation
  */
 open class PassthroughInventory
-constructor(private val persistentContent: Array<SerializableItemStack?>) : SerializableInventory(persistentContent) {
+constructor(private val persistentContent: Array<SerializableItemStack?>,
+			dirtyMarker: DirtyMarker<in SerializableInventory>? = null,
+			@Transient var cacheMarker: CacheMarker<in PassthroughInventory>? = null) : SerializableInventory(persistentContent, dirtyMarker) {
 
 	@Transient
 	open var bukkitInventory: Inventory? = null
@@ -26,6 +30,13 @@ constructor(private val persistentContent: Array<SerializableItemStack?>) : Seri
 
 			if (newInventory != null) {
 				newInventory.contents = contents.toTypedArray()
+			}
+
+			if (oldInventory == null && newInventory != null) {
+				cacheMarker?.markStrong(this)
+			} else if (oldInventory != null && newInventory == null) {
+				dirtyMarker?.markDirty(this)
+				cacheMarker?.markWeak(this)
 			}
 
 			field = newInventory
@@ -64,6 +75,8 @@ constructor(private val persistentContent: Array<SerializableItemStack?>) : Seri
 			super.set(index, value)
 		}
 	}
+
+	override fun clone() = PassthroughInventory(persistentContent.clone())
 
 	companion object {
 		@JvmStatic

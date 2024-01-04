@@ -1,25 +1,20 @@
-package com.fablesfantasyrp.plugin.inventory.data.persistent
+package com.fablesfantasyrp.plugin.inventory.dal.h2
 
-import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
-import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
+import com.fablesfantasyrp.plugin.database.asSequence
 import com.fablesfantasyrp.plugin.inventory.PassthroughInventory
 import com.fablesfantasyrp.plugin.inventory.PassthroughPlayerInventory
-import com.fablesfantasyrp.plugin.inventory.data.entity.FablesInventoryRepository
-import com.fablesfantasyrp.plugin.inventory.data.entity.ProfileInventory
-import com.fablesfantasyrp.plugin.profile.data.entity.Profile
+import com.fablesfantasyrp.plugin.inventory.dal.model.ProfileInventoryData
+import com.fablesfantasyrp.plugin.inventory.dal.repository.ProfileInventoryDataRepository
 import java.sql.ResultSet
 import javax.sql.DataSource
 
-class H2ProfileInventoryRepository(private val dataSource: DataSource)
-	: FablesInventoryRepository, HasDirtyMarker<ProfileInventory> {
-	override var dirtyMarker: DirtyMarker<ProfileInventory>? = null
+class H2ProfileInventoryDataRepository(private val dataSource: DataSource) : ProfileInventoryDataRepository {
 	private val TABLE_NAME = "FABLES_INVENTORY.INVENTORY"
 
-	override fun forOwner(profile: Profile): ProfileInventory {
-		check(!profile.isDestroyed)
-		val inventory = this.forId(profile.id) ?: run {
-			this.create(ProfileInventory(
-					id = profile.id,
+	override fun forOwner(profileId: Int): ProfileInventoryData {
+		val inventory = this.forId(profileId) ?: run {
+			this.create(ProfileInventoryData(
+					id = profileId,
 					inventory = PassthroughPlayerInventory.createEmpty(),
 					enderChest = PassthroughInventory(arrayOfNulls(27)))
 			)
@@ -27,26 +22,25 @@ class H2ProfileInventoryRepository(private val dataSource: DataSource)
 		return inventory
 	}
 
-	override fun all(): Collection<ProfileInventory> {
+	override fun all(): Collection<ProfileInventoryData> {
 		return dataSource.connection.use { connection ->
-			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME")
-			val result = stmnt.executeQuery()
-			val all = ArrayList<ProfileInventory>()
-			while (result.next()) all.add(fromRow(result))
-			all
+			connection.prepareStatement("SELECT * FROM $TABLE_NAME")
+				.executeQuery()
+				.asSequence()
+				.map { fromRow(it) }
+				.toList()
 		}
 	}
 
-	override fun destroy(v: ProfileInventory) {
+	override fun destroy(v: ProfileInventoryData) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("DELETE FROM $TABLE_NAME WHERE id = ?")
 			stmnt.setInt(1, v.id)
 			stmnt.executeUpdate()
-			v.isDestroyed = true
 		}
 	}
 
-	override fun create(v: ProfileInventory): ProfileInventory {
+	override fun create(v: ProfileInventoryData): ProfileInventoryData {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME " +
 					"(id, inventory, ender_chest) " +
@@ -55,16 +49,15 @@ class H2ProfileInventoryRepository(private val dataSource: DataSource)
 			stmnt.setObject(2, v.inventory)
 			stmnt.setObject(3, v.enderChest)
 			stmnt.executeUpdate()
-			return ProfileInventory(
+			return ProfileInventoryData(
 					id = v.id,
 					inventory = v.inventory,
-					enderChest = v.enderChest,
-					dirtyMarker = dirtyMarker
+					enderChest = v.enderChest
 			)
 		}
 	}
 
-	override fun update(v: ProfileInventory) {
+	override fun update(v: ProfileInventoryData) {
 		return dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("UPDATE $TABLE_NAME SET " +
 					"inventory = ?, " +
@@ -77,11 +70,11 @@ class H2ProfileInventoryRepository(private val dataSource: DataSource)
 		}
 	}
 
-	override fun createOrUpdate(v: ProfileInventory): ProfileInventory {
+	override fun createOrUpdate(v: ProfileInventoryData): ProfileInventoryData {
 		throw NotImplementedError()
 	}
 
-	override fun forId(id: Int): ProfileInventory? {
+	override fun forId(id: Int): ProfileInventoryData? {
 		return dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE id = ?")
 			stmnt.setInt(1, id)
@@ -101,16 +94,15 @@ class H2ProfileInventoryRepository(private val dataSource: DataSource)
 		}
 	}
 
-	private fun fromRow(row: ResultSet): ProfileInventory {
+	private fun fromRow(row: ResultSet): ProfileInventoryData {
 		val id = row.getInt("id")
 		val inventory = row.getObject("inventory", PassthroughPlayerInventory::class.java)
 		val enderChest = row.getObject("ender_chest", PassthroughInventory::class.java)
 
-		return ProfileInventory(
+		return ProfileInventoryData(
 				id = id,
 				inventory = inventory,
-				enderChest = enderChest,
-				dirtyMarker = dirtyMarker
+				enderChest = enderChest
 		)
 	}
 }

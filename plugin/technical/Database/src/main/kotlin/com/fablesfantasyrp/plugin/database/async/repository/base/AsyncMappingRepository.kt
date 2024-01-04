@@ -9,7 +9,7 @@ import com.fablesfantasyrp.plugin.database.sync.repository.MutableRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-abstract class AsyncMappingRepository<KeyType, ChildType, ThisType, ChildRepositoryType>(private val child: ChildRepositoryType)
+abstract class AsyncMappingRepository<KeyType, ChildType, ThisType, ChildRepositoryType>(protected val child: ChildRepositoryType)
 	: AsyncMutableRepository<ThisType>, AsyncKeyedRepository<KeyType, ThisType>, HasDestroyHandler<ThisType>
 		where 	ThisType : Identifiable<KeyType>,
 				ChildType : Identifiable<KeyType>,

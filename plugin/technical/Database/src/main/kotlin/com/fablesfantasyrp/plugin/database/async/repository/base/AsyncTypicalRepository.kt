@@ -1,8 +1,10 @@
 package com.fablesfantasyrp.plugin.database.async.repository.base
 
+import com.fablesfantasyrp.plugin.database.CacheMarker
 import com.fablesfantasyrp.plugin.database.async.repository.AsyncKeyedRepository
 import com.fablesfantasyrp.plugin.database.async.repository.AsyncMutableRepository
 import com.fablesfantasyrp.plugin.database.entity.HasDestroyHandler
+import com.fablesfantasyrp.plugin.database.model.HasCacheMarker
 import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
 import com.fablesfantasyrp.plugin.database.model.Identifiable
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
@@ -12,10 +14,10 @@ import kotlinx.coroutines.flow.onEach
 import java.lang.ref.SoftReference
 
 open class AsyncTypicalRepository<K, T: Identifiable<K>, C>(protected var child: C)
-	: AsyncMutableRepository<T>, AsyncKeyedRepository<K, T>, HasDestroyHandler<T>, DirtyMarker<T>
+	: AsyncMutableRepository<T>, AsyncKeyedRepository<K, T>, HasDestroyHandler<T>, DirtyMarker<T>, CacheMarker<T>
 		where C : AsyncKeyedRepository<K, T>,
 			  C : AsyncMutableRepository<T>,
-			  C : HasDirtyMarker<T> {
+			  C : HasDirtyMarker<T>, C: HasCacheMarker<T> {
 	protected data class LookupResult<T>(val reference: SoftReference<T>?)
 
 	private val EMPTY_LOOKUP_RESULT = LookupResult<T>(null)
@@ -28,10 +30,11 @@ open class AsyncTypicalRepository<K, T: Identifiable<K>, C>(protected var child:
 
 	open fun init() {
 		child.dirtyMarker = this
+		child.cacheMarker = this
 	}
 
-	suspend fun markStrong(v: T) { strongCache.add(v) }
-	suspend fun markWeak(v: T) { strongCache.remove(v) }
+	override fun markStrong(v: T) { strongCache.add(v) }
+	override fun markWeak(v: T) { strongCache.remove(v) }
 
 	override fun markDirty(v: T) { dirty.add(v) }
 

@@ -4,7 +4,7 @@ import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.shortName
 import com.fablesfantasyrp.plugin.economy.formatMoney
 import com.fablesfantasyrp.plugin.economy.money
-import com.fablesfantasyrp.plugin.inventory.inventory
+import com.fablesfantasyrp.plugin.inventory.domain.FablesInventory
 import com.fablesfantasyrp.plugin.item.ItemTrait
 import com.fablesfantasyrp.plugin.item.ItemTraitService
 import de.themoep.inventorygui.GuiElementGroup
@@ -15,7 +15,9 @@ import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 
-class InventorySearchGui(plugin: JavaPlugin, target: Character, private val itemTraitService: ItemTraitService)
+class InventorySearchGui(plugin: JavaPlugin, target: Character,
+						 private val targetInventory: FablesInventory,
+						 private val itemTraitService: ItemTraitService)
 	: InventoryGui(plugin, "Searching ${target.shortName}", arrayOf(
 	"ggggggggg",
 	"ggggggggg",
@@ -24,7 +26,7 @@ class InventorySearchGui(plugin: JavaPlugin, target: Character, private val item
 	"ggggggggm")) {
 	init {
 		val group = GuiElementGroup('g')
-		target.profile.inventory.inventory.contents
+		targetInventory.contents
 			.map { if (it != null && canSee(it)) it else ItemStack(Material.AIR) }
 			.map { StaticGuiElement('g', it) }
 			.forEach { group.addElement(it) }

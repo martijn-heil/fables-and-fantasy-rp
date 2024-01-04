@@ -9,12 +9,13 @@ import com.fablesfantasyrp.plugin.characters.dal.enums.Race
 import com.fablesfantasyrp.plugin.characters.domain.CHARACTER_STATS_FLOOR
 import com.fablesfantasyrp.plugin.characters.domain.CharacterStats
 import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
+import com.fablesfantasyrp.plugin.characters.flaunch
 import com.fablesfantasyrp.plugin.characters.modifiers.health.HealthModifier
 import com.fablesfantasyrp.plugin.characters.modifiers.stats.StatsModifier
 import com.fablesfantasyrp.plugin.database.entity.DataEntity
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.denizeninterop.dFlags
-import com.fablesfantasyrp.plugin.inventory.inventory
+import com.fablesfantasyrp.plugin.inventory.domain.repository.ProfileInventoryRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.text.legacyText
@@ -63,9 +64,11 @@ class Character : DataEntity<Int, Character> {
 					player.spigot().respawn()
 					//player.showEndCredits()
 				}
-				val inventory = profile.inventory
-				inventory.inventory.clear()
-				inventory.enderChest.clear()
+				flaunch {
+					val profileInventory = Services.get<ProfileInventoryRepository>().forOwner(profile)
+					profileInventory.inventory.clear()
+					profileInventory.enderChest.clear()
+				}
 			} else {
 				diedAt = null
 			}

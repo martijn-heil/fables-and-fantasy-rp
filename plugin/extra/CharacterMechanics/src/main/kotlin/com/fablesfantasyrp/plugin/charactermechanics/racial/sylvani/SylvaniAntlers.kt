@@ -4,7 +4,7 @@ import com.fablesfantasyrp.plugin.charactermechanics.frunBlocking
 import com.fablesfantasyrp.plugin.charactermechanics.racial.base.BaseRaceBehavior
 import com.fablesfantasyrp.plugin.characters.dal.enums.Race
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
-import com.fablesfantasyrp.plugin.inventory.data.entity.FablesInventoryRepository
+import com.fablesfantasyrp.plugin.inventory.domain.repository.ProfileInventoryRepository
 import com.fablesfantasyrp.plugin.location.data.entity.ProfileLocationRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.event.PlayerSwitchProfileEvent
@@ -28,7 +28,7 @@ class SylvaniAntlers(plugin: Plugin,
 					 characters: CharacterRepository,
 					 profileManager: ProfileManager,
 					 private val profileLocations: ProfileLocationRepository,
-					 private val profileInventories: FablesInventoryRepository)
+					 private val profileInventories: ProfileInventoryRepository)
 	: BaseRaceBehavior(Race.SYLVANI, plugin, characters, profileManager) {
 	private val HELMET_SLOT = 39
 	private val ANTLERS_ITEM = itemStack(Material.INK_SAC) {
@@ -51,7 +51,7 @@ class SylvaniAntlers(plugin: Plugin,
 			if (newCharacter.race != Race.SYLVANI) return
 
 			val location = profileLocations.forOwner(newProfile).location
-			val inventory = profileInventories.forOwner(newProfile).inventory
+			val inventory = frunBlocking { profileInventories.forOwner(newProfile).inventory }
 
 			e.transaction.steps.add(TransactionStep(
 				{
