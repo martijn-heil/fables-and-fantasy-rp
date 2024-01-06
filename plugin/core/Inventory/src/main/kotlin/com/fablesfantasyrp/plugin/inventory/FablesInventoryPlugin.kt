@@ -52,7 +52,7 @@ class FablesInventoryPlugin : JavaPlugin(), KoinComponent {
 				profileInventory.enderChest.bukkitInventory = null
 			}.collect()
 
-			get<ProfileInventoryRepositoryImpl>().saveAllDirty()
+			get<ProfileInventoryRepositoryImpl>().saveAll()
 		}
 		get<MirroredInventoryManager>().stop()
 		koinConfig.unload()

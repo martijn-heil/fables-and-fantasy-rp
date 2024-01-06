@@ -16,8 +16,6 @@ fun ItemStackCompanion.fromBytes(data: ByteArray): ItemStack {
 	return CraftItemStack.asBukkitCopy(nmsItem)
 }
 
-val PLAYER_HOTBAR_SLOTS = 36..44
-
 class SerializableItemStack() : Externalizable {
 	lateinit var itemStack: ItemStack
 		private set

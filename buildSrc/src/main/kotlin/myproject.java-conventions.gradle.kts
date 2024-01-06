@@ -119,4 +119,7 @@ dependencies {
 	testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
 	testImplementation("io.mockk:mockk:1.13.7")
 	testImplementation("io.insert-koin:koin-test:3.5.3")
+
+	// Has a conflict with H2 on gson's version
+	//testImplementation("com.github.fablesfantasyrp:MockBukkit:v1.20-SNAPSHOT")
 }

@@ -21,7 +21,7 @@ internal class KoinConfig(private val plugin: Plugin) : BaseKoinConfig() {
 		single {
 			val dalRepository = H2ProfileInventoryDataRepository(get())
 			val mapper = ProfileInventoryMapper(dalRepository)
-			ProfileInventoryRepositoryImpl(mapper, get())
+			ProfileInventoryRepositoryImpl(mapper)
 		} bind ProfileInventoryRepository::class
 
 		singleOf(::MirroredInventoryManager)
