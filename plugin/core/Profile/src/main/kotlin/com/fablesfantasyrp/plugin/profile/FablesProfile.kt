@@ -1,5 +1,19 @@
 package com.fablesfantasyrp.plugin.profile
 
+import com.fablesfantasyrp.caturix.Caturix
+import com.fablesfantasyrp.caturix.fluent.CommandGraph
+import com.fablesfantasyrp.caturix.parametric.ParametricBuilder
+import com.fablesfantasyrp.caturix.parametric.Provider
+import com.fablesfantasyrp.caturix.parametric.provider.PrimitivesModule
+import com.fablesfantasyrp.caturix.spigot.common.CommonModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.BukkitAuthorizer
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.BukkitModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.OfflinePlayerProvider
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.PlayerProvider
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.sender.BukkitSenderModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.sender.BukkitSenderProvider
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.registerCommand
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.unregisterCommand
 import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.profile.command.Commands
@@ -13,20 +27,6 @@ import com.fablesfantasyrp.plugin.profile.web.WebHook
 import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.fablesfantasyrp.plugin.utils.Services
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
-import com.fablesfantasyrp.caturix.spigot.common.CommonModule
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.BukkitAuthorizer
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.BukkitModule
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.OfflinePlayerProvider
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.PlayerProvider
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.sender.BukkitSenderModule
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.sender.BukkitSenderProvider
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.registerCommand
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.unregisterCommand
-import com.fablesfantasyrp.caturix.Caturix
-import com.fablesfantasyrp.caturix.fluent.CommandGraph
-import com.fablesfantasyrp.caturix.parametric.ParametricBuilder
-import com.fablesfantasyrp.caturix.parametric.Provider
-import com.fablesfantasyrp.caturix.parametric.provider.PrimitivesModule
 import com.github.shynixn.mccoroutine.bukkit.launch
 import org.bukkit.Server
 import org.bukkit.command.Command
@@ -72,7 +72,7 @@ class FablesProfile : JavaPlugin(), KoinComponent {
 			single<Plugin> { this@FablesProfile } binds(arrayOf(JavaPlugin::class))
 
 			single<EntityProfileRepository> {
-				val profilesImpl = EntityProfileRepositoryImpl(H2ProfileRepository(server, fablesDatabase))
+				val profilesImpl = EntityProfileRepositoryImpl(H2ProfileRepository(get(), fablesDatabase))
 				profilesImpl.init()
 				profilesImpl
 			} bind ProfileRepository::class

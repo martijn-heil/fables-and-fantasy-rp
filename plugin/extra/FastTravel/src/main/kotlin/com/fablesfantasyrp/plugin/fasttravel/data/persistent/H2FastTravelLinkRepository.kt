@@ -1,14 +1,15 @@
 package com.fablesfantasyrp.plugin.fasttravel.data.persistent
 
-import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
+import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
+import com.fablesfantasyrp.plugin.database.warnBlockingIO
 import com.fablesfantasyrp.plugin.fasttravel.data.entity.FastTravelLink
 import com.fablesfantasyrp.plugin.fasttravel.data.entity.FastTravelLinkRepository
 import com.fablesfantasyrp.plugin.worldguardinterop.WorldGuardRegion
 import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldguard.protection.regions.RegionContainer
 import org.bukkit.Location
-import org.bukkit.Server
+import org.bukkit.plugin.Plugin
 import java.sql.Connection
 import java.sql.ResultSet
 import java.sql.Statement
@@ -16,24 +17,25 @@ import java.util.*
 import javax.sql.DataSource
 import kotlin.time.Duration.Companion.seconds
 
-class H2FastTravelLinkRepository(private val server: Server,
+class H2FastTravelLinkRepository(private val plugin: Plugin,
 								 private val dataSource: DataSource,
 								 private val regionContainer: RegionContainer) : FastTravelLinkRepository, HasDirtyMarker<FastTravelLink> {
 	override var dirtyMarker: DirtyMarker<FastTravelLink>? = null
 	private val TABLE_NAME = "FABLES_FASTTRAVEL.FASTTRAVEL"
+	private val server = plugin.server
 
-	override fun forOriginRegion(region: WorldGuardRegion): FastTravelLink? {
-		return dataSource.connection.use { connection ->
+	override fun forOriginRegion(region: WorldGuardRegion): FastTravelLink? = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE from_region = ?")
 			stmnt.setString(1, "${region.region.id},${region.world.uid}")
 			val result = stmnt.executeQuery()
-			if (!result.next()) return null
+			if (!result.next()) return@use null
 			fromRowOrDelete(result, connection)
 		}
 	}
 
-	override fun all(): Collection<FastTravelLink> {
-		return dataSource.connection.use { connection ->
+	override fun all(): Collection<FastTravelLink> = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME")
 			val result = stmnt.executeQuery()
 			val all = ArrayList<FastTravelLink>()
@@ -45,7 +47,7 @@ class H2FastTravelLinkRepository(private val server: Server,
 		}
 	}
 
-	override fun destroy(v: FastTravelLink) {
+	override fun destroy(v: FastTravelLink) = warnBlockingIO(plugin) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("DELETE FROM $TABLE_NAME WHERE id = ?")
 			stmnt.setObject(1, v.id)
@@ -54,7 +56,7 @@ class H2FastTravelLinkRepository(private val server: Server,
 		}
 	}
 
-	override fun create(v: FastTravelLink): FastTravelLink {
+	override fun create(v: FastTravelLink): FastTravelLink = warnBlockingIO(plugin) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME " +
 					"(from_region, to_x, to_y, to_z, to_yaw, to_pitch, to_world, travel_duration) " +
@@ -71,7 +73,7 @@ class H2FastTravelLinkRepository(private val server: Server,
 			val rs = stmnt.generatedKeys
 			rs.next()
 			val id = rs.getInt(1)
-			return FastTravelLink(
+			FastTravelLink(
 					id = id,
 					from = v.from,
 					to = v.to,
@@ -89,18 +91,18 @@ class H2FastTravelLinkRepository(private val server: Server,
 		throw NotImplementedError()
 	}
 
-	override fun forId(id: Int): FastTravelLink? {
-		return dataSource.connection.use { connection ->
+	override fun forId(id: Int): FastTravelLink? = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE id = ?")
 			stmnt.setInt(1, id)
 			val result = stmnt.executeQuery()
-			if (!result.next()) return null
+			if (!result.next()) return@use null
 			fromRowOrDelete(result, connection)
 		}
 	}
 
-	override fun allIds(): Collection<Int> {
-		return dataSource.connection.use { connection ->
+	override fun allIds(): Collection<Int> = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT id FROM $TABLE_NAME")
 			val result = stmnt.executeQuery()
 			val all = ArrayList<Int>()

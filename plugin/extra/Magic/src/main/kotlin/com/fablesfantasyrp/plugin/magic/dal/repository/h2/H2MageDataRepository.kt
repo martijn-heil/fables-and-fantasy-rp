@@ -1,18 +1,22 @@
 package com.fablesfantasyrp.plugin.magic.dal.repository.h2
 
 import com.fablesfantasyrp.plugin.database.repository.BaseH2KeyedRepository
+import com.fablesfantasyrp.plugin.database.warnBlockingIO
 import com.fablesfantasyrp.plugin.magic.dal.enums.MagicPath
 import com.fablesfantasyrp.plugin.magic.dal.model.MageData
 import com.fablesfantasyrp.plugin.magic.dal.repository.MageDataRepository
 import com.fablesfantasyrp.plugin.magic.dal.repository.SpellDataRepository
+import org.bukkit.plugin.Plugin
 import java.sql.ResultSet
 import javax.sql.DataSource
 
-class H2MageDataRepository(private val dataSource: DataSource, private val spells: SpellDataRepository) : MageDataRepository,
-	BaseH2KeyedRepository<Long, MageData>(Long::class.java, dataSource) {
+class H2MageDataRepository(private val plugin: Plugin,
+						   private val dataSource: DataSource,
+						   private val spells: SpellDataRepository) : MageDataRepository,
+	BaseH2KeyedRepository<Long, MageData>(Long::class.java, plugin, dataSource) {
 	override val TABLE_NAME = "FABLES_MAGIC.MAGES"
 
-	override fun create(v: MageData): MageData {
+	override fun create(v: MageData): MageData = warnBlockingIO(plugin) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME " +
 					"(id, magic_path, magic_level, spells) " +
@@ -23,7 +27,7 @@ class H2MageDataRepository(private val dataSource: DataSource, private val spell
 			stmnt.setArray(4, connection.createArrayOf("VARCHAR ARRAY", v.spells.toTypedArray()))
 			stmnt.executeUpdate()
 		}
-		return v
+		v
 	}
 
 	override fun forCharacter(characterId: Int): MageData {
@@ -40,17 +44,17 @@ class H2MageDataRepository(private val dataSource: DataSource, private val spell
 		}
 	}
 
-	private fun forIdMaybe(id: Long): MageData? {
-		return dataSource.connection.use { connection ->
+	private fun forIdMaybe(id: Long): MageData? = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE id = ?")
 			stmnt.setObject(1, id)
 			val result = stmnt.executeQuery()
-			if (!result.next()) { return null }
+			if (!result.next()) { return@use null }
 			fromRow(result)
 		}
 	}
 
-	override fun update(v: MageData) {
+	override fun update(v: MageData): Unit = warnBlockingIO(plugin) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("UPDATE $TABLE_NAME SET " +
 					"magic_path = ?, " +

@@ -11,9 +11,25 @@ class EntityFastTravelLinkRepository<C>(child: C) : MassivelyCachingEntityReposi
 			  C: MutableRepository<FastTravelLink>,
 			  C: HasDirtyMarker<FastTravelLink>,
 			  C: FastTravelLinkRepository {
+	private val byFromRegion = HashMap<WorldGuardRegion, FastTravelLink>()
+
+	override fun init() {
+		super.init()
+		all().forEach { byFromRegion[it.from] = it }
+	}
+
+	override fun create(v: FastTravelLink): FastTravelLink {
+		val created = super.create(v)
+		byFromRegion[created.from] = created
+		return created
+	}
+
+	override fun destroy(v: FastTravelLink) {
+		super.destroy(v)
+		byFromRegion.remove(v.from)
+	}
 
 	override fun forOriginRegion(region: WorldGuardRegion): FastTravelLink? {
-		val childResult = child.forOriginRegion(region) ?: return null
-		return this.forId(childResult.id)
+		return byFromRegion[region]
 	}
 }

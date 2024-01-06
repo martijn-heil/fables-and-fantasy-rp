@@ -1,5 +1,15 @@
 package com.fablesfantasyrp.plugin.chat
 
+import com.fablesfantasyrp.caturix.Caturix
+import com.fablesfantasyrp.caturix.fluent.CommandGraph
+import com.fablesfantasyrp.caturix.parametric.ParametricBuilder
+import com.fablesfantasyrp.caturix.parametric.provider.PrimitivesModule
+import com.fablesfantasyrp.caturix.spigot.common.CommonModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.BukkitAuthorizer
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.BukkitModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.sender.BukkitSenderModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.registerCommand
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.unregisterCommand
 import com.fablesfantasyrp.plugin.chat.command.Commands
 import com.fablesfantasyrp.plugin.chat.command.provider.ChatModule
 import com.fablesfantasyrp.plugin.chat.data.ChatPlayerRepository
@@ -10,16 +20,6 @@ import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDataba
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
-import com.fablesfantasyrp.caturix.spigot.common.CommonModule
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.BukkitAuthorizer
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.BukkitModule
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.sender.BukkitSenderModule
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.registerCommand
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.unregisterCommand
-import com.fablesfantasyrp.caturix.Caturix
-import com.fablesfantasyrp.caturix.fluent.CommandGraph
-import com.fablesfantasyrp.caturix.parametric.ParametricBuilder
-import com.fablesfantasyrp.caturix.parametric.provider.PrimitivesModule
 import com.github.shynixn.mccoroutine.bukkit.launch
 import org.bukkit.command.Command
 import org.bukkit.plugin.Plugin
@@ -60,7 +60,7 @@ class FablesChat : JavaPlugin(), KoinComponent {
 			singleOf(::ChatListener)
 			single { Commands.CommandChatParty(get(), get(), get(), get(), get()) }
 			single {
-				val tmp = EntityChatPlayerRepositoryImpl(this@FablesChat, H2ChatPlayerRepository(server, fablesDatabase))
+				val tmp = EntityChatPlayerRepositoryImpl(this@FablesChat, H2ChatPlayerRepository(get(), fablesDatabase))
 				tmp.init()
 				tmp
 			} binds(arrayOf(ChatPlayerRepository::class, EntityChatPlayerRepository::class))

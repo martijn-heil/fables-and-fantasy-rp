@@ -4,19 +4,21 @@ import com.fablesfantasyrp.plugin.database.asSequence
 import com.fablesfantasyrp.plugin.database.getUuid
 import com.fablesfantasyrp.plugin.database.repository.BaseH2KeyedRepository
 import com.fablesfantasyrp.plugin.database.setUuid
+import com.fablesfantasyrp.plugin.database.warnBlockingIO
 import com.fablesfantasyrp.plugin.lodestones.dal.model.LodestoneData
 import com.fablesfantasyrp.plugin.lodestones.dal.repository.LodestoneDataRepository
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.BlockIdentifier
+import org.bukkit.plugin.Plugin
 import java.sql.ResultSet
 import java.sql.Statement
 import javax.sql.DataSource
 
-class H2LodestoneDataRepository(private val dataSource: DataSource)
-	: BaseH2KeyedRepository<Int, LodestoneData>(Int::class.java, dataSource), LodestoneDataRepository {
+class H2LodestoneDataRepository(private val plugin: Plugin, private val dataSource: DataSource)
+	: BaseH2KeyedRepository<Int, LodestoneData>(Int::class.java, plugin, dataSource), LodestoneDataRepository {
 
 	override val TABLE_NAME = "FABLES_LODESTONES.LODESTONE"
 
-	override fun create(v: LodestoneData): LodestoneData {
+	override fun create(v: LodestoneData): LodestoneData = warnBlockingIO(plugin) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME " +
 				"(" +
@@ -39,7 +41,7 @@ class H2LodestoneDataRepository(private val dataSource: DataSource)
 			val rs = stmnt.generatedKeys
 			rs.next()
 			val id = rs.getInt(1)
-			return LodestoneData(
+			LodestoneData(
 					id = id,
 					location = v.location,
 					name = v.name,
@@ -47,7 +49,7 @@ class H2LodestoneDataRepository(private val dataSource: DataSource)
 		}
 	}
 
-	override fun update(v: LodestoneData) {
+	override fun update(v: LodestoneData): Unit = warnBlockingIO(plugin) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("UPDATE $TABLE_NAME SET " +
 				"location_x = ?, " +
@@ -73,26 +75,26 @@ class H2LodestoneDataRepository(private val dataSource: DataSource)
 		throw NotImplementedError()
 	}
 
-	override fun forId(id: Int): LodestoneData? {
-		return dataSource.connection.use { connection ->
+	override fun forId(id: Int): LodestoneData? = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE id = ?")
 			stmnt.setInt(1, id)
 			val result = stmnt.executeQuery()
-			if (!result.next()) return null
+			if (!result.next()) return@use null
 			fromRow(result)
 		}
 	}
 
-	override fun forName(name: String): LodestoneData? {
-		return dataSource.connection.use { connection ->
+	override fun forName(name: String): LodestoneData? = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE name = ?").apply {
 				setString(1, name)
 			}.executeQuery().asSequence().firstOrNull()?.let { fromRow(it) }
 		}
 	}
 
-	override fun allNames(): Set<String> {
-		return dataSource.connection.use { connection ->
+	override fun allNames(): Set<String> = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			connection.prepareStatement("SELECT name FROM $TABLE_NAME")
 				.executeQuery()
 				.asSequence()

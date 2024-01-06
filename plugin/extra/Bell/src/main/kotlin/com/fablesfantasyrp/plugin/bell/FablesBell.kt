@@ -1,5 +1,15 @@
 package com.fablesfantasyrp.plugin.bell
 
+import com.fablesfantasyrp.caturix.Caturix
+import com.fablesfantasyrp.caturix.fluent.CommandGraph
+import com.fablesfantasyrp.caturix.parametric.ParametricBuilder
+import com.fablesfantasyrp.caturix.parametric.provider.PrimitivesModule
+import com.fablesfantasyrp.caturix.spigot.common.CommonModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.BukkitAuthorizer
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.BukkitModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.sender.BukkitSenderModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.registerCommand
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.unregisterCommand
 import com.fablesfantasyrp.plugin.bell.command.Commands
 import com.fablesfantasyrp.plugin.bell.command.provider.BellModule
 import com.fablesfantasyrp.plugin.bell.dal.h2.H2BellDataRepository
@@ -10,16 +20,6 @@ import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
-import com.fablesfantasyrp.caturix.spigot.common.CommonModule
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.BukkitAuthorizer
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.BukkitModule
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.sender.BukkitSenderModule
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.registerCommand
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.unregisterCommand
-import com.fablesfantasyrp.caturix.Caturix
-import com.fablesfantasyrp.caturix.fluent.CommandGraph
-import com.fablesfantasyrp.caturix.parametric.ParametricBuilder
-import com.fablesfantasyrp.caturix.parametric.provider.PrimitivesModule
 import com.github.shynixn.mccoroutine.bukkit.launch
 import org.bukkit.command.Command
 import org.bukkit.plugin.Plugin
@@ -59,7 +59,7 @@ class FablesBell : JavaPlugin(), KoinComponent {
 			singleOf(::BellListener)
 
 			single {
-				val h2Repository = H2BellDataRepository(get())
+				val h2Repository = H2BellDataRepository(get(), get())
 				val mapper = BellMapper(h2Repository)
 				val characterRepositoryImpl = BellRepositoryImpl(mapper)
 				characterRepositoryImpl.init()

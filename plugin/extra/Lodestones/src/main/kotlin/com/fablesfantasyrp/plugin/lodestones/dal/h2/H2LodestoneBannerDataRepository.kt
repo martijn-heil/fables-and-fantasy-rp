@@ -3,19 +3,22 @@ package com.fablesfantasyrp.plugin.lodestones.dal.h2
 import com.fablesfantasyrp.plugin.database.getUuid
 import com.fablesfantasyrp.plugin.database.repository.BaseH2KeyedRepository
 import com.fablesfantasyrp.plugin.database.setUuid
+import com.fablesfantasyrp.plugin.database.warnBlockingIO
 import com.fablesfantasyrp.plugin.lodestones.dal.model.LodestoneBannerData
 import com.fablesfantasyrp.plugin.lodestones.dal.repository.LodestoneBannerDataRepository
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.BlockIdentifier
+import org.bukkit.plugin.Plugin
 import java.sql.ResultSet
 import java.sql.Statement
 import javax.sql.DataSource
 
-class H2LodestoneBannerDataRepository(private val dataSource: DataSource)
-	: BaseH2KeyedRepository<Int, LodestoneBannerData>(Int::class.java, dataSource), LodestoneBannerDataRepository {
+class H2LodestoneBannerDataRepository(private val plugin: Plugin,
+									  private val dataSource: DataSource)
+	: BaseH2KeyedRepository<Int, LodestoneBannerData>(Int::class.java, plugin, dataSource), LodestoneBannerDataRepository {
 
 	override val TABLE_NAME = "FABLES_LODESTONES.LODESTONE_BANNER"
 
-	override fun create(v: LodestoneBannerData): LodestoneBannerData {
+	override fun create(v: LodestoneBannerData): LodestoneBannerData = warnBlockingIO(plugin) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME " +
 				"(" +
@@ -36,7 +39,7 @@ class H2LodestoneBannerDataRepository(private val dataSource: DataSource)
 			val rs = stmnt.generatedKeys
 			rs.next()
 			val id = rs.getInt(1)
-			return LodestoneBannerData(
+			LodestoneBannerData(
 					id = id,
 					location = v.location,
 					lodestoneId = v.lodestoneId
@@ -44,7 +47,7 @@ class H2LodestoneBannerDataRepository(private val dataSource: DataSource)
 		}
 	}
 
-	override fun update(v: LodestoneBannerData) {
+	override fun update(v: LodestoneBannerData): Unit = warnBlockingIO(plugin) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("UPDATE $TABLE_NAME SET" +
 				"location_x = ?, " +
@@ -66,16 +69,6 @@ class H2LodestoneBannerDataRepository(private val dataSource: DataSource)
 
 	override fun createOrUpdate(v: LodestoneBannerData): LodestoneBannerData {
 		throw NotImplementedError()
-	}
-
-	override fun forId(id: Int): LodestoneBannerData? {
-		return dataSource.connection.use { connection ->
-			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE id = ?")
-			stmnt.setInt(1, id)
-			val result = stmnt.executeQuery()
-			if (!result.next()) return null
-			fromRow(result)
-		}
 	}
 
 	override fun fromRow(row: ResultSet): LodestoneBannerData {

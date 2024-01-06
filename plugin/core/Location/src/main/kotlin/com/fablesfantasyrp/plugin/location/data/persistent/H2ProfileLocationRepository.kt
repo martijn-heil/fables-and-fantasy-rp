@@ -1,26 +1,28 @@
 package com.fablesfantasyrp.plugin.location.data.persistent
 
-import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
+import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
+import com.fablesfantasyrp.plugin.database.warnBlockingIO
 import com.fablesfantasyrp.plugin.location.data.entity.ProfileLocation
 import com.fablesfantasyrp.plugin.location.data.entity.ProfileLocationRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import org.bukkit.Location
-import org.bukkit.Server
+import org.bukkit.plugin.Plugin
 import java.sql.ResultSet
 import java.util.*
 import javax.sql.DataSource
 
 class H2ProfileLocationRepository(private val dataSource: DataSource,
-								  private val server: Server,
+								  private val plugin: Plugin,
 								  private val profileManager: ProfileManager,
 								  private val defaultLocation: Location)
 	: ProfileLocationRepository, HasDirtyMarker<ProfileLocation> {
 	override var dirtyMarker: DirtyMarker<ProfileLocation>? = null
 	private val TABLE_NAME = "FABLES_LOCATION.LOCATION"
+	private val server = plugin.server
 
-	override fun forOwner(profile: Profile): ProfileLocation {
+	override fun forOwner(profile: Profile): ProfileLocation = warnBlockingIO(plugin) {
 		check(!profile.isDestroyed)
 
 		val player = profileManager.getCurrentForProfile(profile)
@@ -32,11 +34,11 @@ class H2ProfileLocationRepository(private val dataSource: DataSource,
 		if (player != null && player.isOnline) {
 			location.player = player
 		}
-		return location
+		location
 	}
 
-	override fun all(): Collection<ProfileLocation> {
-		return dataSource.connection.use { connection ->
+	override fun all(): Collection<ProfileLocation> = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME")
 			val result = stmnt.executeQuery()
 			val all = ArrayList<ProfileLocation>()
@@ -45,7 +47,7 @@ class H2ProfileLocationRepository(private val dataSource: DataSource,
 		}
 	}
 
-	override fun destroy(v: ProfileLocation) {
+	override fun destroy(v: ProfileLocation) = warnBlockingIO(plugin) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("DELETE FROM $TABLE_NAME WHERE id = ?")
 			stmnt.setInt(1, v.id)
@@ -54,7 +56,7 @@ class H2ProfileLocationRepository(private val dataSource: DataSource,
 		}
 	}
 
-	override fun create(v: ProfileLocation): ProfileLocation {
+	override fun create(v: ProfileLocation): ProfileLocation = warnBlockingIO(plugin) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME " +
 					"(" +
@@ -82,12 +84,12 @@ class H2ProfileLocationRepository(private val dataSource: DataSource,
 					dirtyMarker = dirtyMarker
 			)
 			obj.player = v.player
-			return obj
+			obj
 		}
 	}
 
-	override fun update(v: ProfileLocation) {
-		return dataSource.connection.use { connection ->
+	override fun update(v: ProfileLocation): Unit = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("UPDATE $TABLE_NAME SET " +
 					"location_x = ?, " +
 					"location_y = ?, " +
@@ -112,18 +114,18 @@ class H2ProfileLocationRepository(private val dataSource: DataSource,
 		throw NotImplementedError()
 	}
 
-	override fun forId(id: Int): ProfileLocation? {
-		return dataSource.connection.use { connection ->
+	override fun forId(id: Int): ProfileLocation? = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE id = ?")
 			stmnt.setInt(1, id)
 			val result = stmnt.executeQuery()
-			if (!result.next()) return null
+			if (!result.next()) return@use null
 			fromRow(result)
 		}
 	}
 
-	override fun allIds(): Collection<Int> {
-		return dataSource.connection.use { connection ->
+	override fun allIds(): Collection<Int> = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT id FROM $TABLE_NAME")
 			val result = stmnt.executeQuery()
 			val all = ArrayList<Int>()

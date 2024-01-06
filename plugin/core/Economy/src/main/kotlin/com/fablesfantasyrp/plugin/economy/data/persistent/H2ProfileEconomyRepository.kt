@@ -1,14 +1,17 @@
 package com.fablesfantasyrp.plugin.economy.data.persistent
 
-import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
+import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
+import com.fablesfantasyrp.plugin.database.warnBlockingIO
 import com.fablesfantasyrp.plugin.economy.data.entity.ProfileEconomy
 import com.fablesfantasyrp.plugin.economy.data.entity.ProfileEconomyRepository
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
+import org.bukkit.plugin.Plugin
 import java.sql.ResultSet
 import javax.sql.DataSource
 
-class H2ProfileEconomyRepository(private val dataSource: DataSource)
+class H2ProfileEconomyRepository(private val plugin: Plugin,
+								 private val dataSource: DataSource)
 	: ProfileEconomyRepository, HasDirtyMarker<ProfileEconomy> {
 	override var dirtyMarker: DirtyMarker<ProfileEconomy>? = null
 	private val TABLE_NAME = "FABLES_ECONOMY.MONEY"
@@ -23,8 +26,8 @@ class H2ProfileEconomyRepository(private val dataSource: DataSource)
 		return economy
 	}
 
-	override fun all(): Collection<ProfileEconomy> {
-		return dataSource.connection.use { connection ->
+	override fun all(): Collection<ProfileEconomy> = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME")
 			val result = stmnt.executeQuery()
 			val all = ArrayList<ProfileEconomy>()
@@ -33,7 +36,7 @@ class H2ProfileEconomyRepository(private val dataSource: DataSource)
 		}
 	}
 
-	override fun destroy(v: ProfileEconomy) {
+	override fun destroy(v: ProfileEconomy): Unit = warnBlockingIO(plugin) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("DELETE FROM $TABLE_NAME WHERE id = ?")
 			stmnt.setInt(1, v.id)
@@ -42,7 +45,7 @@ class H2ProfileEconomyRepository(private val dataSource: DataSource)
 		}
 	}
 
-	override fun create(v: ProfileEconomy): ProfileEconomy {
+	override fun create(v: ProfileEconomy): ProfileEconomy = warnBlockingIO(plugin) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME " +
 					"(" +
@@ -56,12 +59,12 @@ class H2ProfileEconomyRepository(private val dataSource: DataSource)
 			stmnt.setInt(3, v.bankMoney)
 			stmnt.executeUpdate()
 			v.dirtyMarker = dirtyMarker
-			return v
+			v
 		}
 	}
 
-	override fun update(v: ProfileEconomy) {
-		return dataSource.connection.use { connection ->
+	override fun update(v: ProfileEconomy): Unit = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("UPDATE $TABLE_NAME SET " +
 					"pocket_money = ?, " +
 					"bank_money = ? " +
@@ -77,18 +80,18 @@ class H2ProfileEconomyRepository(private val dataSource: DataSource)
 		throw NotImplementedError()
 	}
 
-	override fun forId(id: Int): ProfileEconomy? {
-		return dataSource.connection.use { connection ->
+	override fun forId(id: Int): ProfileEconomy? = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE id = ?")
 			stmnt.setInt(1, id)
 			val result = stmnt.executeQuery()
-			if (!result.next()) return null
+			if (!result.next()) return@use null
 			fromRow(result)
 		}
 	}
 
-	override fun allIds(): Collection<Int> {
-		return dataSource.connection.use { connection ->
+	override fun allIds(): Collection<Int> = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT id FROM $TABLE_NAME")
 			val result = stmnt.executeQuery()
 			val all = ArrayList<Int>()

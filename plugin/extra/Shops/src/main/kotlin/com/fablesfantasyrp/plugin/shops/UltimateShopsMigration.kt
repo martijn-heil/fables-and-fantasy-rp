@@ -18,7 +18,7 @@ class UltimateShopsMigration(private val plugin: Plugin,
 
 		val inputRepository = UltimateShopsDataRepository(server, YamlConfiguration.loadConfiguration(shopsFile))
 
-		val outputRepository = H2ShopDataRepository(dataSource)
+		val outputRepository = H2ShopDataRepository(plugin, dataSource)
 
 		val allShops = inputRepository.all()
 

@@ -1,21 +1,24 @@
 package com.fablesfantasyrp.plugin.lodestones.dal.h2
 
 import com.fablesfantasyrp.plugin.database.asSequence
+import com.fablesfantasyrp.plugin.database.warnBlockingIO
 import com.fablesfantasyrp.plugin.lodestones.dal.repository.CharacterLodestoneDataRepository
+import org.bukkit.plugin.Plugin
 import javax.sql.DataSource
 
-class H2CharacterLodestoneDataRepository(private val dataSource: DataSource) : CharacterLodestoneDataRepository {
+class H2CharacterLodestoneDataRepository(private val plugin: Plugin,
+										 private val dataSource: DataSource) : CharacterLodestoneDataRepository {
 	private val TABLE_NAME = "FABLES_LODESTONES.CHARACTER_LODESTONE"
 
-	override fun forCharacter(characterId: Int): Set<Int> {
-		return dataSource.connection.use { connection ->
+	override fun forCharacter(characterId: Int): Set<Int> = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE character_id = ?").apply {
 				this.setInt(1, characterId)
 			}.executeQuery().asSequence().map { it.getInt("lodestone_id") }.toSet()
 		}
 	}
 
-	override fun add(characterId: Int, lodestoneId: Int) {
+	override fun add(characterId: Int, lodestoneId: Int): Unit = warnBlockingIO(plugin) {
 		dataSource.connection.use { connection ->
 			connection.prepareStatement("INSERT INTO $TABLE_NAME (character_id, lodestone_id) VALUES (?, ?)").apply {
 				this.setInt(1, characterId)
@@ -24,7 +27,7 @@ class H2CharacterLodestoneDataRepository(private val dataSource: DataSource) : C
 		}
 	}
 
-	override fun remove(characterId: Int, lodestoneId: Int) {
+	override fun remove(characterId: Int, lodestoneId: Int): Unit = warnBlockingIO(plugin) {
 		dataSource.connection.use { connection ->
 			connection.prepareStatement("DELETE FROM $TABLE_NAME WHERE character_id = ? AND lodestone_id = ?").apply {
 				this.setInt(1, characterId)
@@ -33,7 +36,7 @@ class H2CharacterLodestoneDataRepository(private val dataSource: DataSource) : C
 		}
 	}
 
-	override fun destroy(lodestoneId: Int) {
+	override fun destroy(lodestoneId: Int): Unit = warnBlockingIO(plugin) {
 		dataSource.connection.use { connection ->
 			connection.prepareStatement("DELETE FROM $TABLE_NAME WHERE lodestone_id = ?").apply {
 				this.setInt(1, lodestoneId)

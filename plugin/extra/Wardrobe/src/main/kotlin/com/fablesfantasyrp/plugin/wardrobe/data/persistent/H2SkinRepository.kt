@@ -2,22 +2,24 @@ package com.fablesfantasyrp.plugin.wardrobe.data.persistent
 
 import com.fablesfantasyrp.plugin.database.asSequence
 import com.fablesfantasyrp.plugin.database.repository.BaseH2KeyedRepository
+import com.fablesfantasyrp.plugin.database.warnBlockingIO
 import com.fablesfantasyrp.plugin.wardrobe.data.Skin
 import com.fablesfantasyrp.plugin.wardrobe.data.SkinRepository
-import org.bukkit.Server
+import org.bukkit.plugin.Plugin
 import org.bukkit.profile.PlayerTextures.SkinModel
 import java.net.URL
 import java.sql.ResultSet
 import java.util.*
 import javax.sql.DataSource
 
-class H2SkinRepository(private val server: Server,
+class H2SkinRepository(private val plugin: Plugin,
 					   private val dataSource: DataSource)
-	: BaseH2KeyedRepository<Int, Skin>(Int::class.java, dataSource), SkinRepository {
+	: BaseH2KeyedRepository<Int, Skin>(Int::class.java, plugin, dataSource), SkinRepository {
+	private val server = plugin.server
 
 	override val TABLE_NAME = "FABLES_WARDROBE.SKIN"
 
-	override fun create(v: Skin): Skin {
+	override fun create(v: Skin): Skin = warnBlockingIO(plugin) {
 		val profile = server.createProfile(UUID.randomUUID(), null)
 		profile.setProperty(v.toProfileProperty())
 		val skinUrl = profile.textures.skin!!
@@ -40,7 +42,7 @@ class H2SkinRepository(private val server: Server,
 				this.setString(4, skinModel.name)
 			}.executeUpdate()
 
-			return forValue(skinUrl, skinModel)
+			forValue(skinUrl, skinModel)
 		}
 	}
 
@@ -52,18 +54,18 @@ class H2SkinRepository(private val server: Server,
 		return create(v)
 	}
 
-	override fun forId(id: Int): Skin? {
-		return dataSource.connection.use { connection ->
+	override fun forId(id: Int): Skin? = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE id = ?")
 			stmnt.setInt(1, id)
 			val result = stmnt.executeQuery()
-			if (!result.next()) return null
+			if (!result.next()) return@use null
 			fromRow(result)
 		}
 	}
 
-	override fun forValue(skinUrl: URL, skinModel: SkinModel): Skin {
-		return dataSource.connection.use { connection ->
+	override fun forValue(skinUrl: URL, skinModel: SkinModel): Skin = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE " +
 				"textures_skin_url = ? AND textures_skin_model = ?").apply {
 				this.setString(1, skinUrl.toString())

@@ -11,10 +11,11 @@ open class MassivelyCachingEntityRepository<K, T: Identifiable<K>, C>(child: C) 
 		where C : KeyedRepository<K, T>,
 			  C : MutableRepository<T>,
 			  C: HasDirtyMarker<T> {
-
 	override fun init() {
 		super.init()
-		this.all().forEach { this.markStrong(it) }
+
+		// Important we don't call our own implementation of all()
+		super.all().forEach { this.markStrong(it) }
 	}
 
 	override fun create(v: T): T {
@@ -25,4 +26,10 @@ open class MassivelyCachingEntityRepository<K, T: Identifiable<K>, C>(child: C) 
 		this.markStrong(result)
 		return result
 	}
+
+	override fun all(): Collection<T> = cache.values.mapNotNull { it.get() }
+	override fun allIds(): Collection<K> = cache.values.asSequence()
+		.mapNotNull { it.get() }
+		.map { it.id }
+		.toList()
 }

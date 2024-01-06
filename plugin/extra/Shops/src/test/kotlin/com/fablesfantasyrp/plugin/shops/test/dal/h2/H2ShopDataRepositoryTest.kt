@@ -22,7 +22,7 @@ import java.util.*
 import kotlin.test.assertEquals
 
 internal class H2ShopDataRepositoryTest : BaseH2RepositoryTest("FABLES_SHOPS") {
-	private val repository = H2ShopDataRepository(dataSource)
+	private val repository = H2ShopDataRepository(plugin, dataSource)
 
 	private fun simpleEntity() = ShopData(
 		location = BlockIdentifier(UUID.randomUUID(), 0, 0, 0),

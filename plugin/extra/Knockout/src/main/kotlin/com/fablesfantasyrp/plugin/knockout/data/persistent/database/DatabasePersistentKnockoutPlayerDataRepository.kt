@@ -1,21 +1,23 @@
 package com.fablesfantasyrp.plugin.knockout.data.persistent.database
 
+import com.fablesfantasyrp.plugin.database.warnBlockingIO
 import com.fablesfantasyrp.plugin.knockout.data.KnockoutState
 import com.fablesfantasyrp.plugin.knockout.data.persistent.PersistentKnockoutPlayerData
 import com.fablesfantasyrp.plugin.knockout.data.persistent.PersistentKnockoutPlayerDataRepository
 import org.bukkit.OfflinePlayer
-import org.bukkit.Server
 import org.bukkit.event.entity.EntityDamageEvent
+import org.bukkit.plugin.Plugin
 import java.sql.ResultSet
 import java.sql.Timestamp
 import java.util.*
 import javax.sql.DataSource
 
-class DatabasePersistentKnockoutPlayerDataRepository(private val server: Server, private val dataSource: DataSource) : PersistentKnockoutPlayerDataRepository {
-	val TABLE_NAME = "\"fables_knockout\".KNOCKOUT"
+class DatabasePersistentKnockoutPlayerDataRepository(private val plugin: Plugin, private val dataSource: DataSource) : PersistentKnockoutPlayerDataRepository {
+	private val TABLE_NAME = "\"fables_knockout\".KNOCKOUT"
+	private val server = plugin.server
 
-	override fun all(): Collection<PersistentKnockoutPlayerData> {
-		return dataSource.connection.use { connection ->
+	override fun all(): Collection<PersistentKnockoutPlayerData> = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME")
 			val result = stmnt.executeQuery()
 			val all = ArrayList<DatabaseKnockoutPlayerData>()
@@ -24,7 +26,7 @@ class DatabasePersistentKnockoutPlayerDataRepository(private val server: Server,
 		}
 	}
 
-	override fun destroy(v: PersistentKnockoutPlayerData) {
+	override fun destroy(v: PersistentKnockoutPlayerData): Unit = warnBlockingIO(plugin) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("DELETE FROM $TABLE_NAME WHERE id = ?")
 			stmnt.setObject(1, v.id)
@@ -32,7 +34,7 @@ class DatabasePersistentKnockoutPlayerDataRepository(private val server: Server,
 		}
 	}
 
-	override fun create(v: PersistentKnockoutPlayerData): PersistentKnockoutPlayerData {
+	override fun create(v: PersistentKnockoutPlayerData): PersistentKnockoutPlayerData = warnBlockingIO(plugin) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME " +
 					"(id, state, knocked_out_at, knockout_cause, damager) " +
@@ -47,7 +49,7 @@ class DatabasePersistentKnockoutPlayerDataRepository(private val server: Server,
 			stmnt.setObject(5, damager?.uniqueId)
 			stmnt.executeUpdate()
 		}
-		return v
+		v
 	}
 
 	override fun forOfflinePlayer(offlinePlayer: OfflinePlayer): PersistentKnockoutPlayerData {
@@ -69,18 +71,18 @@ class DatabasePersistentKnockoutPlayerDataRepository(private val server: Server,
 		return result
 	}
 
-	private fun forIdMaybe(id: UUID): PersistentKnockoutPlayerData? {
-		return dataSource.connection.use { connection ->
+	private fun forIdMaybe(id: UUID): PersistentKnockoutPlayerData? = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE id = ?")
 			stmnt.setObject(1, id)
 			val result = stmnt.executeQuery()
-			if (!result.next()) { return null }
+			if (!result.next()) { return@use null }
 			fromRow(result)
 		}
 	}
 
-	override fun allIds(): Collection<UUID> {
-		return dataSource.connection.use { connection ->
+	override fun allIds(): Collection<UUID> = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT id FROM $TABLE_NAME")
 			val result = stmnt.executeQuery()
 			val all = ArrayList<UUID>()
@@ -89,7 +91,7 @@ class DatabasePersistentKnockoutPlayerDataRepository(private val server: Server,
 		}
 	}
 
-	override fun update(v: PersistentKnockoutPlayerData) {
+	override fun update(v: PersistentKnockoutPlayerData): Unit = warnBlockingIO(plugin) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("UPDATE $TABLE_NAME SET " +
 					"state = ?, " +

@@ -28,7 +28,7 @@ internal class KoinConfig(private val plugin: JavaPlugin) : BaseKoinConfig() {
 		singleOf(::ShopListener)
 
 		single {
-			val h2Repository = H2ShopDataRepository(get())
+			val h2Repository = H2ShopDataRepository(get(), get())
 			val mapper = ShopMapper(h2Repository, get())
 			val domainRepository = ShopRepositoryImpl(mapper, get())
 			domainRepository

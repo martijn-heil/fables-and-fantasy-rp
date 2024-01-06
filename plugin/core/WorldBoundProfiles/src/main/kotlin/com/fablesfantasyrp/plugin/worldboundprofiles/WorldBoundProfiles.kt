@@ -30,7 +30,7 @@ class FablesWorldBoundProfiles : JavaPlugin() {
 
 		val profiles = Services.get<EntityProfileRepository>()
 		val profileManager = Services.get<ProfileManager>()
-		val worldRestrictionRuleRepository = H2WorldRestrictionRuleRepository(server, fablesDatabase, profiles)
+		val worldRestrictionRuleRepository = H2WorldRestrictionRuleRepository(this, fablesDatabase, profiles)
 		Services.register(WorldRestrictionRuleRepository::class, worldRestrictionRuleRepository, this)
 
 		server.pluginManager.registerEvents(WorldBoundProfilesListener(

@@ -1,5 +1,15 @@
 package com.fablesfantasyrp.plugin.fasttravel
 
+import com.fablesfantasyrp.caturix.Caturix
+import com.fablesfantasyrp.caturix.fluent.CommandGraph
+import com.fablesfantasyrp.caturix.parametric.ParametricBuilder
+import com.fablesfantasyrp.caturix.parametric.provider.PrimitivesModule
+import com.fablesfantasyrp.caturix.spigot.common.CommonModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.BukkitAuthorizer
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.BukkitModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.sender.BukkitSenderModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.registerCommand
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.unregisterCommand
 import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.fasttravel.data.entity.EntityFastTravelLinkRepository
@@ -10,16 +20,6 @@ import com.fablesfantasyrp.plugin.fasttravel.data.persistent.H2FastTravelLinkRep
 import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.fablesfantasyrp.plugin.worldguardinterop.command.WorldGuardModule
-import com.fablesfantasyrp.caturix.spigot.common.CommonModule
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.BukkitAuthorizer
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.BukkitModule
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.sender.BukkitSenderModule
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.registerCommand
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.unregisterCommand
-import com.fablesfantasyrp.caturix.Caturix
-import com.fablesfantasyrp.caturix.fluent.CommandGraph
-import com.fablesfantasyrp.caturix.parametric.ParametricBuilder
-import com.fablesfantasyrp.caturix.parametric.provider.PrimitivesModule
 import com.github.shynixn.mccoroutine.bukkit.launch
 import com.sk89q.worldguard.WorldGuard
 import org.bukkit.command.Command
@@ -50,7 +50,7 @@ class FablesFastTravel : JavaPlugin() {
 
 		players = MapFastTravelPlayerRepository()
 		links = run {
-			val repo = EntityFastTravelLinkRepository(H2FastTravelLinkRepository(server, fablesDatabase, regionContainer))
+			val repo = EntityFastTravelLinkRepository(H2FastTravelLinkRepository(this, fablesDatabase, regionContainer))
 			repo.init()
 			repo
 		}

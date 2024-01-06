@@ -1,5 +1,15 @@
 package com.fablesfantasyrp.plugin.lodestones
 
+import com.fablesfantasyrp.caturix.Caturix
+import com.fablesfantasyrp.caturix.fluent.CommandGraph
+import com.fablesfantasyrp.caturix.parametric.ParametricBuilder
+import com.fablesfantasyrp.caturix.parametric.provider.PrimitivesModule
+import com.fablesfantasyrp.caturix.spigot.common.CommonModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.BukkitAuthorizer
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.BukkitModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.sender.BukkitSenderModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.registerCommand
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.unregisterCommand
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.lodestones.command.LodestoneBannerCommand
@@ -14,16 +24,6 @@ import com.fablesfantasyrp.plugin.lodestones.domain.mapper.LodestoneMapper
 import com.fablesfantasyrp.plugin.lodestones.domain.repository.*
 import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
-import com.fablesfantasyrp.caturix.spigot.common.CommonModule
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.BukkitAuthorizer
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.BukkitModule
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.sender.BukkitSenderModule
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.registerCommand
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.unregisterCommand
-import com.fablesfantasyrp.caturix.Caturix
-import com.fablesfantasyrp.caturix.fluent.CommandGraph
-import com.fablesfantasyrp.caturix.parametric.ParametricBuilder
-import com.fablesfantasyrp.caturix.parametric.provider.PrimitivesModule
 import com.github.shynixn.mccoroutine.bukkit.launch
 import org.bukkit.command.Command
 import org.bukkit.plugin.Plugin
@@ -66,7 +66,7 @@ class FablesLodestones : JavaPlugin(), KoinComponent {
 			singleOf(::TeleportParticlesListener)
 
 			single {
-				val h2Repository = H2LodestoneDataRepository(get())
+				val h2Repository = H2LodestoneDataRepository(get(), get())
 				val mapper = LodestoneMapper(h2Repository)
 				val domainRepository = LodestoneRepositoryImpl(mapper)
 				domainRepository.init()
@@ -74,7 +74,7 @@ class FablesLodestones : JavaPlugin(), KoinComponent {
 			} bind LodestoneRepository::class
 
 			single {
-				val h2Repository = H2LodestoneBannerDataRepository(get())
+				val h2Repository = H2LodestoneBannerDataRepository(get(), get())
 				val mapper = LodestoneBannerMapper(h2Repository, get())
 				val domainRepository = LodestoneBannerRepositoryImpl(mapper, get())
 				domainRepository.init()
@@ -82,7 +82,7 @@ class FablesLodestones : JavaPlugin(), KoinComponent {
 			} bind LodestoneBannerRepository::class
 
 			single {
-				val h2Repository = H2CharacterLodestoneDataRepository(get())
+				val h2Repository = H2CharacterLodestoneDataRepository(get(), get())
 				val mapper = CharacterLodestoneMapper(get(), h2Repository)
 				val domainRepository = CharacterLodestoneRepositoryImpl(mapper, get())
 				domainRepository.init()

@@ -39,7 +39,7 @@ class FablesInventoryPlugin : JavaPlugin(), KoinComponent {
 
 		server.pluginManager.registerEvents(get<ProfileInventoryListener>(), this)
 
-		scheduleRepeatingDataSave(this) { get<ProfileInventoryRepositoryImpl>().saveAllDirty() }
+		scheduleRepeatingDataSave(this) { get<ProfileInventoryRepositoryImpl>().saveAll() }
 	}
 
 	override fun onDisable() {

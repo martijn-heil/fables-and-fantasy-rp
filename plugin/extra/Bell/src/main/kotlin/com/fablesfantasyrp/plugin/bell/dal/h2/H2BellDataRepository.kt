@@ -6,17 +6,19 @@ import com.fablesfantasyrp.plugin.database.*
 import com.fablesfantasyrp.plugin.database.repository.BaseH2KeyedRepository
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.BlockIdentifier
 import dev.kord.common.entity.Snowflake
+import org.bukkit.plugin.Plugin
 import org.h2.api.H2Type
 import java.sql.ResultSet
 import java.sql.Statement
 import javax.sql.DataSource
 
-class H2BellDataRepository(private val dataSource: DataSource)
-	: BaseH2KeyedRepository<Int, BellData>(Int::class.java, dataSource), BellDataRepository {
+class H2BellDataRepository(private val plugin: Plugin,
+						   private val dataSource: DataSource)
+	: BaseH2KeyedRepository<Int, BellData>(Int::class.java, plugin, dataSource), BellDataRepository {
 
 	override val TABLE_NAME = "FABLES_BELL.BELL"
 
-	override fun create(v: BellData): BellData {
+	override fun create(v: BellData): BellData = warnBlockingIO(plugin) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME " +
 				"(" +
@@ -41,7 +43,7 @@ class H2BellDataRepository(private val dataSource: DataSource)
 			val rs = stmnt.generatedKeys
 			rs.next()
 			val id = rs.getInt(1)
-			return BellData(
+			BellData(
 					id = id,
 					location = v.location,
 					name = v.name,
@@ -51,7 +53,7 @@ class H2BellDataRepository(private val dataSource: DataSource)
 		}
 	}
 
-	override fun update(v: BellData) {
+	override fun update(v: BellData): Unit = warnBlockingIO(plugin) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("UPDATE $TABLE_NAME SET" +
 				"location_x = ?, " +
@@ -79,26 +81,26 @@ class H2BellDataRepository(private val dataSource: DataSource)
 		throw NotImplementedError()
 	}
 
-	override fun forId(id: Int): BellData? {
-		return dataSource.connection.use { connection ->
+	override fun forId(id: Int): BellData? = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE id = ?")
 			stmnt.setInt(1, id)
 			val result = stmnt.executeQuery()
-			if (!result.next()) return null
+			if (!result.next()) return@use null
 			fromRow(result)
 		}
 	}
 
-	override fun forName(name: String): BellData? {
-		return dataSource.connection.use { connection ->
+	override fun forName(name: String): BellData? = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE location_name = ?").apply {
 				setString(1, name)
 			}.executeQuery().asSequence().firstOrNull()?.let { fromRow(it) }
 		}
 	}
 
-	override fun allNames(): Set<String> {
-		return dataSource.connection.use { connection ->
+	override fun allNames(): Set<String> = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			connection.prepareStatement("SELECT location_name FROM $TABLE_NAME")
 				.executeQuery()
 				.asSequence()

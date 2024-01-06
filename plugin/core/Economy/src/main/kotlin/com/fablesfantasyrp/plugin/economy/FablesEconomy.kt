@@ -11,7 +11,6 @@ import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.sender.BukkitSe
 import com.fablesfantasyrp.caturix.spigot.common.bukkit.registerCommand
 import com.fablesfantasyrp.caturix.spigot.common.bukkit.unregisterCommand
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
-import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.economy.data.entity.EntityProfileEconomyRepository
 import com.fablesfantasyrp.plugin.economy.data.entity.EntityProfileEconomyRepositoryImpl
@@ -63,7 +62,7 @@ class FablesEconomy : JavaPlugin(), KoinComponent {
 			single<Plugin> { this@FablesEconomy } binds(arrayOf(JavaPlugin::class))
 
 			single {
-				val profileEconomyRepository = EntityProfileEconomyRepositoryImpl(H2ProfileEconomyRepository(fablesDatabase))
+				val profileEconomyRepository = EntityProfileEconomyRepositoryImpl(H2ProfileEconomyRepository(get(), get()))
 				profileEconomyRepository.init()
 				profileEconomyRepository
 			} binds (arrayOf(EntityProfileEconomyRepository::class, ProfileEconomyRepository::class))

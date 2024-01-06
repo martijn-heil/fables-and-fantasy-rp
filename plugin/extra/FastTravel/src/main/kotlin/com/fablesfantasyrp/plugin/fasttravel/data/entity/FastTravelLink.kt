@@ -8,19 +8,24 @@ import org.bukkit.Location
 import kotlin.time.Duration
 
 class FastTravelLink : DataEntity<Int, FastTravelLink>, FastTravelLinkData {
+	override var dirtyMarker: DirtyMarker<FastTravelLink>? = null
+	var isDestroyed = false
+
 	override val from: WorldGuardRegion
 	override val to: Location
 	override val travelDuration: Duration
 	override val id: Int
-	override var dirtyMarker: DirtyMarker<FastTravelLink>? = null
-	var isDestroyed = false
 
-	constructor(id: Int, from: WorldGuardRegion, to: Location, travelDuration: Duration,
+	constructor(id: Int,
+				from: WorldGuardRegion,
+				to: Location,
+				travelDuration: Duration,
 				dirtyMarker: DirtyMarker<FastTravelLink>? = null) {
 		this.id = id
-		this.dirtyMarker = dirtyMarker
 		this.from = from
 		this.to = to
 		this.travelDuration = travelDuration
+
+		this.dirtyMarker = dirtyMarker
 	}
 }

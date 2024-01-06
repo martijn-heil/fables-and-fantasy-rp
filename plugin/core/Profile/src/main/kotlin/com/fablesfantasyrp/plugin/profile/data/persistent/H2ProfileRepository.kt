@@ -1,24 +1,26 @@
 package com.fablesfantasyrp.plugin.profile.data.persistent
 
 import com.fablesfantasyrp.plugin.database.getUuid
-import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
+import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.setUuid
+import com.fablesfantasyrp.plugin.database.warnBlockingIO
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.profile.data.entity.ProfileRepository
 import org.bukkit.OfflinePlayer
-import org.bukkit.Server
+import org.bukkit.plugin.Plugin
 import java.sql.ResultSet
 import java.sql.Statement
 import javax.sql.DataSource
 
-class H2ProfileRepository(private val server: Server,
+class H2ProfileRepository(private val plugin: Plugin,
 						  private val dataSource: DataSource) : ProfileRepository, HasDirtyMarker<Profile> {
 	override var dirtyMarker: DirtyMarker<Profile>? = null
 	private val TABLE_NAME = "FABLES_PROFILE.PROFILE"
+	private val server = plugin.server
 
-	override fun allForOwner(offlinePlayer: OfflinePlayer?): Collection<Profile> {
-		return dataSource.connection.use { connection ->
+	override fun allForOwner(offlinePlayer: OfflinePlayer?): Collection<Profile> = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE owner = ?")
 			stmnt.setUuid(1, offlinePlayer?.uniqueId)
 			val result = stmnt.executeQuery()
@@ -30,8 +32,8 @@ class H2ProfileRepository(private val server: Server,
 		}
 	}
 
-	override fun all(): Collection<Profile> {
-		return dataSource.connection.use { connection ->
+	override fun all(): Collection<Profile> = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME")
 			val result = stmnt.executeQuery()
 			val all = ArrayList<Profile>()
@@ -40,7 +42,7 @@ class H2ProfileRepository(private val server: Server,
 		}
 	}
 
-	override fun destroy(v: Profile) {
+	override fun destroy(v: Profile) = warnBlockingIO(plugin) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("DELETE FROM $TABLE_NAME WHERE id = ?")
 			stmnt.setObject(1, v.id)
@@ -49,7 +51,7 @@ class H2ProfileRepository(private val server: Server,
 		}
 	}
 
-	override fun create(v: Profile): Profile {
+	override fun create(v: Profile): Profile = warnBlockingIO(plugin) {
 		dataSource.connection.use { connection ->
 			if (v.id == -1) {
 				val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME " +
@@ -62,7 +64,7 @@ class H2ProfileRepository(private val server: Server,
 				val rs = stmnt.generatedKeys
 				rs.next()
 				val id = rs.getInt(1)
-				return Profile(
+				Profile(
 						id = id,
 						owner = v.owner,
 						description = v.description,
@@ -82,7 +84,7 @@ class H2ProfileRepository(private val server: Server,
 				val stmnt2 = connection.prepareStatement("ALTER TABLE $TABLE_NAME ALTER COLUMN id RESTART WITH (SELECT MAX(id) FROM $TABLE_NAME) + 1")
 				stmnt2.executeUpdate()
 
-				return Profile(
+				Profile(
 						id = v.id,
 						owner = v.owner,
 						description = v.description,
@@ -93,7 +95,7 @@ class H2ProfileRepository(private val server: Server,
 		}
 	}
 
-	override fun update(v: Profile) {
+	override fun update(v: Profile): Unit = warnBlockingIO(plugin) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("UPDATE $TABLE_NAME SET " +
 					"owner = ?, " +

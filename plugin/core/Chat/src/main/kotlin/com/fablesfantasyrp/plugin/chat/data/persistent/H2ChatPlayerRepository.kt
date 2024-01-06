@@ -5,26 +5,28 @@ import com.fablesfantasyrp.plugin.chat.channel.ChatOutOfCharacter
 import com.fablesfantasyrp.plugin.chat.channel.ToggleableChatChannel
 import com.fablesfantasyrp.plugin.chat.data.ChatPlayerRepository
 import com.fablesfantasyrp.plugin.chat.data.entity.ChatPlayer
-import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
+import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
+import com.fablesfantasyrp.plugin.database.warnBlockingIO
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import org.bukkit.OfflinePlayer
-import org.bukkit.Server
+import org.bukkit.plugin.Plugin
 import org.h2.jdbc.JdbcSQLDataException
 import java.io.Serializable
 import java.sql.ResultSet
 import java.util.*
 import javax.sql.DataSource
 
-class H2ChatPlayerRepository(private val server: Server, private val dataSource: DataSource) :
+class H2ChatPlayerRepository(private val plugin: Plugin, private val dataSource: DataSource) :
 		ChatPlayerRepository, HasDirtyMarker<ChatPlayer> {
 	val TABLE_NAME = "\"fables_chat\".CHAT"
+	private val server = plugin.server
 
 	override var dirtyMarker: DirtyMarker<ChatPlayer>? = null
 
-	override fun all(): Collection<ChatPlayer> {
-		return dataSource.connection.use { connection ->
+	override fun all(): Collection<ChatPlayer> = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME")
 			val result = stmnt.executeQuery()
 			val all = ArrayList<ChatPlayer>()
@@ -33,7 +35,7 @@ class H2ChatPlayerRepository(private val server: Server, private val dataSource:
 		}
 	}
 
-	override fun destroy(v: ChatPlayer) {
+	override fun destroy(v: ChatPlayer): Unit = warnBlockingIO(plugin) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("DELETE FROM $TABLE_NAME WHERE id = ?")
 			stmnt.setObject(1, v.id)
@@ -41,7 +43,7 @@ class H2ChatPlayerRepository(private val server: Server, private val dataSource:
 		}
 	}
 
-	override fun create(v: ChatPlayer): ChatPlayer {
+	override fun create(v: ChatPlayer): ChatPlayer = warnBlockingIO(plugin) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME (id, channel, disabled_channels, reception_indicator_enabled) " +
 					"VALUES (?, ?, ?, ?)")
@@ -51,15 +53,15 @@ class H2ChatPlayerRepository(private val server: Server, private val dataSource:
 			stmnt.setBoolean(4, v.isReceptionIndicatorEnabled)
 			stmnt.executeUpdate()
 		}
-		return v
+		v
 	}
 
-	override fun forOfflinePlayer(offlinePlayer: OfflinePlayer): ChatPlayer {
+	override fun forOfflinePlayer(offlinePlayer: OfflinePlayer): ChatPlayer = warnBlockingIO(plugin) {
 		check(offlinePlayer.hasPlayedBefore())
-		return forId(offlinePlayer.uniqueId)!!
+		forId(offlinePlayer.uniqueId)!!
 	}
 
-	override fun forId(id: UUID): ChatPlayer? {
+	override fun forId(id: UUID): ChatPlayer? = warnBlockingIO(plugin) {
 		var result: ChatPlayer?
 		while (true) {
 			result = this.forIdMaybe(id)
@@ -70,21 +72,21 @@ class H2ChatPlayerRepository(private val server: Server, private val dataSource:
 			}
 			break
 		}
-		return result
+		result
 	}
 
-	private fun forIdMaybe(id: UUID): ChatPlayer? {
-		return dataSource.connection.use { connection ->
+	private fun forIdMaybe(id: UUID): ChatPlayer? = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE id = ?")
 			stmnt.setObject(1, id)
 			val result = stmnt.executeQuery()
-			if (!result.next()) { return null }
+			if (!result.next()) { return@use null }
 			fromRow(result)
 		}
 	}
 
-	override fun allIds(): Collection<UUID> {
-		return dataSource.connection.use { connection ->
+	override fun allIds(): Collection<UUID> = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT id FROM $TABLE_NAME")
 			val result = stmnt.executeQuery()
 			val all = ArrayList<UUID>()
@@ -93,7 +95,7 @@ class H2ChatPlayerRepository(private val server: Server, private val dataSource:
 		}
 	}
 
-	override fun update(v: ChatPlayer) {
+	override fun update(v: ChatPlayer): Unit = warnBlockingIO(plugin) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("UPDATE $TABLE_NAME SET " +
 					"channel = ?, " +

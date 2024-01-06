@@ -4,21 +4,24 @@ import com.fablesfantasyrp.plugin.database.asSequence
 import com.fablesfantasyrp.plugin.database.getUuid
 import com.fablesfantasyrp.plugin.database.repository.BaseH2KeyedRepository
 import com.fablesfantasyrp.plugin.database.setUuid
+import com.fablesfantasyrp.plugin.database.warnBlockingIO
 import com.fablesfantasyrp.plugin.shops.dal.model.ShopData
 import com.fablesfantasyrp.plugin.shops.dal.repository.ShopDataRepository
 import com.fablesfantasyrp.plugin.utils.SerializableItemStack
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.BlockIdentifier
+import org.bukkit.plugin.Plugin
 import java.sql.ResultSet
 import java.sql.Statement
 import java.sql.Timestamp
 import java.sql.Types
 import javax.sql.DataSource
 
-class H2ShopDataRepository(private val dataSource: DataSource)
-	: BaseH2KeyedRepository<Int, ShopData>(Int::class.java, dataSource), ShopDataRepository {
+class H2ShopDataRepository(private val plugin: Plugin,
+						   private val dataSource: DataSource)
+	: BaseH2KeyedRepository<Int, ShopData>(Int::class.java, plugin, dataSource), ShopDataRepository {
 	override val TABLE_NAME = "FABLES_SHOPS.SHOP"
 
-	override fun create(v: ShopData): ShopData {
+	override fun create(v: ShopData): ShopData = warnBlockingIO(plugin) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME " +
 				"(" +
@@ -51,11 +54,11 @@ class H2ShopDataRepository(private val dataSource: DataSource)
 			val rs = stmnt.generatedKeys
 			rs.next()
 			val id = rs.getInt(1)
-			return v.copy(id = id)
+			v.copy(id = id)
 		}
 	}
 
-	override fun update(v: ShopData) {
+	override fun update(v: ShopData): Unit = warnBlockingIO(plugin) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("UPDATE $TABLE_NAME SET " +
 				"location_x = ?, " +
@@ -91,18 +94,8 @@ class H2ShopDataRepository(private val dataSource: DataSource)
 		throw NotImplementedError()
 	}
 
-	override fun forId(id: Int): ShopData? {
-		return dataSource.connection.use { connection ->
-			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE id = ?")
-			stmnt.setInt(1, id)
-			val result = stmnt.executeQuery()
-			if (!result.next()) return null
-			fromRow(result)
-		}
-	}
-
-	override fun forOwner(ownerId: Int): Collection<ShopData> {
-		return dataSource.connection.use { connection ->
+	override fun forOwner(ownerId: Int): Collection<ShopData> = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE owner = ?").apply {
 				this.setInt(1, ownerId)
 			}.executeQuery().asSequence().map { fromRow(it) }.toList()

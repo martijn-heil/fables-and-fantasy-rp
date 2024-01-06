@@ -28,7 +28,7 @@ internal class KoinConfig(private val plugin: Plugin) : BaseKoinConfig() {
 		single <Plugin> { plugin } binds(arrayOf(JavaPlugin::class))
 
 		single {
-			val h2CharacterRepository = H2CharacterDataRepository(get(), get())
+			val h2CharacterRepository = H2CharacterDataRepository(get(), get(), get())
 			val mapper = CharacterMapper(h2CharacterRepository, get())
 			CharacterRepositoryImpl(mapper, get())
 		} bind CharacterRepository::class

@@ -114,6 +114,7 @@ dependencies {
 		exclude(group = "org.spigotmc")
 	}
 	implementation(fileTree("${project.rootDir}/lib") { include("*.jar") })
+	implementation("io.mockk:mockk:1.13.7")
 
 	//testImplementation(kotlin("test"))
 	testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")

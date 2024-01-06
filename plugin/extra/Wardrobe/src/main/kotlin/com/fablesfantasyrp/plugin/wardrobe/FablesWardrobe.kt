@@ -1,6 +1,15 @@
 package com.fablesfantasyrp.plugin.wardrobe
 
-import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
+import com.fablesfantasyrp.caturix.Caturix
+import com.fablesfantasyrp.caturix.fluent.CommandGraph
+import com.fablesfantasyrp.caturix.parametric.ParametricBuilder
+import com.fablesfantasyrp.caturix.parametric.provider.PrimitivesModule
+import com.fablesfantasyrp.caturix.spigot.common.CommonModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.BukkitAuthorizer
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.BukkitModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.sender.BukkitSenderModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.registerCommand
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.unregisterCommand
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.profile.command.provider.ProfileModule
 import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
@@ -10,16 +19,6 @@ import com.fablesfantasyrp.plugin.wardrobe.data.ProfileSkinRepository
 import com.fablesfantasyrp.plugin.wardrobe.data.SkinRepository
 import com.fablesfantasyrp.plugin.wardrobe.data.persistent.H2ProfileSkinRepository
 import com.fablesfantasyrp.plugin.wardrobe.data.persistent.H2SkinRepository
-import com.fablesfantasyrp.caturix.spigot.common.CommonModule
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.BukkitAuthorizer
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.BukkitModule
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.sender.BukkitSenderModule
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.registerCommand
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.unregisterCommand
-import com.fablesfantasyrp.caturix.Caturix
-import com.fablesfantasyrp.caturix.fluent.CommandGraph
-import com.fablesfantasyrp.caturix.parametric.ParametricBuilder
-import com.fablesfantasyrp.caturix.parametric.provider.PrimitivesModule
 import com.github.shynixn.mccoroutine.bukkit.launch
 import org.bukkit.command.Command
 import org.bukkit.plugin.Plugin
@@ -57,8 +56,8 @@ class FablesWardrobe : JavaPlugin(), KoinComponent {
 		koinModule = module(createdAtStart = true) {
 			single<Plugin> { this@FablesWardrobe } binds(arrayOf(JavaPlugin::class))
 
-			single { H2SkinRepository(get(), fablesDatabase) } bind SkinRepository::class
-			single { H2ProfileSkinRepository(fablesDatabase, get(), get()) } bind ProfileSkinRepository::class
+			singleOf(::H2SkinRepository) bind SkinRepository::class
+			singleOf(::H2ProfileSkinRepository) bind ProfileSkinRepository::class
 
 			single {
 				val originalProfileTrackerService = OriginalPlayerProfileServiceImpl(get())

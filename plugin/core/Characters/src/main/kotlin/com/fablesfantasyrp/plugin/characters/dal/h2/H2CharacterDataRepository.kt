@@ -6,26 +6,27 @@ import com.fablesfantasyrp.plugin.characters.dal.model.CharacterData
 import com.fablesfantasyrp.plugin.characters.dal.repository.CharacterDataRepository
 import com.fablesfantasyrp.plugin.characters.domain.CharacterStats
 import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
-import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.database.asSequence
+import com.fablesfantasyrp.plugin.database.warnBlockingIO
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.profile.data.entity.ProfileRepository
 import com.fablesfantasyrp.plugin.time.javatime.FablesLocalDate
-import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
+import org.bukkit.plugin.Plugin
 import java.sql.Connection
 import java.sql.ResultSet
 import java.time.Instant
 import java.time.temporal.ChronoField
 import javax.sql.DataSource
 
-class H2CharacterDataRepository(private val dataSource: DataSource,
+class H2CharacterDataRepository(private val plugin: Plugin,
+								private val dataSource: DataSource,
 								private val profiles: ProfileRepository) : CharacterDataRepository {
 	private val SCHEMA = "FABLES_CHARACTERS"
 	private val TABLE_NAME = "$SCHEMA.CHARACTERS"
 
-	override fun all(): Collection<CharacterData> {
-		return dataSource.connection.use { connection ->
+	override fun all(): Collection<CharacterData> = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME")
 			val result = stmnt.executeQuery()
 			val all = ArrayList<CharacterData>()
@@ -34,7 +35,7 @@ class H2CharacterDataRepository(private val dataSource: DataSource,
 		}
 	}
 
-	override fun destroy(v: CharacterData) {
+	override fun destroy(v: CharacterData): Unit = warnBlockingIO(plugin) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("DELETE FROM $TABLE_NAME WHERE id = ?")
 			stmnt.setInt(1, v.id)
@@ -42,7 +43,7 @@ class H2CharacterDataRepository(private val dataSource: DataSource,
 		}
 	}
 
-	override fun create(v: CharacterData): CharacterData {
+	override fun create(v: CharacterData): CharacterData = warnBlockingIO(plugin) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("INSERT INTO $TABLE_NAME " +
 					"(id, " +
@@ -81,7 +82,7 @@ class H2CharacterDataRepository(private val dataSource: DataSource,
 				}.executeUpdate()
 			}
 
-			return CharacterData(
+			CharacterData(
 				id = v.id,
 				name = v.name,
 				description = v.description,
@@ -97,20 +98,20 @@ class H2CharacterDataRepository(private val dataSource: DataSource,
 		}
 	}
 
-	override fun forOwner(offlinePlayer: OfflinePlayer?): Collection<CharacterData> {
-		return profiles.allForOwner(offlinePlayer).mapNotNull { this.forId(it.id) }
+	override fun forOwner(offlinePlayer: OfflinePlayer?): Collection<CharacterData> = warnBlockingIO(plugin) {
+		profiles.allForOwner(offlinePlayer).mapNotNull { this.forId(it.id) }
 	}
 
-	override fun forProfile(profile: Profile): CharacterData? {
-		return this.forId(profile.id)
+	override fun forProfile(profile: Profile): CharacterData? = warnBlockingIO(plugin) {
+		this.forId(profile.id)
 	}
 
-	override fun forName(name: String): CharacterData? {
-		return dataSource.connection.use { connection ->
+	override fun forName(name: String): CharacterData? = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE name = ?")
 			stmnt.setString(1, name)
 			val result = stmnt.executeQuery()
-			if (!result.next()) return null
+			if (!result.next()) return@use null
 			fromRow(result)
 		}
 	}
@@ -120,39 +121,35 @@ class H2CharacterDataRepository(private val dataSource: DataSource,
 
 	override val nameMap: Map<String, Int>
 		get() {
-			return dataSource.connection.use { connection ->
-				val stmnt = connection.prepareStatement("SELECT id, name FROM $TABLE_NAME")
-				val result = stmnt.executeQuery()
-				val map = HashMap<String, Int>()
-				while (result.next()) {
-					val id = result.getInt("id")
-					val name = result.getString("name")
-					map[name] = id
+			return warnBlockingIO(plugin) {
+				dataSource.connection.use { connection ->
+					val stmnt = connection.prepareStatement("SELECT id, name FROM $TABLE_NAME")
+					val result = stmnt.executeQuery()
+					val map = HashMap<String, Int>()
+					while (result.next()) {
+						val id = result.getInt("id")
+						val name = result.getString("name")
+						map[name] = id
+					}
+					map
 				}
-				map
 			}
 		}
 
-	override fun forId(id: Int): CharacterData? {
-		Bukkit.getLogger().info("forId($id), getting connection")
-		return dataSource.connection.use { connection ->
-			Bukkit.getLogger().info("forId($id), got connection")
+	override fun forId(id: Int): CharacterData? = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE id = ?")
 			stmnt.setInt(1, id)
-			Bukkit.getLogger().info("forId($id), executing query")
 			val result = stmnt.executeQuery()
-			Bukkit.getLogger().info("forId($id), executed query")
 			if (!result.next()) {
-				Bukkit.getLogger().info("forId($id) got no result")
-				return null
+				return@use null
 			}
-			Bukkit.getLogger().info("forId($id), fromrow")
 			fromRow(result)
 		}
 	}
 
-	override fun allIds(): Collection<Int> {
-		return dataSource.connection.use { connection ->
+	override fun allIds(): Collection<Int> = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT id FROM $TABLE_NAME")
 			val result = stmnt.executeQuery()
 			val all = ArrayList<Int>()
@@ -161,7 +158,7 @@ class H2CharacterDataRepository(private val dataSource: DataSource,
 		}
 	}
 
-	override fun update(v: CharacterData) {
+	override fun update(v: CharacterData) = warnBlockingIO(plugin) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("UPDATE $TABLE_NAME SET " +
 					"name = ?, " +
@@ -214,8 +211,8 @@ class H2CharacterDataRepository(private val dataSource: DataSource,
 		throw NotImplementedError()
 	}
 
-	private fun traitsForCharacter(characterId: Int): Set<CharacterTrait> {
-		return dataSource.connection.use { connection ->
+	private fun traitsForCharacter(characterId: Int): Set<CharacterTrait> = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			connection.prepareStatement("SELECT character_trait_id FROM $SCHEMA.CHARACTER_CHARACTER_TRAIT WHERE character_id = ?").apply {
 				this.setInt(1, characterId)
 			}.executeQuery().asSequence().mapNotNull {
@@ -226,7 +223,7 @@ class H2CharacterDataRepository(private val dataSource: DataSource,
 		}
 	}
 
-	private fun addTraitsForCharacter(connection: Connection, characterId: Int, traits: Set<CharacterTrait>) {
+	private fun addTraitsForCharacter(connection: Connection, characterId: Int, traits: Set<CharacterTrait>) = warnBlockingIO(plugin) {
 		for (trait in traits) {
 			connection.prepareStatement("INSERT INTO $SCHEMA.CHARACTER_CHARACTER_TRAIT (character_id, character_trait_id) " +
 				"VALUES (?, ?)").apply {

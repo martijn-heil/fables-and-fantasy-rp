@@ -4,16 +4,20 @@ import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
 import com.fablesfantasyrp.plugin.database.model.Identifiable
 import com.fablesfantasyrp.plugin.database.sync.repository.KeyedRepository
 import com.fablesfantasyrp.plugin.database.sync.repository.MutableRepository
+import com.fablesfantasyrp.plugin.database.warnBlockingIO
+import org.bukkit.plugin.Plugin
 import java.sql.ResultSet
 import javax.sql.DataSource
 
-abstract class BaseH2KeyedRepository<K, T: Identifiable<K>>(private val keyClass: Class<K>, private val dataSource: DataSource)
+abstract class BaseH2KeyedRepository<K, T: Identifiable<K>>(private val keyClass: Class<K>,
+															private val plugin: Plugin,
+															private val dataSource: DataSource)
 	: MutableRepository<T>, KeyedRepository<K, T>, HasDirtyMarker<T> {
 	override var dirtyMarker: DirtyMarker<T>? = null
 	protected abstract val TABLE_NAME: String
 
-	override fun all(): Collection<T> {
-		return dataSource.connection.use { connection ->
+	override fun all(): Collection<T> = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME")
 			val result = stmnt.executeQuery()
 			val all = ArrayList<T>()
@@ -25,7 +29,7 @@ abstract class BaseH2KeyedRepository<K, T: Identifiable<K>>(private val keyClass
 		}
 	}
 
-	override fun destroy(v: T) {
+	override fun destroy(v: T): Unit = warnBlockingIO(plugin) {
 		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("DELETE FROM $TABLE_NAME WHERE id = ?")
 			stmnt.setObject(1, v.id)
@@ -33,18 +37,18 @@ abstract class BaseH2KeyedRepository<K, T: Identifiable<K>>(private val keyClass
 		}
 	}
 
-	override fun forId(id: K): T? {
-		return dataSource.connection.use { connection ->
+	override fun forId(id: K): T? = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT * FROM $TABLE_NAME WHERE id = ?")
 			stmnt.setObject(1, id)
 			val result = stmnt.executeQuery()
-			if (!result.next()) return null
+			if (!result.next()) return@use null
 			fromRow(result)
 		}
 	}
 
-	override fun allIds(): Collection<K> {
-		return dataSource.connection.use { connection ->
+	override fun allIds(): Collection<K> = warnBlockingIO(plugin) {
+		dataSource.connection.use { connection ->
 			val stmnt = connection.prepareStatement("SELECT id FROM $TABLE_NAME")
 			val result = stmnt.executeQuery()
 			val all = ArrayList<K>()

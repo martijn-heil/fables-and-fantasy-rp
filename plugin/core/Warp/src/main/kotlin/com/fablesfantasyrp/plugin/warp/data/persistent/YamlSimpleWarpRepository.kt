@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.warp.data.persistent
 
+import com.fablesfantasyrp.plugin.database.warnBlockingIO
 import com.fablesfantasyrp.plugin.warp.data.SimpleWarp
 import com.fablesfantasyrp.plugin.warp.data.SimpleWarpRepository
 import org.bukkit.Location
@@ -83,7 +84,7 @@ class YamlSimpleWarpRepository(private val plugin: Plugin,
 
 	@Throws(YAMLException::class, IllegalStateException::class)
 	private fun fromFile(file: File): SimpleWarp {
-		val yaml = YamlConfiguration.loadConfiguration(file)
+		val yaml = warnBlockingIO(plugin) { YamlConfiguration.loadConfiguration(file) }
 
 		fun missingField(fieldName: String): Nothing {
 			throw IllegalStateException("$fieldName is missing from file '${file.path}'")

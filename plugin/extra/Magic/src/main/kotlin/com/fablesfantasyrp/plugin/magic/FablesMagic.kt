@@ -1,7 +1,16 @@
 package com.fablesfantasyrp.plugin.magic
 
+import com.fablesfantasyrp.caturix.Caturix
+import com.fablesfantasyrp.caturix.fluent.CommandGraph
+import com.fablesfantasyrp.caturix.parametric.ParametricBuilder
+import com.fablesfantasyrp.caturix.parametric.provider.PrimitivesModule
+import com.fablesfantasyrp.caturix.spigot.common.CommonModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.BukkitAuthorizer
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.BukkitModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.sender.BukkitSenderModule
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.registerCommand
+import com.fablesfantasyrp.caturix.spigot.common.bukkit.unregisterCommand
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
-import com.fablesfantasyrp.plugin.database.FablesDatabase.Companion.fablesDatabase
 import com.fablesfantasyrp.plugin.database.applyMigrations
 import com.fablesfantasyrp.plugin.magic.authorizer.MagicTypeAuthorizer
 import com.fablesfantasyrp.plugin.magic.authorizer.MagicTypeAuthorizerImpl
@@ -21,16 +30,6 @@ import com.fablesfantasyrp.plugin.magic.domain.repository.TearRepositoryImpl
 import com.fablesfantasyrp.plugin.magic.web.WebHook
 import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
-import com.fablesfantasyrp.caturix.spigot.common.CommonModule
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.BukkitAuthorizer
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.BukkitModule
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.sender.BukkitSenderModule
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.registerCommand
-import com.fablesfantasyrp.caturix.spigot.common.bukkit.unregisterCommand
-import com.fablesfantasyrp.caturix.Caturix
-import com.fablesfantasyrp.caturix.fluent.CommandGraph
-import com.fablesfantasyrp.caturix.parametric.ParametricBuilder
-import com.fablesfantasyrp.caturix.parametric.provider.PrimitivesModule
 import com.github.shynixn.mccoroutine.bukkit.launch
 import org.bukkit.command.Command
 import org.bukkit.plugin.Plugin
@@ -74,7 +73,7 @@ class FablesMagic : JavaPlugin(), KoinComponent {
 			single<Plugin> { this@FablesMagic } binds(arrayOf(JavaPlugin::class))
 
 			single { YamlSpellDataRepository(get(), spellsDirectory) } bind SpellDataRepository::class
-			single { H2MageDataRepository(fablesDatabase, get()) } bind MageDataRepository::class
+			singleOf(::H2MageDataRepository) bind MageDataRepository::class
 			singleOf(::MageRepositoryMapper)
 			single { MageRepositoryImpl(get()).apply { init() } } bind MageRepository::class
 

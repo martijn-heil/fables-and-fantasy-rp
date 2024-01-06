@@ -1,5 +1,6 @@
 package com.fablesfantasyrp.plugin.magic.dal.repository.yaml
 
+import com.fablesfantasyrp.plugin.database.warnBlockingIO
 import com.fablesfantasyrp.plugin.magic.dal.enums.MagicPath
 import com.fablesfantasyrp.plugin.magic.dal.model.SpellData
 import com.fablesfantasyrp.plugin.magic.dal.repository.SpellDataRepository
@@ -37,7 +38,7 @@ class YamlSpellDataRepository(private val plugin: Plugin, private val directory:
 		fileForId(v.id).delete()
 	}
 
-	override fun create(v: SpellData): SpellData {
+	override fun create(v: SpellData): SpellData = warnBlockingIO(plugin) {
 		val file = fileForId(v.id)
 		require(!file.exists())
 
@@ -45,7 +46,7 @@ class YamlSpellDataRepository(private val plugin: Plugin, private val directory:
 		val yaml = YamlConfiguration.loadConfiguration(file)
 		updateYaml(v, yaml)
 		yaml.save(file)
-		return v
+		v
 	}
 
 	override fun update(v: SpellData) {
@@ -80,7 +81,7 @@ class YamlSpellDataRepository(private val plugin: Plugin, private val directory:
 	}
 
 	@Throws(YAMLException::class, IllegalStateException::class)
-	private fun fromFile(file: File): SpellData {
+	private fun fromFile(file: File): SpellData = warnBlockingIO(plugin) {
 		val yaml = YamlConfiguration.loadConfiguration(file)
 
 		fun missingField(fieldName: String): Nothing {
@@ -101,7 +102,7 @@ class YamlSpellDataRepository(private val plugin: Plugin, private val directory:
 		if (castingValue == Int.MAX_VALUE) missingField("casting_value")
 
 
-		return SpellData(
+		SpellData(
 				id = file.nameWithoutExtension,
 				displayName = displayName,
 				description = description,
