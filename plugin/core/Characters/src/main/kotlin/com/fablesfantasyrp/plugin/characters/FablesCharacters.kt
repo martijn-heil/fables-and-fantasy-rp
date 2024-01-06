@@ -7,6 +7,7 @@ import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterReposito
 import com.fablesfantasyrp.plugin.characters.nametags.NameTagManager
 import com.fablesfantasyrp.plugin.characters.web.WebHook
 import com.fablesfantasyrp.plugin.database.applyMigrations
+import com.fablesfantasyrp.plugin.database.scheduleRepeatingDataSave
 import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import org.bukkit.plugin.ServicePriority
@@ -69,6 +70,8 @@ class FablesCharacters : JavaPlugin(), KoinComponent {
 			logger.info("Saving character traits..")
 			get<CharacterTraitRepositoryImpl>().saveAllDirty()
 		}, 0, 6000)*/
+
+		scheduleRepeatingDataSave(this) { get<CharacterRepositoryImpl>().saveAllDirty() }
 	}
 
 	override fun onDisable() {
