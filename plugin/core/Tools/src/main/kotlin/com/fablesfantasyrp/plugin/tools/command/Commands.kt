@@ -320,6 +320,10 @@ class Commands(private val powerToolManager: PowerToolManager,
 	@Command(aliases = ["spawn", "fspawn"], desc = "Teleport to spawn")
 	@Require(Permission.Command.Spawn)
 	fun spawn(@Sender sender: CommandSender, @CommandTarget(Permission.Command.Spawn + ".others") target: Player) {
+		if (target.isDead) {
+			target.spigot().respawn()
+		}
+
 		target.teleport(SPAWN)
 		broadcaster.log(sender, "Teleported ${target.name} to spawn")
 	}
