@@ -323,23 +323,23 @@ class Commands(private val powerToolManager: PowerToolManager,
 
 	@Command(aliases = ["back", "fback"], desc = "Teleport back to your previous location")
 	@Require(Permission.Command.Back)
-	fun back(@Sender sender: CommandSender, @CommandTarget(Permission.Command.Back + ".others") target: Player) {
+	suspend fun back(@Sender sender: CommandSender, @CommandTarget(Permission.Command.Back + ".others") target: Player) {
 		val previousLocation = backManager.getPreviousLocation(target) ?: run {
 			sender.sendError("${target.name} has no previous location.")
 			return
 		}
-		target.teleport(previousLocation)
+		target.teleportAsync(previousLocation).await()
 		broadcaster.log(sender, "Teleported ${target.name} back to their previous location (${previousLocation.humanReadable()})")
 	}
 
 	@Command(aliases = ["spawn", "fspawn"], desc = "Teleport to spawn")
 	@Require(Permission.Command.Spawn)
-	fun spawn(@Sender sender: CommandSender, @CommandTarget(Permission.Command.Spawn + ".others") target: Player) {
+	suspend fun spawn(@Sender sender: CommandSender, @CommandTarget(Permission.Command.Spawn + ".others") target: Player) {
 		if (target.isDead) {
 			target.spigot().respawn()
 		}
 
-		target.teleport(SPAWN)
+		target.teleportAsync(SPAWN).await()
 		broadcaster.log(sender, "Teleported ${target.name} to spawn")
 	}
 
