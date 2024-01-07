@@ -5,9 +5,9 @@ import com.fablesfantasyrp.plugin.characters.dal.enums.Gender
 import com.fablesfantasyrp.plugin.characters.dal.enums.Race
 import com.fablesfantasyrp.plugin.characters.domain.CHARACTER_STATS_FLOOR
 import com.fablesfantasyrp.plugin.characters.domain.CharacterStats
-import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
 import com.fablesfantasyrp.plugin.characters.domain.CharacterTraitRaces
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.characters.gui.CharacterStatsGui
 import com.fablesfantasyrp.plugin.form.promptChat
@@ -183,8 +183,10 @@ suspend fun promptNewCharacterInfo(player: Player, allowedRaces: Collection<Race
 	player.sendMessage(miniMessage.deserialize("<gray>Your character's description is <yellow><description></yellow></gray>",
 			Placeholder.unparsed("description", description)))
 
+	val traits = promptTraits(player, race)
+
 	val baseStats = CHARACTER_STATS_FLOOR.withModifiers(listOf(race.boosters))
-	val stats = player.promptGui(CharacterStatsGui(FablesCharacters.instance, baseStats, "Please choose $name's stats"))
+	val stats = player.promptGui(CharacterStatsGui(FablesCharacters.instance, baseStats, traits, "Please choose $name's stats"))
 	Component.text().color(NamedTextColor.GRAY)
 			.append(Component.text("Your character's stats are "))
 			.append(
@@ -207,8 +209,6 @@ suspend fun promptNewCharacterInfo(player: Player, allowedRaces: Collection<Race
 			Placeholder.unparsed("defense", stats.defense.toString()),
 			Placeholder.unparsed("agility", stats.agility.toString()),
 			Placeholder.unparsed("intelligence", stats.intelligence.toString())))
-
-	val traits = promptTraits(player, race)
 
 	return NewCharacterData(name, dateOfBirth, gender, race, description, traits, stats)
 }

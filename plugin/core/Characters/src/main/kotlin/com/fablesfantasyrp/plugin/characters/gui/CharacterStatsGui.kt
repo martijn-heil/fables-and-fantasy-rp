@@ -1,6 +1,7 @@
 package com.fablesfantasyrp.plugin.characters.gui
 
 import com.fablesfantasyrp.plugin.characters.domain.CharacterStats
+import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
 import com.fablesfantasyrp.plugin.gui.ResultProducingInventoryGui
 import com.fablesfantasyrp.plugin.gui.element.Slider
 import de.themoep.inventorygui.DynamicGuiElement
@@ -11,7 +12,10 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 import kotlin.math.min
 
-class CharacterStatsGui(plugin: JavaPlugin, minimums: CharacterStats, title: String = "Character stats",
+class CharacterStatsGui(plugin: JavaPlugin,
+						minimums: CharacterStats,
+						traits: Set<CharacterTrait>,
+						title: String = "Character stats",
 						initial: CharacterStats = CharacterStats(0U, 0U, 0U, 0U)) :
 		ResultProducingInventoryGui<CharacterStats>(plugin, title,
 		arrayOf(
@@ -31,7 +35,7 @@ class CharacterStatsGui(plugin: JavaPlugin, minimums: CharacterStats, title: Str
 
 	private val statSliders = arrayOf(strengthSlider, defenseSlider, agilitySlider, intelligenceSlider)
 
-	private val distributablePoints = 12U
+	private val distributablePoints = if (traits.contains(CharacterTrait.PAINFULLY_AVERAGE)) 14U else 12U
 	private val usedStatPoints get() =  statSliders.sumOf { it.value }
 	private val freePoints get() = distributablePoints - usedStatPoints
 

@@ -1,5 +1,13 @@
 package com.fablesfantasyrp.plugin.characters.command
 
+import com.fablesfantasyrp.caturix.Command
+import com.fablesfantasyrp.caturix.Require
+import com.fablesfantasyrp.caturix.parametric.annotation.Optional
+import com.fablesfantasyrp.caturix.parametric.annotation.Range
+import com.fablesfantasyrp.caturix.parametric.annotation.Switch
+import com.fablesfantasyrp.caturix.spigot.common.CommandTarget
+import com.fablesfantasyrp.caturix.spigot.common.Sender
+import com.fablesfantasyrp.caturix.util.auth.AuthorizationException
 import com.fablesfantasyrp.plugin.characters.*
 import com.fablesfantasyrp.plugin.characters.command.provider.AllowCharacterName
 import com.fablesfantasyrp.plugin.characters.dal.enums.CharacterStatKind
@@ -28,17 +36,7 @@ import com.fablesfantasyrp.plugin.timers.CancelReason
 import com.fablesfantasyrp.plugin.timers.countdown
 import com.fablesfantasyrp.plugin.utils.FABLES_ADMIN
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.broadcast
-import com.github.shynixn.mccoroutine.bukkit.launch
-import com.fablesfantasyrp.caturix.spigot.common.CommandTarget
-import com.fablesfantasyrp.caturix.spigot.common.Sender
-import com.fablesfantasyrp.caturix.Command
-import com.fablesfantasyrp.caturix.Require
-import com.fablesfantasyrp.caturix.parametric.annotation.Optional
-import com.fablesfantasyrp.caturix.parametric.annotation.Range
-import com.fablesfantasyrp.caturix.parametric.annotation.Switch
-import com.fablesfantasyrp.caturix.util.auth.AuthorizationException
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.format.NamedTextColor
@@ -369,8 +367,13 @@ class Commands(private val plugin: JavaPlugin,
 					initialSliderValues = CharacterStats(0U, 0U, 0U, 0U)
 				}
 
-				val gui = CharacterStatsGui(plugin, minimums, "#${target.id} ${target.name}'s stats",
-						initialSliderValues)
+				val gui = CharacterStatsGui(
+					plugin,
+					minimums,
+					target.traits,
+					"#${target.id} ${target.name}'s stats",
+					initialSliderValues
+				)
 
 				flaunch { target.stats = gui.execute(sender) }
 			}
@@ -464,7 +467,14 @@ class Commands(private val plugin: JavaPlugin,
 					initialSliderValues = CharacterStats(0U, 0U, 0U, 0U)
 				}
 
-				val gui = CharacterStatsGui(plugin, minimums, "#${target.id} ${target.name}'s stats", initialSliderValues)
+				val gui = CharacterStatsGui(
+					plugin,
+					minimums,
+					target.traits,
+					"#${target.id} ${target.name}'s stats",
+					initialSliderValues
+				)
+
 				flaunch {
 					val oldStats = target.stats
 					val newStats = gui.execute(sender)
