@@ -1,5 +1,6 @@
-package com.fablesfantasyrp.plugin.utils.extensions.bukkit
+package com.fablesfantasyrp.plugin.utils.test.extensions.bukkit
 
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.splitStacks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
