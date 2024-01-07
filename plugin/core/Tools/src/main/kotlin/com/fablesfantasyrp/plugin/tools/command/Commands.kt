@@ -29,6 +29,7 @@ import com.fablesfantasyrp.plugin.utils.SPAWN
 import com.fablesfantasyrp.plugin.utils.asEnabledDisabledComponent
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.humanReadable
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.isVanished
+import kotlinx.coroutines.future.await
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -87,8 +88,22 @@ class Commands(private val powerToolManager: PowerToolManager,
 			one.location = two.location
 			broadcaster.log(sender, "Teleported ${one.displayName()} to ${two.displayName()}")
 		} else if (sender is Player) {
-			sender.teleport(one.location)
+			sender.teleportAsync(one.location).await()
 			broadcaster.log(sender, "Teleported themself to ${one.displayName()}")
+		} else {
+			sender.sendError("You have to be a player to use this command.")
+		}
+	}
+
+	@Command(aliases = ["playerteleport", "fplayerteleport", "ptp", "fptp", "ptele", "fptele"], desc = "Teleport players")
+	@Require(Permission.Command.Teleport)
+	suspend fun playerteleport(@Sender sender: CommandSender, one: Player, @Optional two: Player?) {
+		if (two != null) {
+			one.teleportAsync(two.location).await()
+			broadcaster.log(sender, "Teleported ${one.name} to ${two.name}")
+		} else if (sender is Player) {
+			sender.teleportAsync(one.location).await()
+			broadcaster.log(sender, "Teleported themself to ${one.name}")
 		} else {
 			sender.sendError("You have to be a player to use this command.")
 		}
