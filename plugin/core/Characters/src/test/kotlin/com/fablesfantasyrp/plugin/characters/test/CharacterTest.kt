@@ -1,9 +1,10 @@
-package com.fablesfantasyrp.plugin.characters
+package com.fablesfantasyrp.plugin.characters.test
 
 import com.fablesfantasyrp.plugin.characters.dal.enums.Gender
 import com.fablesfantasyrp.plugin.characters.dal.enums.Race
 import com.fablesfantasyrp.plugin.characters.domain.CharacterStats
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
+import com.fablesfantasyrp.plugin.characters.flaunch
 import com.fablesfantasyrp.plugin.inventory.PassthroughInventory
 import com.fablesfantasyrp.plugin.inventory.PassthroughPlayerInventory
 import com.fablesfantasyrp.plugin.inventory.domain.entity.ProfileInventory

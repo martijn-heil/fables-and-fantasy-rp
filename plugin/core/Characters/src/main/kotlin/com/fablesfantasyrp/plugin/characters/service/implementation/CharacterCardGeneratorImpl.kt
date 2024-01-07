@@ -1,8 +1,12 @@
-package com.fablesfantasyrp.plugin.characters
+package com.fablesfantasyrp.plugin.characters.service.implementation
 
+import com.fablesfantasyrp.plugin.characters.CharacterAuthorizer
 import com.fablesfantasyrp.plugin.characters.dal.enums.CharacterStatKind
-import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.domain.CharacterTrait
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
+import com.fablesfantasyrp.plugin.characters.isStaffCharacter
+import com.fablesfantasyrp.plugin.characters.service.api.CharacterCardGenerator
+import com.fablesfantasyrp.plugin.characters.service.api.CreatureSizeCalculator
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.text.join
 import com.fablesfantasyrp.plugin.text.miniMessage

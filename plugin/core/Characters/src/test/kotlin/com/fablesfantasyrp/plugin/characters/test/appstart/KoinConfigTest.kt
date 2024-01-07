@@ -1,14 +1,16 @@
-package com.fablesfantasyrp.plugin.characters.appstart
+package com.fablesfantasyrp.plugin.characters.test.appstart
 
 import com.fablesfantasyrp.caturix.parametric.Provider
 import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.OfflinePlayerProvider
 import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.PlayerProvider
+import com.fablesfantasyrp.plugin.characters.appstart.KoinConfig
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.ProfilePrompter
 import com.fablesfantasyrp.plugin.profile.command.provider.ProfileProvider
 import com.fablesfantasyrp.plugin.profile.data.entity.EntityProfileRepository
 import com.fablesfantasyrp.plugin.profile.data.entity.ProfileRepository
 import com.fablesfantasyrp.plugin.staffprofiles.data.StaffProfileRepository
+import com.fablesfantasyrp.plugin.utils.domain.premium.PremiumRankCalculator
 import io.mockk.every
 import io.mockk.mockk
 import org.bukkit.Server
@@ -33,6 +35,7 @@ internal class KoinConfigTest {
 		val profilePrompter = mockk<ProfilePrompter>()
 		val staffProfileRepository = mockk<StaffProfileRepository>()
 		val dataSource = mockk<DataSource>()
+		val premiumRankCalculator = mockk<PremiumRankCalculator>()
 
 		every { plugin.server } returns server
 
@@ -46,6 +49,7 @@ internal class KoinConfigTest {
 				single { profileManager }
 				single { profilePrompter }
 				single { staffProfileRepository }
+				single { premiumRankCalculator }
 				factory {
 					ProfileProvider(
 						profiles,

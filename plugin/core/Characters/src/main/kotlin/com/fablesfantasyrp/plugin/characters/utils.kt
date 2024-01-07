@@ -17,11 +17,6 @@ import org.bukkit.entity.Player
 import java.util.*
 import kotlin.math.roundToLong
 
-val Player.characterSlotCount: Int get()
-	= denizenParseTag("<proc[characters_calculate_slotcount].context[<[player]>]>",
-			mapOf("player" to PlayerTag(this))
-	).asElement().asInt()
-
 val Character.isStaffCharacter get() = this.profile.owner == FABLES_ADMIN
 val Profile.isStaffCharacter get() = this.owner == FABLES_ADMIN
 

@@ -3,6 +3,7 @@ package com.fablesfantasyrp.plugin.characters
 import com.denizenscript.denizen.objects.PlayerTag
 import com.denizenscript.denizencore.objects.core.ElementTag
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
+import com.fablesfantasyrp.plugin.characters.service.api.CharacterCardGenerator
 import com.fablesfantasyrp.plugin.denizeninterop.dFlags
 import com.fablesfantasyrp.plugin.denizeninterop.denizenRun
 import com.fablesfantasyrp.plugin.profile.ProfileManager

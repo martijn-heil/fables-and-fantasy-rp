@@ -18,8 +18,6 @@ import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
 import com.github.shynixn.mccoroutine.bukkit.launch
 import org.bukkit.command.Command
 import org.bukkit.plugin.Plugin
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
 
 internal class CommandConfig(private val plugin: Plugin,
 							 private val characterModule: CharacterModule,
@@ -60,7 +58,7 @@ internal class CommandConfig(private val plugin: Plugin,
 
 		val charactersCommand = rootDispatcherNode.group("character", "char", "fchar", "fcharacter")
 		charactersCommand.registerMethods(commandsCharacters)
-		rootDispatcherNode.registerMethods(LegacyCommands(plugin, commandsCharacters))
+		rootDispatcherNode.registerMethods(LegacyCommands(commandsCharacters))
 
 		charactersCommand.group("stats").registerMethods(commandsCharactersStats)
 		charactersCommand.group("change").registerMethods(commandsCharactersChange)

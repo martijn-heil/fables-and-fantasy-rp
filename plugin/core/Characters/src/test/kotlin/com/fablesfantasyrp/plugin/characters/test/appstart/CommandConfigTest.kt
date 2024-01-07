@@ -1,13 +1,15 @@
-package com.fablesfantasyrp.plugin.characters.appstart
+package com.fablesfantasyrp.plugin.characters.test.appstart
 
 import com.fablesfantasyrp.caturix.parametric.Provider
 import com.fablesfantasyrp.caturix.spigot.common.bukkit.registerCommand
 import com.fablesfantasyrp.caturix.spigot.common.bukkit.unregisterCommand
 import com.fablesfantasyrp.plugin.characters.CharacterAuthorizer
+import com.fablesfantasyrp.plugin.characters.appstart.CommandConfig
 import com.fablesfantasyrp.plugin.characters.command.CharacterTraitCommand
 import com.fablesfantasyrp.plugin.characters.command.Commands
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
+import com.fablesfantasyrp.plugin.characters.service.api.CharacterSlotCountCalculator
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.ProfilePrompter
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
@@ -35,6 +37,7 @@ internal class CommandConfigTest {
 		val profileManager = mockk<ProfileManager>()
 		val profilePrompter = mockk<ProfilePrompter>()
 		val authorizer = mockk<CharacterAuthorizer>()
+		val characterSlotCountCalculator = mockk<CharacterSlotCountCalculator>()
 		val profileProvider = mockk<Provider<Profile>>()
 
 		every { Bukkit.getServer() } returns server
@@ -43,7 +46,7 @@ internal class CommandConfigTest {
 
 		val characterModule = CharacterModule(server, characters, profileManager, profileProvider)
 
-		val commands = Commands(plugin, characters, profiles, profileManager, profilePrompter, authorizer)
+		val commands = Commands(plugin, characters, profiles, profileManager, profilePrompter, authorizer, characterSlotCountCalculator)
 		val commandsCharacters = commands.Characters()
 		val commandsCharactersStats = commandsCharacters.Stats()
 		val commandsCharactersChange = commandsCharacters.Change()

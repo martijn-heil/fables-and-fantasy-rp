@@ -1,4 +1,4 @@
-package com.fablesfantasyrp.plugin.characters
+package com.fablesfantasyrp.plugin.characters.service.api
 
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import net.kyori.adventure.text.Component

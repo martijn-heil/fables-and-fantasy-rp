@@ -10,8 +10,16 @@ import com.fablesfantasyrp.plugin.characters.dal.h2.H2CharacterDataRepository
 import com.fablesfantasyrp.plugin.characters.domain.mapper.CharacterMapper
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepositoryImpl
+import com.fablesfantasyrp.plugin.characters.modifiers.characterslots.CharacterSlotCountModifier
+import com.fablesfantasyrp.plugin.characters.modifiers.characterslots.PremiumRankCharacterSlotCountModifier
 import com.fablesfantasyrp.plugin.characters.modifiers.stats.RaceStatsModifier
 import com.fablesfantasyrp.plugin.characters.modifiers.stats.StatsModifier
+import com.fablesfantasyrp.plugin.characters.service.api.CharacterCardGenerator
+import com.fablesfantasyrp.plugin.characters.service.api.CharacterSlotCountCalculator
+import com.fablesfantasyrp.plugin.characters.service.api.CreatureSizeCalculator
+import com.fablesfantasyrp.plugin.characters.service.implementation.CharacterCardGeneratorImpl
+import com.fablesfantasyrp.plugin.characters.service.implementation.CharacterSlotCountCalculatorImpl
+import com.fablesfantasyrp.plugin.characters.service.implementation.CreatureSizeCalculatorImpl
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.utils.koin.BaseKoinConfig
 import org.bukkit.plugin.Plugin
@@ -35,8 +43,11 @@ internal class KoinConfig(private val plugin: Plugin) : BaseKoinConfig() {
 
 		singleOf(::CharacterAuthorizerImpl) bind CharacterAuthorizer::class
 		singleOf(::CharacterCardGeneratorImpl) bind CharacterCardGenerator::class
+		singleOf(::CharacterSlotCountCalculatorImpl) bind CharacterSlotCountCalculator::class
+
 		factoryOf(::RaceStatsModifier) bind StatsModifier::class
 		factoryOf(::CreatureSizeCalculatorImpl) bind CreatureSizeCalculator::class
+		factoryOf(::PremiumRankCharacterSlotCountModifier) bind CharacterSlotCountModifier::class
 
 		factory { CharacterModule(get(), get(), get(), get<Provider<Profile>>(named("Profile"))) }
 		singleOf(::CharactersListener)
