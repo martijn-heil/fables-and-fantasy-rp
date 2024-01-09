@@ -10,7 +10,7 @@ import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.data.entity.EntityProfileRepository
 import com.fablesfantasyrp.plugin.profile.event.PlayerForceProfileSelectionEvent
 import com.fablesfantasyrp.plugin.profile.event.PostPlayerSwitchProfileEvent
-import com.fablesfantasyrp.plugin.staffprofiles.data.StaffProfileRepository
+import com.fablesfantasyrp.plugin.staffprofiles.domain.repository.StaffProfileRepository
 import com.fablesfantasyrp.plugin.time.event.NewDayEvent
 import com.fablesfantasyrp.plugin.time.javatime.FablesLocalDate
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.isRealPlayer

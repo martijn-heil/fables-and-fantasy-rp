@@ -1,12 +1,12 @@
 package com.fablesfantasyrp.plugin.staffprofiles
 
 import com.fablesfantasyrp.plugin.database.applyMigrations
-import com.fablesfantasyrp.plugin.profile.data.entity.EntityProfileRepository
-import com.fablesfantasyrp.plugin.staffprofiles.data.H2StaffProfileRepository
-import com.fablesfantasyrp.plugin.staffprofiles.data.StaffProfileRepository
+import com.fablesfantasyrp.plugin.staffprofiles.dal.h2.H2StaffProfileDataRepository
+import com.fablesfantasyrp.plugin.staffprofiles.dal.repository.StaffProfileDataRepository
+import com.fablesfantasyrp.plugin.staffprofiles.domain.repository.StaffProfileRepository
+import com.fablesfantasyrp.plugin.staffprofiles.domain.repository.StaffProfileRepositoryImpl
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import org.bukkit.plugin.Plugin
-import org.bukkit.plugin.ServicePriority
 import org.bukkit.plugin.java.JavaPlugin
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
@@ -39,7 +39,8 @@ class FablesStaffProfiles : JavaPlugin(), KoinComponent {
 		koinModule = module(createdAtStart = true) {
 			single<Plugin> { this@FablesStaffProfiles } binds(arrayOf(JavaPlugin::class))
 
-			singleOf(::H2StaffProfileRepository) bind StaffProfileRepository::class
+			singleOf(::H2StaffProfileDataRepository) bind StaffProfileDataRepository::class
+			singleOf(::StaffProfileRepositoryImpl) bind StaffProfileRepository::class
 			single { StaffProfilesListener(get(), get(), get(), get(), getOrNull()) }
 
 			single {
@@ -56,14 +57,13 @@ class FablesStaffProfiles : JavaPlugin(), KoinComponent {
 		}
 		loadKoinModules(koinModule)
 
-		val staffProfiles = get<StaffProfileRepository>()
-		val profiles = get<EntityProfileRepository>()
+		val staffProfiles = get<StaffProfileRepositoryImpl>()
+		frunBlocking { staffProfiles.init() }
+
 		val worldBoundProfilesHook: WorldBoundProfilesHook? = GlobalContext.get().getOrNull()
 
-		server.servicesManager.register(StaffProfileRepository::class.java, staffProfiles, this, ServicePriority.Normal)
-
 		if (worldBoundProfilesHook != null) {
-			staffProfiles.all().forEach { worldBoundProfilesHook.allowToFlatroom(it) }
+			frunBlocking { staffProfiles.all() }.forEach { worldBoundProfilesHook.allowToFlatroom(it) }
 		}
 
 		server.pluginManager.registerEvents(get<StaffProfilesListener>(), this)

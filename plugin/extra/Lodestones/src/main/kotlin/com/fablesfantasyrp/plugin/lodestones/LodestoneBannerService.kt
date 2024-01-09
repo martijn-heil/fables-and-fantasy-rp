@@ -10,7 +10,6 @@ import com.fablesfantasyrp.plugin.text.sendError
 import com.fablesfantasyrp.plugin.utils.every
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.ColumnIdentifier
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.groundLevel
-import com.github.shynixn.mccoroutine.bukkit.launch
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -175,19 +174,21 @@ class LodestoneBannerService(private val plugin: Plugin,
 
 		@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 		fun onPlayerTeleport(e: PlayerTeleportEvent) {
-			val toMapBox = mapBoxes.anyContains(e.to)
-			val fromMapBox = mapBoxes.anyContains(e.from)
+			server.scheduler.scheduleSyncDelayedTask(plugin) {
+				val toMapBox = mapBoxes.anyContains(e.to)
+				val fromMapBox = mapBoxes.anyContains(e.from)
 
-			if (toMapBox && !fromMapBox) {
-				previousState[e.player.uniqueId] = PlayerState(
-					gameMode = e.player.gameMode,
-					walkSpeed = e.player.walkSpeed,
-					allowFlight = e.player.allowFlight
-				)
-				applyPlayerState(e.player, SPECIAL_PLAYER_STATE)
-			} else if (fromMapBox && !toMapBox) {
-				val previousState = previousState.remove(e.player.uniqueId) ?: return
-				applyPlayerState(e.player, previousState)
+				if (toMapBox && !fromMapBox) {
+					previousState[e.player.uniqueId] = PlayerState(
+						gameMode = e.player.gameMode,
+						walkSpeed = e.player.walkSpeed,
+						allowFlight = e.player.allowFlight
+					)
+					applyPlayerState(e.player, SPECIAL_PLAYER_STATE)
+				} else if (fromMapBox && !toMapBox) {
+					val previousState = previousState.remove(e.player.uniqueId) ?: return@scheduleSyncDelayedTask
+					applyPlayerState(e.player, previousState)
+				}
 			}
 		}
 

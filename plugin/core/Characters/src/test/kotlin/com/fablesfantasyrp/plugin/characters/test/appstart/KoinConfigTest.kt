@@ -9,7 +9,7 @@ import com.fablesfantasyrp.plugin.profile.ProfilePrompter
 import com.fablesfantasyrp.plugin.profile.command.provider.ProfileProvider
 import com.fablesfantasyrp.plugin.profile.data.entity.EntityProfileRepository
 import com.fablesfantasyrp.plugin.profile.data.entity.ProfileRepository
-import com.fablesfantasyrp.plugin.staffprofiles.data.StaffProfileRepository
+import com.fablesfantasyrp.plugin.staffprofiles.domain.repository.StaffProfileRepository
 import com.fablesfantasyrp.plugin.utils.domain.premium.PremiumRankCalculator
 import io.mockk.every
 import io.mockk.mockk
