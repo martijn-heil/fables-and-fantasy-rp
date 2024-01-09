@@ -1,8 +1,7 @@
 package com.fablesfantasyrp.plugin.magic.domain.entity
 
-import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.dal.enums.CharacterStatKind
-import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
+import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.chat.awaitEmote
 import com.fablesfantasyrp.plugin.chat.chat
 import com.fablesfantasyrp.plugin.chat.getPlayersWithinRange
@@ -23,6 +22,7 @@ import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.sendError
 import com.fablesfantasyrp.plugin.utils.DISTANCE_TALK
 import com.fablesfantasyrp.plugin.utils.Services
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.distanceSafe
 import com.github.shynixn.mccoroutine.bukkit.launch
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
@@ -89,7 +89,7 @@ class Mage : DataEntity<Long, Mage> {
 		val profileManager = Services.get<ProfileManager>()
 		val myPlayer = profileManager.getCurrentForProfile(character.profile)!!
 
-		if (myPlayer.location.world != tear.location.world || myPlayer.location.distance(tear.location) > 15) {
+		if (myPlayer.location.distanceSafe(tear.location) > 15) {
 			myPlayer.sendError("Targeted tear is out of range, you need to be within 15 blocks of the tear")
 			return false
 		}

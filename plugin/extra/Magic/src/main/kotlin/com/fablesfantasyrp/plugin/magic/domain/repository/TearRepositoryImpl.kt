@@ -1,10 +1,11 @@
 package com.fablesfantasyrp.plugin.magic.domain.repository
 
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
-import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.model.HasDirtyMarker
+import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
 import com.fablesfantasyrp.plugin.database.repository.SimpleMapRepository
 import com.fablesfantasyrp.plugin.magic.domain.entity.Tear
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.distanceSafe
 import org.bukkit.Location
 
 class TearRepositoryImpl : SimpleMapRepository<Long, Tear>(), TearRepository, HasDirtyMarker<Tear> {
@@ -26,7 +27,7 @@ class TearRepositoryImpl : SimpleMapRepository<Long, Tear>(), TearRepository, Ha
 	}
 
 	override fun forLocation(location: Location): Tear? {
-		return this.all().find { it.location.distance(location) < 0.1 }
+		return this.all().find { it.location.distanceSafe(location) < 0.1 }
 	}
 
 	override fun destroy(v: Tear) {

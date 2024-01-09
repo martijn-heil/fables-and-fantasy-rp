@@ -27,6 +27,7 @@ import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.sendError
 import com.fablesfantasyrp.plugin.utils.DISTANCE_TALK
 import com.fablesfantasyrp.plugin.utils.Services
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.distanceSafe
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.isVanished
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.*
@@ -190,5 +191,5 @@ fun Character.findTear(magicType: MagicType): Tear? {
 	return tears.all().asSequence()
 		.filter { it.magicType == magicType }
 		.filter { it.location.world == player.location.world }
-		.find { it.location.distance(player.location) <= 15 }
+		.find { it.location.distanceSafe(player.location) <= 15 }
 }
