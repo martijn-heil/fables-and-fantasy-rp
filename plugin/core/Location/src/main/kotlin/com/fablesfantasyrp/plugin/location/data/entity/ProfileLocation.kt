@@ -21,10 +21,10 @@ class ProfileLocation : DataEntity<Int, ProfileLocation>, ProfileLocationData {
 			field = null
 			if (oldValue != null) {
 				location = oldValue.location
-				if(!oldValue.teleport(SPAWN)) throw IllegalStateException("Teleport of previous occupant failed")
+				if(!oldValue.teleport(SPAWN) && oldValue.isConnected) throw IllegalStateException("Teleport of previous occupant failed")
 			}
 			if (newValue != null) {
-				if(!newValue.teleport(location)) throw IllegalStateException("Teleport failed")
+				if(!newValue.teleport(location) && newValue.isConnected) throw IllegalStateException("Teleport failed")
 			}
 			field = newValue
 		}
