@@ -2,8 +2,8 @@ package com.fablesfantasyrp.plugin.location.data.entity
 
 import com.fablesfantasyrp.plugin.database.entity.DataEntity
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
+import com.fablesfantasyrp.plugin.domain.SPAWN
 import com.fablesfantasyrp.plugin.location.data.ProfileLocationData
-import com.fablesfantasyrp.plugin.utils.SPAWN
 import org.bukkit.Location
 import org.bukkit.entity.Player
 

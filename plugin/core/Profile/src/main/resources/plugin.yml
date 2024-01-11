@@ -3,8 +3,9 @@ version: @version@
 authors: [@authors@]
 depend:
   - FablesKotlinRuntime
-  - FablesDatabase
   - FablesUtils
+  - FablesDomain
+  - FablesDatabase
   - FablesTimers
   - FablesText
   - FablesForm

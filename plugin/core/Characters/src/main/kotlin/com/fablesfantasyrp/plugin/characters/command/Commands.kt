@@ -21,6 +21,7 @@ import com.fablesfantasyrp.plugin.characters.event.CharacterChangeStatsEvent
 import com.fablesfantasyrp.plugin.characters.gui.CharacterStatsGui
 import com.fablesfantasyrp.plugin.characters.service.api.CharacterCardGenerator
 import com.fablesfantasyrp.plugin.characters.service.api.CharacterSlotCountCalculator
+import com.fablesfantasyrp.plugin.domain.FABLES_ADMIN
 import com.fablesfantasyrp.plugin.form.YesNoChatPrompt
 import com.fablesfantasyrp.plugin.form.promptChat
 import com.fablesfantasyrp.plugin.form.promptGui
@@ -36,7 +37,6 @@ import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.sendError
 import com.fablesfantasyrp.plugin.timers.CancelReason
 import com.fablesfantasyrp.plugin.timers.countdown
-import com.fablesfantasyrp.plugin.utils.FABLES_ADMIN
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.broadcast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

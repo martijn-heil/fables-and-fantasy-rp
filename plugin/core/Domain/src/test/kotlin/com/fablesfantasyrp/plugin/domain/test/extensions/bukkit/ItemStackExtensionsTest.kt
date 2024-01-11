@@ -1,4 +1,4 @@
-package com.fablesfantasyrp.plugin.utils.test.extensions.bukkit
+package com.fablesfantasyrp.plugin.domain.test.extensions.bukkit
 
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.splitStacks
 import io.mockk.every

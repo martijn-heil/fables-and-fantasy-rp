@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/plugin/core/Inventory/fables-and-fantasy-rp-kotlin.plugin.core.Inventory.test.iml" filepath="$PROJECT_DIR$/.idea/modules/plugin/core/Inventory/fables-and-fantasy-rp-kotlin.plugin.core.Inventory.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/plugin/extra/Shops/fables-and-fantasy-rp-kotlin.plugin.extra.Shops.test.iml" filepath="$PROJECT_DIR$/.idea/modules/plugin/extra/Shops/fables-and-fantasy-rp-kotlin.plugin.extra.Shops.test.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/plugin/technical/Utils/fables-and-fantasy-rp-kotlin.plugin.technical.Utils.test.iml" filepath="$PROJECT_DIR$/.idea/modules/plugin/technical/Utils/fables-and-fantasy-rp-kotlin.plugin.technical.Utils.test.iml" />
     </modules>
   </component>
 </project>

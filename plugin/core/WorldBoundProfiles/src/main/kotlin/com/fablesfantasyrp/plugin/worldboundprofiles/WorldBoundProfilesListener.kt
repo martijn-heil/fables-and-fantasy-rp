@@ -1,5 +1,7 @@
 package com.fablesfantasyrp.plugin.worldboundprofiles
 
+import com.fablesfantasyrp.plugin.domain.FLATROOM
+import com.fablesfantasyrp.plugin.domain.PLOTS
 import com.fablesfantasyrp.plugin.location.location
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.ProfilePrompter
@@ -7,13 +9,10 @@ import com.fablesfantasyrp.plugin.profile.data.entity.EntityProfileRepository
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.profile.event.PlayerSwitchProfileEvent
 import com.fablesfantasyrp.plugin.profile.event.PostPlayerSwitchProfileEvent
-import com.fablesfantasyrp.plugin.utils.FLATROOM
-import com.fablesfantasyrp.plugin.utils.PLOTS
 import com.fablesfantasyrp.plugin.utils.Services
 import com.fablesfantasyrp.plugin.worldboundprofiles.data.WorldRestrictionRule
 import com.fablesfantasyrp.plugin.worldboundprofiles.data.WorldRestrictionRuleAction
 import com.fablesfantasyrp.plugin.worldboundprofiles.data.WorldRestrictionRuleRepository
-import com.github.shynixn.mccoroutine.bukkit.launch
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler

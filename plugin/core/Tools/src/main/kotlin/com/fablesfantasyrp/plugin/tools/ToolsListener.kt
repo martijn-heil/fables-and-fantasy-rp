@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.tools
 
-import com.fablesfantasyrp.plugin.utils.SPAWN
+import com.fablesfantasyrp.plugin.domain.SPAWN
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener

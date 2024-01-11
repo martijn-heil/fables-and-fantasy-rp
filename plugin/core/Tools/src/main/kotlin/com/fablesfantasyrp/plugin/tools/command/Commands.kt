@@ -12,6 +12,7 @@ import com.fablesfantasyrp.caturix.spigot.common.Toggle
 import com.fablesfantasyrp.caturix.util.auth.AuthorizationException
 import com.fablesfantasyrp.plugin.characters.command.provider.AllowCharacterName
 import com.fablesfantasyrp.plugin.characters.displayName
+import com.fablesfantasyrp.plugin.domain.SPAWN
 import com.fablesfantasyrp.plugin.inventory.domain.repository.ProfileInventoryRepository
 import com.fablesfantasyrp.plugin.inventory.service.MirroredInventory
 import com.fablesfantasyrp.plugin.inventory.service.MirroredInventoryManager
@@ -25,7 +26,6 @@ import com.fablesfantasyrp.plugin.text.nameStyle
 import com.fablesfantasyrp.plugin.text.sendError
 import com.fablesfantasyrp.plugin.tools.*
 import com.fablesfantasyrp.plugin.tools.command.provider.MinecraftTime
-import com.fablesfantasyrp.plugin.utils.SPAWN
 import com.fablesfantasyrp.plugin.utils.asEnabledDisabledComponent
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.humanReadable
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.isVanished

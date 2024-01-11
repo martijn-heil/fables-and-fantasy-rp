@@ -4,8 +4,8 @@ import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.chat.getPlayersWithinRange
 import com.fablesfantasyrp.plugin.database.entity.DataEntity
 import com.fablesfantasyrp.plugin.database.repository.DirtyMarker
+import com.fablesfantasyrp.plugin.domain.DISTANCE_TALK
 import com.fablesfantasyrp.plugin.magic.dal.enums.MagicType
-import com.fablesfantasyrp.plugin.utils.DISTANCE_TALK
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.sound.Sound
 import org.bukkit.Location

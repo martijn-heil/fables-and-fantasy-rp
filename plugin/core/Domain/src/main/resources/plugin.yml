@@ -1,0 +1,8 @@
+name: FablesDomain
+version: @version@
+authors: [@authors@]
+depend:
+  - FablesKotlinRuntime
+  - FablesUtils
+main: com.fablesfantasyrp.plugin.domain.FablesDomain
+api-version: @bukkit_api_version@

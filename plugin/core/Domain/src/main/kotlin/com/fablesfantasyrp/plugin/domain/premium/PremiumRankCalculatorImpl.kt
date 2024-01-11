@@ -1,4 +1,4 @@
-package com.fablesfantasyrp.plugin.utils.domain.premium
+package com.fablesfantasyrp.plugin.domain.premium
 
 import com.fablesfantasyrp.plugin.utils.Services
 import net.milkbowl.vault.permission.Permission

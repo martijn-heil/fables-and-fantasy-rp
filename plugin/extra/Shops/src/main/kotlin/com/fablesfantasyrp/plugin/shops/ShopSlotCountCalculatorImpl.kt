@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.shops
 
-import com.fablesfantasyrp.plugin.utils.domain.premium.PremiumRank
-import com.fablesfantasyrp.plugin.utils.domain.premium.PremiumRankCalculator
+import com.fablesfantasyrp.plugin.domain.premium.PremiumRank
+import com.fablesfantasyrp.plugin.domain.premium.PremiumRankCalculator
 import org.bukkit.entity.Player
 
 class ShopSlotCountCalculatorImpl(private val premiumRankCalculator: PremiumRankCalculator) : ShopSlotCountCalculator {

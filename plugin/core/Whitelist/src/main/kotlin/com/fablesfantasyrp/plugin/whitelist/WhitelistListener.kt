@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.whitelist
 
+import com.fablesfantasyrp.plugin.domain.SPAWN
 import com.fablesfantasyrp.plugin.text.sendError
-import com.fablesfantasyrp.plugin.utils.SPAWN
 import com.fablesfantasyrp.plugin.utilsoffline.gameMode
 import com.fablesfantasyrp.plugin.utilsoffline.location
 import com.fablesfantasyrp.plugin.whitelist.event.WhitelistAddedPlayerEvent

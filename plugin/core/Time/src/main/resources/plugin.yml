@@ -4,6 +4,7 @@ authors: [@authors@]
 depend:
   - FablesKotlinRuntime
   - FablesUtils
+  - FablesDomain
   - FablesGui
   - FablesText
 main: com.fablesfantasyrp.plugin.time.FablesTime

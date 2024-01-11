@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.characters.modifiers.characterslots
 
-import com.fablesfantasyrp.plugin.utils.domain.premium.PremiumRank
-import com.fablesfantasyrp.plugin.utils.domain.premium.PremiumRankCalculator
+import com.fablesfantasyrp.plugin.domain.premium.PremiumRank
+import com.fablesfantasyrp.plugin.domain.premium.PremiumRankCalculator
 import org.bukkit.entity.Player
 
 class PremiumRankCharacterSlotCountModifier(private val premiumRankCalculator: PremiumRankCalculator) : CharacterSlotCountModifier {

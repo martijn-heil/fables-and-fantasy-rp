@@ -1,14 +1,13 @@
 package com.fablesfantasyrp.plugin.profile
 
+import com.fablesfantasyrp.plugin.domain.SPAWN
 import com.fablesfantasyrp.plugin.profile.data.entity.EntityProfileRepository
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.profile.event.PlayerForceProfileSelectionEvent
 import com.fablesfantasyrp.plugin.profile.event.PlayerSwitchProfileEvent
 import com.fablesfantasyrp.plugin.profile.event.PostPlayerSwitchProfileEvent
 import com.fablesfantasyrp.plugin.text.sendError
-import com.fablesfantasyrp.plugin.utils.SPAWN
 import com.fablesfantasyrp.plugin.utils.TransactionStep
-import com.github.shynixn.mccoroutine.bukkit.launch
 import kotlinx.coroutines.CancellationException
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler

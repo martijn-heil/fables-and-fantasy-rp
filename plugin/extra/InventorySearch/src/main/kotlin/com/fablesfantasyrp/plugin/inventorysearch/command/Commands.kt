@@ -4,6 +4,7 @@ import com.fablesfantasyrp.caturix.Command
 import com.fablesfantasyrp.caturix.Require
 import com.fablesfantasyrp.caturix.spigot.common.Sender
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
+import com.fablesfantasyrp.plugin.domain.DISTANCE_TALK
 import com.fablesfantasyrp.plugin.form.YesNoChatPrompt
 import com.fablesfantasyrp.plugin.inventory.domain.repository.ProfileInventoryRepository
 import com.fablesfantasyrp.plugin.inventorysearch.Permission
@@ -14,7 +15,6 @@ import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.sendError
-import com.fablesfantasyrp.plugin.utils.DISTANCE_TALK
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.distanceSafe
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.plugin.java.JavaPlugin

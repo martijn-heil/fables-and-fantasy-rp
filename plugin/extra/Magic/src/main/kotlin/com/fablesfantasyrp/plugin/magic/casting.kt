@@ -6,6 +6,7 @@ import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterReposito
 import com.fablesfantasyrp.plugin.chat.awaitEmote
 import com.fablesfantasyrp.plugin.chat.chat
 import com.fablesfantasyrp.plugin.chat.getPlayersWithinRange
+import com.fablesfantasyrp.plugin.domain.DISTANCE_TALK
 import com.fablesfantasyrp.plugin.form.YesNoChatPrompt
 import com.fablesfantasyrp.plugin.magic.ability.aeromancy.Cloud
 import com.fablesfantasyrp.plugin.magic.ability.pyromancy.FlamingFamiliar
@@ -25,7 +26,6 @@ import com.fablesfantasyrp.plugin.targeting.targeting
 import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.sendError
-import com.fablesfantasyrp.plugin.utils.DISTANCE_TALK
 import com.fablesfantasyrp.plugin.utils.Services
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.distanceSafe
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.isVanished

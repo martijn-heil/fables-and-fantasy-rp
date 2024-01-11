@@ -4,6 +4,7 @@ authors: [@authors@]
 depend:
   - FablesKotlinRuntime
   - FablesUtils
+  - FablesDomain
   - FablesCharacters
   - FablesProfile
   - FablesLocation

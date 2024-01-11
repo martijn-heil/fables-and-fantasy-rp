@@ -1,8 +1,8 @@
 package com.fablesfantasyrp.plugin.wardrobe
 
 import com.fablesfantasyrp.plugin.characters.isStaffCharacter
+import com.fablesfantasyrp.plugin.domain.EDEN
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
-import com.fablesfantasyrp.plugin.utils.EDEN
 import com.github.shynixn.mccoroutine.bukkit.asyncDispatcher
 import kotlinx.coroutines.withContext
 import net.milkbowl.vault.permission.Permission

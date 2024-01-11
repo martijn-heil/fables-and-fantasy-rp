@@ -6,6 +6,7 @@ depend:
   - FablesCharacters
   - FablesKnockout
   - FablesUtils
+  - FablesDomain
   - FablesText
   - FablesDatabase
   - FablesHacks

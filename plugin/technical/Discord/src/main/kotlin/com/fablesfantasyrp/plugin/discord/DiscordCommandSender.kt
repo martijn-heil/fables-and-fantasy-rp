@@ -1,6 +1,6 @@
 package com.fablesfantasyrp.plugin.discord
 
-import com.fablesfantasyrp.plugin.utils.EDEN
+import com.fablesfantasyrp.plugin.domain.EDEN
 import com.fablesfantasyrp.plugin.utils.Services
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.entity.User

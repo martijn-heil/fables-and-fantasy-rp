@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":plugin:technical:Text"))
     implementation(project(":plugin:technical:Gui"))
     implementation(project(":plugin:technical:Web"))
+	implementation(project(":plugin:core:Domain"))
     implementation(project(":plugin:core:Rolls"))
     implementation(project(":plugin:core:Characters"))
     implementation(project(":plugin:core:Profile"))

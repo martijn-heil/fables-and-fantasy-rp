@@ -1,16 +1,14 @@
 package com.fablesfantasyrp.plugin.characters
 
-import com.denizenscript.denizen.objects.PlayerTag
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
-import com.fablesfantasyrp.plugin.denizeninterop.denizenParseTag
+import com.fablesfantasyrp.plugin.domain.FABLES_ADMIN
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
 import com.fablesfantasyrp.plugin.text.legacyText
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.time.formatDateLong
 import com.fablesfantasyrp.plugin.time.javatime.FablesLocalDate
-import com.fablesfantasyrp.plugin.utils.FABLES_ADMIN
 import com.fablesfantasyrp.plugin.utils.Services
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.entity.Player

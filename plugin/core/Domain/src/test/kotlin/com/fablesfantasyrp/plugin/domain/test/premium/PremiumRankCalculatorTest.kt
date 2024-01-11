@@ -1,7 +1,7 @@
-package com.fablesfantasyrp.plugin.utils.test.domain.premium
+package com.fablesfantasyrp.plugin.domain.test.premium
 
-import com.fablesfantasyrp.plugin.utils.domain.premium.PremiumRank
-import com.fablesfantasyrp.plugin.utils.domain.premium.PremiumRankCalculatorImpl
+import com.fablesfantasyrp.plugin.domain.premium.PremiumRank
+import com.fablesfantasyrp.plugin.domain.premium.PremiumRankCalculatorImpl
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic

@@ -11,4 +11,5 @@ dependencies {
     implementation(project(":plugin:technical:Form"))
     implementation(project(":plugin:technical:Gui"))
     implementation(project(":plugin:technical:Web"))
+	implementation(project(":plugin:core:Domain"))
 }

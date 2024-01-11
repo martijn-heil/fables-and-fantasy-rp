@@ -11,6 +11,7 @@ dependencies {
     implementation(project(":plugin:technical:Form"))
     implementation(project(":plugin:technical:Gui"))
     implementation(project(":plugin:technical:WorldGuardInterop"))
+	implementation(project(":plugin:core:Domain"))
     implementation(project(":plugin:core:Profile"))
 	implementation(project(":plugin:core:Characters"))
 	implementation(project(":plugin:core:Economy"))

@@ -1,4 +1,4 @@
-package com.fablesfantasyrp.plugin.utils.domain.premium
+package com.fablesfantasyrp.plugin.domain.premium
 
 import org.bukkit.entity.Player
 

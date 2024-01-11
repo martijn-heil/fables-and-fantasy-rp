@@ -3,8 +3,8 @@ package com.fablesfantasyrp.plugin.characters.nametags
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.characters.frunBlocking
 import com.fablesfantasyrp.plugin.denizeninterop.dFlags
+import com.fablesfantasyrp.plugin.domain.EDEN
 import com.fablesfantasyrp.plugin.profile.ProfileManager
-import com.fablesfantasyrp.plugin.utils.EDEN
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.isVanished
 import me.neznamy.tab.api.TabAPI
 import org.bukkit.GameMode

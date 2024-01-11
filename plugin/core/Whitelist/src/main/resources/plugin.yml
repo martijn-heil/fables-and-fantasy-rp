@@ -5,6 +5,7 @@ depend:
   - FablesKotlinRuntime
   - FablesText
   - FablesUtils
+  - FablesDomain
   - FablesUtilsOffline
   - FablesChat
   - SuperVanish

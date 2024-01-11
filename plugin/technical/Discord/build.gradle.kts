@@ -7,6 +7,7 @@ dependencies {
     implementation(project(":plugin:technical:Text"))
     implementation(project(":plugin:technical:DenizenInterop"))
     implementation(project(":plugin:technical:Web"))
+	implementation(project(":plugin:core:Domain"))
     implementation("dev.kord:kord-core:0.9.0")
     api("dev.kord:kord-core:0.9.0")
 }

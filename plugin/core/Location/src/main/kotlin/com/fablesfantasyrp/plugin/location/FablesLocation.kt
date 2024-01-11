@@ -1,11 +1,11 @@
 package com.fablesfantasyrp.plugin.location
 
 import com.fablesfantasyrp.plugin.database.applyMigrations
+import com.fablesfantasyrp.plugin.domain.SPAWN
 import com.fablesfantasyrp.plugin.location.data.entity.EntityProfileLocationRepository
 import com.fablesfantasyrp.plugin.location.data.entity.ProfileLocationRepository
 import com.fablesfantasyrp.plugin.location.data.persistent.H2ProfileLocationRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
-import com.fablesfantasyrp.plugin.utils.SPAWN
 import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin

@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":plugin:technical:Text"))
     implementation(project(":plugin:technical:UtilsOffline"))
     implementation(project(":plugin:technical:Timers"))
+	implementation(project(":plugin:core:Domain"))
     implementation(project(":plugin:core:Profile"))
     implementation(project(":plugin:core:Location"))
     implementation(project(":plugin:core:Inventory"))

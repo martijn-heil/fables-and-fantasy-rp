@@ -6,9 +6,9 @@ import com.fablesfantasyrp.plugin.characters.domain.CharacterStatsModifier
 import com.fablesfantasyrp.plugin.characters.domain.entity.Character
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.characters.modifiers.stats.StatsModifier
+import com.fablesfantasyrp.plugin.domain.EDEN
 import com.fablesfantasyrp.plugin.location.location
 import com.fablesfantasyrp.plugin.profile.ProfileManager
-import com.fablesfantasyrp.plugin.utils.EDEN
 import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldedit.math.BlockVector3
 import com.sk89q.worldguard.protection.regions.ProtectedRegion

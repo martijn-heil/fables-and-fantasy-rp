@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":plugin:technical:DenizenInterop"))
     implementation(project(":plugin:technical:Text"))
     implementation(project(":plugin:technical:Form"))
+	implementation(project(":plugin:core:Domain"))
     implementation(project(":plugin:core:Characters"))
     implementation(project(":plugin:extra:Knockout"))
     implementation(project(":plugin:extra:Party"))

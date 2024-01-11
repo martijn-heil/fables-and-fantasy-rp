@@ -1,7 +1,7 @@
 package com.fablesfantasyrp.plugin.staffprofiles
 
+import com.fablesfantasyrp.plugin.domain.FLATROOM
 import com.fablesfantasyrp.plugin.profile.data.entity.Profile
-import com.fablesfantasyrp.plugin.utils.FLATROOM
 import com.fablesfantasyrp.plugin.utils.Services
 import com.fablesfantasyrp.plugin.worldboundprofiles.data.WorldRestrictionRule
 import com.fablesfantasyrp.plugin.worldboundprofiles.data.WorldRestrictionRuleAction

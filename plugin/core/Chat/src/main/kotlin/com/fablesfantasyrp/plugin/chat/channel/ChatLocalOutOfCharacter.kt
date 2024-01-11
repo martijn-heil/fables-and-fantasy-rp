@@ -3,10 +3,10 @@ package com.fablesfantasyrp.plugin.chat.channel
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.chat.chat
 import com.fablesfantasyrp.plugin.chat.getPlayersWithinRange
+import com.fablesfantasyrp.plugin.domain.DISTANCE_TALK
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.parseLinks
-import com.fablesfantasyrp.plugin.utils.DISTANCE_TALK
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.humanReadable
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.Tag
