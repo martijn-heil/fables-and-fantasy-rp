@@ -4,9 +4,8 @@ import com.fablesfantasyrp.plugin.domain.SPAWN
 import com.fablesfantasyrp.plugin.text.sendError
 import com.fablesfantasyrp.plugin.utilsoffline.gameMode
 import com.fablesfantasyrp.plugin.utilsoffline.location
-import com.fablesfantasyrp.plugin.whitelist.event.WhitelistAddedPlayerEvent
-import com.fablesfantasyrp.plugin.whitelist.event.WhitelistRemovedPlayerEvent
 import de.myzelyam.api.vanish.VanishAPI
+import io.papermc.paper.event.server.WhitelistStateUpdateEvent
 import net.kyori.adventure.text.Component
 import org.bukkit.GameMode
 import org.bukkit.Server
@@ -107,24 +106,23 @@ class WhitelistListener(private val plugin: JavaPlugin) : Listener {
 	}
 
 	@EventHandler(priority = MONITOR, ignoreCancelled = true)
-	fun onPlayerWhitelisted(e: WhitelistAddedPlayerEvent) {
-		val offlinePlayer = e.offlinePlayer
+	fun onPlayerWhitelisted(e: WhitelistStateUpdateEvent) {
+		val offlinePlayer = e.player
 
-		try {
-			if (offlinePlayer.hasPlayedBefore()) {
-				offlinePlayer.player?.let { VanishAPI.showPlayer(it) }
-				offlinePlayer.location = SPAWN
-				offlinePlayer.gameMode = GameMode.SURVIVAL
+		if (e.status == WhitelistStateUpdateEvent.WhitelistStatus.ADDED) {
+			try {
+				if (offlinePlayer.hasPlayedBefore()) {
+					offlinePlayer.player?.let { VanishAPI.showPlayer(it) }
+					offlinePlayer.location = SPAWN
+					offlinePlayer.gameMode = GameMode.SURVIVAL
+				}
+			} catch(ex: Exception) {
+				plugin.logger.log(Level.SEVERE, "Error handling WhitelistAddedPlayerEvent", ex)
+			} finally {
+				offlinePlayer.player?.kick(Component.text("You have been whitelisted, please relog!"))
 			}
-		} catch(ex: Exception) {
-			plugin.logger.log(Level.SEVERE, "Error handling WhitelistAddedPlayerEvent", ex)
-		} finally {
-			offlinePlayer.player?.kick(Component.text("You have been whitelisted, please relog!"))
+		} else if (e.status == WhitelistStateUpdateEvent.WhitelistStatus.REMOVED) {
+			offlinePlayer.player?.kick(Component.text("You have been removed from the whitelist!"))
 		}
-	}
-
-	@EventHandler(priority = MONITOR, ignoreCancelled = true)
-	fun onPlayerUnWhitelisted(e: WhitelistRemovedPlayerEvent) {
-		e.offlinePlayer.player?.kick(Component.text("You have been removed from the whitelist!"))
 	}
 }
