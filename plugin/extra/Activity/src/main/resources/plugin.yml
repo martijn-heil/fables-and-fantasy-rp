@@ -1,12 +1,13 @@
-name: FablesTime
+name: FablesActivity
 version: @version@
 authors: [@authors@]
 depend:
   - FablesKotlinRuntime
   - FablesUtils
-  - FablesDomain
-  - FablesGui
   - FablesText
+  - FablesDomain
+  - FablesWorldGuardInterop
+  - FablesDatabase
   - Caturix
-main: com.fablesfantasyrp.plugin.time.FablesTime
+main: com.fablesfantasyrp.plugin.activity.FablesActivity
 api-version: @bukkit_api_version@

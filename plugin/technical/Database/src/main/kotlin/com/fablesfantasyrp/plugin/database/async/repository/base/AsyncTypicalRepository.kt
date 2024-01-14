@@ -13,24 +13,19 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import java.lang.ref.SoftReference
 
-open class AsyncTypicalRepository<K, T: Identifiable<K>, C>(protected var child: C)
-	: AsyncMutableRepository<T>, AsyncKeyedRepository<K, T>, HasDestroyHandler<T>, DirtyMarker<T>, CacheMarker<T>
+open class AsyncTypicalRepository<K, T: Identifiable<K>, C>(child: C)
+	: AsyncTypicalImmutableRepository<K, T, C>(child),
+	AsyncMutableRepository<T>, AsyncKeyedRepository<K, T>, HasDestroyHandler<T>, DirtyMarker<T>, CacheMarker<T>
 		where C : AsyncKeyedRepository<K, T>,
 			  C : AsyncMutableRepository<T>,
 			  C : HasDirtyMarker<T>, C: HasCacheMarker<T> {
-	protected data class LookupResult<T>(val reference: SoftReference<T>?)
-
-	private val EMPTY_LOOKUP_RESULT = LookupResult<T>(null)
-
-	protected val cache = HashMap<K, LookupResult<T>>()
-	protected val strongCache = HashSet<T>()
 	protected val dirty = LinkedHashSet<T>()
 
 	protected val destroyHandlers: MutableCollection<(T) -> Unit> = ArrayList()
 
-	open fun init() {
+	override fun init() {
+		super.init()
 		child.dirtyMarker = this
-		child.cacheMarker = this
 	}
 
 	override fun markStrong(v: T) { strongCache.add(v) }
@@ -71,8 +66,6 @@ open class AsyncTypicalRepository<K, T: Identifiable<K>, C>(protected var child:
 		strongCache.remove(v)
 	}
 
-	override suspend fun allIds(): Collection<K> = child.allIds()
-
 	override suspend fun createOrUpdate(v: T): T {
 		return if (v.id == 0 || !this.exists(v.id)) {
 			this.create(v)
@@ -81,30 +74,6 @@ open class AsyncTypicalRepository<K, T: Identifiable<K>, C>(protected var child:
 			v
 		}
 	}
-
-	override suspend fun all(): Collection<T> = child.allIds().mapNotNull { this.forId(it) }
-	override suspend fun forId(id: K): T? {
-		val lookupResult = cache[id]
-		val entity = lookupResult?.reference?.get()
-
-		if (entity != null) {
-			return entity
-		} else if (lookupResult == EMPTY_LOOKUP_RESULT) { // Entity was already looked up earlier but doesn't exist
-			return null
-		} else {
-			val obj = child.forId(id) ?: run {
-				cache[id] = EMPTY_LOOKUP_RESULT
-				return null
-			}
-			return deduplicate(obj)
-		}
-	}
-
-	protected fun deduplicate(entities: Collection<T>): Collection<T>
-		= entities.map { deduplicate(it) }
-
-	protected fun deduplicate(v: T)
-		= cache.merge(v.id, LookupResult(SoftReference(v))) { a, b -> if (a.reference?.get() != null) a else b }!!.reference!!.get()!!
 
 	override fun onDestroy(callback: (T) -> Unit) {
 		destroyHandlers.add(callback)

@@ -1,0 +1,96 @@
+regions:
+  avalheim:
+    region: avalheim
+    display_name: Avalheim
+
+  raevendrecht:
+    region: activity_raevendrecht
+    display_name: Raevendrecht
+
+  adelsburg:
+    region: adelsburg
+    display_name: Adelsburg
+
+  prezza:
+    region: prezza
+    display_name: Lionne
+
+  norburen:
+    region: norburen
+    display_name: Norbüren
+
+  bergwood:
+    region: bergwood
+    display_name: Bergwood
+
+  al_jabrid:
+    region: al_jabrid
+    display_name: Al-Jabrid
+
+  al_khadir:
+    region: al_khadir
+    display_name: Al-Khadir
+
+  luminion:
+    region: luminion
+    display_name: Luminion
+
+  aerial:
+    region: aerial
+    display_name: Aerial
+
+  aestarius:
+    region: aestarius
+    display_name: Aestarius
+
+  zadh_nadrozz:
+    region: zadh_nadrozz
+    display_name: Zadh-Nadrozz
+
+  modraz_logh:
+    region: modraz_logh
+    display_name: Modraz Logh
+
+  mitrona:
+    region: mitrona
+    display_name: Mitrona
+
+  salus_limin:
+    region: salus_limin
+    display_name: Salus Limin
+
+  dar_ach_denur:
+    region: dar_ach_denur
+    display_name: Dar-ach Denur
+
+  sapherum_port:
+    region: Sapherum_port
+    display_name: Sapherum-Port
+
+  lunburg:
+    region: Lunbeck_Castle
+    display_name: Lünburg Castle
+
+  cerils_keep:
+    region: cerils_keep
+    display_name: Cerils Keep
+
+  jagershoff:
+    region: krugerbrewery_claim
+    display_name: Krügers Brewery
+
+  aeyflir_estate:
+    region: mansion_activity
+    display_name: Aey'flir estate
+
+  New_Wakkerdam:
+    region: activity_wakkerdam
+    display_name: New Wakkerdam
+
+  Lowau:
+    region: eisarnwidus
+    display_name: Eisarnwidus
+
+  Sunscape:
+    region: town-sunscape
+    display_name: Sunscape
