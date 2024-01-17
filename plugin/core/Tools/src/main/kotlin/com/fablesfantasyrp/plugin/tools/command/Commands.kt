@@ -27,6 +27,7 @@ import com.fablesfantasyrp.plugin.text.sendError
 import com.fablesfantasyrp.plugin.tools.*
 import com.fablesfantasyrp.plugin.tools.command.provider.MinecraftTime
 import com.fablesfantasyrp.plugin.utils.asEnabledDisabledComponent
+import com.fablesfantasyrp.plugin.utils.extensions.bukkit.customModel
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.humanReadable
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.isVanished
 import kotlinx.coroutines.future.await
@@ -341,6 +342,13 @@ class Commands(private val powerToolManager: PowerToolManager,
 
 		target.teleportAsync(SPAWN).await()
 		broadcaster.log(sender, "Teleported ${target.name} to spawn")
+	}
+
+	@Command(aliases = ["setcustommodeldata"], desc = "Set the CustomModelData on an item in your hand.")
+	@Require(Permission.Command.SetCustomModelData)
+	fun setcustommmodeldata(@Sender sender: Player, @Optional customModelData: Int?) {
+		val item = sender.inventory.itemInMainHand
+		item.itemMeta = item.itemMeta.clone().apply { customModel = customModelData }
 	}
 
 	@Command(aliases = ["rigcheer"], desc = "Rig the cheer")
