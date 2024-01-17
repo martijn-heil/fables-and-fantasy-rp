@@ -16,3 +16,5 @@ const val DISTANCE_WHISPER = 2U
 const val DISTANCE_QUIET = 8u
 const val DISTANCE_TALK = 15U
 const val DISTANCE_SHOUT = 30U
+
+const val NAMESPACE = "fablesfantasyrp"

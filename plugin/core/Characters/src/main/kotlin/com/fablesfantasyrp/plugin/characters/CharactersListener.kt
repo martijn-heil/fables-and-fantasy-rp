@@ -6,11 +6,13 @@ import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterReposito
 import com.fablesfantasyrp.plugin.characters.service.api.CharacterCardGenerator
 import com.fablesfantasyrp.plugin.denizeninterop.dFlags
 import com.fablesfantasyrp.plugin.denizeninterop.denizenRun
+import com.fablesfantasyrp.plugin.domain.namespaced
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.profile.data.entity.EntityProfileRepository
 import com.fablesfantasyrp.plugin.profile.event.PlayerForceProfileSelectionEvent
 import com.fablesfantasyrp.plugin.profile.event.PostPlayerSwitchProfileEvent
 import com.fablesfantasyrp.plugin.staffprofiles.domain.repository.StaffProfileRepository
+import com.fablesfantasyrp.plugin.time.FablesInstantSource
 import com.fablesfantasyrp.plugin.time.event.NewDayEvent
 import com.fablesfantasyrp.plugin.time.javatime.FablesLocalDate
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.isRealPlayer
@@ -18,8 +20,10 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
+import org.bukkit.event.player.PlayerEditBookEvent
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.inventory.EquipmentSlot
+import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.Plugin
 import org.koin.core.context.GlobalContext
 import java.time.Instant
@@ -28,7 +32,8 @@ class CharactersListener(private val plugin: Plugin,
 						 private val characters: CharacterRepository,
 						 private val profiles: EntityProfileRepository,
 						 private val profileManager: ProfileManager,
-						 private val staffProfiles: StaffProfileRepository) : Listener {
+						 private val staffProfiles: StaffProfileRepository,
+						 private val gameInstantSource: FablesInstantSource) : Listener {
 	private val server = plugin.server
 	private val characterCardGenerator by lazy { GlobalContext.get().get<CharacterCardGenerator>() }
 
@@ -116,5 +121,18 @@ class CharactersListener(private val plugin: Plugin,
 			}
 			e.player.sendMessage(characterCardGenerator.card(character, e.player))
 		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+	fun onPlayerSignBook(e: PlayerEditBookEvent) {
+		if (!e.isSigning) return
+		val character = frunBlocking { profileManager.getCurrentForPlayer(e.player)?.let { characters.forProfile(it) } } ?: return
+		e.newBookMeta = e.newBookMeta.clone().apply { author = character.name }
+
+		// This is currently not used anywhere, but it's worthwhile to store for future purposes
+		val data = e.newBookMeta.persistentDataContainer
+		data.set(namespaced("book_version"), PersistentDataType.INTEGER, 2)
+		data.set(namespaced("book_author"), PersistentDataType.INTEGER, character.id)
+		data.set(namespaced("book_signed_at"), PersistentDataType.LONG, gameInstantSource.instant().epochSecond)
 	}
 }

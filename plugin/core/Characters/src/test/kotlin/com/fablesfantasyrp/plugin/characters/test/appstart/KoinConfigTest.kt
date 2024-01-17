@@ -11,6 +11,7 @@ import com.fablesfantasyrp.plugin.profile.command.provider.ProfileProvider
 import com.fablesfantasyrp.plugin.profile.data.entity.EntityProfileRepository
 import com.fablesfantasyrp.plugin.profile.data.entity.ProfileRepository
 import com.fablesfantasyrp.plugin.staffprofiles.domain.repository.StaffProfileRepository
+import com.fablesfantasyrp.plugin.time.FablesInstantSource
 import io.mockk.every
 import io.mockk.mockk
 import org.bukkit.Server
@@ -36,6 +37,7 @@ internal class KoinConfigTest {
 		val staffProfileRepository = mockk<StaffProfileRepository>()
 		val dataSource = mockk<DataSource>()
 		val premiumRankCalculator = mockk<PremiumRankCalculator>()
+		val fablesInstantSource = mockk<FablesInstantSource>()
 
 		every { plugin.server } returns server
 
@@ -50,6 +52,7 @@ internal class KoinConfigTest {
 				single { profilePrompter }
 				single { staffProfileRepository }
 				single { premiumRankCalculator }
+				single { fablesInstantSource }
 				factory {
 					ProfileProvider(
 						profiles,
