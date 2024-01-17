@@ -1,5 +1,8 @@
 package com.fablesfantasyrp.plugin.magic.command.provider
 
+import com.fablesfantasyrp.caturix.parametric.AbstractModule
+import com.fablesfantasyrp.caturix.parametric.provider.EnumProvider
+import com.fablesfantasyrp.caturix.spigot.common.Sender
 import com.fablesfantasyrp.plugin.characters.command.provider.CharacterProvider
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
 import com.fablesfantasyrp.plugin.magic.ability.MageAbility
@@ -12,9 +15,6 @@ import com.fablesfantasyrp.plugin.magic.dal.repository.SpellDataRepository
 import com.fablesfantasyrp.plugin.magic.domain.entity.Mage
 import com.fablesfantasyrp.plugin.magic.domain.repository.MageRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
-import com.fablesfantasyrp.caturix.spigot.common.Sender
-import com.fablesfantasyrp.caturix.parametric.AbstractModule
-import com.fablesfantasyrp.caturix.parametric.provider.EnumProvider
 import org.bukkit.Server
 
 class MagicModule(private val server: Server,
@@ -25,7 +25,7 @@ class MagicModule(private val server: Server,
 				  private val magicTypeAuthorizer: MagicTypeAuthorizer,
 				  private val profileManager: ProfileManager) : AbstractModule() {
 	override fun configure() {
-		bind(Mage::class.java).toProvider(MageProvider(CharacterProvider(server, characters, profileManager), characters, mages))
+		bind(Mage::class.java).toProvider(MageProvider(CharacterProvider(server, characters, profileManager), mages))
 		bind(Mage::class.java).annotatedWith(Sender::class.java).toProvider(MageSenderProvider(profileManager, characters, mages))
 		bind(SpellData::class.java).annotatedWith(OwnSpell::class.java)
 				.toProvider(OwnSpellDataProvider(SpellDataProvider(spells), profileManager, characters, spellAuthorizer))

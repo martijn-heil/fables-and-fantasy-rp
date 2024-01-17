@@ -28,9 +28,10 @@ class ActivityRegionMapper(child: ActivityRegionDataRepository,
 		} else null
 
 		return ActivityRegion(
+			id = v.id,
 			regionIdentifier = v.region,
 			region = region,
-			name = v.displayName
+			name = v.displayName,
 		)
 	}
 }
