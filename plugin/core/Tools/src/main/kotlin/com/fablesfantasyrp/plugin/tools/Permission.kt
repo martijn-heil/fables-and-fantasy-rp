@@ -22,6 +22,7 @@ object Permission {
 		const val Back = "$prefix.back"
 		const val Spawn = "$prefix.spawn"
 		const val SetCustomModelData = "$prefix.setcustommodeldata"
+		const val BottleColor = "$prefix.bottlecolor"
 		const val Rigcheer = "$prefix.tphere"
 	}
 }

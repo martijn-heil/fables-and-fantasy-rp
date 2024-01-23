@@ -2,6 +2,7 @@ package com.fablesfantasyrp.plugin.tools.command
 
 import com.fablesfantasyrp.caturix.Command
 import com.fablesfantasyrp.caturix.Require
+import com.fablesfantasyrp.caturix.parametric.ProvisionException
 import com.fablesfantasyrp.caturix.parametric.annotation.Optional
 import com.fablesfantasyrp.caturix.parametric.annotation.Range
 import com.fablesfantasyrp.caturix.parametric.annotation.Switch
@@ -34,12 +35,10 @@ import kotlinx.coroutines.future.await
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
-import org.bukkit.GameMode
-import org.bukkit.Location
-import org.bukkit.OfflinePlayer
-import org.bukkit.WeatherType
+import org.bukkit.*
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.inventory.meta.PotionMeta
 import org.ocpsoft.prettytime.PrettyTime
 import java.time.Instant
 
@@ -349,6 +348,20 @@ class Commands(private val powerToolManager: PowerToolManager,
 	fun setcustommmodeldata(@Sender sender: Player, @Optional customModelData: Int?) {
 		val item = sender.inventory.itemInMainHand
 		item.itemMeta = item.itemMeta.clone().apply { customModel = customModelData }
+	}
+
+	@Command(aliases = ["bottlecolor"], desc = "Change a potion's color")
+	@Require(Permission.Command.BottleColor)
+	fun bottlecolor(@Sender sender: Player, color: Color) {
+		val item = sender.inventory.itemInMainHand
+		val potionMeta = item.itemMeta as? PotionMeta
+			?: throw ProvisionException("Please hold the water bottle/potion you want to change the color of.")
+
+		potionMeta.color = color
+		item.itemMeta = potionMeta
+
+		val colorDisplay = color.asRGB().toString(16).uppercase().padStart(6, '0')
+		sender.sendMessage("$SYSPREFIX Updated bottle color to #${colorDisplay}.")
 	}
 
 	@Command(aliases = ["rigcheer"], desc = "Rig the cheer")
