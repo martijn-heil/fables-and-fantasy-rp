@@ -38,6 +38,7 @@ class FablesAlternateMechanics : JavaPlugin(), KoinComponent {
 			single { get<WorldGuard>().platform.regionContainer }
 
 			singleOf(::HorseJumpStrength) bind Mechanic::class
+			singleOf(::HorseTrampling) bind Mechanic::class
 			singleOf(::LeadBreakSound) bind Mechanic::class
 			singleOf(::NoGoldenApples) bind Mechanic::class
 			singleOf(::NoHorseAi) bind Mechanic::class
