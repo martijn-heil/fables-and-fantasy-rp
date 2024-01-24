@@ -7,6 +7,8 @@ object Permission {
 		private const val prefix = Permission.prefix + ".command"
 		const val Invsee = "$prefix.invsee"
 		const val Endersee = "$prefix.endersee"
+		const val ClearInventory = "$prefix.clearinventory"
+		const val ClearEnderChest = "$prefix.clearenderchest"
 		const val Teleport = "$prefix.teleport"
 		const val Tppos = "$prefix.tppos"
 		const val Tphere = "$prefix.tphere"

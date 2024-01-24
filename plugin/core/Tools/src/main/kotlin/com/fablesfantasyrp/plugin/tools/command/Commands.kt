@@ -74,6 +74,24 @@ class InventoryCommands(private val inventories: ProfileInventoryRepository,
 		sender.openInventory(inventory.bukkitInventory)
 		broadcaster.log(sender, "Endersee ${target.displayName()}")
 	}
+
+	@Command(aliases = ["clear", "clearinventory"], desc = "Clear a profile's inventory")
+	@Require(Permission.Command.ClearInventory)
+	suspend fun clearinventory(@Sender sender: CommandSender, @AllowCharacterName @AllowPlayerName target: Profile) {
+		val profileInventory = inventories.forOwner(target)
+		profileInventory.inventory.clear()
+
+		broadcaster.log(sender, "Cleared ${target.displayName()}'s inventory")
+	}
+
+	@Command(aliases = ["clearenderchest"], desc = "Clear a profile's enderchest")
+	@Require(Permission.Command.ClearEnderChest)
+	suspend fun clearenderchest(@Sender sender: CommandSender, @AllowCharacterName @AllowPlayerName target: Profile) {
+		val profileInventory = inventories.forOwner(target)
+		profileInventory.enderChest.clear()
+
+		broadcaster.log(sender, "Cleared ${target.displayName()}'s enderchest")
+	}
 }
 
 class Commands(private val powerToolManager: PowerToolManager,
