@@ -18,6 +18,7 @@ class Commands(private val activityRegions: ActivityRegionRepository) {
 		val regions = activityRegions.all().asSequence()
 			.map { Pair(it, it.countPlayers()) }
 			.filter { it.second > 0 }
+			.sortedByDescending { it.second }
 			.map { miniMessage.deserialize("<green><player_count></green> <gray>in <display_name></gray>",
 				Placeholder.unparsed("player_count", it.second.toString()),
 				Placeholder.unparsed("display_name", it.first.name)) }
