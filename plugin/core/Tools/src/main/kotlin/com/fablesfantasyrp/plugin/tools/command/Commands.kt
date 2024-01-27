@@ -39,6 +39,7 @@ import org.bukkit.*
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.inventory.meta.PotionMeta
+import org.bukkit.plugin.Plugin
 import org.ocpsoft.prettytime.PrettyTime
 import java.time.Instant
 
@@ -94,7 +95,8 @@ class InventoryCommands(private val inventories: ProfileInventoryRepository,
 	}
 }
 
-class Commands(private val powerToolManager: PowerToolManager,
+class Commands(private val plugin: Plugin,
+			   private val powerToolManager: PowerToolManager,
 			   private val backManager: BackManager,
 			   private val broadcaster: StaffActionBroadcaster) {
 	@Command(aliases = ["teleport", "fteleport", "tp", "ftp", "tele", "ftele"], desc = "Teleport characters")
@@ -366,6 +368,15 @@ class Commands(private val powerToolManager: PowerToolManager,
 	fun setcustommmodeldata(@Sender sender: Player, @Optional customModelData: Int?) {
 		val item = sender.inventory.itemInMainHand
 		item.itemMeta = item.itemMeta.clone().apply { customModel = customModelData }
+	}
+
+	@OptIn(ExperimentalStdlibApi::class)
+	@Command(aliases = ["exportitem"], desc = "Export the item in your main hand to console")
+	@Require(Permission.Command.ExportItem)
+	fun exportitem(@Sender sender: Player) {
+		val item  = sender.inventory.itemInMainHand
+		val bytes = item.serializeAsBytes()
+		plugin.logger.info("${sender.name} exported an item in their hand: ${bytes.toHexString()}")
 	}
 
 	@Command(aliases = ["bottlecolor"], desc = "Change a potion's color")

@@ -25,6 +25,7 @@ object Permission {
 		const val Spawn = "$prefix.spawn"
 		const val SetCustomModelData = "$prefix.setcustommodeldata"
 		const val BottleColor = "$prefix.bottlecolor"
+		const val ExportItem = "$prefix.exportitem"
 		const val Rigcheer = "$prefix.tphere"
 	}
 }
