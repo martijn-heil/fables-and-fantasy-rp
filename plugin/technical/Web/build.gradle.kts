@@ -21,6 +21,7 @@ dependencies {
     api("io.ktor:ktor-server-netty-jvm:$ktor_version")
     api("io.ktor:ktor-server-content-negotiation:$ktor_version")
     api("io.ktor:ktor-server-auth:$ktor_version")
+	api("io.ktor:ktor-server-auth-jwt:$ktor_version")
     api("io.ktor:ktor-server-sessions:$ktor_version")
     api("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
     api("io.ktor:ktor-server-resources:$ktor_version")
@@ -28,4 +29,6 @@ dependencies {
     api("io.ktor:ktor-server-request-validation:$ktor_version")
     api("io.ktor:ktor-server-status-pages:$ktor_version")
     api("io.ktor:ktor-server-forwarded-header:$ktor_version")
+
+	implementation("org.keycloak:keycloak-core:23.0.6")
 }

@@ -27,6 +27,7 @@ dependencies {
     shadow("io.ktor:ktor-server-netty-jvm:$ktor_version")
     shadow("io.ktor:ktor-server-content-negotiation:$ktor_version")
     shadow("io.ktor:ktor-server-auth:$ktor_version")
+	shadow("io.ktor:ktor-server-auth-jwt:$ktor_version")
     shadow("io.ktor:ktor-server-sessions:$ktor_version")
     shadow("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
     shadow("io.ktor:ktor-server-resources:$ktor_version")
@@ -34,4 +35,5 @@ dependencies {
     shadow("io.ktor:ktor-server-request-validation:$ktor_version")
     shadow("io.ktor:ktor-server-status-pages:$ktor_version")
     shadow("io.ktor:ktor-server-forwarded-header:$ktor_version")
+	shadow("org.keycloak:keycloak-core:23.0.6")
 }

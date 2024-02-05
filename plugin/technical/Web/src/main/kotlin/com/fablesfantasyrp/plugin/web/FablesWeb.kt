@@ -26,11 +26,12 @@ import org.koin.core.context.unloadKoinModules
 import org.koin.core.module.Module
 import org.koin.dsl.binds
 import org.koin.dsl.module
+import java.security.KeyFactory
+import java.security.interfaces.RSAPublicKey
+import java.security.spec.X509EncodedKeySpec
 
 internal val PLUGIN: FablesWeb
 	get() = FablesWeb.instance
-
-val redirects = mutableMapOf<String, String>()
 
 class FablesWeb : JavaPlugin(), KoinComponent {
 	lateinit var koinModule: Module
@@ -53,9 +54,11 @@ class FablesWeb : JavaPlugin(), KoinComponent {
 		}
 		loadKoinModules(koinModule)
 
-		val token = config.getString("auth.token")!!
 		val port = config.getInt("bind.port")
 		val host = config.getString("bind.host")!!
+		val jwtPublicKeyString = config.getString("auth.jwt_pubkey")!!
+
+		val jwtPublicKey = getJwtPublicKey(jwtPublicKeyString)
 
 		server.scheduler.scheduleAsyncDelayedTask(this, {
 			nettyApplicationEngine = embeddedServer(Netty, port = port, host = host) {
@@ -90,12 +93,20 @@ class FablesWeb : JavaPlugin(), KoinComponent {
 					}
 				}
 
-				configureAuth(token)
+				configureAuth(logger, jwtPublicKey)
 				configureRequestValidation()
 				configureRouting()
 				configureSerialization()
 			}.start(wait = false)
 		}, 1)
+	}
+
+	private fun getJwtPublicKey(key: String): RSAPublicKey {
+		val algorithm = "RSA"
+		val keyFactory = KeyFactory.getInstance(algorithm);
+		val publicKeyStr = "-----BEGIN PUBLIC KEY-----${key}-----END PUBLIC KEY-----"
+		val keySpec = X509EncodedKeySpec(publicKeyStr.toByteArray());
+		return keyFactory.generatePublic(keySpec) as RSAPublicKey;
 	}
 
 	override fun onDisable() {
