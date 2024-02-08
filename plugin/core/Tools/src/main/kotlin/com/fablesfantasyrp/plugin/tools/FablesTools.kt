@@ -1,24 +1,25 @@
 package com.fablesfantasyrp.plugin.tools
 
-import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
-import com.fablesfantasyrp.plugin.profile.command.provider.ProfileModule
-import com.fablesfantasyrp.plugin.tools.command.Commands
-import com.fablesfantasyrp.plugin.tools.command.InventoryCommands
-import com.fablesfantasyrp.plugin.tools.command.provider.ToolsModule
-import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
-import com.fablesfantasyrp.plugin.utils.enforceDependencies
+import com.fablesfantasyrp.caturix.Caturix
+import com.fablesfantasyrp.caturix.fluent.CommandGraph
+import com.fablesfantasyrp.caturix.parametric.ParametricBuilder
+import com.fablesfantasyrp.caturix.parametric.provider.PrimitivesModule
 import com.fablesfantasyrp.caturix.spigot.common.CommonModule
 import com.fablesfantasyrp.caturix.spigot.common.bukkit.BukkitAuthorizer
 import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.BukkitModule
 import com.fablesfantasyrp.caturix.spigot.common.bukkit.provider.sender.BukkitSenderModule
 import com.fablesfantasyrp.caturix.spigot.common.bukkit.registerCommand
 import com.fablesfantasyrp.caturix.spigot.common.bukkit.unregisterCommand
-import com.fablesfantasyrp.caturix.Caturix
-import com.fablesfantasyrp.caturix.fluent.CommandGraph
-import com.fablesfantasyrp.caturix.parametric.ParametricBuilder
-import com.fablesfantasyrp.caturix.parametric.provider.PrimitivesModule
+import com.fablesfantasyrp.plugin.characters.command.provider.CharacterModule
+import com.fablesfantasyrp.plugin.domain.service.GameModeAuthorizer
+import com.fablesfantasyrp.plugin.profile.command.provider.ProfileModule
+import com.fablesfantasyrp.plugin.tools.command.Commands
+import com.fablesfantasyrp.plugin.tools.command.InventoryCommands
+import com.fablesfantasyrp.plugin.tools.command.provider.ToolsModule
+import com.fablesfantasyrp.plugin.tools.service.GameModeAuthorizerImpl
+import com.fablesfantasyrp.plugin.utils.GLOBAL_SYSPREFIX
+import com.fablesfantasyrp.plugin.utils.enforceDependencies
 import com.github.shynixn.mccoroutine.bukkit.launch
-import com.github.shynixn.mccoroutine.bukkit.minecraftDispatcher
 import org.bukkit.command.Command
 import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
@@ -29,6 +30,7 @@ import org.koin.core.context.unloadKoinModules
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
 import org.koin.dsl.binds
 import org.koin.dsl.module
 
@@ -51,6 +53,7 @@ class FablesTools : JavaPlugin(), KoinComponent {
 			singleOf(::Commands)
 			singleOf(::ToolsListener)
 			singleOf(::InventoryCommands)
+			singleOf(::GameModeAuthorizerImpl) bind GameModeAuthorizer::class
 			single { get<Commands>().Ptime() }
 			single { get<Commands>().PWeather() }
 

@@ -11,6 +11,7 @@ val SPAWN: Location get() = EDEN!!.spawnLocation.toCenterLocation()
 val FLATROOM: World? get() = Bukkit.getWorld("flatroom")
 val PLOTS: World? get() = Bukkit.getWorld("plots")
 val EDEN: World? get() = Bukkit.getWorld("Eden")
+val BACKROOMS: World? get() = Bukkit.getWorld("backrooms")
 
 const val DISTANCE_WHISPER = 2U
 const val DISTANCE_QUIET = 8u

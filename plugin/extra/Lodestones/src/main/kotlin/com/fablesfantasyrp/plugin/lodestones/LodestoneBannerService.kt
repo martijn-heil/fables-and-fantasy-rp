@@ -1,12 +1,14 @@
 package com.fablesfantasyrp.plugin.lodestones
 
 import com.fablesfantasyrp.plugin.characters.domain.repository.CharacterRepository
+import com.fablesfantasyrp.plugin.domain.service.GameModeAuthorizer
 import com.fablesfantasyrp.plugin.lodestones.domain.entity.MapBox
 import com.fablesfantasyrp.plugin.lodestones.domain.repository.LodestoneBannerRepository
 import com.fablesfantasyrp.plugin.lodestones.domain.repository.MapBoxRepository
 import com.fablesfantasyrp.plugin.profile.ProfileManager
 import com.fablesfantasyrp.plugin.text.miniMessage
 import com.fablesfantasyrp.plugin.text.sendError
+import com.fablesfantasyrp.plugin.utils.Services
 import com.fablesfantasyrp.plugin.utils.every
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.ColumnIdentifier
 import com.fablesfantasyrp.plugin.utils.extensions.bukkit.groundLevel
@@ -47,6 +49,7 @@ class LodestoneBannerService(private val plugin: Plugin,
 							 private val mapBoxes: MapBoxRepository,
 							 private val authorizer: LodestoneAuthorizer) {
 	private val server = plugin.server
+	private val logger = plugin.logger
 	private val transparentMaterials = hashSetOf(
 		Material.AIR,
 		Material.CAVE_AIR,
@@ -118,7 +121,22 @@ class LodestoneBannerService(private val plugin: Plugin,
 	}
 
 	private fun applyPlayerState(player: Player, state: PlayerState) {
-		player.gameMode = state.gameMode
+		val gameModeAuthorizer = Services.getMaybe<GameModeAuthorizer>()
+		val world = player.world
+
+		if (gameModeAuthorizer == null) {
+			logger.warning("There is no GameModeAuthorizer registered, defaulting to standard behaviour. This can be dangerous.")
+		}
+
+		val gameMode = if (state !== SPECIAL_PLAYER_STATE && gameModeAuthorizer != null) {
+			if (gameModeAuthorizer.mayAccess(player, state.gameMode, world)) {
+				state.gameMode
+			} else {
+				gameModeAuthorizer.getPreferredGameMode(player, world)
+			}
+		} else state.gameMode
+
+		player.gameMode = gameMode
 		player.walkSpeed = state.walkSpeed
 		player.allowFlight = state.allowFlight
 	}

@@ -13,5 +13,6 @@ depend:
   - FablesProfile
   - FablesMoreLogging
   - Caturix
+  - Vault
 main: com.fablesfantasyrp.plugin.tools.FablesTools
 api-version: @bukkit_api_version@
