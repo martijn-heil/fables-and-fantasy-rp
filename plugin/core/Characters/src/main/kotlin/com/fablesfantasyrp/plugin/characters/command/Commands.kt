@@ -312,7 +312,7 @@ class Commands(private val plugin: JavaPlugin,
 
 		@Command(aliases = ["transfer"], desc = "Transfer a character to another player")
 		@Require(Permission.Command.Characters.Transfer)
-		suspend fun transfer(@Sender sender: CommandSender, to: Player, @CommandTarget target: Character) {
+		suspend fun transfer(@Sender sender: CommandSender, to: OfflinePlayer, @CommandTarget target: Character) {
 			authorizer.mayTransfer(sender, target).orElse { throw AuthorizationException(it) }
 
 			if (sender is Player) {
