@@ -29,6 +29,7 @@ import org.koin.dsl.module
 import java.security.KeyFactory
 import java.security.interfaces.RSAPublicKey
 import java.security.spec.X509EncodedKeySpec
+import java.util.Base64
 
 internal val PLUGIN: FablesWeb
 	get() = FablesWeb.instance
@@ -104,8 +105,7 @@ class FablesWeb : JavaPlugin(), KoinComponent {
 	private fun getJwtPublicKey(key: String): RSAPublicKey {
 		val algorithm = "RSA"
 		val keyFactory = KeyFactory.getInstance(algorithm);
-		val publicKeyStr = "-----BEGIN PUBLIC KEY-----${key}-----END PUBLIC KEY-----"
-		val keySpec = X509EncodedKeySpec(publicKeyStr.toByteArray());
+		val keySpec = X509EncodedKeySpec(Base64.getDecoder().decode(key));
 		return keyFactory.generatePublic(keySpec) as RSAPublicKey;
 	}
 
