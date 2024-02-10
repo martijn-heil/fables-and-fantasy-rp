@@ -4,6 +4,5 @@ authors: [@authors@]
 depend:
   - FablesKotlinRuntime
   - FablesUtils
-  - Vault
 main: com.fablesfantasyrp.plugin.domain.FablesDomain
 api-version: @bukkit_api_version@

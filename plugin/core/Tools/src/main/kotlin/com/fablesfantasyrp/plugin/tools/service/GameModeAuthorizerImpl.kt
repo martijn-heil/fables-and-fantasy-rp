@@ -6,6 +6,7 @@ import com.fablesfantasyrp.plugin.domain.FLATROOM
 import com.fablesfantasyrp.plugin.domain.PLOTS
 import com.fablesfantasyrp.plugin.domain.service.GameModeAuthorizer
 import com.fablesfantasyrp.plugin.tools.Permission
+import com.fablesfantasyrp.plugin.utils.Services
 import org.bukkit.GameMode
 import org.bukkit.GameMode.CREATIVE
 import org.bukkit.GameMode.SURVIVAL
@@ -13,7 +14,9 @@ import org.bukkit.World
 import org.bukkit.entity.Player
 import net.milkbowl.vault.permission.Permission as VaultPermission
 
-class GameModeAuthorizerImpl(private val vaultPermission: VaultPermission) : GameModeAuthorizer {
+class GameModeAuthorizerImpl : GameModeAuthorizer {
+	private val vaultPermission get() = Services.get<VaultPermission>()
+
 	override fun mayAccess(player: Player, gameMode: GameMode, world: World): Boolean
 		= getDefaultGameMode(world) == gameMode || vaultPermission.playerHas(world.name, player, getPermission(gameMode))
 
