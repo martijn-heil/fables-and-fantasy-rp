@@ -1,4 +1,7 @@
 # Fables & Fantasy Kotlin plugins
+These are all the core plugins that I wrote while I was active on Fables and Fantasy RP. I've since then long left the place, and have decided to release my work as open source software under the GNU Affero General Public License v3.0.
+
+See the LICENSE file for more information.
 
 ## Useful links
 - [Latest Spigot Javadocs](https://hub.spigotmc.org/javadocs/spigot/)
