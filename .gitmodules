@@ -1,5 +1,0 @@
-[submodule "."]
-	branch = master
-[submodule "lib"]
-	path = lib
-	url = git@github.com:fablesfantasyrp/bukkit-dependency-plugin-jars.git
