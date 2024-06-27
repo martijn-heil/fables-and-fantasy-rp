@@ -18,9 +18,9 @@ the `buildSrc`, `examples` and `lib` directories are the only exceptions to this
 - `lib` is a git submodule that contains third party plugin jars that are used as dependencies
 
 ## Cloning
-To clone (using SSH) as well as set up all submodules:
+To clone as well as set up all submodules:
 ```
-git clone --recurse-submodules git@github.com:fablesfantasyrp/fables-and-fantasy-rp-kotlin.git
+git clone --recurse-submodules https://github.com/martijn-heil/fables-and-fantasy-rp.git
 ```
 
 If you cloned and forgot `--recurse-submodules`, you can set up the submodules like this:
